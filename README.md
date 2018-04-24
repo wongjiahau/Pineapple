@@ -53,14 +53,14 @@ However, readability will be preferred first when contradicting situation happen
 |`[]`|List initialization|
 
 
-
 ## Functions
 Note that the `??` operator means the function is unimplemented yet
 
 ### Prefix function
 ```
-sum~(xs:number[]) => number
+sum~(xs:number[]) => number 
     => ??
+
 
 result = sum~[1,2,3,4]
 ```
