@@ -23,22 +23,22 @@ However, readability will be preferred first when contradicting situation happen
 
 |Symbol|Name|  
 |-|-| 
-|+|Plus
-|-|Minus/Negate
-|*|Multiply
-|/|Divide
-|%|Modulus
+|`+`|Plus
+|`-`|Minus/Negate
+|`*`|Multiply
+|`/`|Divide
+|`%`|Modulus
 
 ### Relational
 |Symbol|Name
 |-|-|  
-| > |More than
-| < |Less than
-| <= |Less than or equals
-| >= |More than or equals
-| == |Equals
-| != |Not equals
-| !  |Not
+| `> `  |More than
+| `< `  |Less than
+| `<=`  |Less than or equals
+| `>=`  |More than or equals
+| `==`  |Equals
+| `!=`  |Not equals
+| `! `  |Not
 
 ### Others
 
