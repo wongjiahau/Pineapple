@@ -21,27 +21,36 @@ However, readability will be preferred first when contradicting situation happen
 ## Operators
 ### Arithmetic
 
-|Symbol|Name|
-|-|-|-|  
+|Symbol|Name|  
+|-|-| 
 |+|Plus
-|-|Minus
+|-|Minus/Negate
 |*|Multiply
 |/|Divide
 |%|Modulus
 
 ### Relational
-|Symbol|Name|
-|-|-|-|  
+|Symbol|Name
+|-|-|  
 | > |More than
 | < |Less than
+| <= |Less than or equals
+| >= |More than or equals
+| == |Equals
+| != |Not equals
+| !  |Not
 
-
+### Others
 
 |Symbol|Name|
-|-|-|-|  
+|-|-|  
+|`~`|Function name linker
 |`=`|Pure assignment|
 |`<-`|Dirty assignment|
-|`:`|T
+|`:`|Type scoping|
+|`=>`|Return|
+|`??`|Unimplemented
+|`[]`|List initialization|
 
 
 
