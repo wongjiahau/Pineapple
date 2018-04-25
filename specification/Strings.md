@@ -40,3 +40,15 @@ This is a
 multiline 
 comment
 ###
+```
+
+## Regex
+Regex are first class just like Javascript. They are enquoted using `/`.
+```js
+phoneNumberPattern = /^[0-9]{3}-\d{7}$/
+
+if "012-34567" conformsTo phoneNumberPattern
+    -> print "oh yea"
+else
+    -> print "oh no"
+```

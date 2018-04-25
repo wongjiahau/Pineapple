@@ -5,11 +5,13 @@
 |`number`|-9, 23, 77.77|
 |`int`|-2, -1, 0, 1, 2|
 |`string`|`"hello"`, `'hey'`, `$"yoyo"`|
+|`regex`|`/^[a-z]$/`|
 |`boolean`|`"true"`, `false`|
 |`list`|`[1,2,3]`, `["p", "i", "n", "e"]`|
 |`object`|`(.name="hi" .age=9)`|
 |`any`|any data type|
 |`null`|`null`|
+|`type`|`typeOf number`|
 
 ## Null-safe
 By default, a variable cannot be set to `null`.  
@@ -40,4 +42,15 @@ Generics can be done using the `T` keyword.
 sort (list: T[]) => T[]
     where T: IComparable
     => ??
+```
+
+## How to get the type of an thing?
+By using the `typeOf` function. 
+```js
+x = 5
+typeOf x // number
+
+typeOf number // type
+
+typeOf type // type
 ```
