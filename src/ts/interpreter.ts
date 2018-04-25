@@ -2,7 +2,7 @@ interface BinaryOperatorNode {
     kind: "BinaryOperator";
     left: ExpressionNode;
     right: ExpressionNode;
-    operator: "+" | "*" | "-" | "/";
+    operator: "+" | "*" | "-" | "/" | "%" | "^";
 }
 
 interface UnaryOperatorNode {
@@ -21,7 +21,7 @@ type ExpressionNode
     | UnaryOperatorNode
     | NumberNode;
 
-function evaluate(expression: ExpressionNode): number {
+export function evalutateExpression(expression: ExpressionNode): number {
     switch (expression.kind) {
         case "Number":
             return expression.value;
@@ -33,18 +33,20 @@ function evaluate(expression: ExpressionNode): number {
 }
 
 function evalUnaryOperator(node: UnaryOperatorNode): number {
-    const value = evaluate(node.inner);
+    const value = evalutateExpression(node.inner);
     return node.operator === "-" ? -value : value;
 }
 
 function evalBinaryOperator(node: BinaryOperatorNode): number {
-    const leftValue = evaluate(node.left);
-    const rightValue = evaluate(node.right);
+    const leftValue = evalutateExpression(node.left);
+    const rightValue = evalutateExpression(node.right);
     switch (node.operator) {
         case "+": return  leftValue + rightValue;
         case "-": return leftValue - rightValue;
         case "*": return leftValue * rightValue;
         case "/": return leftValue / rightValue;
+        case "%": return leftValue % rightValue;
+        case "^": return Math.pow(leftValue, rightValue);
     }
 }
 

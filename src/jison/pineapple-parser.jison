@@ -31,51 +31,45 @@
 
 %% /* language grammar */
 
-binary_operator
-    : BINOP1
-    | BINOP2
-    | BINOP3
-    ;
-
 expressions
-    : e EOF
-        { // typeof console !== 'undefined' ? console.log($1) : print($1);
-          return $1; 
-        }
+    : expr  EOF { 
+        return $1; 
+    }
     ;
 
-e
-    : e BINOP1 e {$$={
+expr 
+    : expr  BINOP1 expr  {$$={
         kind     : "BinaryOperator",
         left     : $1,
         operator : $2,
         right    : $3
     }}
 
-    | e BINOP2 e {$$={
+    | expr  BINOP2 expr  {$$={
         kind     : "BinaryOperator",
         left     : $1,
         operator : $2,
         right    : $3
     }}
 
-    | e BINOP3 e {$$={
+    | expr  BINOP3 expr  {$$={
         kind     : "BinaryOperator",
         left     : $1,
         operator : $2,
         right    : $3
     }}
 
-    | '-' e %prec UMINUS
+    | '-' expr  %prec UMINUS
         {$$ = -$2;}
 
-    | '(' e ')'
+    | '(' expr  ')'
         {$$ = $2;}
 
     | NUMBER {$$ = {
         kind: "Number",
         value: Number(yytext)
     }}
+
     | E
         {$$ = Math.E;}
     | PI
