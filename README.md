@@ -43,4 +43,4 @@ It is a language that focuses on (ranked by priority):
 - Super terse syntax (like Haskell or Python)
 - Super verbose syntax (like Java)
 
-## The specifaction are located at `specification` folder.
+## The specifaction are located at [`specification`](https://github.com/wongjiahau/Pineapple/tree/master/specification) folder.
