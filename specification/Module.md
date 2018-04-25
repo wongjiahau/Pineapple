@@ -30,3 +30,18 @@ from ./math.pine import _add_ , _isEven_ , sum_
 -> print sum [1,2,3] toString
 
 ```
+
+
+## How to import every function from a file?
+By using the `*` operator.
+```python
+from ./myModule.pine import *
+```
+
+## How to not export a function from a file?
+By using the `@private` annotation.
+```java
+@private 
+(x: number) add (y: number) => number
+    => ??
+```

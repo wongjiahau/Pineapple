@@ -32,8 +32,8 @@ You may also use bracket to group them together, but that is optional
 myFruit: Fruit =(.name="Mango" .isTasty=true .sibling=(.name="Durian" .isTasty=false .sibling=null))
 ```
 
-## Arrays
-Arrays are just like Python arrays.
+## Arrays/Lists
+Arrays are just like Python arrays. However, they must consist of the same type, no array with mixed typed is allowed.
 
 ### Initialization
 ```python
@@ -73,8 +73,8 @@ xs[1:3] # [10,20,30]
 ### List comprehension
 ```python
 fruits = ['apple', 'banana', 'pineapple']
-tastyFruits = [foreach fruit in fruits take fruit if fruit length > 5]
+longNameFruits = [foreach fruit in fruits take fruit if fruit length > 5] # ['banana', 'pineapple']
 
 xs = [1,2,3,4,5]
-newList = [foreach x in xs take x]
+newList = [foreach x in xs take x*2] # [1,3,9,16,25]
 ```

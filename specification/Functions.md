@@ -1,8 +1,10 @@
 # Functions
+Every function can be annotated with the `@function` keywords. This is optional, it is just to improve the readability.  
 Note that the `??` operator means the function is unimplemented yet
 
 ## Prefix function
-```
+```ts
+@function 
 sum (xs:number[]) => number 
     => ??
 
@@ -11,6 +13,7 @@ result = sum [1,2,3,4]
 
 ## Suffix function
 ```ts
+@function
 (howMany:int) daysFromToday => Date 
     => ??
 
@@ -19,6 +22,7 @@ result = 5 daysFromToday
 
 ## Infix function
 ```ts
+@function
 (x:boolean) xor (y:boolean) => number
     => ??
 
@@ -27,13 +31,15 @@ result = true xor false
 ```
 ## Hybrid funtion
 ```ts
+@function
 expect (x:number) toEqual (y:number) =>  maybe error 
     => ?? 
 
 expect 99 toEqual 88 // error
 ```
 
-```
+```ts
+@function
 from (list: T[])
     select (function: T => T)
     where (comparator: T => boolean) => T[]
@@ -66,25 +72,20 @@ name = readLine # Compiler error
 print "Hey" # Compiler error
 ```
 
-### How to declare function that involve IO?
-```
-# For function that contain output IO only
--> send (query: string) ToDatabase => void
+### How to declare function that involve IO operation?
+By using the `IO` keyword.
+```ts
+@function IO
+send (query: string) ToDatabase => void
     => ??
 
-# For function that contain input IO only
-<- readIc => string
-    => ??
-
-# For function that contain both
-<-> readAndPrint => void
-    => ??
 ```
 
-If a function is not prefix with any arrow operator, it cannot contain statement that involve IO operation.
+If a function is not annotated with `IO`, it cannot contain statement that involve IO operation.
 For example:
-```
-sayHello => void
+```ts
+@function 
+sayHello => null
     -> print "hello" # Compile error
 ```
 
@@ -92,7 +93,8 @@ sayHello => void
 
 Void function must be declared with `=> void`
 
-```
--> sayHello => void
-    print "Hello"
+```ts
+@function IO
+sayHello => void
+    -> print "Hello"
 ```
