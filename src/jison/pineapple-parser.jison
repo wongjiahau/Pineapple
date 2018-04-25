@@ -6,13 +6,9 @@
 
 \s+                   /* skip whitespace */
 [0-9]+("."[0-9]+)?\b  return 'NUMBER'
-"*"                   return '*'
-"/"                   return '/'
-"-"                   return '-'
-"+"                   return '+'
-"^"                   return '^'
-"!"                   return '!'
-"%"                   return '%'
+("+"|"-")             return 'BINOP1'
+("*"|"/")             return 'BINOP2'
+("%"|"^")             return 'BINOP3'
 "("                   return '('
 ")"                   return ')'
 "PI"                  return 'PI'
@@ -23,47 +19,63 @@
 /lex
 
 /* operator associations and precedence */
+/* the last statement has the highest precedence */
+/* the first statement has the lower precedence */
 
-%left '+' '-'
-%left '*' '/'
-%left '^'
-%right '!'
-%right '%'
+%left BINOP1
+%left BINOP2
+%left BINOP3
 %left UMINUS
 
 %start expressions
 
 %% /* language grammar */
 
+binary_operator
+    : BINOP1
+    | BINOP2
+    | BINOP3
+    ;
+
 expressions
     : e EOF
-        { typeof console !== 'undefined' ? console.log($1) : print($1);
-          return $1; }
+        { // typeof console !== 'undefined' ? console.log($1) : print($1);
+          return $1; 
+        }
     ;
 
 e
-    : e '+' e
-        {$$ = $1+$3;}
-    | e '-' e
-        {$$ = $1-$3;}
-    | e '*' e
-        {$$ = $1*$3;}
-    | e '/' e
-        {$$ = $1/$3;}
-    | e '^' e
-        {$$ = Math.pow($1, $3);}
-    | e '!'
-        {{
-          $$ = (function fact (n) { return n==0 ? 1 : fact(n-1) * n })($1);
-        }}
-    | e '%'
-        {$$ = $1/100;}
+    : e BINOP1 e {$$={
+        kind     : "BinaryOperator",
+        left     : $1,
+        operator : $2,
+        right    : $3
+    }}
+
+    | e BINOP2 e {$$={
+        kind     : "BinaryOperator",
+        left     : $1,
+        operator : $2,
+        right    : $3
+    }}
+
+    | e BINOP3 e {$$={
+        kind     : "BinaryOperator",
+        left     : $1,
+        operator : $2,
+        right    : $3
+    }}
+
     | '-' e %prec UMINUS
         {$$ = -$2;}
+
     | '(' e ')'
         {$$ = $2;}
-    | NUMBER
-        {$$ = Number(yytext);}
+
+    | NUMBER {$$ = {
+        kind: "Number",
+        value: Number(yytext)
+    }}
     | E
         {$$ = Math.E;}
     | PI
