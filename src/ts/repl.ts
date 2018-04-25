@@ -15,6 +15,7 @@ const prompt = () => {
     rl.question("pine>", (answer: string) => {
         try {
             const abstractSyntaxTree = exec(answer);
+            console.log(abstractSyntaxTree);
             const result = evalutateExpression(abstractSyntaxTree);
             console.log(result);
         } catch (error) {
