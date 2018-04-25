@@ -18,6 +18,17 @@ const NumberNode = (value) => ({
     value: Number(value)
 });
 
+const AssignmentNode = (varname, dataType, expr) => ({
+    kind: "Assignment",
+    variableNode: varname,
+    dataType: dataType,
+    expression: expr
+});
+
+const VariableNode = (varname) => ({
+    kind: "VariableName",
+    name: varname
+});
 %}
 
 /* lexical grammar */
@@ -26,8 +37,10 @@ const NumberNode = (value) => ({
 
 \s+                   /* skip whitespace */
 [0-9]+("."[0-9]+)?\b  return 'NUMBER'
+[a-zA-Z]+[a-zA-Z0-9]* return 'VARNAME'                        
 "+"                   return '+'
 "-"                   return '-'
+"="                   return 'ASSIGNMENT'
 ("*"|"/")             return 'BINOP2'
 ("%"|"^")             return 'BINOP3'
 ">"                   return 'UMINUS'
@@ -44,6 +57,7 @@ const NumberNode = (value) => ({
 /* the last statement has the highest precedence */
 /* the first statement has the lower precedence */
 
+%right ASSIGNMENT
 %left '+' '-'
 %left BINOP2
 %left BINOP3
@@ -74,8 +88,11 @@ expr
 
     | NUMBER {$$=NumberNode(yytext)}
 
-    | E
-        {$$ = Math.E;}
-    | PI
-        {$$ = Math.PI;}
+    | VARNAME ASSIGNMENT expr {$$=AssignmentNode(VariableNode($1),$2,$3)}
+
+    | VARNAME {$$=VariableNode($1)}
+
+    | E {$$ = Math.E;}
+
+    | PI {$$ = Math.PI;}
     ;

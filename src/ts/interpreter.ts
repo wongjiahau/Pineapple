@@ -16,28 +16,47 @@ interface NumberNode {
     value: number;
 }
 
+interface AssignmentNode {
+    kind: "Assignment";
+    variableNode: VariableNode;
+    dataType: string;
+    expression: ExpressionNode;
+}
+
+interface VariableNode {
+    kind: "VariableName";
+    name: string;
+}
+
 type ExpressionNode
-    = BinaryOperatorNode
+    = AssignmentNode
+    | BinaryOperatorNode
     | UnaryOperatorNode
-    | NumberNode;
+    | NumberNode
+    | VariableNode
+    ;
 
 export function evalutateExpression(expression: ExpressionNode): number {
     switch (expression.kind) {
         case "Number":
             return expression.value;
         case "UnaryOperator":
-            return evalUnaryOperator(expression);
+            return evalUnaryOperatorNode(expression);
         case "BinaryOperator":
-            return evalBinaryOperator(expression);
+            return evalBinaryOperatorNode(expression);
+        case "Assignment":
+            return evalAssignmentNode(expression);
+        case "VariableName":
+            return evalVariableNode(expression);
     }
 }
 
-function evalUnaryOperator(node: UnaryOperatorNode): number {
+function evalUnaryOperatorNode(node: UnaryOperatorNode): number {
     const value = evalutateExpression(node.inner);
     return node.operator === "-" ? -value : value;
 }
 
-function evalBinaryOperator(node: BinaryOperatorNode): number {
+function evalBinaryOperatorNode(node: BinaryOperatorNode): number {
     const leftValue = evalutateExpression(node.left);
     const rightValue = evalutateExpression(node.right);
     switch (node.operator) {
@@ -50,27 +69,16 @@ function evalBinaryOperator(node: BinaryOperatorNode): number {
     }
 }
 
-const expr1: ExpressionNode = {
-    kind: "BinaryOperator",
-    operator: "*",
-    left: {
-        kind: "BinaryOperator",
-        operator: "+",
-        left: {
-            kind: "Number",
-            value: 42
-        },
-        right: {
-            kind: "Number",
-            value: 5
-        }
-    },
-    right: {
-        kind: "UnaryOperator",
-        operator: "-",
-        inner: {
-            kind: "Number",
-            value: 12
-        }
-    }
-};
+const VARIABLES_TABLE: {[index: string]: {dataType: string, value: any}} = {};
+function evalAssignmentNode(node: AssignmentNode): number {
+    const exprValue = evalutateExpression(node.expression);
+    VARIABLES_TABLE[node.variableNode.name] = {
+        dataType: node.dataType,
+        value: exprValue
+    };
+    return exprValue;
+}
+
+function evalVariableNode(node: VariableNode): number {
+    return VARIABLES_TABLE[node.name].value;
+}
