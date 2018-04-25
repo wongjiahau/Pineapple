@@ -1,4 +1,24 @@
 /* description: Parses and executes mathematical expressions. */
+%{
+const BinaryOperatorNode = (left, operator, right) => ({
+    kind: "BinaryOperator",
+    left: left,
+    operator: operator,
+    right: right,
+});
+
+const UnaryOperatorNode = (operator, inner) => ({
+    kind: "UnaryOperator",
+    operator: operator,
+    inner: inner
+});
+
+const NumberNode = (value) => ({
+    kind: "Number",
+    value: Number(value)
+});
+
+%}
 
 /* lexical grammar */
 %lex
@@ -34,65 +54,25 @@
 %% /* language grammar */
 
 expressions
-    : expr EOF { 
-        return $1; 
-    }
+    : expr EOF { return $1; }
     ;
 
 expr
-    : '-' expr %prec UMINUS {$$={
-        kind: "UnaryOperator",
-        operator: $1,
-        inner: $2,
-    }}
+    : '-' expr %prec UMINUS {$$=UnaryOperatorNode($1,$2)}
 
-    | '+' expr %prec UMINUS {$$={
-        kind: "UnaryOperator",
-        operator: $1,
-        inner: $2,
-    }}
+    | '+' expr %prec UMINUS {$$=UnaryOperatorNode($1,$2)}
 
-    | expr '+' expr {$$={
-        kind     : "BinaryOperator",
-        left     : $1,
-        operator : $2,
-        right    : $3
-    }}
+    | expr '+' expr    {$$=BinaryOperatorNode($1,$2,$3)}
+
+    | expr '-' expr    {$$=BinaryOperatorNode($1,$2,$3)}
+
+    | expr BINOP2 expr {$$=BinaryOperatorNode($1,$2,$3)}
+
+    | expr BINOP3 expr {$$=BinaryOperatorNode($1,$2,$3)}
     
-    | expr '-' expr {$$={
-        kind     : "BinaryOperator",
-        left     : $1,
-        operator : $2,
-        right    : $3
-    }}
+    | '(' expr ')' {$$ = $2;}
 
-    | expr BINOP2 expr {$$={
-        kind     : "BinaryOperator",
-        left     : $1,
-        operator : $2,
-        right    : $3
-    }}
-
-    | expr BINOP3 expr {$$={
-        kind     : "BinaryOperator",
-        left     : $1,
-        operator : $2,
-        right    : $3
-    }}
-
-    | UMINUS expr {$$={
-        kind: "UnaryOperator",
-        operator: '-',
-        inner: $2,
-    }}
-
-    | '(' expr ')'
-        {$$ = $2;}
-
-    | NUMBER {$$={
-        kind: "Number",
-        value: Number(yytext)
-    }}
+    | NUMBER {$$=NumberNode(yytext)}
 
     | E
         {$$ = Math.E;}
