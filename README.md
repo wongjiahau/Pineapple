@@ -5,6 +5,7 @@ This is a language that focuses on:
 - Type safety
 - High order function (map, filter, reduce)
 - Ability to differentiate pure and impure code (like Haskell)
+- Easy module import/export
 
 This language aims to allow developers to write readable code easily and to write library that have readable API. 
 
@@ -17,6 +18,7 @@ However, readability will be preferred first when contradicting situation happen
 - Typescript
 - Python
 - C#
+- YAML
 
 ## Operators
 ### Arithmetic
@@ -52,6 +54,36 @@ However, readability will be preferred first when contradicting situation happen
 |`??`|Unimplemented
 |`[]`|List initialization|
 
+## Data structure
+The data structure will be using the format of PON (Pinapple Object Notation)
+```ts
+// Definition
+type Fruit:
+.name       : string
+.isTasy     : boolean
+.sibling    : Fruit | null
+
+// Initialization
+let myFruit: Fruit = 
+    .name    = "Mango" 
+    .isTasty = true
+    .sibling = 
+        .name    = "Durian"
+        .isTasty = false
+        .sibling = null
+
+print(myFruit.sibling.name) // "Durian"
+```
+
+You may also declare them in one line
+```ts
+let myFruit: Fruit = .name="Mango" .isTasty=true .sibling= .name="Durian" .isTasty=false .sibling=null 
+```
+
+You may also use bracket to group them together, but that is optional
+```ts
+let myFruit: Fruit =(.name="Mango" .isTasty=true .sibling=(.name="Durian" .isTasty=false .sibling=null))
+```
 
 ## Functions
 Note that the `??` operator means the function is unimplemented yet
@@ -66,8 +98,8 @@ result = sum~[1,2,3,4]
 ```
 
 ### Suffix function
-```
-(howMany:int)~daysFromToday => Date
+```ts
+(howMany:int)~daysFromToday => Date 
     => ??
 
 result = 5~daysFromToday
