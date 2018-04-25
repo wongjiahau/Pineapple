@@ -3,9 +3,10 @@ This is a language that focuses on:
 - Readability
 - Typability
 - Type safety
-- High order function (map, filter, reduce)
-- Ability to differentiate pure and impure code (like Haskell)
 - Easy module import/export
+- Ability to differentiate pure and impure code (like Haskell)
+- List comprehension
+- High order function (map, filter, reduce)
 
 This language aims to allow developers to write readable code easily and to write library that have readable API. 
 
@@ -62,17 +63,3 @@ However, readability will be preferred first when contradicting situation happen
 |`??`|Unimplemented
 |`[]`|List initialization|
 
-
-## Branching and loop
-It will be like python style.
-### If-else
-```python
-if he isSmart  and  he isNerdy
-    print "He is a programmer."
-elif he isHot
-    print "OMG"
-else 
-    print "..."
-
-
-```
