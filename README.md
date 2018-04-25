@@ -1,18 +1,14 @@
 # Pineapple language
-This is a language that focuses on:
-- Readability
-- Typability
+This is a language that focuses on (rank by priority):
+- Understandability
+- Expressiveness
 - Type safety
+- Referential transparency
 - Easy module import/export
-- Ability to differentiate pure and impure code (like Haskell)
-- List comprehension
+- First class list operation
 - High order function (map, filter, reduce)
+- Typability
 
-This language aims to allow developers to write readable code easily and to write library that have readable API. 
-
-Also, it focuses on typability, means weird symbols that are hard to type will be avoided as much as possible.
-
-However, readability will be preferred first when contradicting situation happens.
 
 ## Influence by
 - Haskell
@@ -22,6 +18,7 @@ However, readability will be preferred first when contradicting situation happen
 - C#
 - YAML
 - PHP
+- Java
 
 ## Language paradigm
 - Functional
@@ -57,9 +54,10 @@ However, readability will be preferred first when contradicting situation happen
 |-|-|  
 |`~`|Function name linker
 |`=`|Pure assignment|
-|`<-`|Dirty assignment|
+|`<-`|IO input assignment|
+|`->`|IO output|
+|`<->`|IO input & output|
 |`:`|Type scoping|
 |`=>`|Return|
 |`??`|Unimplemented
-|`[]`|List initialization|
 

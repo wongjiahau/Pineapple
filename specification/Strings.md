@@ -26,10 +26,11 @@ let html =
 ```
 
 ## Comments
-Single line comment prefix by `#`
-```python
+Single line comment is prefix by `#` or `//`
+```php
 # This is a comment
 let x = 3 # You can place it at the back
+// This  is also a comment
 ```
 
 Multiline comment is surrounded by `###`.

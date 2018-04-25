@@ -21,20 +21,23 @@ x = null # Compiler error
 
 ## Discriminated unions
 You can have a variable which can have both type. For example, you might want to have a nullable string type.
-```coffee
+```java
 var x: string | null = "hello"
-x = null # No error
+x = null // No error
 
 
-type Color = "red" | "green" | "blue"
-myColor: Color = "yellow" # Error
+@type 
+Color: "red" | "green" | "blue"
+
+myColor: Color = "yellow" // Error
 ```
 
 
 ## Generics
 Generics can be done using the `T` keyword.
-```
+```java
+@function
 sort (list: T[]) => T[]
-    where T: Comparable
+    where T: IComparable
     => ??
 ```

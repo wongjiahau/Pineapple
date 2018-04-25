@@ -1,12 +1,13 @@
 # Data structure
 ## Objects
 The data structure will be using the format of PON (Pinapple Object Notation)
-```ts
+```java
 // Definition
-type Fruit:
-.name       : string
-.isTasy     : boolean
-.sibling    : Fruit | null
+@type 
+Fruit:
+    .name       : string
+    .isTasy     : boolean
+    .sibling    : Fruit | null
 
 // Initialization
 myFruit: Fruit = 

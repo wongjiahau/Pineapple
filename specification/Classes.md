@@ -2,13 +2,14 @@
 There no classes in Pineapple! However you can simulate that using suffix function.
 
 ## Example: BinaryTree
-```python
-# Definition of BinaryTree
-type BinaryTree:
+```java
+// Definition of BinaryTree
+@type 
+BinaryTree:
     .left  : Node | null
     .right : Node | null
     .value : T
-    where T: Comparable
+    where T: IComparable
 
 @function
 newTree (value: T) => tree
@@ -45,8 +46,8 @@ insert (element: T) to (tree: BinaryTree) => BinaryTree
 
 ```
 
-```python
-# Using binary tree
+```ts
+// Using binary tree
 from ./binaryTree.pine import *
 
 var myTree: BinaryTree<int> = 
@@ -65,33 +66,48 @@ else
 ## Inheritance
 You can inherit a type by using the keyword `extends`.
 
+Multiple inheritance is also allowed.
 ```ts
-type Human:
+@type 
+Human:
     name: string
     dob: Date
 
-type Parent extends Employee:
+@type 
+Parent extends Human:
     kids: Human[]
+
+@type
+Worker:
+    salary: number
+
+// multiple inheritance
+@type
+SuperWoman extends Parent, Worker:
+    isBusy: boolean
 
 ```
 
 ## Interface
-You can define an interface using `interface`.
-```coffee
-interface IComparable:
+You can define an interface using `@interface`.  
+```java
+@interface 
+IComparable:
     (x: T) greaterThan (y: T) => boolean
     (x: T) equals (y: T) => boolean
 
-type Color implements IComparable:
+@type
+Color implements IComparable:
     .red  : int
     .green: int
     .blue : int
 
+@function
 (x: Color) greaterThan (y: Color) => boolean
     => x.red   > y.red   and
        x.green > y.green and
        x.blue  > y.blue 
     
-# Error: type `Color` did not implements `(x: T) equals (y: T)` from interface `IComparable`
+// Error: type `Color` did not implements `(x: T) equals (y: T)` from interface `IComparable`
 ```
 If we didn't declare the required functions, the Pineapple compiler will throw error.
