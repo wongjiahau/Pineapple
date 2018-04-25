@@ -1,6 +1,8 @@
 # Unit test
 Unit testing is a first class facility in Pineapple, so coder can define test cases easily within the same file.
 
+Moreover, they don't need install external library.
+
 You can denote a test using `@test` annotation.
 
 ```java

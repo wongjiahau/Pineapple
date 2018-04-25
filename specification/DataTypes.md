@@ -21,6 +21,15 @@ var x: string = "hello"
 x = null # Compiler error
 ```
 
+## Enumerations
+Enumaration can be declared using `@enum` annotation.
+```java
+@enum
+Color: Red | Green | Blue
+
+myColor = Color.Red
+```
+
 ## Discriminated unions
 You can have a variable which can have both type. For example, you might want to have a nullable string type.
 ```java

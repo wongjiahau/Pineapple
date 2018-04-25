@@ -31,6 +31,7 @@ It is a language that focuses on (ranked by priority):
 - PHP
 - Java
 - Eiffel
+- Smalltalk
 
 ## Language paradigm
 - Functional
