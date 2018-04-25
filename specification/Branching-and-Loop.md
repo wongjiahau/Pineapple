@@ -22,14 +22,14 @@ x += 5 if addMore
 ```
 
 ## Switch cases
-Switch cases can be don using `switch`, `when`, and `otherwise` keyword.  
+Switch cases can be done using `check`, `when`, and `otherwise` keyword.  
 
 Its even more powerful that you can use the `it` keyword.
 
 
 ```coffee
 day = 1
-switch day
+when day
     when it isBetween 1 and 5
         # Go to work
     when it == 6
@@ -77,12 +77,19 @@ while i < fruits length
     i++
 ```
 
+### How to loop through keys of an object?
+By using the `keysOf` function.
+```python
+foreach key in keysOf myObject
+    -> print myObject[key]
+```
+
 ## Try catch
 ```coffee
 try
     -> doSomeCrazyThing
 catch error
-    -> print error
+    -> print (error toString)
 finally
     -> cleanUp
 ```

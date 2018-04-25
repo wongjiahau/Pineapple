@@ -33,6 +33,12 @@ It is a language that focuses on (ranked by priority):
 - Functional
 - Pseudo Object-Oriented
 
+## Design goal
+- The error thrown by the interpreter should be easy to understand
+- REPL should be existence for this language
+- Is an interpreted language
+- Should give suggestion to user when there are ways to improve the code
+
 ## Non-goal
 - Super terse syntax (like Haskell or Python)
 - Super verbose syntax (like Java)

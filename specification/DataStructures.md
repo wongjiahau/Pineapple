@@ -21,7 +21,7 @@ myFruit: Fruit =
 print myFruit.sibling.name // "Durian"
 ```
 
-Note that the indentation is not necessary.  
+Note that the indentation is not necessary. It's just for making the code easier to read.
 
 So, you may also declare them in one line
 ```ts
@@ -37,8 +37,19 @@ myFruit: Fruit =(.name="Mango" .isTasty=true .sibling=(.name="Durian" .isTasty=f
 Arrays are just like Python arrays. However, they must consist of the same type, no array with mixed typed is allowed.
 
 ### Initialization
-```python
+```js
 xs = [1,2,3,4]
+
+invalidList = [1, "b"] // Error: Cannot contain different type in a list
+
+rangeOfNumbers = [1 to 5] // [1,2,3,4,5]
+
+manyFruits = [
+    (.name="Apple" .color="red"),
+    (.name="Pineapple" .color="yellow")
+]
+
+
 ```
 
 ### Indexing
