@@ -1,8 +1,8 @@
 function exec(input: string) {
-    return require("../jison/pineapple-parser").parse(input);
+    return require("../jison/pineapple-parser.js").parse(input);
 }
 
-import readline from "readline";
+import * as readline from "readline";
 
 const rl = readline.createInterface({
     input: process.stdin,
