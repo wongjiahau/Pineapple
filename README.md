@@ -16,9 +16,17 @@ However, readability will be preferred first when contradicting situation happen
 ## Influence by
 - Haskell
 - Typescript
+- CoffeeScript
 - Python
 - C#
 - YAML
+- PHP
+
+## Language paradigm
+- Functional
+
+
+## The specifaction are located at `specification` folder.
 
 ## Operators
 ### Arithmetic
@@ -54,79 +62,17 @@ However, readability will be preferred first when contradicting situation happen
 |`??`|Unimplemented
 |`[]`|List initialization|
 
-## Data structure
-The data structure will be using the format of PON (Pinapple Object Notation)
-```ts
-// Definition
-type Fruit:
-.name       : string
-.isTasy     : boolean
-.sibling    : Fruit | null
 
-// Initialization
-let myFruit: Fruit = 
-    .name    = "Mango" 
-    .isTasty = true
-    .sibling = 
-        .name    = "Durian"
-        .isTasty = false
-        .sibling = null
-
-print(myFruit.sibling.name) // "Durian"
-```
-
-You may also declare them in one line
-```ts
-let myFruit: Fruit = .name="Mango" .isTasty=true .sibling= .name="Durian" .isTasty=false .sibling=null 
-```
-
-You may also use bracket to group them together, but that is optional
-```ts
-let myFruit: Fruit =(.name="Mango" .isTasty=true .sibling=(.name="Durian" .isTasty=false .sibling=null))
-```
-
-## Functions
-Note that the `??` operator means the function is unimplemented yet
-
-### Prefix function
-```
-sum~(xs:number[]) => number 
-    => ??
+## Branching and loop
+It will be like python style.
+### If-else
+```python
+if he isSmart  and  he isNerdy
+    print "He is a programmer."
+elif he isHot
+    print "OMG"
+else 
+    print "..."
 
 
-result = sum~[1,2,3,4]
-```
-
-### Suffix function
-```ts
-(howMany:int)~daysFromToday => Date 
-    => ??
-
-result = 5~daysFromToday
-```
-
-### Infix function
-```
-(x:boolean)~xor~(y:boolean) => number
-    => ??
-
-result = true~xor~false
-
-```
-### Hybrid funtion
-```
-expect~(x:number)~toEqual~(y:number) =>  maybe error 
-    => ?? 
-
-expect~99~toEqual~99
-```
-```
-from~(list: T[])
-    ~select~(function: T => T)
-    ~where~(comparator: T => boolean) => T[]
-    => ??
-
-from~[1,2,3,4]
-    ~select~((x) => x + 2)
-    ~where~((x) => x > 2)
 ```
