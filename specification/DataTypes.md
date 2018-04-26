@@ -13,6 +13,27 @@
 |`null`|`null`|
 |`type`|`typeOf number`|
 
+## How to declare my own data type?
+By using the `@type` annotation.
+```java
+// Definition
+@type 
+Fruit:
+    .name       : string
+    .isTasy     : boolean
+    .sibling    : Fruit | null
+```
+
+## Type safety
+If you declare a variable to have a specific type, Pineapple compiler will expect the variable fully fulfils the specification of the type.
+```js
+myFruit: Fruit = 
+    .name = 123 // Error, `.name` should be type of `string`
+    .isTasty = true
+    // Error, missing member `.sibling`
+```
+
+
 ## Null-safe
 By default, a variable cannot be set to `null`.  
 Pineapple used this approach to prevent a very common error like `null pointer`.

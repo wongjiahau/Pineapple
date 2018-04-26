@@ -1,16 +1,10 @@
 # Data structure
 ## Objects
-The data structure will be using the format of PON (Pinapple Object Notation)
-```java
-// Definition
-@type 
-Fruit:
-    .name       : string
-    .isTasy     : boolean
-    .sibling    : Fruit | null
+The data structure will be using the format of PON (Pinapple Object Notation). It is just a variant of JSON that is more readable with lesser typing.
 
+```java
 // Initialization
-myFruit: Fruit = 
+myFruit = 
     .name    = "Mango" 
     .isTasty = true
     .sibling = 
@@ -18,19 +12,20 @@ myFruit: Fruit =
         .isTasty = false
         .sibling = null
 
-print myFruit.sibling.name // "Durian"
+-> print myFruit.sibling.name // "Durian"
+-> print myFruit["name"]  // "Mango"
 ```
 
 Note that the indentation is not necessary. It's just for making the code easier to read.
 
 So, you may also declare them in one line
 ```ts
-myFruit: Fruit = .name="Mango" .isTasty=true .sibling= .name="Durian" .isTasty=false .sibling=null 
+myFruit = .name="Mango" .isTasty=true .sibling= .name="Durian" .isTasty=false .sibling=null 
 ```
 
 You may also use bracket to group them together, but that is optional
 ```ts
-myFruit: Fruit =(.name="Mango" .isTasty=true .sibling=(.name="Durian" .isTasty=false .sibling=null))
+myFruit =(.name="Mango" .isTasty=true .sibling=(.name="Durian" .isTasty=false .sibling=null))
 ```
 
 ## Arrays/Lists
