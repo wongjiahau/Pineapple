@@ -74,7 +74,7 @@ export function evalutateExpression(expression: ExpressionNode): number | object
         case "VariableName":
             return evalVariableNode(expression);
         case "ArrayNode":
-            return evalArrayNode(expression);
+            return evalElementNode(expression.element);
         case "Object":
             return evalObjectNode(expression);
         case "ObjectChild":
@@ -122,15 +122,11 @@ function evalObjectNode(node: ObjectNode): object {
     return result;
 }
 
-function evalArrayNode(node: ArrayNode): any[] {
-    const result: any[] = [];
-    result.push(evalutateExpression(node.element.expression));
-    let currentElementNode = node.element.next;
-    while (true) {
-        if (!currentElementNode) {
-            return result;
-        }
-        result.push(evalutateExpression(currentElementNode.expression));
-        currentElementNode = currentElementNode.next;
+function evalElementNode(node: ElementNode): any[] {
+    if (!node) {
+        return [];
     }
+    let result = [evalutateExpression(node.expression)];
+    result = result.concat(evalElementNode(node.next));
+    return result;
 }

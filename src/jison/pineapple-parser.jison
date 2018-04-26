@@ -122,6 +122,7 @@ expr
     | assignment_expr
 
     | '[' elements ']' {$$=ArrayNode($2)}
+    | '[' ']' {$$=ArrayNode(null)}
 
     ;
 
