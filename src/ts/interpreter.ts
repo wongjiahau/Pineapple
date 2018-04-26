@@ -16,6 +16,15 @@ interface NumberNode {
     value: number;
 }
 
+interface BooleanNode {
+    kind: "Boolean";
+    value: boolean;
+}
+
+interface NullNode {
+    kind: "Null";
+}
+
 interface AssignmentNode {
     kind: "Assignment";
     variableNode: VariableNode;
@@ -56,15 +65,21 @@ type ExpressionNode
     | BinaryOperatorNode
     | UnaryOperatorNode
     | NumberNode
+    | BooleanNode
+    | NullNode
     | VariableNode
     | ArrayNode
     | ObjectNode
     ;
 
-export function evalutateExpression(expression: ExpressionNode): number | object {
+export function evalutateExpression(expression: ExpressionNode): any {
     switch (expression.kind) {
         case "Number":
             return expression.value;
+        case "Boolean":
+            return expression.value;
+        case "Null":
+            return null;
         case "UnaryOperator":
             return evalUnaryOperatorNode(expression);
         case "BinaryOperator":

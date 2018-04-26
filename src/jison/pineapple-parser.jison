@@ -18,6 +18,15 @@ const NumberNode = (value) => ({
     value: Number(value)
 });
 
+const BooleanNode = (value) => ({
+    kind: "Number",
+    value: eval(value)
+});
+
+const NullNode = () => ({
+    kind: "Null"
+});
+
 const AssignmentNode = (varname, dataType, expr) => ({
     kind: "Assignment",
     variableNode: varname,
@@ -60,6 +69,9 @@ const ElementNode = (expr, next) =>  ({
 %%
 
 \s+                      /* skip whitespace */
+"true"                   return 'TRUE'
+"false"                  return 'FALSE'
+"null"                   return 'NULL'
 [0-9]+("."[0-9]+)?\b     return 'NUMBER'
 [a-zA-Z]+[a-zA-Z0-9]*    return 'VARNAME'                        
 "."[a-zA-Z]+[a-zA-Z0-9]* return 'MEMBERNAME'                        
@@ -80,7 +92,6 @@ const ElementNode = (expr, next) =>  ({
 "PI"                     return 'PI'
 "E"                      return 'E'
 <<EOF>>                  return 'EOF'
-.                        return 'INVALID'
 
 /lex
 
@@ -119,8 +130,6 @@ expr
     
     | '(' expr ')' {$$ = $2;}
 
-    | NUMBER {$$=NumberNode(yytext)}
-
     | VARNAME {$$=VariableNode($1)}
 
     | E {$$ = Math.E;}
@@ -135,6 +144,19 @@ expr
 
     | object
 
+    | value
+
+    ;
+
+value
+    : NUMBER {$$=NumberNode(yytext)}
+    | NULL {$$=NullNode()}
+    | bool_value {$$=BooleanNode(yytext)}
+    ;
+
+bool_value
+    : TRUE 
+    | FALSE
     ;
 
 elements
@@ -149,11 +171,11 @@ assignment_expr
 
 object 
     :  '(' ')' {$$=ObjectNode(null)}
-    |  '(' members ')'  {$$=ObjectNode($2)}
+    |  members  {$$=ObjectNode($2)}
     ;
 
 members
-    : MEMBERNAME ASSIGNOP expr {$$=ObjectMemberNode($1, $3, null)}
-    | MEMBERNAME ASSIGNOP expr members {$$=ObjectMemberNode($1, $3, $4)}
+    : MEMBERNAME ASSIGNOP value {$$=ObjectMemberNode($1, $3, null)}
+    | MEMBERNAME ASSIGNOP value members {$$=ObjectMemberNode($1, $3, $4)}
     ;
 

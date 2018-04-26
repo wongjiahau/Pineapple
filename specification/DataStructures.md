@@ -2,11 +2,14 @@
 ## Objects
 The data structure will be using the format of PON (Pinapple Object Notation). It is just a variant of JSON that is more readable with lesser typing.
 
+Not only it is easier to read, it is also easier to retrieve the value of the desired node.
+
 ```java
 // Initialization
 myFruit = 
     .name    = "Mango" 
     .isTasty = true
+    .amount  = (10 + 5)
     .sibling = 
         .name    = "Durian"
         .isTasty = false
@@ -18,9 +21,14 @@ myFruit =
 
 Note that the indentation is not necessary. It's just for making the code easier to read.
 
-So, you may also declare them in one line, but you will need to put brackets.
+So, you may also declare them in one line. 
 ```ts
 myFruit =(.name="Mango" .isTasty=true .sibling=(.name="Durian" .isTasty=false .sibling=null))
+```
+
+Note that you can ommit the brackets and spaces as well.
+```ts
+myFruit=.name="Mango".isTasty=true.sibling= .name="Durian".isTasty=false.sibling=null
 ```
 
 ### How to declare an empty object?
