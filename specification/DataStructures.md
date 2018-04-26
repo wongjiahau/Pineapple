@@ -9,30 +9,28 @@ Not only it is easier to read, it is also easier to retrieve the value of the de
 myFruit =
     .name    = "Mango" 
     .isTasty = true
-    .amount  = (10 + 5)
     .sibling =
         .name    = "Durian"
         .isTasty = false
+    .amount  = (10 + 5)
 
 -> print myFruit.sibling.name // "Durian"
 -> print myFruit["name"]  // "Mango"
 ```
 
-Note that the indentation is not necessary. It's just for making the code easier to read.
+Note that the indentation is necessary.
+
+However, you may also declared it in one line using curly braces.
 
 So, you may also declare them in one line. 
 ```ts
-myFruit =(.name="Mango" .isTasty=true .sibling=(.name="Durian" .isTasty=false .sibling=null))
+myFruit ={.name="Mango" .isTasty=true .sibling={.name="Durian" .isTasty=false .sibling=null}}
 ```
 
-Note that you can ommit the brackets and spaces as well.
-```ts
-myFruit=.name="Mango".isTasty=true.sibling= .name="Durian".isTasty=false.sibling=null
-```
 
 ### How to declare an empty object?
 ```js
-var x = () // This is similar to {} in Javascript/Python
+var x = {}
 ```
 
 ## Arrays/Lists
