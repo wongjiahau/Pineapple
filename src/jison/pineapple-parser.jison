@@ -40,10 +40,10 @@ const VariableNode = (varname) => ({
 [a-zA-Z]+[a-zA-Z0-9]* return 'VARNAME'                        
 "+"                   return '+'
 "-"                   return '-'
+":"                   return ':'
 "="                   return 'ASSIGNMENT'
 ("*"|"/")             return 'BINOP2'
 ("%"|"^")             return 'BINOP3'
-">"                   return 'UMINUS'
 "("                   return '('
 ")"                   return ')'
 "PI"                  return 'PI'
@@ -58,6 +58,7 @@ const VariableNode = (varname) => ({
 /* the first statement has the lower precedence */
 
 %right ASSIGNMENT
+%right ':'
 %left '+' '-'
 %left BINOP2
 %left BINOP3
@@ -88,11 +89,17 @@ expr
 
     | NUMBER {$$=NumberNode(yytext)}
 
-    | VARNAME ASSIGNMENT expr {$$=AssignmentNode(VariableNode($1),$2,$3)}
 
     | VARNAME {$$=VariableNode($1)}
 
     | E {$$ = Math.E;}
 
     | PI {$$ = Math.PI;}
+
+    | assignment_expr
+    ;
+
+assignment_expr
+    : VARNAME ASSIGNMENT expr {$$=AssignmentNode(VariableNode($1),null,$3)}
+    | VARNAME ':' VARNAME ASSIGNMENT expr {$$=AssignmentNode(VariableNode($1),$3,$5)}
     ;
