@@ -45,7 +45,7 @@ const ObjectNode = (member) => ({
     memberNode: member
 });
 
-const ObjectMemberNode = (name, expr, next) => ({
+const ObjectMemberNode = (name, expr, next) => ({ 
     kind: "ObjectMember",
     name: name,
     expression: expr,
@@ -88,6 +88,7 @@ const ElementNode = (expr, next) =>  ({
 "}"                      return '}'
 "["                      return '['
 "]"                      return ']'
+"|"                      return '|'
 ","                      return ','
 "PI"                     return 'PI'
 "E"                      return 'E'
@@ -171,11 +172,13 @@ assignment_expr
 
 object 
     :  '(' ')' {$$=ObjectNode(null)}
-    |  members  {$$=ObjectNode($2)}
+    |  members {$$=ObjectNode($1)}
     ;
 
 members
     : MEMBERNAME ASSIGNOP value {$$=ObjectMemberNode($1, $3, null)}
     | MEMBERNAME ASSIGNOP value members {$$=ObjectMemberNode($1, $3, $4)}
+    | MEMBERNAME ASSIGNOP '(' expr ')' {$$=ObjectMemberNode($1, $3, null)}
+    | MEMBERNAME ASSIGNOP '(' expr ')' members {$$=ObjectMemberNode($1, $3, $6)}
     ;
 

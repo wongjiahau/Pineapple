@@ -132,10 +132,11 @@ function evalObjectMemberNode(node: ObjectMemberNode): object {
         return {};
     }
     const result: {[index: string]: any} = {};
+    // We slice one in order to get rid of the dot prefix
     result[node.name.slice(1)] = evalutateExpression(node.expression);
     let next: ObjectMemberNode = node.next;
     while (next) {
-        result[next.name] = evalutateExpression(next.expression);
+        result[next.name.slice(1)] = evalutateExpression(next.expression);
         next = next.next;
     }
     return result;

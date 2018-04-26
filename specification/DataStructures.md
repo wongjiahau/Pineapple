@@ -6,14 +6,13 @@ Not only it is easier to read, it is also easier to retrieve the value of the de
 
 ```java
 // Initialization
-myFruit = 
+myFruit =
     .name    = "Mango" 
     .isTasty = true
     .amount  = (10 + 5)
-    .sibling = 
+    .sibling =
         .name    = "Durian"
         .isTasty = false
-        .sibling = null
 
 -> print myFruit.sibling.name // "Durian"
 -> print myFruit["name"]  // "Mango"
