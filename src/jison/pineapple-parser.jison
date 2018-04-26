@@ -18,6 +18,11 @@ const NumberNode = (value) => ({
     value: Number(value)
 });
 
+const StringNode = (value) => ({
+    kind: "String",
+    value: eval(value)
+});
+
 const BooleanNode = (value) => ({
     kind: "Number",
     value: eval(value)
@@ -73,12 +78,14 @@ const ElementNode = (expr, next) =>  ({
 "false"                  return 'FALSE'
 "null"                   return 'NULL'
 [0-9]+("."[0-9]+)?\b     return 'NUMBER'
+"\""[^\"\\]*"\""         return 'STRING'
 [a-zA-Z]+[a-zA-Z0-9]*    return 'VARNAME'                        
 "."[a-zA-Z]+[a-zA-Z0-9]* return 'MEMBERNAME'                        
 "+"                      return '+'
 "-"                      return '-'
 ":"                      return ':'
 "\n"                     return '\n'
+"\""                     return '"'                     
 "="                      return 'ASSIGNOP'
 ("*"|"/")                return 'BINOP2'
 ("%"|"^")                return 'BINOP3'
@@ -153,6 +160,7 @@ value
     : NUMBER {$$=NumberNode(yytext)}
     | NULL {$$=NullNode()}
     | bool_value {$$=BooleanNode(yytext)}
+    | STRING {$$=StringNode(yytext)}
     ;
 
 bool_value

@@ -20,7 +20,7 @@ const prompt = () => {
                 console.log(abstractSyntaxTree);
                 // console.log("\n");
                 const result = evalutateExpression(abstractSyntaxTree);
-                console.log(result);
+                console.log(JSON.stringify(result));
             }
         } catch (error) {
             console.log(error.message);
