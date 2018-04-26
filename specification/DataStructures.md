@@ -18,12 +18,7 @@ myFruit =
 
 Note that the indentation is not necessary. It's just for making the code easier to read.
 
-So, you may also declare them in one line
-```ts
-myFruit = .name="Mango" .isTasty=true .sibling= .name="Durian" .isTasty=false .sibling=null 
-```
-
-You may also use bracket to group them together, but that is optional
+So, you may also declare them in one line, but you will need to put brackets.
 ```ts
 myFruit =(.name="Mango" .isTasty=true .sibling=(.name="Durian" .isTasty=false .sibling=null))
 ```
