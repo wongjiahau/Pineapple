@@ -23,6 +23,11 @@ So, you may also declare them in one line, but you will need to put brackets.
 myFruit =(.name="Mango" .isTasty=true .sibling=(.name="Durian" .isTasty=false .sibling=null))
 ```
 
+### How to declare an empty object?
+```js
+var x = () // This is similar to {} in Javascript/Python
+```
+
 ## Arrays/Lists
 Arrays are just like Python arrays. However, they must consist of the same type, no array with mixed typed is allowed.
 
