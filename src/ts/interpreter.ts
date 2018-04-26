@@ -30,13 +30,14 @@ interface VariableNode {
 
 interface ObjectNode {
     kind: "Object";
-    children: ObjectMemberNode[];
+    memberNode: ObjectMemberNode;
 }
 
 interface ObjectMemberNode {
-    kind: "ObjectChild";
+    kind: "ObjectMember";
     name: string;
     expression: ExpressionNode;
+    next: ObjectMemberNode;
 }
 
 interface ArrayNode {
@@ -58,7 +59,6 @@ type ExpressionNode
     | VariableNode
     | ArrayNode
     | ObjectNode
-    | ObjectMemberNode
     ;
 
 export function evalutateExpression(expression: ExpressionNode): number | object {
@@ -76,9 +76,7 @@ export function evalutateExpression(expression: ExpressionNode): number | object
         case "ArrayNode":
             return evalElementNode(expression.element);
         case "Object":
-            return evalObjectNode(expression);
-        case "ObjectChild":
-            return evalutateExpression(expression.expression);
+            return evalObjectMemberNode(expression.memberNode);
     }
 }
 
@@ -114,11 +112,14 @@ function evalVariableNode(node: VariableNode): number {
     return VARIABLES_TABLE[node.name].value;
 }
 
-function evalObjectNode(node: ObjectNode): object {
+function evalObjectMemberNode(node: ObjectMemberNode): object {
     const result: {[index: string]: any} = {};
-    node.children.forEach((x) => {
-        result[x.name] = evalutateExpression(x.expression);
-    });
+    result[node.name] = evalutateExpression(node.expression);
+    let next: ObjectMemberNode = node.next;
+    while (next) {
+        result[next.name] = evalutateExpression(next.expression);
+        next = next.next;
+    }
     return result;
 }
 

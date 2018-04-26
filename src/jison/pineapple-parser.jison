@@ -30,10 +30,17 @@ const VariableNode = (varname) => ({
     name: varname
 });
 
-const MemberNode = (memberName, expr) => ({
-    kind: "ObjectChild",
-    name: memberName,
-    expression: expr
+
+const ObjectNode = (member) => ({
+    kind: "Object",
+    memberNode: member
+});
+
+const ObjectMemberNode = (name, expr, next) => ({
+    kind: "ObjectMember",
+    name: name,
+    expression: expr,
+    next: next
 });
 
 const ArrayNode = (element) => ({
@@ -122,7 +129,10 @@ expr
     | assignment_expr
 
     | '[' elements ']' {$$=ArrayNode($2)}
+
     | '[' ']' {$$=ArrayNode(null)}
+
+    | object
 
     ;
 
@@ -138,14 +148,11 @@ assignment_expr
 
 object 
     : '{' '}'
-    | '{' members '}'
+    | '{' members '}' {$$=ObjectNode($2)}
     ;
 
 members
-    : pair
-    | pair ',' members
+    : MEMBERNAME ASSIGNOP expr {$$=ObjectMemberNode($1, $3, null)}
+    | MEMBERNAME ASSIGNOP expr members {$$=ObjectMemberNode($1, $3, $4)}
     ;
 
-pair
-    :MEMBERNAME ASSIGNOP expr
-    ;
