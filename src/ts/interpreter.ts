@@ -28,15 +28,40 @@ interface VariableNode {
     name: string;
 }
 
+interface ObjectNode {
+    kind: "Object";
+    children: ObjectMemberNode[];
+}
+
+interface ObjectMemberNode {
+    kind: "ObjectChild";
+    name: string;
+    expression: ExpressionNode;
+}
+
+interface ArrayNode {
+    kind: "ArrayNode";
+    element: ElementNode;
+}
+
+interface ElementNode {
+    kind: "Element";
+    expression: ExpressionNode;
+    next: ElementNode;
+}
+
 type ExpressionNode
     = AssignmentNode
     | BinaryOperatorNode
     | UnaryOperatorNode
     | NumberNode
     | VariableNode
+    | ArrayNode
+    | ObjectNode
+    | ObjectMemberNode
     ;
 
-export function evalutateExpression(expression: ExpressionNode): number {
+export function evalutateExpression(expression: ExpressionNode): number | object {
     switch (expression.kind) {
         case "Number":
             return expression.value;
@@ -48,17 +73,23 @@ export function evalutateExpression(expression: ExpressionNode): number {
             return evalAssignmentNode(expression);
         case "VariableName":
             return evalVariableNode(expression);
+        case "ArrayNode":
+            return evalArrayNode(expression);
+        case "Object":
+            return evalObjectNode(expression);
+        case "ObjectChild":
+            return evalutateExpression(expression.expression);
     }
 }
 
 function evalUnaryOperatorNode(node: UnaryOperatorNode): number {
-    const value = evalutateExpression(node.inner);
+    const value = evalutateExpression(node.inner) as number;
     return node.operator === "-" ? -value : value;
 }
 
 function evalBinaryOperatorNode(node: BinaryOperatorNode): number {
-    const leftValue = evalutateExpression(node.left);
-    const rightValue = evalutateExpression(node.right);
+    const leftValue = evalutateExpression(node.left) as number;
+    const rightValue = evalutateExpression(node.right) as number;
     switch (node.operator) {
         case "+": return  leftValue + rightValue;
         case "-": return leftValue - rightValue;
@@ -70,7 +101,7 @@ function evalBinaryOperatorNode(node: BinaryOperatorNode): number {
 }
 
 const VARIABLES_TABLE: {[index: string]: {dataType: string, value: any}} = {};
-function evalAssignmentNode(node: AssignmentNode): number {
+function evalAssignmentNode(node: AssignmentNode): any {
     const exprValue = evalutateExpression(node.expression);
     VARIABLES_TABLE[node.variableNode.name] = {
         dataType: node.dataType,
@@ -81,4 +112,25 @@ function evalAssignmentNode(node: AssignmentNode): number {
 
 function evalVariableNode(node: VariableNode): number {
     return VARIABLES_TABLE[node.name].value;
+}
+
+function evalObjectNode(node: ObjectNode): object {
+    const result: {[index: string]: any} = {};
+    node.children.forEach((x) => {
+        result[x.name] = evalutateExpression(x.expression);
+    });
+    return result;
+}
+
+function evalArrayNode(node: ArrayNode): any[] {
+    const result: any[] = [];
+    result.push(evalutateExpression(node.element.expression));
+    let currentElementNode = node.element.next;
+    while (true) {
+        if (!currentElementNode) {
+            return result;
+        }
+        result.push(evalutateExpression(currentElementNode.expression));
+        currentElementNode = currentElementNode.next;
+    }
 }
