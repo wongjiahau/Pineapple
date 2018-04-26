@@ -123,7 +123,7 @@ function evalBinaryOperatorNode(node: BinaryOperatorNode): number {
     }
 }
 
-const VARIABLES_TABLE: {[index: string]: {dataType: string, value: any}} = {};
+export const VARIABLES_TABLE: {[index: string]: {dataType: string, value: any}} = {};
 function evalAssignmentNode(node: AssignmentNode): any {
     const exprValue = evalutateExpression(node.expression);
     VARIABLES_TABLE[node.variableNode.name] = {
