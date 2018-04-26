@@ -178,7 +178,7 @@ object
 members
     : MEMBERNAME ASSIGNOP value {$$=ObjectMemberNode($1, $3, null)}
     | MEMBERNAME ASSIGNOP value members {$$=ObjectMemberNode($1, $3, $4)}
-    | MEMBERNAME ASSIGNOP '(' expr ')' {$$=ObjectMemberNode($1, $3, null)}
-    | MEMBERNAME ASSIGNOP '(' expr ')' members {$$=ObjectMemberNode($1, $3, $6)}
+    | MEMBERNAME ASSIGNOP '(' expr ')' {$$=ObjectMemberNode($1, $4, null)}
+    | MEMBERNAME ASSIGNOP '(' expr ')' members {$$=ObjectMemberNode($1, $4, $6)}
     ;
 
