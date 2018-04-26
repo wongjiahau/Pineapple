@@ -66,6 +66,7 @@ const ElementNode = (expr, next) =>  ({
 "+"                      return '+'
 "-"                      return '-'
 ":"                      return ':'
+"\n"                     return '\n'
 "="                      return 'ASSIGNOP'
 ("*"|"/")                return 'BINOP2'
 ("%"|"^")                return 'BINOP3'
@@ -147,8 +148,8 @@ assignment_expr
     ;
 
 object 
-    : '{' '}'
-    | '{' members '}' {$$=ObjectNode($2)}
+    :  '(' ')' {$$=ObjectNode(null)}
+    |  '(' members ')'  {$$=ObjectNode($2)}
     ;
 
 members

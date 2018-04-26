@@ -113,8 +113,11 @@ function evalVariableNode(node: VariableNode): number {
 }
 
 function evalObjectMemberNode(node: ObjectMemberNode): object {
+    if (node === null) {
+        return {};
+    }
     const result: {[index: string]: any} = {};
-    result[node.name] = evalutateExpression(node.expression);
+    result[node.name.slice(1)] = evalutateExpression(node.expression);
     let next: ObjectMemberNode = node.next;
     while (next) {
         result[next.name] = evalutateExpression(next.expression);
