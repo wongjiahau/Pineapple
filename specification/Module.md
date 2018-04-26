@@ -3,13 +3,16 @@ All function is exported by default.
 ## How to import function from another file?
 Let say you have the file `math.pine`.
 
-```python
+```java
+@function
 (x: number) add (y: number) => number
     => x + y
 
+@function
 (x: number) isEven => boolean
     => x % 2 == 0
 
+@function
 sum (xs: number[]) => number
     var result = 0
     foreach x in xs
@@ -41,7 +44,7 @@ from ./myModule.pine import *
 ## How to not export a function from a file?
 By using the `@private` annotation.
 ```java
-@private 
+@private function
 (x: number) add (y: number) => number
     => ??
 ```
