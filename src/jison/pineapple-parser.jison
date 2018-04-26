@@ -150,8 +150,6 @@ expr
 
     | '[' ']' {$$=ArrayNode(null)}
 
-    | object
-
     | value
 
     ;
@@ -161,6 +159,7 @@ value
     | NULL {$$=NullNode()}
     | bool_value {$$=BooleanNode(yytext)}
     | STRING {$$=StringNode(yytext)}
+    | object
     ;
 
 bool_value
@@ -179,14 +178,12 @@ assignment_expr
     ;
 
 object 
-    :  '(' ')' {$$=ObjectNode(null)}
-    |  members {$$=ObjectNode($1)}
+    :  '{' '}' {$$=ObjectNode(null)}
+    |  '{' members '}' {$$=ObjectNode($2)}
     ;
 
 members
-    : MEMBERNAME ASSIGNOP value {$$=ObjectMemberNode($1, $3, null)}
-    | MEMBERNAME ASSIGNOP value members {$$=ObjectMemberNode($1, $3, $4)}
-    | MEMBERNAME ASSIGNOP '(' expr ')' {$$=ObjectMemberNode($1, $4, null)}
-    | MEMBERNAME ASSIGNOP '(' expr ')' members {$$=ObjectMemberNode($1, $4, $6)}
+    : MEMBERNAME ASSIGNOP expr {$$=ObjectMemberNode($1, $3, null)}
+    | MEMBERNAME ASSIGNOP expr members {$$=ObjectMemberNode($1, $3, $4)}
     ;
 
