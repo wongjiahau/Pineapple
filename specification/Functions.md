@@ -19,6 +19,9 @@ result = sum [1,2,3,4]
 
 result = 5 daysFromToday
 ```
+```js
+result = daysFromToday(5);
+```
 
 ## Infix function
 ```ts
@@ -35,7 +38,7 @@ result = true xor false
 expect (x:number) toEqual (y:number) =>  maybe error 
     => ?? 
 
-expect 99 toEqual 88 // error
+assert 99 Equal 88 // error
 ```
 
 ```ts
