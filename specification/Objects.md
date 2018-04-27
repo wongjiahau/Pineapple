@@ -59,3 +59,32 @@ myFruit ={name: "Mango", isTasty=true, sibling: {name: "Durian", isTasty: false,
 ```js
 var x = {}
 ```
+
+
+
+
+
+
+
+```js
+var form = createElement "form"
+var nameInput = createElement "name"
+append nameInput to form
+
+var fieldset = from document getElementWithIdOf "inputElement"
+append form to fieldset
+
+```
+
+## Serialization
+PON object can be serialized easily, just like JSON. Moreover, it is even more compact than JSON, because the property name do not have to be quoted (like JSON5);
+```js
+// JSON
+jsonString  = '{"name":"pineapple","price":12.9,"date":"20180909"}' // 51 characters
+
+// PON
+ponString   = "{.name='pineapple'.price=12.9.date='20180909'}"      // 46 characters
+
+// JSON5
+json5String = '{name:"pineapple",price:12.9,date:"20180909"}'       // 45 characters
+```
