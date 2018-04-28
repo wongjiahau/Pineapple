@@ -2,6 +2,15 @@
 ## Say goodbye to WTFs.
 Yes, `Pineapple` is designed to reduced the WTFs of developers. 
 
+## What are the WTFs?
+- What is this statement doing?
+- Why my variable's value change?
+- What is this function about?
+- Which function modified my variables?
+- WTF is the type of this variable?
+- WTF is going on?
+- WTF, I just want to write a human-readable function but it seems impossible!
+
 ## Design goal
 Pineapple  a general purpose language.
 It is a language that focuses on (ranked by priority):
