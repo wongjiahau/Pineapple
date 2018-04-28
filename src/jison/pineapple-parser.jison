@@ -120,38 +120,25 @@ const ElementNode = (expr, next) =>  ({
 %% /* language grammar */
 
 expressions
-    : expr EOF { return $1; }
+    : expr EOF         { return $1; }
+    | partial_expr EOF { return $1; }
     ;
 
 expr
     : '-' expr %prec UMINUS {$$=UnaryOperatorNode($1,$2)}
-
     | '+' expr %prec UMINUS {$$=UnaryOperatorNode($1,$2)}
-
     | expr '+' expr    {$$=BinaryOperatorNode($1,$2,$3)}
-
     | expr '-' expr    {$$=BinaryOperatorNode($1,$2,$3)}
-
     | expr BINOP2 expr {$$=BinaryOperatorNode($1,$2,$3)}
-
     | expr BINOP3 expr {$$=BinaryOperatorNode($1,$2,$3)}
-    
     | '(' expr ')' {$$ = $2;}
-
     | VARNAME {$$=VariableNode($1)}
-
     | E {$$ = Math.E;}
-
     | PI {$$ = Math.PI;}
-
     | assignment_expr
-
     | '[' elements ']' {$$=ArrayNode($2)}
-
     | '[' ']' {$$=ArrayNode(null)}
-
     | value
-
     ;
 
 value
@@ -179,11 +166,21 @@ assignment_expr
 
 object 
     :  '{' '}' {$$=ObjectNode(null)}
-    |  '{' members '}' {$$=ObjectNode($2)}
+    |  '{' member '}' {$$=ObjectNode($2)}
     ;
 
-members
+member
     : MEMBERNAME ASSIGNOP expr {$$=ObjectMemberNode($1, $3, null)}
-    | MEMBERNAME ASSIGNOP expr members {$$=ObjectMemberNode($1, $3, $4)}
+    | MEMBERNAME ASSIGNOP expr member {$$=ObjectMemberNode($1, $3, $4)}
     ;
 
+partial_expr
+    : partial_assignment
+    | member
+    ;
+
+partial_assignment
+    : VARNAME ASSIGNOP {$$=AssignmentNode(VariableNode($1),null,null)}
+    | VARNAME ':' VARNAME ASSIGNOP {$$=AssignmentNode(VariableNode($1),$3,null)}
+    | MEMBERNAME ASSIGNOP {$$=ObjectMemberNode($1, null, null)}
+    ;

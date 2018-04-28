@@ -31,7 +31,7 @@ interface NullNode {
     value: null;
 }
 
-interface AssignmentNode {
+interface AssignmentNode  {
     kind: "Assignment";
     variableNode: VariableNode;
     dataType: string;
@@ -43,16 +43,16 @@ interface VariableNode {
     name: string;
 }
 
-interface ObjectNode {
+export interface ObjectNode {
     kind: "Object";
     memberNode: ObjectMemberNode;
 }
 
-interface ObjectMemberNode {
+export interface ObjectMemberNode {
     kind: "ObjectMember";
     name: string;
     expression: ExpressionNode;
-    next: ObjectMemberNode;
+    next: ObjectMemberNode | null;
 }
 
 interface ArrayNode {
@@ -66,13 +66,14 @@ interface ElementNode {
     next: ElementNode;
 }
 
-type ExpressionNode
+export type ExpressionNode
     = AssignmentNode
     | BinaryOperatorNode
     | UnaryOperatorNode
     | VariableNode
     | ArrayNode
     | ObjectNode
+    | ObjectMemberNode
     | ValueNode
     ;
 
@@ -144,7 +145,7 @@ function evalObjectMemberNode(node: ObjectMemberNode): object {
     const result: {[index: string]: any} = {};
     // We slice one in order to get rid of the dot prefix
     result[node.name.slice(1)] = evalutateExpression(node.expression);
-    let next: ObjectMemberNode = node.next;
+    let next: ObjectMemberNode | null = node.next;
     while (next) {
         result[next.name.slice(1)] = evalutateExpression(next.expression);
         next = next.next;
