@@ -1,17 +1,54 @@
 # Pineapple language 
 ## Say goodbye to WTFs.
 Yes, `Pineapple` is designed to reduced the WTFs of developers.  
-The **W** in the WTF may stands for Why, When, What, How.
+The **W** in the WTF may stands for Why, When, What or How.
 
 ## What are the WTFs?
-- What is this statement doing?
-- Why my variable's value change?
-- What is this function about?
-- Which function modified my variables?
+- WTF is this statement doing?
+- WTF did my variable's value changed?
+- WTF is this function about?
+- WTF, which function modified my variables?
 - WTF is the type of this variable?
 - WTF is going on?
 - HTF can I import function from another file?
 - WTF, I just want to write a human-readable function but it seems impossible!
+
+## Main objective
+Pineapple is designed to allow *non-professional* to code *professionally* by leveraging functional concept such as `map` or `filter`.  
+For example, consider the following sentence. 
+```
+Pick all apple that are not spoilt from this basket of apples.
+```
+Obviously, this sentence is not hard to understand, even a 3 year old kid can understand it well.  
+However, most programmer just can't express it properly in code because of the *hack-ish* syntax.  
+Let's look at example in Haskell or Javascript.
+```Javascript
+// Javascript
+var goodApples = allApples.filter((x) => x.isNotSpoilt())
+```
+```hs
+-- Haskell
+goodApples = filter (isNotSpoilt) allApples
+```
+Now with these kind of syntax, even a programmer that took Bachelor in Computer Science may not necessarily understand what is going on.  
+
+This is because the syntax is the *barrier* for expressing their thoughts.  
+
+So, what I want to demonstrate here is that, **there are no stupid programmers, but there are syntax that make programmers stupid.**
+
+### Now, lets look at how Pineapple solve this syntax barrier issue.  
+The following code is valid in Pineapple.
+```java
+// Pineapple
+goodApples = select apple from allApples which isNotSpoilt
+```
+Note that `select _ from _ which` are NOT keywords in Pineapple.   
+They are signature of a function!  
+
+This is possible in Pineapple because it allow programmer to define `prefix`, `infix`, `postfix` or `hybrid` functions.  
+
+So, that is how Pineapple allow **non-professional to code professionaly**.
+
 
 ## Design goal
 Pineapple  a general purpose language.
@@ -36,18 +73,6 @@ It is a language that focuses on (ranked by priority):
     - Most of the code should be easy to type 
 
 
-## Influenced by
-- Haskell
-- Typescript
-- CoffeeScript
-- Python
-- C#
-- YAML
-- PHP
-- Java
-- Eiffel
-- Smalltalk
-
 ## Language paradigm
 - Functional
 - Pseudo Object-Oriented
@@ -61,5 +86,18 @@ It is a language that focuses on (ranked by priority):
 ## Non-goal
 - Super terse syntax (like Haskell or Python)
 - Super verbose syntax (like Java)
+
+## Influenced by
+- Haskell
+- Typescript
+- CoffeeScript
+- Python
+- C#
+- YAML
+- PHP
+- Java
+- Eiffel
+- Smalltalk
+
 
 ## The specifaction are located at [`specification`](https://github.com/wongjiahau/Pineapple/tree/master/specification) folder.
