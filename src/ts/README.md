@@ -1,6 +1,7 @@
-## How to transpile?
+# How to get started?
+## How to transpile/compile the code?
 ```
-tsc --watch
+./transpile.sh
 ```
 
 ## How to run test?
