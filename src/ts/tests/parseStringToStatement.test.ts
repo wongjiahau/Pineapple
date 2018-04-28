@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import { newStatement } from "../groupStatements";
-import { parseStatement } from "../parseStatement";
+import { parseStatement } from "../parseStringToStatement";
 
 describe("parseStatement", () => {
     it("should parse string into Statement object", () => {
