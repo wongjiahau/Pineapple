@@ -106,6 +106,25 @@ send (query: string) ToDatabase => void
 
 ```
 
+
+## How to limit a dirtyFunction?
+Sometimes we might pass an object to a function, but we only want it to manipulate some of the properties.  
+To achieve this, you can use the `can-only-change` operator.  
+For example:
+```java
+@type
+Fruit:
+    .name  : string
+    .price : number
+
+@dirtyFunction
+modifyPrice (fruit: Fruit) => void
+    can-only-change .name
+    fruit.name = "new fruit"
+    fruit.price = 123  // Error: Cannot modify `.price`
+```
+
+
 If a function is not annotated with `dirtyFunction`, it cannot contain statement that call another `dirtyFunction`.  
 
 For example:
