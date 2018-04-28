@@ -5,9 +5,11 @@ const parse = require("../jison/pineapple-parser.js").parse;
 // AST stands for abstract syntax tree
 export function parseStatementToAst(statement: IStatement): ExpressionNode {
     const ast = parse(statement.content) as ExpressionNode;
+    if (statement.children.length === 0) {
+        return ast;
+    }
     if (ast.kind === "Assignment") {
-        if (statement.children.length > 0
-            && ast.expression !== null) {
+        if (ast.expression !== null) {
                 throw new Error("Assignment is not partial, but it has child statement.");
         }
         const objectNode: ObjectNode = {

@@ -1,8 +1,8 @@
 import { IStatement, newStatement } from "./groupStatements";
 
-export function parseStatement(input: string): IStatement {
+export function parseStringToStatement(input: string): IStatement {
     const fourSpaces = "    ";
-    const line = input.replace("\t", fourSpaces);
+    const line = input.replace("\t", fourSpaces).split("//")[0];
     let leadingSpacesCount = 0;
     for (let i = 0; i < line.length; i++) {
         if (line[i] !== " ") {

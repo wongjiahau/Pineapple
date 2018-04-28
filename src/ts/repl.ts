@@ -1,7 +1,11 @@
+import { AstBuilder } from "./astBuilder";
 const parser = require("../jison/pineapple-parser.js");
 import { readFileSync } from "fs";
 import * as readline from "readline";
-import { evalutateExpression, VARIABLES_TABLE } from "./interpreter";
+import { groupStatements } from "./groupStatements";
+import { evalutateExpression, ExpressionNode, VARIABLES_TABLE } from "./interpreter";
+import { parseStatementToAst } from "./parseStatementToAst";
+import { parseStringToStatement } from "./parseStringToStatement";
 
 const rl = readline.createInterface({
     input: process.stdin,
@@ -12,8 +16,8 @@ function exec(input: string) {
     return parser.parse(input);
 }
 
-function log(message: string) {
-    console.log(message);
+function log(message: object | string) {
+    console.log(JSON.stringify(message, null, 2));
 }
 
 log("Welcome to Pineapple Interactive Shell!");
@@ -26,8 +30,9 @@ const prompt = () => {
                 showHelp();
             } else if (response.startsWith(":load")) {
                 const file = readFileSync(response.split(" ")[1]);
-                file.toString().split("\n").forEach((line, lineNumber) => {
-                    evaluateLine(line, lineNumber);
+                const result = evaluateMultipleLines(file.toString().split("\n"));
+                result.forEach((x: any) => {
+                    log(x);
                 });
             } else if (response.length > 0) {
                 evaluateLine(response, 0);
@@ -40,18 +45,28 @@ const prompt = () => {
 
 };
 
+export function evaluateMultipleLines(lines: string[]): any {
+    const result: any[] = [];
+    groupStatements(
+        lines
+        .filter((x) => x.split("//")[0].length > 0)
+        .map((x) => parseStringToStatement(x))
+    ).forEach((stmt) => {
+        const ast = parseStatementToAst(stmt);
+        result.push(evalutateExpression(ast));
+    });
+    return result;
+}
+
 function evaluateLine(line: string, lineNumber: number) {
     if (line.indexOf("//<<<") > -1) {
         showDebugTable(lineNumber);
     }
     const statement = line.split("//")[0];
-    if (statement.length > 0) {
-        const abstractSyntaxTree = exec(statement);
-    }
-    // log("AST = ");
-    // log(abstractSyntaxTree);
-    const result = evalutateExpression(abstractSyntaxTree);
-    log(JSON.stringify(result));
+    const abstractSyntaxTree = statement.length > 0 ? exec(statement) : null;
+    log("AST = ");
+    log(abstractSyntaxTree);
+    log(evalutateExpression(abstractSyntaxTree));
 }
 
 function showDebugTable(lineNumber: number) {
