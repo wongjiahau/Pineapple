@@ -1,9 +1,22 @@
 # Functions
 Every function can be annotated with the `@function` keywords. This is optional, it is just to improve the readability.  
-Note that the `??` operator means the function is unimplemented yet
+Note that the `??` operator means the function is unimplemented yet.
+
+## How to call a function?
+Just like how you will do it in Haskell. No need brackets, only space.  
+Suppose we have this function `plus`.
+```java
+@function 
+(x:number) plus (y:number) => number
+    => x + y
+
+// Here's how you call the `plus` function
+result = 2 plus 5
+
+```
 
 ## Prefix function
-```ts
+```java
 @function 
 sum (xs:number[]) => number 
     => ??
@@ -130,4 +143,33 @@ Function that does not return anything must be declared with `=> void`
 @dirtyFunction 
 sayHello => void
     -> print "Hello"
+```
+
+
+## How to declare a function that will take in function?
+It will looks similar like Typescript.  
+For example, let's look at how to define a simple `map` function in Pineapple.
+```java
+@function
+map (func: (x: number, y: number) => number) to (xys: number[][]) => number[]
+    var result = []
+    foreach xy in xys
+        add func(xy[0], xy[1]) to result
+    => result
+```
+
+## How to pass a function to a function?
+Just like how you will import them from other file, using the `underscore` notation.  
+For example, suppose we have the `map` function defined as above.
+```java
+@function 
+(x: number) add (y: number) => number
+    => x + y
+
+// This is how you pass the `add` function to `map
+
+result = map _add_ to [[1,2], [3,4]]
+
+-> print result // [3,7]
+
 ```
