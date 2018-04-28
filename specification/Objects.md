@@ -30,7 +30,7 @@ myFruit = {
 ```
 
 ## How to access the data?
-Using the dot notation, just like in Javascript.
+Using the dot notation or square bracket notation, just like in Javascript.
 ```js
 myFruit = 
     .name = "Durian"
@@ -38,7 +38,15 @@ myFruit =
     .sibiling =
         .name = "Rambutan"
 
--- print myFruit.sibling.name
+// Using dot notation
+myFruit.sibling.name  // Durian
+
+// Using square bracket notation
+myFruit['sibling']['name'] // Durian
+
+// Using both notation
+myFruit[.sibling][.name]   // Durian
+
 ```
 
 Note that the indentation is necessary.

@@ -24,3 +24,21 @@ You can also specify type when declaring a variable by using colon (`:`) . It's 
 x: number = 2
 y: number = "123" # Error
 ```
+
+## Naming Rules
+- All variable names must consist of only alphanumeric characters and `$` sign.
+- A variable name must not start with a number. 
+- A variable name cannot contain any symbol other than `$`.
+
+Thus, the only naming convention allowed is `camelCase`.   
+All other naming convention such as `snake_case` or `kebab-case` are forbidden.
+
+### Example
+
+|Variable Name|Valid or not|  
+|--|--|  
+|x|valid|  
+|$|valid|  
+|hello_there|Invalid, cannot contain underscore ( `_` ) |  
+|12ve|Invalid, cannot start with number
+|goodBye|Valid

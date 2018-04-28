@@ -10,8 +10,10 @@
 |`elif`|Use for declaring a else-if block
 |`else`|Use for declaring a else block
 |`then`|Used in a if-statement expression
-|`check`|Use for declaring a switch block
+|`switch`|Use for declaring a switch block
 |`when`|Use for defining branch in a switch block
 |`it`|Use for referring the target variable in a switch block
 |`otherwise`|Use for defining last branch in switch block
 |`to`|Use for defining range of number in a list
+|`type-of`|Use to get the type of a variable
+|`member-of`|Use to get the members of a type

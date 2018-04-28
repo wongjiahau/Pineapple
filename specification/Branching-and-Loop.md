@@ -22,14 +22,14 @@ x += 5 if addMore
 ```
 
 ## Switch cases
-Switch cases can be done using `check`, `when`, and `otherwise` keyword.  
+Switch cases can be done using `switch`, `when`, and `otherwise` keyword.  
 
 Its even more powerful that you can use the `it` keyword.
 
 
 ```coffee
 day = 1
-when day
+switch day
     when it isBetween 1 and 5
         # Go to work
     when it == 6
