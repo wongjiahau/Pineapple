@@ -13,41 +13,46 @@ The **W** in the WTF may stands for Why, When, What or How.
 - HTF can I import function from another file?
 - WTF, I just want to write a human-readable function but it seems impossible!
 
-## Main objective
-Pineapple is designed to allow *non-professional* to code *professionally* by leveraging functional concept such as `map` or `filter`.  
-For example, consider the following sentence. 
-```
-Pick all apple that are not spoilt from this basket of apples.
-```
-Obviously, this sentence is not hard to understand, even a 3 year old kid can understand it well.  
-However, most programmer just can't express it properly in code because of the *hack-ish* syntax.  
-Let's look at example in Haskell or Javascript.
+## Secondary objective
+Despite reducing WTFs, Pineapple is also designed to allow *non-professional* to code *professionally* by leveraging functional concept such as `map` or `filter`.  
+
+Before I continue, please try to understand the following code which are written in some programming language.
 ```Javascript
 // Javascript
-var goodApples = allApples.filter((x) => x.isNotSpoilt())
+var goodApples = basketOfApples.filter((x) => x.isNotSpoilt())
 ```
 ```hs
 -- Haskell
-goodApples = filter (isNotSpoilt) allApples
+goodApples = filter (isNotSpoilt) basketOfApples
 ```
-Now with these kind of syntax, even a programmer that took Bachelor in Computer Science may not necessarily understand what is going on.  
+```python
+# python
+goodApples = [apple for apple in basketOfApples if apple.isNotSpoilt()]
+```
+*Don't worry if you don't fully understand them. Because they are not that really easy.*
 
-This is because the syntax is the *barrier* for expressing their thoughts.  
+Those codes above actually represent the following sentence.
+```
+Pick all apple that are not spoilt from a basket of apples.
+```
+Obviously, this sentence is not hard to understand, even a 3-year-old kid can understand it well.  
 
-So, what I want to demonstrate here is that, **there are no stupid programmers, but there are syntax that make programmers stupid.**
+However, most programmer just can't express it properly in code because *syntax is the barrier* for expressing their thoughts.  
+
+So, what I want to demonstrate here is that, **there are no stupid programmers, but there are syntax that make programmers look stupid.**
 
 ### Now, lets look at how Pineapple solve this syntax barrier issue.  
 The following code is valid in Pineapple.
 ```java
 // Pineapple
-goodApples = select apple from allApples which isNotSpoilt
+goodApples = select apple which isNotSpoilt from basketOfApples
 ```
-Note that `select _ from _ which` are NOT keywords in Pineapple.   
+Note that `select _ which _ from` are NOT keywords in Pineapple.   
 They are signature of a function!  
 
 This is possible in Pineapple because it allow programmer to define `prefix`, `infix`, `postfix` or `hybrid` functions.  
 
-So, that is how Pineapple allow **non-professional to code professionaly**.
+So, that is how Pineapple allow **non-professionals to code professionaly**.
 
 
 ## Design goal
