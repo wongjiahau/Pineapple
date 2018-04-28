@@ -26,8 +26,7 @@
 |Symbol|Name|
 |-|-|  
 |`=`|clean assignment|
-|`<-`|dirty assignment|
-|`->`|calling dirty function|
 |`:`|Type scoping|
 |`=>`|Return|
-|`??`|Unimplemented
+|`??`|Unimplemented|  
+|`|>`|Pipe forward|

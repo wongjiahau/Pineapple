@@ -36,10 +36,7 @@ from ./math.pine import _add_ , _isEven_ , sum_
 
 
 ## How to import every function from a file?
-By using the `*` operator.
-```python
-from ./myModule.pine import *
-```
+You can't do that like you would in language such as Python or Typescript, because it will be hard to find out where did the function comes from. 
 
 ## How to not export a function from a file?
 By using the `@private` annotation.

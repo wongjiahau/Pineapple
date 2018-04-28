@@ -1,6 +1,7 @@
 # Pineapple language 
 ## Say goodbye to WTFs.
-Yes, `Pineapple` is designed to reduced the WTFs of developers. 
+Yes, `Pineapple` is designed to reduced the WTFs of developers.  
+The **W** in the WTF may stands for Why, When, What, How.
 
 ## What are the WTFs?
 - What is this statement doing?
@@ -9,6 +10,7 @@ Yes, `Pineapple` is designed to reduced the WTFs of developers.
 - Which function modified my variables?
 - WTF is the type of this variable?
 - WTF is going on?
+- HTF can I import function from another file?
 - WTF, I just want to write a human-readable function but it seems impossible!
 
 ## Design goal
