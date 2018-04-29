@@ -1,17 +1,17 @@
-interface BinaryOperatorNode {
+export interface BinaryOperatorNode {
     kind: "BinaryOperator";
     left: ExpressionNode;
     right: ExpressionNode;
-    operator: "+" | "*" | "-" | "/" | "%" | "^";
+    operator: "+" | "*" | "-" | "/" | "%" | "^" | "<" | ">" | "<=" | ">=" | "==" | "!=";
 }
 
-interface UnaryOperatorNode {
+export interface UnaryOperatorNode {
     kind: "UnaryOperator";
     operator: "+" | "-";
     inner: ExpressionNode;
 }
 
-interface NumberNode {
+export interface NumberNode {
     kind: "Number";
     value: number;
 }
@@ -31,10 +31,17 @@ interface NullNode {
     value: null;
 }
 
-interface AssignmentNode  {
+export interface BindingNode {
+    kind: "Binding";
+    variableNode: VariableNode;
+    dataType: string | null;
+    expression: ExpressionNode;
+}
+
+export interface AssignmentNode  {
     kind: "Assignment";
     variableNode: VariableNode;
-    dataType: string;
+    dataType: string | null;
     expression: ExpressionNode;
 }
 
@@ -51,7 +58,9 @@ export interface ObjectNode {
 export interface ObjectMemberNode {
     kind: "ObjectMember";
     name: string;
+    dataType: string | null;
     expression: ExpressionNode;
+    type: "assignment" | "binding";
     next: ObjectMemberNode | null;
 }
 
@@ -74,6 +83,7 @@ export type ExpressionNode
     | ArrayNode
     | ObjectNode
     | ObjectMemberNode
+    | BindingNode
     | ValueNode
     ;
 
@@ -97,6 +107,8 @@ export function evalutateExpression(expression: ExpressionNode): any {
             return evalBinaryOperatorNode(expression);
         case "Assignment":
             return evalAssignmentNode(expression);
+        case "Binding":
+            return evalBindingNode(expression);
         case "VariableName":
             return evalVariableNode(expression);
         case "ArrayNode":
@@ -111,7 +123,7 @@ function evalUnaryOperatorNode(node: UnaryOperatorNode): number {
     return node.operator === "-" ? -value : value;
 }
 
-function evalBinaryOperatorNode(node: BinaryOperatorNode): number {
+function evalBinaryOperatorNode(node: BinaryOperatorNode): number | boolean {
     const leftValue = evalutateExpression(node.left) as number;
     const rightValue = evalutateExpression(node.right) as number;
     switch (node.operator) {
@@ -121,6 +133,12 @@ function evalBinaryOperatorNode(node: BinaryOperatorNode): number {
         case "/": return leftValue / rightValue;
         case "%": return leftValue % rightValue;
         case "^": return Math.pow(leftValue, rightValue);
+        case ">": return leftValue > rightValue;
+        case "<": return leftValue < rightValue;
+        case "<=": return leftValue <= rightValue;
+        case ">=": return leftValue >= rightValue;
+        case "==": return leftValue === rightValue;
+        case "!=": return leftValue !== rightValue;
     }
 }
 
@@ -128,6 +146,16 @@ export const VARIABLES_TABLE: {[index: string]: {dataType: string, value: any}} 
 function evalAssignmentNode(node: AssignmentNode): any {
     const exprValue = evalutateExpression(node.expression);
     VARIABLES_TABLE[node.variableNode.name] = {
+        dataType: node.dataType,
+        value: exprValue
+    };
+    return exprValue;
+}
+
+export const BINDINGS_TABLE: {[index: string]: {dataType: string, value: any}} = {};
+function evalBindingNode(node: BindingNode): any {
+    const exprValue = evalutateExpression(node.expression);
+    BINDINGS_TABLE[node.variableNode.name] = {
         dataType: node.dataType,
         value: exprValue
     };

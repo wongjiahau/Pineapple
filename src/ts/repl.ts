@@ -17,6 +17,10 @@ function exec(input: string) {
 }
 
 function log(message: object | string) {
+    if (typeof message === "string") {
+        console.log(message);
+        return;
+    }
     console.log(JSON.stringify(message, null, 2));
 }
 

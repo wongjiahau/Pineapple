@@ -57,11 +57,13 @@ const ObjectNode = (member) => ({
     memberNode: member
 });
 
-const ObjectMemberNode = (name, expr, next) => ({ 
+const ObjectMemberNode = (name, expr, next, dataType, type) => ({ 
     kind: "ObjectMember",
     name: name,
     expression: expr,
-    next: next
+    next: next,
+    type: type,
+    dataType: dataType
 });
 
 const ArrayNode = (element) => ({
@@ -186,8 +188,10 @@ object
     ;
 
 member
-    : MEMBERNAME ASSIGNOP expr {$$=ObjectMemberNode($1, $3, null)}
-    | MEMBERNAME ASSIGNOP expr member {$$=ObjectMemberNode($1, $3, $4)}
+    : MEMBERNAME ASSIGNOP expr         {$$=ObjectMemberNode($1,$3,null,null,"assignment")}
+    | MEMBERNAME ASSIGNOP expr member  {$$=ObjectMemberNode($1,$3,$4,  null,"assignment")}
+    | MEMBERNAME BINDINGOP expr        {$$=ObjectMemberNode($1,$3,null,null,"binding")}
+    | MEMBERNAME BINDINGOP expr member {$$=ObjectMemberNode($1,$3,$4,  null,"binding")}
     ;
 
 partial_expr
