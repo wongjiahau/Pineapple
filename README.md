@@ -1,7 +1,17 @@
 # Pineapple language 
 ## Say goodbye to WTFs.
-Yes, `Pineapple` is designed to reduced the WTFs of developers.  
-The **W** in the WTF may stands for Why, When, What or How.
+According to [codingsec.net](https://codingsec.net/2016/04/10-problems-every-programmer-face/), some of the top 10 problems every programmers have to faced are :
+
+- Debugging
+- Poor documentation
+- People don't understand what I do
+- Working with other people's code
+
+Obviously, the problems above has already generated if not more than few billions of WTFs worldwide since the dawn of computers.
+
+We realized that this is a serious problem, and thus we present to you: **Pineapple**, which is designed to reduced the WTFs of developers.  
+
+P/S: The **W** in the WTF may stands for Why, When, What or How.
 
 ## What are the WTFs?
 - WTF is this statement doing?
@@ -50,6 +60,8 @@ goodApples = select apple which isNotSpoilt from basketOfApples
 Note that `select _ which _ from` are NOT keywords in Pineapple.   
 They are signature of a function!  
 
+Moreover, it's even shorter than the Python's version!
+
 This is possible in Pineapple because it allow programmer to define `prefix`, `infix`, `postfix` or `hybrid` functions.  
 
 So, that is how Pineapple allow **non-professionals to code professionaly**.
@@ -87,6 +99,7 @@ It is a language that focuses on (ranked by priority):
 - REPL should be existence for this language
 - Is an interpreted language
 - Should give suggestion to user when there are ways to improve the code
+- Highlight to user which lines of code are dirty (have side effects)
 
 ## Non-goal
 - Super terse syntax (like Haskell or Python)
