@@ -86,7 +86,14 @@ const ElementNode = (expr, next) =>  ({
 ":"                             return ':'
 "\n"                            return '\n'
 "\""                            return '"'                     
-"="                             return 'ASSIGNOP'
+"<-"                            return 'ASSIGNOP'
+">="                            return 'GTE'
+"<="                            return 'LTE'
+"<"                             return 'LT'
+">"                             return 'GT'
+"=="                            return 'EQ'
+"!="                            return 'NEQ'
+"!"                             return 'NOT'
 ("*"|"/")                       return 'BINOP2'
 ("%"|"^")                       return 'BINOP3'
 "("                             return '('
@@ -110,6 +117,7 @@ const ElementNode = (expr, next) =>  ({
 %right ASSIGNOP
 %right ':'
 %left ','
+%left LT GT LTE GTE EQ NEQ NOT
 %left '+' '-'
 %left BINOP2
 %left BINOP3
@@ -125,25 +133,19 @@ expressions
     ;
 
 expr
-    : '-' expr %prec UMINUS {$$=UnaryOperatorNode($1,$2)}
-    | '+' expr %prec UMINUS {$$=UnaryOperatorNode($1,$2)}
-    | expr '+' expr    {$$=BinaryOperatorNode($1,$2,$3)}
-    | expr '-' expr    {$$=BinaryOperatorNode($1,$2,$3)}
-    | expr BINOP2 expr {$$=BinaryOperatorNode($1,$2,$3)}
-    | expr BINOP3 expr {$$=BinaryOperatorNode($1,$2,$3)}
+    : arithmetic_expr
     | '(' expr ')' {$$ = $2;}
-    | VARNAME {$$=VariableNode($1)}
     | E {$$ = Math.E;}
     | PI {$$ = Math.PI;}
     | assignment_expr
     | '[' elements ']' {$$=ArrayNode($2)}
     | '[' ']' {$$=ArrayNode(null)}
+    | relational_expr
     | value
     ;
 
 value
-    : NUMBER {$$=NumberNode(yytext)}
-    | NULL {$$=NullNode()}
+    : NULL {$$=NullNode()}
     | bool_value {$$=BooleanNode(yytext)}
     | STRING {$$=StringNode(yytext)}
     | object
@@ -183,4 +185,25 @@ partial_assignment
     : VARNAME ASSIGNOP {$$=AssignmentNode(VariableNode($1),null,null)}
     | VARNAME ':' VARNAME ASSIGNOP {$$=AssignmentNode(VariableNode($1),$3,null)}
     | MEMBERNAME ASSIGNOP {$$=ObjectMemberNode($1, null, null)}
+    ;
+
+relational_expr
+    : arithmetic_expr relational_operator arithmetic_expr {$$=BinaryOperatorNode($1,$2,$3)}
+    ;
+
+relational_operator : GT | LT | GTE | LTE | EQ | NEQ ;
+
+arithmetic_expr
+    : '-' arithmetic_expr %prec UMINUS {$$=UnaryOperatorNode($1,$2)}
+    | '+' arithmetic_expr %prec UMINUS {$$=UnaryOperatorNode($1,$2)}
+    | arithmetic_expr '+' arithmetic_expr    {$$=BinaryOperatorNode($1,$2,$3)}
+    | arithmetic_expr '-' arithmetic_expr    {$$=BinaryOperatorNode($1,$2,$3)}
+    | arithmetic_expr BINOP2 arithmetic_expr {$$=BinaryOperatorNode($1,$2,$3)}
+    | arithmetic_expr BINOP3 arithmetic_expr {$$=BinaryOperatorNode($1,$2,$3)}
+    | NUMBER {$$=NumberNode(yytext)}
+    | maybe_arithmetic_value
+    ;
+
+maybe_arithmetic_value
+    : VARNAME {$$=VariableNode($1)}
     ;

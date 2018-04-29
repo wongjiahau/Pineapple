@@ -1,7 +1,6 @@
 import {expect} from "chai";
 import {BinaryOperatorNode, NumberNode, UnaryOperatorNode} from "../../interpreter";
-
-const parser = require("../../../jison/pineapple-parser.js");
+import {parser} from "./imported";
 
 describe("arithmetic expressions", () => {
     it("number", () => {
