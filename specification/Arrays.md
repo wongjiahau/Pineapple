@@ -7,10 +7,8 @@ xs = [1,2,3,4]
 
 invalidList = [1, "b"] // Error: Cannot contain different type in a list
 
-rangeOfNumbers = [1 to 5] // [1,2,3,4,5]
-
 manyFruits = [
-    {.name="Apple" .color="red"},
+    {.name="Apple"     .color="red"},
     {.name="Pineapple" .color="yellow"}
 ]
 
@@ -18,6 +16,7 @@ manyFruits = [
 ```
 
 ## Indexing
+The first element will have the index of zero.
 ```python
 xs = [1,2,3,4]
 
@@ -36,16 +35,39 @@ xs = [10,20,30,40]
 # Get all
 xs[:] # [10,20,30,40]
 
-# Get until element-1
-xs[:1] # [10,20]
+# Get until element 1
+xs[0 to 1] # [10,20]
 
-# Get from element-1 onward
-xs[1:] # [20,30,40]
+# Get from element 1 onward
+# Remember that -1 means last
+xs[1 to -1] # [20,30,40]
 
-# Get from element-1 to element-3
-xs[1:3] # [10,20,30]
+# Get from element 1 to element 3
+xs[1 to 3] # [10,20,30]
 
 ```
+
+## Mutability
+By default, you cannot change the member of an array.  For example :
+```python
+xs = [1, 2, 3, 4]
+
+# Change the last element to 99
+xs[-1] <- 99 # Compile error
+```
+However, if you want to declare an array which is immutable, you need to use the `mutable` keyword.  
+```python
+xs = mutable [1,2,3,4]
+xs[-1] <- 99 # No error
+```
+
+## Strings
+Strings are actually list of characters, so you can apply list operation on `string` as well.
+```python
+message = 'Pineapple'
+message[4 to -1] # 'apple'
+```
+
 
 ## List comprehension
 ```python
