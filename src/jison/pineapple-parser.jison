@@ -39,6 +39,13 @@ const AssignmentNode = (varname, dataType, expr) => ({
     expression: expr
 });
 
+const BindingNode = (varname, dataType, expr) => ({
+    kind: "Binding",
+    variableNode: varname,
+    dataType: dataType,
+    expression: expr
+});
+
 const VariableNode = (varname) => ({
     kind: "VariableName",
     name: varname
@@ -93,6 +100,7 @@ const ElementNode = (expr, next) =>  ({
 ">"                             return 'GT'
 "=="                            return 'EQ'
 "!="                            return 'NEQ'
+"="                             return 'BINDINGOP'
 "!"                             return 'NOT'
 ("*"|"/")                       return 'BINOP2'
 ("%"|"^")                       return 'BINOP3'
@@ -138,6 +146,7 @@ expr
     | E {$$ = Math.E;}
     | PI {$$ = Math.PI;}
     | assignment_expr
+    | binding_expr
     | '[' elements ']' {$$=ArrayNode($2)}
     | '[' ']' {$$=ArrayNode(null)}
     | relational_expr
@@ -166,6 +175,11 @@ assignment_expr
     | VARNAME ':' VARNAME ASSIGNOP expr {$$=AssignmentNode(VariableNode($1),$3,$5)}
     ;
 
+binding_expr
+    : VARNAME BINDINGOP expr {$$=BindingNode(VariableNode($1),null,$3)}
+    | VARNAME ':' VARNAME BINDINGOP expr {$$=BindingNode(VariableNode($1),$3,$5)}
+    ;
+
 object 
     :  '{' '}' {$$=ObjectNode(null)}
     |  '{' member '}' {$$=ObjectNode($2)}
@@ -178,6 +192,7 @@ member
 
 partial_expr
     : partial_assignment
+    | partial_binding
     | member
     ;
 
@@ -185,6 +200,12 @@ partial_assignment
     : VARNAME ASSIGNOP {$$=AssignmentNode(VariableNode($1),null,null)}
     | VARNAME ':' VARNAME ASSIGNOP {$$=AssignmentNode(VariableNode($1),$3,null)}
     | MEMBERNAME ASSIGNOP {$$=ObjectMemberNode($1, null, null)}
+    ;
+
+partial_binding
+    : VARNAME BINDINGOP {$$=BindingNode(VariableNode($1),null,null)}
+    | VARNAME ':' VARNAME BINDINGOP {$$=BindingNode(VariableNode($1),$3,null)}
+    | MEMBERNAME BINDINGOP {$$=ObjectMemberNode($1, null, null)}
     ;
 
 relational_expr
