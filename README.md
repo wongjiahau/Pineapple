@@ -104,5 +104,8 @@ It is a language that focuses on (ranked by priority):
 - Eiffel
 - Smalltalk
 
+## Reference
+- Quora: [Which programming language is/was the prettiest and/or most readable?](http://qr.ae/TUT8tw)
+
 
 ## The specifaction are located at [`specification`](https://github.com/wongjiahau/Pineapple/tree/master/specification) folder.
