@@ -136,19 +136,31 @@ print x // 15
 
 y = 7
 add 99 to y // Error: `y` is already binded to value `7`
-
-
 ```
 
 ## Void functions
-
 Function that does not return anything must be declared with `=> void`
 
 ```java
 @dirtyFunction 
 sayHello => void
-    -> print "Hello"
+    print "Hello"
 ```
+
+## What is the type of a function?
+The type of a function will be like the following.
+```java
+@function 
+(x:number) square => x * x
+
+type-of _square // number => number
+
+@function 
+(x:number) add (y:number) => x + y
+
+type-of _add_ // number => number => number
+```
+They are just like function in Haskell.  
 
 
 ## How to declare a function that will take in function?
@@ -179,44 +191,6 @@ print result // [3,7]
 
 ```
 
-## Pattern matching (Pending)
-*This feature is still under consideration, as it seems to violate the objective of Pineapple.*
-```hs
-@function
-(x:number) divide (y:number) => number
-x divide y => x / y
-_ divide 0 => error
-
-
-@function 
-select (mapFunc: T => T) whichIs (filterFunc: T => boolean) from (list: T[]) => T[]
-select _ whichIs _ from [] = []
-select mapFunc whichIs filterFunc from (x cons xs) => 
-    (mapFunc x) cons remaining
-    if (filterFunc x) 
-    else remaining
-    where remaining = (select mapFunc whichIs filterFunc from xs)
-```
-Usage
-```java
-moreThan (x:number) => (y:number) => y > x
-result = select num whichIs (moreThan 3) from [1,2,3,4]
-//Little note: num will be expanded to (num => num)
-```
-*To be honest, not many people can understand pattern matching and object deconstruction. LOL*
-
-Let's look at the imperative version.
-```java
-@function
-select (mapFunc: T => T) whichIs (filterFunc: T => boolean) from (list: T[]) => T[]
-    if list is empty => []
-    result = mutable []
-    foreach x in list
-        if filterFunc x
-            add (mapFunc x) into result
-    => result
-```
-To be honest, the imperative version is actually much shorter can much cleaner than the functional counterpart. OOPS.
 
 ## Anonymous function
 Anonymous function are always called by prefix notation, for example, let say we have a function that call another function
@@ -229,7 +203,7 @@ invoke (func: number => number) with (param: number) => number
 ### Double parameter 
 ```java
 @function
-invoke (func: (number, number) => number) on (list: number[]) => number
+invoke (func: number => number => number) on (list: number[]) => number
     result <- 0
     foreach i in 0 till (list.length - 2)
         result <- result + func list[i] list[i+1]
@@ -288,3 +262,42 @@ Of course, you can also call it without the `is` function, but it is not recomme
 [] empty // true
 not [1,2,3,4] empty // false
 ```
+
+## Pattern matching (Pending)
+*This feature is still under consideration, as it seems to violate the objective of Pineapple.*
+```hs
+@function
+(x:number) divide (y:number) => number
+x divide y => x / y
+_ divide 0 => error
+
+
+@function 
+select (mapFunc: T => T) whichIs (filterFunc: T => boolean) from (list: T[]) => T[]
+select _ whichIs _ from [] = []
+select mapFunc whichIs filterFunc from (x cons xs) => 
+    (mapFunc x) cons remaining
+    if (filterFunc x) 
+    else remaining
+    where remaining = (select mapFunc whichIs filterFunc from xs)
+```
+Usage
+```java
+moreThan (x:number) => (y:number) => y > x
+result = select num whichIs (moreThan 3) from [1,2,3,4]
+//Little note: num will be expanded to (num => num)
+```
+*To be honest, not many people can understand pattern matching and object deconstruction. LOL*
+
+Let's look at the imperative version.
+```java
+@function
+select (mapFunc: T => T) whichIs (filterFunc: T => boolean) from (list: T[]) => T[]
+    if list is empty => []
+    result = mutable []
+    foreach x in list
+        if filterFunc x
+            add (mapFunc x) into result
+    => result
+```
+To be honest, the imperative version is actually much shorter can much cleaner than the functional counterpart. OOPS.
