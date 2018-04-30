@@ -14,18 +14,20 @@ BinaryTree:
 @function
 newTree (value: T) => tree
     result =
-        .left  = null
-        .right = null
-        .value = value
+        .left  <- null
+        .right <- null
+        .value =  value
     => result
+// Note that `<-` is assignment operator, while `=` is binding operator.  
+// When a name is binded with a value, it's value cannot be changed anymore
     
 @function
 insert (element: T) to (tree: BinaryTree) => BinaryTree
     if tree.left == null
-        tree.left = newTree element
+        tree.left <- newTree element
     elif element > tree.left
         if tree.right == null
-            tree.right = newTree element
+            tree.right <- newTree element
         else
             insert element to tree.right
     else 
@@ -48,19 +50,22 @@ insert (element: T) to (tree: BinaryTree) => BinaryTree
 
 ```ts
 // Using binary tree
-from ./binaryTree.pine import *
+from ./binaryTree.pine import 
+    BinaryTree
+    insert_to_
+    _contains_
 
 var myTree: BinaryTree<int> = 
-    .left = null
-    .right = null
+    .left <- null
+    .right <- null
     .value = 99
 
 myTree = insert 5 to myTree
 
-if myTree contains 5
-    -> print "It contains 5"
+if myTree contains 5 
+    print "It contains 5"
 else 
-    -> print "Nope"
+    print "Nope"
 ```
 
 ## Inheritance
