@@ -59,6 +59,7 @@ expect 99 Equal 88 // error
 Prefix > Suffix > Infix > Hybrid
 ```
 
+
 ## Referential transparency
 By default, all function in Pineapple is clean, which means it won't modify the input and no I/O operation is allow. 
 
@@ -176,4 +177,66 @@ result = map _add_ to [[1,2], [3,4]]
 
 print result // [3,7]
 
+```
+
+## Pattern matching (Pending)
+*This feature is still under consideration, as it seems to violate the objective of Pineapple.*
+```hs
+@function
+(x:number) divide (y:number) => number
+x divide y => x / y
+_ divide 0 => error
+
+
+@function 
+select (mapFunc: T => T) whichIs (filterFunc: T => boolean) from (list: T[]) => T[]
+select _ whichIs _ from [] = []
+select mapFunc whichIs filterFunc from (x cons xs) => 
+    (mapFunc x) cons remaining
+    if (filterFunc x) 
+    else remaining
+    where remaining = (select mapFunc whichIs filterFunc from xs)
+```
+Usage
+```java
+moreThan (x:number) => (y:number) => y > x
+result = select num whichIs (moreThan 3) from [1,2,3,4]
+//Little note: num will be expanded to (num => num)
+```
+*To be honest, not many people can understand pattern matching and object deconstruction. LOL*
+
+Let's look at the imperative version.
+```
+@function
+select (mapFunc: T => T) whichIs (filterFunc: T => boolean) from (list: T[]) => T[]
+    if list is empty => []
+    result = mutable []
+    foreach x in list
+        if filterFunc x
+            add (mapFunc x) into result
+    => result
+```
+To be honest, the imperative version is actually much shorter can much cleaner than the functional counterpart. OOPS.
+
+## Tips
+When we declare a boolean function, don't start it with the *is* word.
+```java
+@function
+(list: T[]) isEmpty => boolean  // bad
+(list: T[]) empty   => boolean  // good
+```
+
+Why? Because we can declare an `is` and `isnt` function.
+```java
+@function 
+(item:T) is (func: T => boolean) => boolean
+    => func(item)
+
+(item:T) isnt (func: T => boolean) => boolean
+    => not func(item)
+```
+Then we can use it like this:
+```java
+result = [] is empty // true
+result = [1,2,3] isnt empty // true
 ```
