@@ -237,6 +237,11 @@ Why? Because we can declare an `is` and `isnt` function.
 ```
 Then we can use it like this:
 ```java
-result = [] is empty // true
-result = [1,2,3] isnt empty // true
+[] is empty // true
+[1,2,3] isnt empty // true
+```
+Of course, you can also call it without the `is` function, but it is not recommended as it seems unnatural.
+```java
+[] empty // true
+not [1,2,3,4] empty // false
 ```

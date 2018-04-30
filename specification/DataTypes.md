@@ -6,7 +6,8 @@
 |`int`|-2, -1, 0, 1, 2|
 |`string`|`"hello"`, `'hey'`, `$"yoyo"`|
 |`regex`|`/^[a-z]$/`|
-|`boolean`|`"true"`, `false`|
+|`directory`|`./index.html` , `../folder`|
+|`boolean`|`true`, `false`|
 |`list`|`[1,2,3]`, `["p", "i", "n", "e"]`|
 |`object`|`{.name='hi' .age=9}`|
 |`any`|any data type|
