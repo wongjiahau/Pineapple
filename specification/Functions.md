@@ -206,7 +206,7 @@ result = select num whichIs (moreThan 3) from [1,2,3,4]
 *To be honest, not many people can understand pattern matching and object deconstruction. LOL*
 
 Let's look at the imperative version.
-```
+```java
 @function
 select (mapFunc: T => T) whichIs (filterFunc: T => boolean) from (list: T[]) => T[]
     if list is empty => []
@@ -217,6 +217,51 @@ select (mapFunc: T => T) whichIs (filterFunc: T => boolean) from (list: T[]) => 
     => result
 ```
 To be honest, the imperative version is actually much shorter can much cleaner than the functional counterpart. OOPS.
+
+## Anonymous function
+Anonymous function are always called by prefix notation, for example, let say we have a function that call another function
+### Single parameter 
+```java
+@function
+invoke (func: number => number) with (param: number) => number
+    func param
+```
+### Double parameter 
+```java
+@function
+invoke (func: (number, number) => number) on (list: number[]) => number
+    result <- 0
+    foreach i in 0 till (list.length - 2)
+        result <- result + func list[i] list[i+1]
+    => result
+```
+
+
+## Currying
+There are 2 ways, the first one which is the usual one (as in Haskell or Javascript)
+```java
+@function
+moreThan (x:number) => (y:number) => y > x
+
+moreThanThree = morethan 3
+5 moreThenThree // true
+```
+However, that way of currying is not really readable, and you can't swap the parameter position easily.  
+Now, let's see the Pineapple way of currying.
+```java
+@function
+(x:number) moreThan (y:number) => x > y
+
+moreThanThree = _moreThan 3
+
+// invert it
+threeMoreThan = 3 moreThan_
+
+result1 = select moreThanThree from [1,2,3,4,5] // [4,5]
+
+result2 = select threeMoreThan from [1,2,3,4,5] // [1,2,3]
+```
+
 
 ## Tips
 When we declare a boolean function, don't start it with the *is* word.
@@ -229,11 +274,9 @@ When we declare a boolean function, don't start it with the *is* word.
 Why? Because we can declare an `is` and `isnt` function.
 ```java
 @function 
-(item:T) is (func: T => boolean) => boolean
-    => func(item)
-
-(item:T) isnt (func: T => boolean) => boolean
-    => not func(item)
+(item:T) is (func: T => boolean) => func(item)
+@function
+(item:T) isnt (func: T => boolean) => not func(item)
 ```
 Then we can use it like this:
 ```java
