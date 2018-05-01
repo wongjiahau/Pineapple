@@ -63,6 +63,13 @@ But, you may ask *'How can this idea help me to debug my code?'*.
 The answer is simple,  **just look for the `<-` symbol** !  
 Because all the unexpected things happen when we change the value of a variable.
 
+### Smart detection
+Not only you can't re-assign value to a binded variable, you also can't use assignment on a variable which its future value is not changed!  For example:  
+```Java
+x <- 5 // Warning: The value of `x` is not reassigned, please consider changing `<-` to `=`.
+y <- 6
+y <- 7
+```
 
 ## How to specify type?
 You can also specify type when declaring a variable by using colon (`:`) . It's just like Typescript.
@@ -72,7 +79,7 @@ y: number = "123" # Error
 ```
 
 ## Naming Rules
-- All variable names must consist of only alphanumeric characters and `$` sign.
+- All variable names must consist of only alphanumeric characters or `$` sign.
 - A variable name must not start with a number. 
 - A variable name cannot contain any symbol other than `$`.
 
@@ -87,4 +94,5 @@ All other naming convention such as `snake_case` or `kebab-case` are forbidden.
 |$|valid|  
 |hello_there|Invalid, cannot contain underscore ( `_` ) |  
 |12ve|Invalid, cannot start with number
+|ve12|Invalid, cannot start with number
 |goodBye|Valid
