@@ -28,24 +28,61 @@ xs[-1] # 4
 ```
 
 ## Slicing
-The slicing is a little different from Python, it will be easier to understand in Pineapple.
+To get a range of number, you can use the keyword `till`.
 ```python
-xs = [10,20,30,40]
-
-# Get all
-xs[:] # [10,20,30,40]
+xs = [10, 20, 30, 40]
 
 # Get until element 1
-xs[0 to 1] # [10,20]
+xs[0 till 1] # [10,20]
 
 # Get from element 1 onward
 # Remember that -1 means last
-xs[1 to -1] # [20,30,40]
+xs[1 till -1] # [20,30,40]
 
 # Get from element 1 to element 3
-xs[1 to 3] # [10,20,30]
-
+xs[1 to 3] # [20,30,40]
 ```
+
+## How to get range of numbers?
+You can do that by using the utility function `to`.
+```python
+x = 1 to 5 # [1,2,3,4,5]
+y = -2 to 2 # [-2,-1,0,1,2]
+```
+### Definition of `to`
+```java
+@function
+(start:number) to (end:number) => number[]
+    if start == end => [start]
+    => (start to (end - 1)) eat end
+```
+`eat` is a core function in Pineapple, it's like a reversed `cons` in Haskell.  
+Example:
+```python
+[] eat 1 # [1]
+[1] eat 1 # [1,1]
+[9,8,7] eat 3 # [9,8,7,3]
+[1,2,3] eat [1,2,3] # Error: the signature of eat is (eater:T[]) eat (food:T) => T[]
+```
+In fact, list are just syntax sugar for `eat`.  
+For example, `[1,2,3]` will be converted into `[] eat 1 eat 2 eat 3`.  
+With `eat` you can create recursive functions and also used pattern matching.   
+
+To demonstrate, look at the definition of `sum` function.
+
+```java
+// Pineapple
+@function
+sum (xs eat x : number[]) => number
+    => 0 if xs == [] else x + sum xs
+```
+In Haskell, the function looks like :
+```hs
+-- Haskell
+sum :: (Eq p, Num p) => [p] -> p
+sum (x:xs) = if xs == [] then 0 else x + sum xs
+``
+
 
 ## Mutability
 By default, you cannot change the member of an array.  For example :
