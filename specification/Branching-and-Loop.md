@@ -64,12 +64,12 @@ grade = switch score
 ```python
 fruits = ['apple', 'banana', 'pineapple']
 
-foreach i in [0 to (fruits length - 1)]
-    -> print fruits[i]
+foreach i in 0 to (fruits.length - 1)
+    print fruits[i]
 
 
 foreach fruit in fruits
-    -> print fruit
+    print fruit
 
 var i = 0
 while i < fruits length
@@ -78,18 +78,18 @@ while i < fruits length
 ```
 
 ### How to loop through keys of an object?
-By using the `keysOf` function.
+By using the `keys-of` keyword.
 ```python
-foreach key in keysOf myObject
-    -> print myObject[key]
+foreach key in keys-of myObject
+    print myObject[key]
 ```
 
 ## Try catch
 ```coffee
 try
-    -> doSomeCrazyThing
+    doSomeCrazyThing
 catch error
-    -> print (error toString)
+    print (error toString)
 finally
-    -> cleanUp
+    cleanUp
 ```
