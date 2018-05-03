@@ -32,9 +32,7 @@ result = sum [1,2,3,4]
 
 result = 5 daysFromToday
 ```
-```js
-result = daysFromToday(5);
-```
+
 
 ## Infix function
 ```ts
@@ -51,7 +49,7 @@ result = true xor false
 expect (x:number) toEqual (y:number) =>  maybe error 
     => ?? 
 
-expect 99 Equal 88 // error
+expect 99 toEqual 88 
 ```
 
 ## Function precedence
@@ -69,17 +67,6 @@ However, if a function need to use I/O function or modify the parameter, it will
 
 When a function is declared as **dirty**, its parameter will be **passed by reference** no matter how primitive is the data type.
 
-All `dirty` functions can only be called using arrow operator.
-This is to allow the programmer to quickly identified which lines contain side effects.
-
-
-```ts
-name <- readLine
--> print "Hello"
-
-name = readLine // Compiler error
-print "Hey" // Compiler error
-```
 
 ## How to declare a dirty function?
 By using the `dirtyFunction` annotation.
@@ -90,7 +77,6 @@ send (query: string) ToDatabase => void
     => ??
 
 ```
-
 
 ## How to limit a dirtyFunction?
 Sometimes we might pass an object to a function, but we only want it to manipulate some of the properties.  
@@ -168,10 +154,10 @@ It will looks similar like Typescript.
 For example, let's look at how to define a simple `map` function in Pineapple.
 ```java
 @function
-map (func: (x: number, y: number) => number) to (xys: number[][]) => number[]
-    result = mutable []
+map (func: number => number => number) to (xys: number[][]) => number[]
+    result <- []
     foreach xy in xys
-        add func(xy[0], xy[1]) to result
+        result <- result eat (func xy[0] xy[1])
     => result
 ```
 
@@ -183,8 +169,7 @@ For example, suppose we have the `map` function defined as above.
 (x: number) add (y: number) => number
     => x + y
 
-// This is how you pass the `add` function to `map
-
+// This is how you pass the `add` function to `map`
 result = map _add_ to [[1,2], [3,4]]
 
 print result // [3,7]
@@ -205,7 +190,7 @@ invoke (func: number => number) with (param: number) => number
 @function
 invoke (func: number => number => number) on (list: number[]) => number
     result <- 0
-    foreach i in 0 till (list.length - 2)
+    foreach i in 0 to (list.length - 2)
         result <- result + func list[i] list[i+1]
     => result
 ```
@@ -248,9 +233,9 @@ When we declare a boolean function, don't start it with the *is* word.
 Why? Because we can declare an `is` and `isnt` function.
 ```java
 @function 
-(item:T) is (func: T => boolean) => func(item)
+(item:T) is (func: T => boolean) => func item
 @function
-(item:T) isnt (func: T => boolean) => not func(item)
+(item:T) isnt (func: T => boolean) => not (func item)
 ```
 Then we can use it like this:
 ```java

@@ -7,7 +7,7 @@ x = 5 # Error: `x` is already binded to the value `4`
 
 people = {.name="John"}
 
-people.name = "Ali" # Error: `people.name` is already binded to the value "John"
+people.name <- "Ali" # Error: `people.name` is already binded to the value "John"
 ```
 ## Assignment
 You can declare a variable by using the left arrow operator (`<-` ).
