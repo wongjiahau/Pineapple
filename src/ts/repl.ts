@@ -2,6 +2,7 @@ import { AstBuilder } from "./astBuilder";
 const parser = require("../jison/pineapple-parser.js");
 import { readFileSync } from "fs";
 import * as readline from "readline";
+import { addBrackets } from "./addBrackets";
 import { groupStatements } from "./groupStatements";
 import { evalutateExpression, ExpressionNode, VARIABLES_TABLE } from "./interpreter";
 import { parseStatementToAst } from "./parseStatementToAst";
@@ -34,12 +35,13 @@ const prompt = () => {
                 showHelp();
             } else if (response.startsWith(":load")) {
                 const file = readFileSync(response.split(" ")[1]);
-                const result = evaluateMultipleLines(file.toString().split("\n"));
-                result.forEach((x: any) => {
-                    log(x);
-                });
+                evaluateInput(file.toString(), 0);
+                // const result = evaluateMultipleLines(file.toString().split("\n"));
+                // result.forEach((x: any) => {
+                //     log(x);
+                // });
             } else if (response.length > 0) {
-                evaluateLine(response, 0);
+                evaluateInput(response, 0);
             }
         } catch (error) {
             log(error.message);
@@ -62,15 +64,22 @@ export function evaluateMultipleLines(lines: string[]): any {
     return result;
 }
 
-function evaluateLine(line: string, lineNumber: number) {
-    if (line.indexOf("//<<<") > -1) {
+function evaluateInput(input: string, lineNumber: number) {
+    if (input.indexOf("//<<<") > -1) {
         showDebugTable(lineNumber);
     }
-    const statement = line.split("//")[0];
-    const abstractSyntaxTree = statement.length > 0 ? exec(statement) : null;
+    interpret(input);
+}
+
+export function interpret(input: string): any {
+    const bracketized = addBrackets(input);
+    const flattenized = bracketized.replace(/(\r\n\t|\n|\r\t)/gm, " ");
+    const abstractSyntaxTree = exec(flattenized);
     log("AST = ");
     log(abstractSyntaxTree);
-    log(evalutateExpression(abstractSyntaxTree));
+    const result = evalutateExpression(abstractSyntaxTree);
+    log(result);
+    return result;
 }
 
 function showDebugTable(lineNumber: number) {
