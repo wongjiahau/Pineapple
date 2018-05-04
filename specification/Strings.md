@@ -6,12 +6,12 @@ let message = 'hello'
 ```
 
 ## String interpolation
-String interpolation are same as in C#. Just prefix the string with a dollar sign (`$`). 
-It will works for both double quote (`"`) and single quote (`'`).
+You can interpolate expression into string using curly brackets `{}`.
 ```cs
 let chosenFruit = "durian"
-let message1 = $"I like {chosenFruit}" 
-let message2 = $'The value of pi is {22/7}' 
+let message1 = "I like {chosenFruit}" // I like durian 
+let message2 = 'The value of pi is {22/7}' 
+// The value of pi is 3.142
 ```
 
 ## Multiline string
@@ -43,12 +43,12 @@ comment
 ```
 
 ## Regex
-Regex are first class just like Javascript. They are enquoted using `/`.
+Regex are first class just like Javascript. They are enquoted using `/` .
 ```js
-phoneNumberPattern = /^[0-9]{3}-\d{7}$/
+let phoneNumberPattern = /^[0-9]{3}-\d{7}$/
 
-if "012-34567" conformsTo phoneNumberPattern
-    -> print "oh yea"
+if "012-34567" matches phoneNumberPattern
+    print "oh yea"
 else
-    -> print "oh no"
+    print "oh no"
 ```
