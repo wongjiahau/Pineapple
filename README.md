@@ -95,6 +95,7 @@ It is a language that focuses on (ranked by priority):
 - Pseudo Object-Oriented
 
 ## Extra Design goal
+- Any symbol or keywords in Pineapple should have **one and only one** meaning, in order to reduce confusion.
 - The error thrown by the interpreter should be easy to understand
 - REPL should be existence for this language
 - Is an interpreted language
