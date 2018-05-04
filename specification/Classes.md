@@ -55,12 +55,12 @@ from ./binaryTree.pine import
     insert_to_
     _contains_
 
-var myTree: BinaryTree<int> = 
-    .left <- null
-    .right <- null
+let myTree: BinaryTree <-
+    .left = null
+    .right = null
     .value = 99
 
-myTree = insert 5 to myTree
+myTree <- insert 5 to myTree
 
 if myTree contains 5 
     print "It contains 5"
