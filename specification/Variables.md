@@ -1,11 +1,12 @@
 # Variables
+To declare a variable, you need to use the `let` keyword.
 ## Binding 
 In Pineapple, the equal symbol ( `=` ) does not stands for assignment, however it stands for binding. And once you bind a name with a value, you cannot rebind it again.
 ```python
-x = 4
+let x = 4
 x = 5 # Error: `x` is already binded to the value `4`
 
-people = {.name="John"}
+let people = {.name="John"}
 
 people.name <- "Ali" # Error: `people.name` is already binded to the value "John"
 ```
@@ -39,7 +40,7 @@ changePriceOf (fruit:Fruit) => void
 ```
 Now, let say in our main program we created a new `Fruit` object.
 ```java
-myFruit: Fruit =
+let myFruit:Fruit = 
     .name  = 'Pineapple'
     .price = 88
 ```
@@ -53,7 +54,7 @@ So, how can we fix this?
 
 Easy, just by changing the binding operator (`=`) to assignment operator (`<-`) .
 ```python
-myFruit: Fruit =
+let myFruit: Fruit =
     .name   = 'Pineapple'
     .price <- 88
 
@@ -66,16 +67,16 @@ Because all the unexpected things happen when we change the value of a variable.
 ### Smart detection
 Not only you can't re-assign value to a binded variable, you also can't use assignment on a variable which its future value is not changed!  For example:  
 ```Java
-x <- 5 // Warning: The value of `x` is not reassigned, please consider changing `<-` to `=`.
-y <- 6
+let x <- 5 // Warning: The value of `x` is not reassigned, please consider changing `<-` to `=`.
+let y <- 6
 y <- 7
 ```
 
 ## How to specify type?
 You can also specify type when declaring a variable by using colon (`:`) . It's just like Typescript.
 ```
-x: number = 2
-y: number = "123" # Error
+let x: number = 2
+let y: number = "123" # Error
 ```
 
 ## Naming Rules
