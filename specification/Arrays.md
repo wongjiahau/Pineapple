@@ -110,7 +110,7 @@ message.(4 till -1) # 'apple'
 ## List comprehension
 ```python
 fruits = ['apple', 'banana', 'pineapple']
-longNameFruits = foreach fruit in fruits take fruit if fruit length > 5 # ['banana', 'pineapple']
+longNameFruits = foreach fruit in fruits take fruit if fruit.length > 5 # ['banana', 'pineapple']
 
 xs = [1,2,3,4,5]
 newList = foreach x in xs take x*2 # [1,3,9,16,25]
