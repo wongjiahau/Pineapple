@@ -6,7 +6,7 @@ Not only it is easier to read, it is also easier to retrieve the value of the de
 
 ```java
 // Pineapple 
-myFruit =
+let myFruit =
     .name    = "Mango" 
     .isTasty = true
     .sibling =
@@ -14,6 +14,7 @@ myFruit =
         .isTasty = false
     .amount  = (10 + 5)
 ```
+Note that the **indentation is necessary**.
 
 The object declaration above is same as the following as in Javascript.
 ```js
@@ -30,36 +31,31 @@ myFruit = {
 ```
 
 ## How to access the data?
-Using the dot notation or square bracket notation, just like in Javascript.
+Using the dot notation or dot-bracket notation.
 ```js
-myFruit = 
+let myFruit = 
     .name = "Durian"
     .price = 100
     .sibiling =
         .name = "Rambutan"
 
 // Using dot notation
-myFruit.sibling.name  // Durian
+myFruit.sibling.name  // Rambutan
 
-// Using square bracket notation
-myFruit['sibling']['name'] // Durian
-
-// Using both notation
-myFruit[.sibling][.name]   // Durian
-
+// Using string
+myFruit.("sibling").("name") // Rambutan
 ```
 
-Note that the indentation is necessary.
 
 However, you may also declared it in one line using curly braces.
 
 So, you may also declare them in one line. 
 ```ts
 // pineapple
-myFruit ={.name="Mango" .isTasty=true .sibling={.name="Durian" .isTasty=false .sibling=null}}
+let myFruit ={.name="Mango" .sibling={.name="Durian" .isTasty=false}}
 
 // javascript
-myFruit ={name: "Mango", isTasty=true, sibling: {name: "Durian", isTasty: false, sibling: null}}
+myFruit ={name: "Mango", sibling: {name: "Durian", isTasty: false}}
 ```
 
 
@@ -67,23 +63,6 @@ myFruit ={name: "Mango", isTasty=true, sibling: {name: "Durian", isTasty: false,
 ```js
 var x = {}
 ```
-
-
-
-
-
-
-
-```js
-var form = createElement "form"
-var nameInput = createElement "name"
-append nameInput to form
-
-var fieldset = from document getElementWithIdOf "inputElement"
-append form to fieldset
-
-```
-
 ## Serialization
 PON object can be serialized easily, just like JSON. Moreover, it is even more compact than JSON, because the property name do not have to be quoted (like JSON5);
 ```js
