@@ -16,15 +16,16 @@ manyFruits = [
 ```
 
 ## Indexing
+Indexing is done using the dot (`.`) operator (same as OCaml).
 The first element will have the index of zero.
 ```python
 xs = [1,2,3,4]
 
 # Get first element
-xs[0] # 1
+mylist.(0)
 
 # Get last element
-xs[-1] # 4
+xs.(-1) # 4
 ```
 
 ## Slicing
@@ -33,14 +34,14 @@ To get a range of number, you can use the keyword `till`.
 xs = [10, 20, 30, 40]
 
 # Get until element 1
-xs[0 till 1] # [10,20]
+xs.(0 till 1) # [10,20]
 
 # Get from element 1 onward
 # Remember that -1 means last
-xs[1 till -1] # [20,30,40]
+xs.(1 till -1) # [20,30,40]
 
 # Get from element 1 to element 3
-xs[1 to 3] # [20,30,40]
+xs.(1 till 3) # [20,30,40]
 ```
 
 ## How to get range of numbers?
@@ -81,7 +82,7 @@ In Haskell, the function looks like :
 -- Haskell
 sum :: (Eq p, Num p) => [p] -> p
 sum (x:xs) = if xs == [] then 0 else x + sum xs
-``
+```
 
 
 ## Mutability
@@ -90,27 +91,27 @@ By default, you cannot change the member of an array.  For example :
 xs = [1, 2, 3, 4]
 
 # Change the last element to 99
-xs[-1] <- 99 # Compile error
+xs.(-1) <- 99 # Compile error
 ```
 However, if you want to declare an array which is immutable, you need to use the `mutable` keyword.  
 ```python
 xs = mutable [1,2,3,4]
-xs[-1] <- 99 # No error
+xs.(-1) <- 99 # No error
 ```
 
 ## Strings
 Strings are actually list of characters, so you can apply list operation on `string` as well.
 ```python
 message = 'Pineapple'
-message[4 to -1] # 'apple'
+message.(4 till -1) # 'apple'
 ```
 
 
 ## List comprehension
 ```python
 fruits = ['apple', 'banana', 'pineapple']
-longNameFruits = [foreach fruit in fruits take fruit if fruit length > 5] # ['banana', 'pineapple']
+longNameFruits = foreach fruit in fruits take fruit if fruit length > 5 # ['banana', 'pineapple']
 
 xs = [1,2,3,4,5]
-newList = [foreach x in xs take x*2] # [1,3,9,16,25]
+newList = foreach x in xs take x*2 # [1,3,9,16,25]
 ```
