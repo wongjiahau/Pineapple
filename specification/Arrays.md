@@ -110,15 +110,15 @@ message.(4 till -1) # 'apple'
 ## List comprehension
 ```python
 fruits = ['apple', 'banana', 'pineapple']
-longNameFruits = foreach fruit in fruits take fruit if fruit.length > 5 # ['banana', 'pineapple']
+longNameFruits = for fruit in fruits take fruit if fruit.length > 5 # ['banana', 'pineapple']
 
 xs = [1,2,3,4,5]
-newList = foreach x in xs take x*2 # [1,3,9,16,25]
+newList = for x in xs take x*2 # [1,3,9,16,25]
 ```
 
 ## List concatenation 
-You can concat 2 list using the tilde operator (`~`);
+You can concat 2 list using the double plus operator (`++`).
 ```python
-[1,2,3] ~ [4,5,6]  # [1,2,3,4,5,6]
-"pine" ~ "apple" # "pineapple"
+[1,2,3] ++ [99] ++ [4,5,6]  # [1,2,3,99,4,5,6]
+"pine" ++ "apple" # "pineapple"
 ```
