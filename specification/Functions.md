@@ -7,8 +7,8 @@ Just like how you will do it in Haskell. No need brackets, only space.
 Suppose we have this function `plus`.
 ```java
 @function 
-(x:number) plus (y:number) => number
-    => x + y
+x:Number plus y:Number -> Number
+    -> x + y
 
 // Here's how you call the `plus` function
 result = 2 plus 5
@@ -18,8 +18,8 @@ result = 2 plus 5
 ## Prefix function
 ```ts
 @function 
-sum (xs:number[]) => number 
-    => ??
+sum xs:Number[] -> Number 
+    -> ??
 
 result = sum [1,2,3,4]
 ```
@@ -27,8 +27,8 @@ result = sum [1,2,3,4]
 ## Suffix function
 ```ts
 @function
-(howMany:int) daysFromToday => Date 
-    => ??
+howMany:int daysFromToday -> Date 
+    -> (today.days + howMany) as Date
 
 result = 5 daysFromToday
 ```
@@ -37,17 +37,17 @@ result = 5 daysFromToday
 ## Infix function
 ```ts
 @function
-(x:boolean) xor (y:boolean) => number
-    => ??
+x:Boolean xor y:Boolean -> boolean 
+    -> x != y
 
 result = true xor false
 
 ```
-## Hybrid funtion
+## Mixfix funtion
 ```ts
 @function
-expect (x:number) toEqual (y:number) =>  maybe error 
-    => ?? 
+expect (x:Number) toEqual (y:Number) -> void | error 
+    -> ?? 
 
 expect 99 toEqual 88 
 ```
@@ -72,9 +72,9 @@ When a function is declared as **dirty**, its parameter will be **passed by refe
 By using the `dirtyFunction` annotation.
 ```java
 @dirtyFunction
-send (query: string) ToDatabase => void
+send (query: string) ToDatabase -> void
     // Send query to database
-    => ??
+    -> ??
 
 ```
 
@@ -86,10 +86,10 @@ For example:
 @type
 Fruit:
     .name  : string
-    .price : number
+    .price : Number
 
 @dirtyFunction
-modifyPrice (fruit: Fruit) => void
+modifyPrice (fruit: Fruit) -> void
     changing fruit.name
     fruit.name <- "new fruit"
     fruit.price <- 123  // Error: Cannot modify `.price`
@@ -101,7 +101,7 @@ If a function is not annotated with `dirtyFunction`, it cannot contain statement
 For example:
 ```java
 @function 
-sayHello => void
+sayHello -> void
     print "hello" // Error, cannot call a dirty function inside a normal function
 ```
 
@@ -113,23 +113,22 @@ Same. By using the `dirtyFunction` annotation.
 For example:
 ```java
 @dirtyFunction
-add (value: number) to (target: number) => void
-    target += value
+add (value: Number) to (target: Number) -> void
+    target <- target + value
 
-x <- 5
-add 10 to x
-print x // 15
-
-y = 7
+let y = 7
 add 99 to y // Error: `y` is already binded to value `7`
+
+let x <- 5
+add 10 to x // No error
 ```
 
 ## Void functions
-Function that does not return anything must be declared with `=> void`
+Function that does not return anything must be declared with `-> void`
 
 ```java
 @dirtyFunction 
-sayHello => void
+sayHello -> void
     print "Hello"
 ```
 
@@ -137,14 +136,14 @@ sayHello => void
 The type of a function will be like the following.
 ```java
 @function 
-(x:number) square => x * x
+(x:Number) square -> x * x
 
-type-of _square // number => number
+type-of _square // Number -> Number
 
 @function 
-(x:number) add (y:number) => x + y
+(x:Number) add (y:Number) -> x + y
 
-type-of _add_ // number => number => number
+type-of _add_ // Number -> Number -> Number
 ```
 They are just like function in Haskell.  
 
@@ -154,11 +153,9 @@ It will looks similar like Typescript.
 For example, let's look at how to define a simple `map` function in Pineapple.
 ```java
 @function
-map (func: number => number => number) to (xys: number[][]) => number[]
-    result <- []
-    foreach xy in xys
-        result <- result eat (func xy[0] xy[1])
-    => result
+map (func: Number -> Number -> Number) to (xys: Number[][]) -> Number[]
+    if xys == [] -> []
+    -> [xys.(0)] ++ (map func to xys.(0 till -1))
 ```
 
 ## How to pass a function to a function?
@@ -166,11 +163,11 @@ Just like how you will import them from other file, using the `underscore` notat
 For example, suppose we have the `map` function defined as above.
 ```java
 @function 
-(x: number) add (y: number) => number
-    => x + y
+(x: Number) add (y: Number) -> Number
+    -> x + y
 
 // This is how you pass the `add` function to `map`
-result = map _add_ to [[1,2], [3,4]]
+let result = map _add_ to [[1,2], [3,4]]
 
 print result // [3,7]
 
@@ -182,17 +179,17 @@ Anonymous function are always called by prefix notation, for example, let say we
 ### Single parameter 
 ```java
 @function
-invoke (func: number => number) with (param: number) => number
+invoke (func: Number -> Number) with (param: Number) -> Number
     func param
 ```
 ### Double parameter 
 ```java
 @function
-invoke (func: number => number => number) on (list: number[]) => number
+invoke (func: Number -> Number -> Number) on (list: Number[]) -> Number
     result <- 0
     foreach i in 0 to (list.length - 2)
         result <- result + func list[i] list[i+1]
-    => result
+    -> result
 ```
 
 
@@ -200,7 +197,7 @@ invoke (func: number => number => number) on (list: number[]) => number
 There are 2 ways, the first one which is the usual one (as in Haskell or Javascript)
 ```java
 @function
-moreThan (x:number) => (y:number) => y > x
+moreThan (x:Number) -> (y:Number) -> y > x
 
 moreThanThree = morethan 3
 5 moreThenThree // true
@@ -209,7 +206,7 @@ However, that way of currying is not really readable, and you can't swap the par
 Now, let's see the Pineapple way of currying.
 ```java
 @function
-(x:number) moreThan (y:number) => x > y
+(x:Number) moreThan (y:Number) -> x > y
 
 moreThanThree = _moreThan 3
 
@@ -226,16 +223,16 @@ result2 = select threeMoreThan from [1,2,3,4,5] // [1,2,3]
 When we declare a boolean function, don't start it with the *is* word.
 ```java
 @function
-(list: T[]) isEmpty => boolean  // bad
-(list: T[]) empty   => boolean  // good
+(list: T[]) isEmpty -> boolean  // bad
+(list: T[]) empty   -> boolean  // good
 ```
 
 Why? Because we can declare an `is` and `isnt` function.
 ```java
 @function 
-(item:T) is (func: T => boolean) => func item
+(item:T) is (func: T -> boolean) -> func item
 @function
-(item:T) isnt (func: T => boolean) => not (func item)
+(item:T) isnt (func: T -> boolean) -> not (func item)
 ```
 Then we can use it like this:
 ```java
@@ -252,15 +249,15 @@ not [1,2,3,4] empty // false
 *This feature is still under consideration, as it seems to violate the objective of Pineapple.*
 ```hs
 @function
-(x:number) divide (y:number) => number
-x divide y => x / y
-_ divide 0 => error
+(x:Number) divide (y:Number) -> Number
+x divide y -> x / y
+_ divide 0 -> error
 
 
 @function 
-select (mapFunc: T => T) whichIs (filterFunc: T => boolean) from (list: T[]) => T[]
+select (mapFunc: T -> T) whichIs (filterFunc: T -> boolean) from (list: T[]) -> T[]
 select _ whichIs _ from [] = []
-select mapFunc whichIs filterFunc from (x cons xs) => 
+select mapFunc whichIs filterFunc from (x cons xs) -> 
     (mapFunc x) cons remaining
     if (filterFunc x) 
     else remaining
@@ -268,21 +265,21 @@ select mapFunc whichIs filterFunc from (x cons xs) =>
 ```
 Usage
 ```java
-moreThan (x:number) => (y:number) => y > x
+moreThan (x:Number) -> (y:Number) -> y > x
 result = select num whichIs (moreThan 3) from [1,2,3,4]
-//Little note: num will be expanded to (num => num)
+//Little note: num will be expanded to (num -> num)
 ```
 *To be honest, not many people can understand pattern matching and object deconstruction. LOL*
 
 Let's look at the imperative version.
 ```java
 @function
-select (mapFunc: T => T) whichIs (filterFunc: T => boolean) from (list: T[]) => T[]
-    if list is empty => []
+select (mapFunc: T -> T) whichIs (filterFunc: T -> boolean) from (list: T[]) -> T[]
+    if list is empty -> []
     result = mutable []
     foreach x in list
         if filterFunc x
             add (mapFunc x) into result
-    => result
+    -> result
 ```
 To be honest, the imperative version is actually much shorter can much cleaner than the functional counterpart. OOPS.
