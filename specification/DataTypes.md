@@ -14,7 +14,7 @@
 |`Null`|`null`|
 |`Type`|`type-of number`|
 |`Member`|`member-of People`|
-|`Function`|`($:number) => number`|
+|`Function`|`($:number) -> number`|
 
 
 ## How to declare my own data type?
@@ -104,12 +104,12 @@ People:
     .age  : number
 
 @function
-select (M: member of T) from (list: T[]) => type of M
+select (M: member of T) from (list: T[]) -> type of M
     where T: People
     var result: T[] = []
     foreach item in list
         add item[M] to result
-    => result
+    -> result
 
 let peopleList :People[] = [
     {.name='John' .age=12},

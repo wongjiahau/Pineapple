@@ -9,20 +9,20 @@ BinaryTree:
     .left  : Node | null
     .right : Node | null
     .value : T
-    where T: IComparable
+    where T: Comparable
 
 @function
-newTree (value: T) => tree
+newTree (value: T) -> tree
     result =
         .left  <- null
         .right <- null
         .value =  value
-    => result
+    -> result
 // Note that `<-` is assignment operator, while `=` is binding operator.  
 // When a name is binded with a value, it's value cannot be changed anymore
     
 @function
-insert (element: T) to (tree: BinaryTree) => BinaryTree
+insert (element: T) to (tree: BinaryTree) -> BinaryTree
     if tree.left == null
         tree.left <- newTree element
     elif element > tree.left
@@ -32,15 +32,15 @@ insert (element: T) to (tree: BinaryTree) => BinaryTree
             insert element to tree.right
     else 
         insert element to tree.left
-    => tree
+    -> tree
 
 @function
-(tree: BinaryTree) hasNoChild => boolean
-    => tree.left == null and tree.right == null
+(tree: BinaryTree) hasNoChild -> boolean
+    -> tree.left == null and tree.right == null
 
 @function
-(tree: BinaryTree) contains (element: T) => boolean
-    => tree.value == element or
+(tree: BinaryTree) contains (element: T) -> boolean
+    -> tree.value == element or
        tree.left  == element or
        tree.right == element or
        tree.left  contains element or
@@ -97,22 +97,22 @@ SuperWoman extends Parent, Worker:
 You can define an interface using `@interface`.  
 ```java
 @interface 
-IComparable:
-    (x: T) greaterThan (y: T) => boolean
-    (x: T) equals (y: T) => boolean
+Comparable:
+    (x: T) greaterThan (y: T) -> boolean
+    (x: T) equals (y: T) -> boolean
 
 @type
-Color implements IComparable:
+Color implements Comparable:
     .red  : int
     .green: int
     .blue : int
 
 @function
-(x: Color) greaterThan (y: Color) => boolean
-    => x.red   > y.red   and
+(x: Color) greaterThan (y: Color) -> boolean
+    -> x.red   > y.red   and
        x.green > y.green and
        x.blue  > y.blue 
     
-// Error: type `Color` did not implements `(x: T) equals (y: T)` from interface `IComparable`
+// Error: type `Color` did not implements `(x: T) equals (y: T)` from interface `Comparable`
 ```
 If we didn't declare the required functions, the Pineapple compiler will throw error.

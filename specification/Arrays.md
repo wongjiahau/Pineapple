@@ -53,9 +53,9 @@ y = -2 to 2 # [-2,-1,0,1,2]
 ### Definition of `to`
 ```java
 @function
-(start:number) to (end:number) => number[]
-    if start == end => [start]
-    => (start to (end - 1)) eat end
+(start:number) to (end:number) -> number[]
+    if start == end -> [start]
+    -> (start to (end - 1)) eat end
 ```
 `eat` is a core function in Pineapple, it's like a reversed `cons` in Haskell.  
 Example:
@@ -63,7 +63,7 @@ Example:
 [] eat 1 # [1]
 [1] eat 1 # [1,1]
 [9,8,7] eat 3 # [9,8,7,3]
-[1,2,3] eat [1,2,3] # Error: the signature of eat is (eater:T[]) eat (food:T) => T[]
+[1,2,3] eat [1,2,3] # Error: the signature of eat is (eater:T[]) eat (food:T) -> T[]
 ```
 In fact, list are just syntax sugar for `eat`.  
 For example, `[1,2,3]` will be converted into `[] eat 1 eat 2 eat 3`.  
@@ -74,13 +74,13 @@ To demonstrate, look at the definition of `sum` function.
 ```java
 // Pineapple
 @function
-sum (xs eat x : number[]) => number
-    => 0 if xs == [] else x + sum xs
+sum (xs eat x : number[]) -> number
+    -> 0 if xs == [] else x + sum xs
 ```
 In Haskell, the function looks like :
 ```hs
 -- Haskell
-sum :: (Eq p, Num p) => [p] -> p
+sum :: (Eq p, Num p) -> [p] -> p
 sum (x:xs) = if xs == [] then 0 else x + sum xs
 ```
 

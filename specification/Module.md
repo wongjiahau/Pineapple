@@ -5,19 +5,19 @@ Let say you have the file `math.pine`.
 
 ```java
 @function
-(x: number) add (y: number) => number
-    => x + y
+(x: number) add (y: number) -> number
+    -> x + y
 
 @function
-(x: number) isEven => boolean
-    => x % 2 == 0
+(x: number) isEven -> boolean
+    -> x % 2 == 0
 
 @function
-sum (xs: number[]) => number
+sum (xs: number[]) -> number
     var result = 0
     foreach x in xs
         result += x
-    => result
+    -> result
 ```
 
 Note that underscore ( `_` ) is a reserved symbol to identify if a function is suffix, prefix, infix or hybrid.
@@ -42,6 +42,6 @@ You can't do that like you would in language such as Python or Typescript, becau
 By using the `@private` annotation.
 ```java
 @private function
-(x: number) add (y: number) => number
-    => ??
+(x: number) add (y: number) -> number
+    -> ??
 ```

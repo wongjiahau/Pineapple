@@ -27,6 +27,6 @@
 |-|-|  
 |`=`|clean assignment|
 |`:`|Type scoping|
-|`=>`|Return|
+|`->`|Return|
 |`??`|Unimplemented|  
 |`|>`|Pipe forward|

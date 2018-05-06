@@ -35,7 +35,7 @@ Fruit:
 Then, we have a function that will modify the price of a `Fruit` to 99.
 ```java
 @function
-changePriceOf (fruit:Fruit) => void
+changePriceOf (fruit:Fruit) -> void
     fruit.price <- 99
 ```
 Now, let say in our main program we created a new `Fruit` object.
