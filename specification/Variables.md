@@ -29,13 +29,13 @@ For example, let say we have a `type`.
 ```java
 @type
 Fruit:
-    .name  : string
-    .price : number
+    .name  : String
+    .price : Number
 ```
 Then, we have a function that will modify the price of a `Fruit` to 99.
 ```java
 @function
-changePriceOf (fruit:Fruit) -> void
+changePriceOf (fruit:Fruit) -> Void
     fruit.price <- 99
 ```
 Now, let say in our main program we created a new `Fruit` object.
@@ -75,13 +75,13 @@ y <- 7
 ## How to specify type?
 You can also specify type when declaring a variable by using colon (`:`) . It's just like Typescript.
 ```
-let x: number = 2
-let y: number = "123" # Error
+let x: Number = 2
+let y: Number = "123" # Error
 ```
 
 ## Naming Rules
 - All variable names must consist of only alphanumeric characters or `$` sign.
-- A variable name must not start with a number. 
+- A variable name must not start with a Number. 
 - A variable name cannot contain any symbol other than `$`.
 
 Thus, the only naming convention allowed is `camelCase`.   
@@ -94,6 +94,6 @@ All other naming convention such as `snake_case` or `kebab-case` are forbidden.
 |x|valid|  
 |$|valid|  
 |hello_there|Invalid, cannot contain underscore ( `_` ) |  
-|12ve|Invalid, cannot start with number
-|ve12|Invalid, cannot start with number
+|12ve|Invalid, cannot start with Number
+|ve12|Invalid, cannot start with Number
 |goodBye|Valid

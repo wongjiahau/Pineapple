@@ -12,9 +12,9 @@
 |`Object`|`{.name='hi' .age=9}`|
 |`Any`|any data type|
 |`Null`|`null`|
-|`Type`|`type-of number`|
+|`Type`|`type-of Number`|
 |`Member`|`member-of People`|
-|`Function`|`($:number) -> number`|
+|`Function`|`($:Number) -> Number`|
 
 
 ## How to declare my own data type?
@@ -23,8 +23,8 @@ By using the `@type` annotation.
 // Definition
 @type 
 Fruit:
-    .name    : string
-    .isTasy  : boolean
+    .name    : String
+    .isTasy  : Boolean
     .sibling : Fruit | null
 ```
 
@@ -32,7 +32,7 @@ Fruit:
 If you declare a variable to have a specific type, Pineapple compiler will expect the variable fully fulfils the specification of the type.
 ```js
 let myFruit: Fruit = 
-    .name = 123 // Error, `.name` should be type of `string`
+    .name = 123 // Error, `.name` should be type of `String`
     .isTasty = true
     // Error, missing member `.sibling`
 ```
@@ -42,7 +42,7 @@ let myFruit: Fruit =
 By default, a variable cannot be set to `null`.  
 Pineapple used this approach to prevent a very common error like `null pointer`.
 ```coffee
-let x: string <- "hello"
+let x: String <- "hello"
 x <- null # Compiler error
 ```
 
@@ -56,9 +56,9 @@ myColor = Color.Red
 ```
 
 ## Discriminated unions
-You can have a variable which can have both type. For example, you might want to have a nullable string type.
+You can have a variable which can have both type. For example, you might want to have a nullable String type.
 ```java
-let x: string | null <- "hello"
+let x: String | null <- "hello"
 x <- null // No error
 
 
@@ -86,7 +86,7 @@ By using the `.type` member.
 ```java
 x = 5
 
-x.type // number
+x.type // Number
 
 x.type.type // type
 
@@ -100,8 +100,8 @@ Let's look at the example below to understand more.
 ```java
 @type
 People:
-    .name : string
-    .age  : number
+    .name : String
+    .age  : Number
 
 @function
 select (M: member of T) from (list: T[]) -> type of M

@@ -1,12 +1,12 @@
 # Strings
-Like Javascript, strings can be delimited by the `"` or `'` characters.
+Like Javascript, Strings can be delimited by the `"` or `'` characters.
 ```ts
 let fruit = "pineapple"
 let message = 'hello'
 ```
 
 ## String interpolation
-You can interpolate expression into string using curly brackets `{}`.
+You can interpolate expression into String using curly brackets `{}`.
 ```cs
 let chosenFruit = "durian"
 let message1 = "I like {chosenFruit}" // I like durian 
@@ -14,7 +14,7 @@ let message2 = 'The value of pi is {22/7}'
 // The value of pi is 3.142
 ```
 
-## Multiline string
+## Multiline String
 No extra syntax, just like PHP.
 ```php
 let html = 

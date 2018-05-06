@@ -29,7 +29,7 @@ xs.(-1) # 4
 ```
 
 ## Slicing
-To get a range of number, you can use the keyword `till`.
+To get a range of Number, you can use the keyword `till`.
 ```python
 xs = [10, 20, 30, 40]
 
@@ -44,7 +44,7 @@ xs.(1 till -1) # [20,30,40]
 xs.(1 till 3) # [20,30,40]
 ```
 
-## How to get range of numbers?
+## How to get range of Numbers?
 You can do that by using the utility function `to`.
 ```python
 x = 1 to 5 # [1,2,3,4,5]
@@ -53,7 +53,7 @@ y = -2 to 2 # [-2,-1,0,1,2]
 ### Definition of `to`
 ```java
 @function
-(start:number) to (end:number) -> number[]
+(start:Number) to (end:Number) -> Number[]
     if start == end -> [start]
     -> (start to (end - 1)) eat end
 ```
@@ -74,7 +74,7 @@ To demonstrate, look at the definition of `sum` function.
 ```java
 // Pineapple
 @function
-sum (xs eat x : number[]) -> number
+sum (xs eat x : Number[]) -> Number
     -> 0 if xs == [] else x + sum xs
 ```
 In Haskell, the function looks like :

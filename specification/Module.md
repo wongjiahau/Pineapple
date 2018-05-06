@@ -5,15 +5,15 @@ Let say you have the file `math.pine`.
 
 ```java
 @function
-(x: number) add (y: number) -> number
+(x: Number) add (y: Number) -> Number
     -> x + y
 
 @function
-(x: number) isEven -> boolean
+(x: Number) isEven -> Boolean
     -> x % 2 == 0
 
 @function
-sum (xs: number[]) -> number
+sum (xs: Number[]) -> Number
     var result = 0
     foreach x in xs
         result += x
@@ -42,6 +42,6 @@ You can't do that like you would in language such as Python or Typescript, becau
 By using the `@private` annotation.
 ```java
 @private function
-(x: number) add (y: number) -> number
+(x: Number) add (y: Number) -> Number
     -> ??
 ```

@@ -35,11 +35,11 @@ insert (element: T) to (tree: BinaryTree) -> BinaryTree
     -> tree
 
 @function
-(tree: BinaryTree) hasNoChild -> boolean
+(tree: BinaryTree) hasNoChild -> Boolean
     -> tree.left == null and tree.right == null
 
 @function
-(tree: BinaryTree) contains (element: T) -> boolean
+(tree: BinaryTree) contains (element: T) -> Boolean
     -> tree.value == element or
        tree.left  == element or
        tree.right == element or
@@ -75,7 +75,7 @@ Multiple inheritance is also allowed.
 ```ts
 @type 
 Human:
-    name: string
+    name: String
     dob: Date
 
 @type 
@@ -84,12 +84,12 @@ Parent extends Human:
 
 @type
 Worker:
-    salary: number
+    salary: Number
 
 // multiple inheritance
 @type
 SuperWoman extends Parent, Worker:
-    isBusy: boolean
+    isBusy: Boolean
 
 ```
 
@@ -98,8 +98,8 @@ You can define an interface using `@interface`.
 ```java
 @interface 
 Comparable:
-    (x: T) greaterThan (y: T) -> boolean
-    (x: T) equals (y: T) -> boolean
+    (x: T) greaterThan (y: T) -> Boolean
+    (x: T) equals (y: T) -> Boolean
 
 @type
 Color implements Comparable:
@@ -108,7 +108,7 @@ Color implements Comparable:
     .blue : int
 
 @function
-(x: Color) greaterThan (y: Color) -> boolean
+(x: Color) greaterThan (y: Color) -> Boolean
     -> x.red   > y.red   and
        x.green > y.green and
        x.blue  > y.blue 

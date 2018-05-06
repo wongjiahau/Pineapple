@@ -37,7 +37,7 @@ result = 5 daysFromToday
 ## Infix function
 ```ts
 @function
-x:Boolean xor y:Boolean -> boolean 
+x:Boolean xor y:Boolean -> Boolean 
     -> x != y
 
 result = true xor false
@@ -46,7 +46,7 @@ result = true xor false
 ## Mixfix funtion
 ```ts
 @function
-expect (x:Number) toEqual (y:Number) -> void | error 
+expect (x:Number) toEqual (y:Number) -> Void | error 
     -> ?? 
 
 expect 99 toEqual 88 
@@ -72,7 +72,7 @@ When a function is declared as **dirty**, its parameter will be **passed by refe
 By using the `dirtyFunction` annotation.
 ```java
 @dirtyFunction
-send (query: string) ToDatabase -> void
+send (query: String) ToDatabase -> Void
     // Send query to database
     -> ??
 
@@ -85,11 +85,11 @@ For example:
 ```java
 @type
 Fruit:
-    .name  : string
+    .name  : String
     .price : Number
 
 @dirtyFunction
-modifyPrice (fruit: Fruit) -> void
+modifyPrice (fruit: Fruit) -> Void
     changing fruit.name
     fruit.name <- "new fruit"
     fruit.price <- 123  // Error: Cannot modify `.price`
@@ -101,7 +101,7 @@ If a function is not annotated with `dirtyFunction`, it cannot contain statement
 For example:
 ```java
 @function 
-sayHello -> void
+sayHello -> Void
     print "hello" // Error, cannot call a dirty function inside a normal function
 ```
 
@@ -113,7 +113,7 @@ Same. By using the `dirtyFunction` annotation.
 For example:
 ```java
 @dirtyFunction
-add (value: Number) to (target: Number) -> void
+add (value: Number) to (target: Number) -> Void
     target <- target + value
 
 let y = 7
@@ -124,11 +124,11 @@ add 10 to x // No error
 ```
 
 ## Void functions
-Function that does not return anything must be declared with `-> void`
+Function that does not return anything must be declared with `-> Void`
 
 ```java
 @dirtyFunction 
-sayHello -> void
+sayHello -> Void
     print "Hello"
 ```
 
@@ -220,19 +220,19 @@ result2 = select threeMoreThan from [1,2,3,4,5] // [1,2,3]
 
 
 ## Tips
-When we declare a boolean function, don't start it with the *is* word.
+When we declare a Boolean function, don't start it with the *is* word.
 ```java
 @function
-(list: T[]) isEmpty -> boolean  // bad
-(list: T[]) empty   -> boolean  // good
+(list: T[]) isEmpty -> Boolean  // bad
+(list: T[]) empty   -> Boolean  // good
 ```
 
 Why? Because we can declare an `is` and `isnt` function.
 ```java
 @function 
-(item:T) is (func: T -> boolean) -> func item
+(item:T) is (func: T -> Boolean) -> func item
 @function
-(item:T) isnt (func: T -> boolean) -> not (func item)
+(item:T) isnt (func: T -> Boolean) -> not (func item)
 ```
 Then we can use it like this:
 ```java
@@ -255,7 +255,7 @@ _ divide 0 -> error
 
 
 @function 
-select (mapFunc: T -> T) whichIs (filterFunc: T -> boolean) from (list: T[]) -> T[]
+select (mapFunc: T -> T) whichIs (filterFunc: T -> Boolean) from (list: T[]) -> T[]
 select _ whichIs _ from [] = []
 select mapFunc whichIs filterFunc from (x cons xs) -> 
     (mapFunc x) cons remaining
@@ -274,7 +274,7 @@ result = select num whichIs (moreThan 3) from [1,2,3,4]
 Let's look at the imperative version.
 ```java
 @function
-select (mapFunc: T -> T) whichIs (filterFunc: T -> boolean) from (list: T[]) -> T[]
+select (mapFunc: T -> T) whichIs (filterFunc: T -> Boolean) from (list: T[]) -> T[]
     if list is empty -> []
     result = mutable []
     foreach x in list

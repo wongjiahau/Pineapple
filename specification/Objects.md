@@ -42,7 +42,7 @@ let myFruit =
 // Using dot notation
 myFruit.sibling.name  // Rambutan
 
-// Using string
+// Using String
 myFruit.("sibling").("name") // Rambutan
 ```
 
