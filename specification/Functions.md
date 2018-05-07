@@ -16,10 +16,13 @@ result = 2 plus 5
 ```
 
 ## Prefix function
-```ts
+```java
 @function 
 sum xs:Number[] -> Number 
-    -> ??
+    let result <- 0
+    for x in xs
+        result <- result + x
+    -> result
 
 result = sum [1,2,3,4]
 ```
