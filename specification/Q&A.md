@@ -1,0 +1,2 @@
+## How to I use mock if I can't create object that has method?
+Look at this article about [Avoid mocks by refactoring to functional](https://www.artificialworlds.net/blog/2014/04/11/avoid-mocks-by-refactoring-to-functional/)
