@@ -1,13 +1,13 @@
-# Arrays/Lists
-Arrays are just like Python arrays. However, they must consist of the same type, no array with mixed typed is allowed.
+# Lists
+List in Pineapple are just like list in Python. However, they must consist of the same type, no list with mixed typed is allowed.
 
 ## Initialization
 ```js
-xs = [1,2,3,4]
+let xs = [1,2,3,4]
 
-invalidList = [1, "b"] // Error: Cannot contain different type in a list
+let invalidList = [1, "b"] // Error: Cannot contain different type in a list
 
-manyFruits = [
+let manyFruits = [
     {.name="Apple"     .color="red"},
     {.name="Pineapple" .color="yellow"}
 ]
@@ -16,7 +16,7 @@ manyFruits = [
 ```
 
 ## Indexing
-Indexing is done using the dot (`.`) operator (same as OCaml).
+Indexing is done using the dot-bracket (`.()`) operator (same as OCaml).
 The first element will have the index of zero.
 ```python
 xs = [1,2,3,4]
@@ -29,7 +29,7 @@ xs.(-1) # 4
 ```
 
 ## Slicing
-To slice a list, you can use the double-dot operator (`..`), its just like Swift.
+To slice a list, you can use the double-dot operator (`..`) or (`..<`), its just like Swift.
 ```swift
 xs = [10, 20, 30, 40]
 
@@ -89,14 +89,14 @@ sum (x:xs) = if xs == [] then 0 else x + sum xs
 
 
 ## Mutability
-By default, you cannot change the member of an array.  For example :
+By default, you cannot change the member of an list.  For example :
 ```python
 xs = [1, 2, 3, 4]
 
 # Change the last element to 99
 xs.(-1) <- 99 # Compile error
 ```
-However, if you want to declare an array which is immutable, you need to use the `mutable` keyword.  
+However, if you want to declare an list which is immutable, you need to use the `mutable` keyword.  
 ```python
 xs = mutable [1,2,3,4]
 xs.(-1) <- 99 # No error

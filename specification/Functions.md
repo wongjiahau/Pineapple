@@ -51,7 +51,7 @@ let result = True or False
 ## Mixfix funtion
 ```ts
 @function
-expect (x:Number) toEqual (y:Number) -> Void | error 
+expect (x:Number) toEqual (y:Number) -> Void 
     -> ?? 
 
 expect 99 toEqual 88 
@@ -62,6 +62,24 @@ expect 99 toEqual 88
 Prefix > Suffix > Infix > Hybrid
 ```
 
+## Optional parameters
+You can set a function to have optional parameters.
+
+Let's look at the `_to_by` function.
+```java
+@function
+(start:Int) to (end:Int) by (step:Int=1) -> Int[]
+    if start == end -> [end]
+    -> [start] ++ ((start + step) to end by step)
+    
+// Calling it
+let range1 = 0 to 6
+print range1 // [0,1,2,3,4,5,6]
+
+let range2 = 0 to 6 by 2
+print range2 // [0,2,4,6]
+
+```
 
 ## Referential transparency
 By default, all function in Pineapple is clean, which means it won't modify the input and no I/O operation is allow. 
@@ -292,7 +310,7 @@ Let's look at the imperative version.
 ```java
 @function
 select (mapFunc: T -> T) whichIs (filterFunc: T -> Boolean) from (list: T[]) -> T[]
-    if list is empty -> []
+    if list is empty_ -> []
     result = mutable []
     foreach x in list
         if filterFunc x

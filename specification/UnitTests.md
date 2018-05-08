@@ -7,14 +7,16 @@ You can denote a test using `@test` annotation.
 
 ```java
 @function
-(x: number) divide (y: number) -> number | error
-    if y == 0
-        throw newError "Divisor cannot be zero"
-    => y / x
+(dividend:Number) divide (divisor:Number) -> Number  
+    if divisor == 0 throw "Divisor cannot be zero"
+    -> y / x
 
 @test _divide_
-5 divide 2 shouldReturn 2
-5 divide 0 shouldThrowError
+    @case 1
+        (5 divide 2) shouldBe 2
+
+    @case 2
+        (try 2 divide 0) shouldBeError
 ```
 
 Thus, the interpreter will also run the test when it interpret the code, and warn user when test case failed.
