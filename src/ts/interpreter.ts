@@ -64,6 +64,12 @@ export interface ObjectMemberNode {
     next: ObjectMemberNode | null;
 }
 
+export interface ObjectAccessNode {
+    kind: "ObjectAccess";
+    objectName: string;
+    accessProperty: ObjectAccessNode | string;
+}
+
 interface ArrayNode {
     kind: "ArrayNode";
     element: ElementNode;
@@ -163,7 +169,15 @@ function evalBindingNode(node: BindingNode): any {
 }
 
 function evalVariableNode(node: VariableNode): number {
-    return VARIABLES_TABLE[node.name].value;
+    let variable = VARIABLES_TABLE[node.name];
+    if (variable) {
+        return variable.value;
+    }
+    variable = BINDINGS_TABLE[node.name];
+    if (variable) {
+        return variable.value;
+    }
+    throw new Error(`No such variable: ${node.name}`);
 }
 
 function evalObjectMemberNode(node: ObjectMemberNode): object {
