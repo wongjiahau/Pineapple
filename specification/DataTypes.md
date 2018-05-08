@@ -12,9 +12,10 @@
 |`Object`|`{.name='hi' .age=9}`|
 |`Any`|any data type|
 |`Null`|`null`|
-|`Type`|`type-of Number`|
+|`Type`|`12.type`|
 |`Member`|`member-of People`|
 |`Function`|`($:Number) -> Number`|
+|`Error`|No examples yet|
 
 
 ## How to declare my own data type?
@@ -74,11 +75,11 @@ Generics can be done using the `T` keyword.
 ```java
 @function
 quicksort xs:T[] -> T[] where T:Comparable
-    if xs == [] -> xs
+    if xs == [] -> []
     let pivot = xs.(0)
     let left  = for x in xs take x if x < pivot
     let right = for x in xs take x if x > pivot
-    -> quicksort left ++ [pivot] ++ quicksort right
+    -> (quicksort left) ++ [pivot] ++ (quicksort right)
 ```
 
 ## How to get the type of a thing?
@@ -88,7 +89,7 @@ x = 5
 
 x.type // Number
 
-x.type.type // type
+x.type.type // Type
 
 ```
 

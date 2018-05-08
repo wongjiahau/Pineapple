@@ -41,11 +41,11 @@ result = 5 daysFromToday
 ```ts
 @function
 x:Boolean or y:Boolean -> Boolean 
-    if x == True -> True
-    if y == True -> True
-    -> False
+    if x == true -> true
+    if y == true -> true
+    -> false
 
-let result = True or False
+let result = true or false
 
 ```
 ## Mixfix funtion
@@ -161,14 +161,13 @@ The type of a function will be like the following.
 @function 
 (x:Number) square -> x * x
 
-type-of _square // Number -> Number
+_square.type // Number -> Number
 
 @function 
 (x:Number) add (y:Number) -> x + y
 
-type-of _add_ // Number -> Number -> Number
+_add_.type // (Number,Number) -> Number
 ```
-They are just like function in Haskell.  
 
 
 ## How to declare a function that will take in function?
