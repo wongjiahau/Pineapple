@@ -178,47 +178,59 @@ print result // [3,7]
 
 
 ## Anonymous function
-Anonymous function are always called by prefix notation, for example, let say we have a function that call another function
+### Assigning a function to a variable
+The variable name for function must contain 1 underscore if it contains 1 argument;   
+2 underscore for 2 arguments, so on and so forth.  
+
+The underscore determine where the argument should be placed.
+
+If it contains no argument, no underscore is needed.
+
+Note that you cannot have consecutive underscore.
+```ts
+let even_ = (x:Number) -> x % 2 == 0
+
+// Here's how to call even_
+even 5
+
+let _add_ = (x:Number, y:Number) -> x + y
+
+// How to call _add_
+5 add 3
+
+```
+## Declaring function that takes function as parameter
 ### Single parameter 
 ```java
 @function
-invoke (func: Number -> Number) with (param: Number) -> Number
+invoke (func_:Number->Number) with (param:Number) -> Number
     func param
 ```
 ### Double parameter 
 ```java
 @function
-invoke (func: Number -> Number -> Number) on (list: Number[]) -> Number
-    result <- 0
-    foreach i in 0 to (list.length - 2)
-        result <- result + func list[i] list[i+1]
+invoke (_func_:(Number,Number)->Number) on (list:Number[]) -> Number
+    let result <- 0
+    for i in 0 to (list.length - 2)
+        result <- result + (list[i] _func_ list[i+1])
     -> result
 ```
 
 
 ## Currying
-There are 2 ways, the first one which is the usual one (as in Haskell or Javascript)
 ```java
 @function
-moreThan (x:Number) -> (y:Number) -> y > x
+(x:Number) moreThan (y:Number) -> boolean
+    -> x > y
 
-moreThanThree = morethan 3
-5 moreThenThree // true
-```
-However, that way of currying is not really readable, and you can't swap the parameter position easily.  
-Now, let's see the Pineapple way of currying.
-```java
-@function
-(x:Number) moreThan (y:Number) -> x > y
-
-moreThanThree = _moreThan 3
+let moreThanThree = _moreThan 3
 
 // invert it
-threeMoreThan = 3 moreThan_
+let threeMoreThan = 3 moreThan_
 
-result1 = select moreThanThree from [1,2,3,4,5] // [4,5]
+select moreThanThree from [1,2,3,4,5] // [4,5]
 
-result2 = select threeMoreThan from [1,2,3,4,5] // [1,2,3]
+select threeMoreThan from [1,2,3,4,5] // [1,2,3]
 ```
 
 
@@ -233,19 +245,19 @@ When we declare a Boolean function, don't start it with the *is* word.
 Why? Because we can declare an `is` and `isnt` function.
 ```java
 @function 
-(item:T) is (func: T -> Boolean) -> func item
+(item:T) is (func_: T -> Boolean) -> func item
 @function
-(item:T) isnt (func: T -> Boolean) -> not (func item)
+(item:T) isnt (func_: T -> Boolean) -> not (func item)
 ```
 Then we can use it like this:
 ```java
-[] is empty // true
-[1,2,3] isnt empty // true
+[] is _empty // true
+[1,2,3] isnt _empty // true
 ```
 Of course, you can also call it without the `is` function, but it is not recommended as it seems unnatural.
 ```java
 [] empty // true
-not [1,2,3,4] empty // false
+not ([1,2,3,4] empty) // false
 ```
 
 ## Pattern matching (Pending)
