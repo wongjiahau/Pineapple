@@ -47,14 +47,6 @@ let x: String <- "hello"
 x <- null # Compiler error
 ```
 
-## Enumerations
-Enumaration can be declared using `@enum` annotation.
-```java
-@enum
-Color: Red | Green | Blue
-
-myColor = Color.Red
-```
 
 ## Discriminated unions
 You can have a variable which can have both type. For example, you might want to have a nullable String type.
@@ -69,6 +61,16 @@ Color: "red" | "green" | "blue"
 let myColor: Color = "yellow" // Error
 ```
 
+## Enumerations
+Enumaration can be declared using `@enum` annotation.
+
+And to access the value, you need to use the 4-dots operator `::`.
+```java
+@enum
+Color = Red | Green | Blue
+
+let myColor = Red::Color
+```
 
 ## Generics
 Generics can be done using the `T` keyword.
