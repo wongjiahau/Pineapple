@@ -40,10 +40,12 @@ result = 5 daysFromToday
 ## Infix function
 ```ts
 @function
-x:Boolean xor y:Boolean -> Boolean 
-    -> x != y
+x:Boolean or y:Boolean -> Boolean 
+    if x == True -> True
+    if y == True -> True
+    -> False
 
-result = true xor false
+let result = True or False
 
 ```
 ## Mixfix funtion
