@@ -75,6 +75,14 @@ interface ArrayNode {
     element: ElementNode;
 }
 
+interface ArraySlicingNode {
+    kind: "ArraySlicing";
+    expr: ExpressionNode;
+    start: ExpressionNode;
+    end: ExpressionNode;
+    excludeUpperBound: boolean;
+}
+
 interface ElementNode {
     kind: "Element";
     expression: ExpressionNode;
@@ -91,6 +99,7 @@ export type ExpressionNode
     | BindingNode
     | ValueNode
     | ObjectAccessNode
+    | ArraySlicingNode
     ;
 
 type ValueNode
@@ -123,6 +132,8 @@ export function evalutateExpression(expression: ExpressionNode): any {
             return evalObjectMemberNode(expression.memberNode);
         case "ObjectAccess":
             return evalObjectAccessNode(expression);
+        case "ArraySlicing":
+            return evalArraySlicingNode(expression);
     }
 }
 
@@ -221,4 +232,18 @@ function evalObjectAccessNode(node: ObjectAccessNode): any {
         value = value[currentNode.name];
         currentNode = currentNode.accessProperty;
     }
+}
+
+function evalArraySlicingNode(node: ArraySlicingNode): any {
+    const list = evalutateExpression(node.expr) as any[];
+    const start = evalutateExpression(node.start) as number;
+    let end = evalutateExpression(node.end) as number;
+    if (end === -1) {
+        end = list.length;
+    }
+    if (node.excludeUpperBound) {
+        end--;
+    }
+    return list.slice(start, end + 1);
+
 }

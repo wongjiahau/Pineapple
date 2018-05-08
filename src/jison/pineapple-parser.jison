@@ -82,6 +82,14 @@ const ElementNode = (expr, next) =>  ({
     expression: expr,
     next: next
 });
+
+const ArraySlicingNode = (expr, start, end, excludeUpperBound=false) => ({
+    kind: "ArraySlicing",
+    expr: expr,
+    start: start,
+    end: end,
+    excludeUpperBound: excludeUpperBound
+});
 %}
 
 /* lexical grammar */
@@ -113,6 +121,9 @@ const ElementNode = (expr, next) =>  ({
 "!"                             return 'NOT'
 ("*"|"/")                       return 'BINOP2'
 ("%"|"^")                       return 'BINOP3'
+".(.."                          return '.(..'
+"..)"                           return '..)'
+".("                            return '.('
 "("                             return '('
 ")"                             return ')'
 "{"                             return '{'
@@ -121,8 +132,8 @@ const ElementNode = (expr, next) =>  ({
 "]"                             return ']'
 "|"                             return '|'
 ","                             return ','
-"PI"                            return 'PI'
-"E"                             return 'E'
+"..<"                           return '..<'
+".."                            return '..'
 "."                             return 'DOT'
 <<EOF>>                         return 'EOF'
 
@@ -148,18 +159,17 @@ const ElementNode = (expr, next) =>  ({
 expressions
     : expr EOF         { return $1; }
     | partial_expr EOF { return $1; }
+    | assignment_expr  { return $1; }
+    | binding_expr     { return $1; }
     ;
 
 expr
     : arithmetic_expr
     | '(' expr ')' {$$ = $2;}
-    | E {$$ = Math.E;}
-    | PI {$$ = Math.PI;}
-    | assignment_expr
-    | binding_expr
     | relational_expr
     | value
     | object_access
+    | array_slicing
     ;
 
 value
@@ -249,4 +259,11 @@ arithmetic_expr
 
 maybe_arithmetic_value
     : VARNAME {$$=VariableNode($1)}
+    ;
+
+array_slicing
+    : expr '.(..' expr ')' {$$=ArraySlicingNode($1,NumberNode(0),$3)}
+    | expr '.(' expr '..)' {$$=ArraySlicingNode($1,$3,NumberNode(-1))}
+    | expr '.(' expr '..' expr ')' {$$=ArraySlicingNode($1,$3,$5)}
+    | expr '.(' expr '..<' expr ')' {$$=ArraySlicingNode($1,$3,$5,true)}
     ;

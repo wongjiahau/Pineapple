@@ -32,7 +32,6 @@ xs.(-1) # 4
 To slice a list, you can use the following operators:
 - double-dot (`..`)
 - double-dot-lessThan (`..<`)
-- triple-dot (`...`)
 ```swift
 xs = [10, 20, 30, 40]
 
@@ -46,10 +45,10 @@ xs.(1..-2) // [20,30]
 xs.(1..<3) // [20,30]
 
 // Get until element 2 from start
-xs.(...2) // [10,20,30]
+xs.(..2) // [10,20,30]
 
 // Get from element 1 till end
-xs.(1...) // [20,30,40]
+xs.(1..) // [20,30,40]
 ```
 
 ## How to get range of Numbers?
@@ -105,7 +104,7 @@ You can concat 2 list using the double plus operator (`++`).
 ```
 
 ## Appending new item to list
-Since Pineapple promote functional-style programming, there is no built-in function such as `[].push()`.   
+Since Pineapple promote functional-style programming, there is no built-in function such as `push` or `append`.   
 The recommended way is to use concatenation.  
 ```js
 let myList <- [1,2,3]
