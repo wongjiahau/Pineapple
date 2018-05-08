@@ -50,10 +50,10 @@ myFruit.("sibling").("name") // Rambutan
 However, you may also declared it in one line using curly braces.
 
 So, you may also declare them in one line. 
-Note that the space before each membername is **necessary**.
+Note that the space between each membername is **necessary**.
 ```ts
 // pineapple
-let myFruit ={ .name="Mango" .sibling={ .name="Durian" .isTasty=false}}
+let myFruit ={.name="Mango" .sibling={.name="Durian" .isTasty=false}}
 
 // javascript
 myFruit ={name: "Mango", sibling: {name: "Durian", isTasty: false}}

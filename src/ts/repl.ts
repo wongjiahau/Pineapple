@@ -3,6 +3,7 @@ import { readFileSync } from "fs";
 import * as readline from "readline";
 import { addBrackets } from "./addBrackets";
 import { evalutateExpression, ExpressionNode, VARIABLES_TABLE } from "./interpreter";
+import { smoothify } from "./smoothify";
 
 const rl = readline.createInterface({
     input: process.stdin,
@@ -56,8 +57,8 @@ function evaluateInput(input: string, lineNumber: number) {
 
 export function interpret(input: string): any {
     const bracketized = addBrackets(input);
-    const flattenized = bracketized.replace(/(\r\n\t|\n|\r\t)/gm, " ");
-    const abstractSyntaxTree = exec(flattenized);
+    const smoothifized = smoothify(input);
+    const abstractSyntaxTree = exec(smoothifized);
     log("AST = ");
     log(abstractSyntaxTree);
     const result = evalutateExpression(abstractSyntaxTree);
