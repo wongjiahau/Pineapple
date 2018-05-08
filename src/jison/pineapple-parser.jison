@@ -83,7 +83,7 @@ const ElementNode = (expr, next) =>  ({
 %%
 
 "let "                          return 'LET'
-" ."[a-zA-Z]+[a-zA-Z0-9]*       return 'MEMBERNAME'                        
+\s+"."[a-zA-Z]+[a-zA-Z0-9]*       return 'MEMBERNAME'                        
 \s+                             /* skip whitespace */
 ("'"|"\"")([^\"\\]|[\\[n\"\']])*("'"|"\"")  return 'STRING'
 "true"                          return 'TRUE'

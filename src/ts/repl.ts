@@ -1,12 +1,8 @@
-import { AstBuilder } from "./astBuilder";
 const parser = require("../jison/pineapple-parser.js");
 import { readFileSync } from "fs";
 import * as readline from "readline";
 import { addBrackets } from "./addBrackets";
-import { groupStatements } from "./groupStatements";
 import { evalutateExpression, ExpressionNode, VARIABLES_TABLE } from "./interpreter";
-import { parseStatementToAst } from "./parseStatementToAst";
-import { parseStringToStatement } from "./parseStringToStatement";
 
 const rl = readline.createInterface({
     input: process.stdin,
@@ -51,19 +47,6 @@ const prompt = () => {
 
 };
 
-export function evaluateMultipleLines(lines: string[]): any {
-    const result: any[] = [];
-    groupStatements(
-        lines
-        .filter((x) => x.split("//")[0].length > 0)
-        .map((x) => parseStringToStatement(x))
-    ).forEach((stmt) => {
-        const ast = parseStatementToAst(stmt);
-        result.push(evalutateExpression(ast));
-    });
-    return result;
-}
-
 function evaluateInput(input: string, lineNumber: number) {
     if (input.indexOf("//<<<") > -1) {
         showDebugTable(lineNumber);
@@ -75,8 +58,8 @@ export function interpret(input: string): any {
     const bracketized = addBrackets(input);
     const flattenized = bracketized.replace(/(\r\n\t|\n|\r\t)/gm, " ");
     const abstractSyntaxTree = exec(flattenized);
-    log("AST = ");
-    log(abstractSyntaxTree);
+    // log("AST = ");
+    // log(abstractSyntaxTree);
     const result = evalutateExpression(abstractSyntaxTree);
     log(result);
     return result;

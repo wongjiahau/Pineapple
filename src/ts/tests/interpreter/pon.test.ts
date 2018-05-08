@@ -3,11 +3,13 @@ import { interpret } from "../../repl";
 
 describe("pineapple object notation", () => {
     it("singline", () => {
-        const input = "{ .age=12 .price=13}";
+        const input = "{ .age=12 .brother={ .name='john'}}";
         const result = interpret(input);
         expect(result).to.deep.eq({
             age: 12,
-            price: 13
+            brother: {
+                name: "john"
+            }
         });
     });
 

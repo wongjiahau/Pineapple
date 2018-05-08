@@ -50,13 +50,15 @@ myFruit.("sibling").("name") // Rambutan
 However, you may also declared it in one line using curly braces.
 
 So, you may also declare them in one line. 
+Note that the space before each membername is **necessary**.
 ```ts
 // pineapple
-let myFruit ={.name="Mango" .sibling={.name="Durian" .isTasty=false}}
+let myFruit ={ .name="Mango" .sibling={ .name="Durian" .isTasty=false}}
 
 // javascript
 myFruit ={name: "Mango", sibling: {name: "Durian", isTasty: false}}
 ```
+
 
 
 ## How to declare an empty object?
@@ -75,3 +77,4 @@ ponString   = "{.name='pineapple'.price=12.9.date='20180909'}"      // 46 charac
 // JSON5
 json5String = '{name:"pineapple",price:12.9,date:"20180909"}'       // 45 characters
 ```
+Note that, in serialize PON, the space before each membername is not needed.
