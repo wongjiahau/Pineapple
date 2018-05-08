@@ -91,7 +91,7 @@ const ElementNode = (expr, next) =>  ({
 "let "                          return 'LET'
 \s+"."[a-zA-Z]+[a-zA-Z0-9]*       return 'MEMBERNAME'                        
 \s+                             /* skip whitespace */
-("'"|"\"")([^\"\\]|[\\[n\"\']])*("'"|"\"")  return 'STRING'
+("'"|"\"")([^\"\\]|[\\[n\"\']])*?("'"|"\"")  return 'STRING'
 "true"                          return 'TRUE'
 "false"                         return 'FALSE'
 "null"                          return 'NULL'
@@ -157,8 +157,6 @@ expr
     | PI {$$ = Math.PI;}
     | assignment_expr
     | binding_expr
-    | '[' elements ']' {$$=ArrayNode($2)}
-    | '[' ']' {$$=ArrayNode(null)}
     | relational_expr
     | value
     | object_access
@@ -169,6 +167,12 @@ value
     | bool_value {$$=BooleanNode(yytext)}
     | STRING {$$=StringNode(yytext)}
     | object
+    | array
+    ;
+
+array
+    : '[' elements ']' {$$=ArrayNode($2)}
+    | '[' ']' {$$=ArrayNode(null)}
     ;
 
 bool_value
