@@ -57,7 +57,7 @@ function evaluateInput(input: string, lineNumber: number) {
 
 export function interpret(input: string): any {
     const bracketized = addBrackets(input);
-    const smoothifized = smoothify(input);
+    const smoothifized = smoothify(bracketized);
     const abstractSyntaxTree = exec(smoothifized);
     log("AST = ");
     log(abstractSyntaxTree);
