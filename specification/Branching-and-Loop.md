@@ -3,9 +3,9 @@ It will be like python style.
 
 ## If elif else
 ```python
-if he isSmart  and  he isNerdy
+if (he is _smart) and (he is _nerdy)
     print "He is a programmer."
-elif he isHot
+elif he is _hot
     print "OMG"
 else 
     print "..."
@@ -13,12 +13,8 @@ else
 
 ## If else as expression
 ```python
-var x = 5
-isMoreThan4 = true if x > 5 else false
-
-
-addMore = true
-x += 5 if addMore
+let x = 5
+leet isMoreThan4 = true if x > 5 else False
 ```
 
 ## Switch cases
@@ -41,10 +37,10 @@ You can have fall through statement.
 ```coffee
 fruit = "Pineapple"
 switch fruit
-    when it is "apple" 
-    when it is "banana"
+    when it == "apple" 
+    when it == "banana"
         # Don't eat
-    when it is "Pineapple"
+    when it == "Pineapple"
         # Eat it!
 ```
 
@@ -62,34 +58,24 @@ grade = switch score
 
 ## Loop
 ```python
-fruits = ['apple', 'banana', 'pineapple']
+let fruits = ['apple', 'banana', 'pineapple']
 
-foreach i in 0 to (fruits.length - 1)
-    print fruits[i]
+for i in 0 to (fruits.length - 1)
+    print fruits.(i)
 
 
-foreach fruit in fruits
+for fruit in fruits
     print fruit
 
-var i = 0
-while i < fruits length
-    -> print fruits[i]
-    i++
+let i <- 0
+while i < fruits.length
+    print fruits.(i)
+    i <- i + 1
 ```
 
 ### How to loop through keys of an object?
-By using the `keys-of` keyword.
+By using the `.keys` property.
 ```python
-foreach key in keys-of myObject
-    print myObject[key]
-```
-
-## Try catch
-```coffee
-try
-    doSomeCrazyThing
-catch error
-    print (error toString)
-finally
-    cleanUp
+for key in myObject.keys
+    print myObject.(key)
 ```
