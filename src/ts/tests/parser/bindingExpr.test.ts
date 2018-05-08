@@ -16,7 +16,7 @@ describe("assignment expression", () => {
                 value: 2
             }
         };
-        expect(parser.parse("x=2")).to.deep.eq(expected);
+        expect(parser.parse("let x=2")).to.deep.eq(expected);
     });
 
     it("typeed", () => {
@@ -32,7 +32,7 @@ describe("assignment expression", () => {
                 value: 2
             }
         };
-        expect(parser.parse("x:number=2")).to.deep.eq(expected);
+        expect(parser.parse("let x:number=2")).to.deep.eq(expected);
     });
 
 });

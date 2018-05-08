@@ -24,7 +24,7 @@ const StringNode = (value) => ({
 });
 
 const BooleanNode = (value) => ({
-    kind: "Number",
+    kind: "Boolean",
     value: eval(value)
 });
 
@@ -60,10 +60,10 @@ const ObjectNode = (member) => ({
 const ObjectMemberNode = (name, expr, next, dataType, type) => ({ 
     kind: "ObjectMember",
     name: name,
+    type: type,
+    dataType: dataType,
     expression: expr,
     next: next,
-    type: type,
-    dataType: dataType
 });
 
 const ArrayNode = (element) => ({
@@ -82,6 +82,7 @@ const ElementNode = (expr, next) =>  ({
 %lex
 %%
 
+"let "                          return 'LET'
 \s+                             /* skip whitespace */
 ("'"|"\"")([^\"\\]|[\\[n\"\']])*("'"|"\"")  return 'STRING'
 "true"                          return 'TRUE'
@@ -114,6 +115,7 @@ const ElementNode = (expr, next) =>  ({
 "]"                             return ']'
 "|"                             return '|'
 ","                             return ','
+"."                             return 'DOT'
 "PI"                            return 'PI'
 "E"                             return 'E'
 <<EOF>>                         return 'EOF'
@@ -132,6 +134,7 @@ const ElementNode = (expr, next) =>  ({
 %left BINOP2
 %left BINOP3
 %left UMINUS
+%left DOT
 
 %start expressions
 
@@ -173,13 +176,13 @@ elements
     ;
 
 assignment_expr
-    : VARNAME ASSIGNOP expr {$$=AssignmentNode(VariableNode($1),null,$3)}
-    | VARNAME ':' VARNAME ASSIGNOP expr {$$=AssignmentNode(VariableNode($1),$3,$5)}
+    : LET VARNAME ASSIGNOP expr {$$=AssignmentNode(VariableNode($2),null,$4)}
+    | LET VARNAME ':' VARNAME ASSIGNOP expr {$$=AssignmentNode(VariableNode($2),$4,$6)}
     ;
 
 binding_expr
-    : VARNAME BINDINGOP expr {$$=BindingNode(VariableNode($1),null,$3)}
-    | VARNAME ':' VARNAME BINDINGOP expr {$$=BindingNode(VariableNode($1),$3,$5)}
+    : LET VARNAME BINDINGOP expr {$$=BindingNode(VariableNode($2),null,$4)}
+    | LET VARNAME ':' VARNAME BINDINGOP expr {$$=BindingNode(VariableNode($2),$4,$6)}
     ;
 
 object 
@@ -193,6 +196,10 @@ member
     | MEMBERNAME BINDINGOP expr        {$$=ObjectMemberNode($1,$3,null,null,"binding")}
     | MEMBERNAME BINDINGOP expr member {$$=ObjectMemberNode($1,$3,$4,  null,"binding")}
     ;
+
+object_access
+    : VARNAME object_access 
+    ; 
 
 partial_expr
     : partial_assignment

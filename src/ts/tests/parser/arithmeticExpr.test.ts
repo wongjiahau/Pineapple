@@ -1,4 +1,5 @@
 import {expect} from "chai";
+import * as mocha from "mocha";
 import {BinaryOperatorNode, NumberNode, UnaryOperatorNode} from "../../interpreter";
 import {parser} from "./imported";
 
