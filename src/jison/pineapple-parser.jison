@@ -66,6 +66,12 @@ const ObjectMemberNode = (name, expr, next, dataType, type) => ({
     next: next,
 });
 
+const ObjectAccessNode = (name, expr) => ({
+    kind: "ObjectAccess",
+    name: name,
+    accessProperty: expr
+});
+
 const ArrayNode = (element) => ({
     kind: "ArrayNode",
     element: element
@@ -117,6 +123,7 @@ const ElementNode = (expr, next) =>  ({
 ","                             return ','
 "PI"                            return 'PI'
 "E"                             return 'E'
+"."                             return 'DOT'
 <<EOF>>                         return 'EOF'
 
 /lex
@@ -127,13 +134,12 @@ const ElementNode = (expr, next) =>  ({
 
 %right ASSIGNOP
 %right ':'
-%left ','
+%left ',' DOT
 %left LT GT LTE GTE EQ NEQ NOT
 %left '+' '-'
 %left BINOP2
 %left BINOP3
 %left UMINUS
-%left DOT
 
 %start expressions
 
@@ -155,6 +161,7 @@ expr
     | '[' ']' {$$=ArrayNode(null)}
     | relational_expr
     | value
+    | object_access
     ;
 
 value
@@ -197,7 +204,8 @@ member
     ;
 
 object_access
-    : VARNAME object_access 
+    : VARNAME DOT object_access {$$=ObjectAccessNode($1,$3)}
+    | VARNAME DOT VARNAME {$$=ObjectAccessNode($1,(ObjectAccessNode($3,null)))}
     ; 
 
 partial_expr

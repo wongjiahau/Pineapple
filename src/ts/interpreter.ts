@@ -66,8 +66,8 @@ export interface ObjectMemberNode {
 
 export interface ObjectAccessNode {
     kind: "ObjectAccess";
-    objectName: string;
-    accessProperty: ObjectAccessNode | string;
+    name: string;
+    accessProperty: ObjectAccessNode;
 }
 
 interface ArrayNode {
@@ -90,6 +90,7 @@ export type ExpressionNode
     | ObjectNode
     | BindingNode
     | ValueNode
+    | ObjectAccessNode
     ;
 
 type ValueNode
@@ -120,6 +121,8 @@ export function evalutateExpression(expression: ExpressionNode): any {
             return evalElementNode(expression.element);
         case "Object":
             return evalObjectMemberNode(expression.memberNode);
+        case "ObjectAccess":
+            return evalObjectAccessNode(expression);
     }
 }
 
@@ -201,4 +204,21 @@ function evalElementNode(node: ElementNode): any[] {
     let result = [evalutateExpression(node.expression)];
     result = result.concat(evalElementNode(node.next));
     return result;
+}
+
+function evalObjectAccessNode(node: ObjectAccessNode): any {
+    let variable = VARIABLES_TABLE[node.name];
+    if (!variable) {
+        variable = BINDINGS_TABLE[node.name];
+        if (!variable) { throw Error("No such variable: " + node.name); }
+    }
+    let value = variable.value[node.accessProperty.name];
+    let currentNode = node.accessProperty.accessProperty;
+    while (true) {
+        if (currentNode === null) {
+            return value;
+        }
+        value = value[currentNode.name];
+        currentNode = currentNode.accessProperty;
+    }
 }

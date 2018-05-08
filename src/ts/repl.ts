@@ -58,8 +58,8 @@ export function interpret(input: string): any {
     const bracketized = addBrackets(input);
     const flattenized = bracketized.replace(/(\r\n\t|\n|\r\t)/gm, " ");
     const abstractSyntaxTree = exec(flattenized);
-    // log("AST = ");
-    // log(abstractSyntaxTree);
+    log("AST = ");
+    log(abstractSyntaxTree);
     const result = evalutateExpression(abstractSyntaxTree);
     log(result);
     return result;
