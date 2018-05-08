@@ -14,6 +14,6 @@
 |`when`|Use for defining branch in a switch block
 |`it`|Use for referring the target variable in a switch block
 |`otherwise`|Use for defining last branch in switch block
-|`to`|Use for defining range of Number in a list
-|`type-of`|Use to get the type of a variable
+|`try`|Use for defining a try block
+|`catch`|Use for defining a catch block
 |`member-of`|Use to get the members of a type
