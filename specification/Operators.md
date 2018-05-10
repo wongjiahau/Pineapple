@@ -30,6 +30,6 @@
 |`:`|Type scoping|
 |`->`|Return|
 |`??`|Unimplemented|  
-|`|>`|Pipe forward|
+|`>>`|Pipe forward|
 |`..`|Slice operator(upper-bound inclusive)|
 |`..<`|Slice operator(upper-bound exclusive)|

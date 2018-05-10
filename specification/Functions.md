@@ -19,10 +19,8 @@ result = 2 plus 5
 ```java
 @function 
 sum xs:Number[] -> Number 
-    let result <- 0
-    for x in xs
-        result <- result + x
-    -> result
+    if xs == [] -> 0
+    -> xs.(0) + sum xs.(1..)
 
 result = sum [1,2,3,4]
 ```
@@ -30,7 +28,7 @@ result = sum [1,2,3,4]
 ## Suffix function
 ```ts
 @function
-howMany:int daysFromToday -> Date 
+howMany:Int daysFromToday -> Date 
     -> (today.days + howMany) as Date
 
 result = 5 daysFromToday
