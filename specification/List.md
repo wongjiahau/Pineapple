@@ -17,12 +17,12 @@ let manyFruits = [
 
 ## Indexing
 Indexing is done using the dot-bracket (`.()`) operator (same as OCaml).
-The first element will have the index of zero.
+The first element will have the index of **ONE**.
 ```python
 xs = [1,2,3,4]
 
 # Get first element
-mylist.(0)
+mylist.(1) 
 
 # Get last element
 xs.(-1) # 4
@@ -35,20 +35,20 @@ To slice a list, you can use the following operators:
 ```swift
 xs = [10, 20, 30, 40]
 
-// Get from element 1 to element 3
-xs.(1..3) // [20,30,40]
+// Get from first element to third element
+xs.(1..3) // [10, 20, 30]
 
-// Get from element 1 until 2nd last element
-xs.(1..-2) // [20,30]
+// Get from second element to 2nd last element
+xs.(2..-2) // [20,30]
 
-// Get from element 1 until before element 3
-xs.(1..<3) // [20,30]
+// Get from second element to before 3rd element
+xs.(1..<3) // [10,20]
 
-// Get until element 2 from start
-xs.(..2) // [10,20,30]
+// Get until third element from start
+xs.(..3) // [10,20,30]
 
-// Get from element 1 till end
-xs.(1..) // [20,30,40]
+// Get from second element till end
+xs.(2..) // [20,30,40]
 ```
 
 ## How to get range of Numbers?
