@@ -16,16 +16,19 @@ let manyFruits = [
 ```
 
 ## Indexing
-Indexing is done using the dot-bracket (`.()`) operator (same as OCaml).
+Indexing is done using the dot (`.`) or dot-bracket (`.()`) operator (same as OCaml).
 The first element will have the index of **ONE**.
-```python
-xs = [1,2,3,4]
+```ts
+xs = [11,22,33,44]
 
-# Get first element
-mylist.(1) 
+// Get the first element without bracket
+myList.1 // 11
 
-# Get last element
-xs.(-1) # 4
+// Get first element
+mylist.(1) // 11
+
+// Get last element
+xs.(-1) // 44
 ```
 
 ## Slicing
@@ -83,7 +86,7 @@ xs.(-1) <- 99 # No error
 Strings are actually list of characters, so you can apply list operation on `string` as well.
 ```python
 message = 'Pineapple'
-message.(4..-1) # 'apple'
+message.(5..-1) # 'apple'
 ```
 
 
@@ -112,4 +115,34 @@ myList <- myList ++ [99]
 print myList // [1,2,3,99]
 
 
+```
+
+## List of objects
+There are 2 ways to declare list of objects.  
+The first way is the usual way with brackets.
+```ts
+let fruits = [
+    {.name = "Pine" .price = 22},
+    {.name = "Apple" .price = 33},
+    {.name = "Durian" .price = 44}
+]
+```
+The other way (as below) would be more accessible.
+
+```ts
+// List of object
+let fruits = 
+    .0 = 
+        .name  = "Pine"
+        .price = 22
+    .1 = 
+        .name  = "Apple"
+        .price = 33
+    .2 = 
+        .name  = "Durian"
+        .price = 44
+```
+How to access `Pine`?
+```
+fruits.0.name
 ```
