@@ -70,15 +70,18 @@ So, that is how Pineapple allow **non-professionals to code professionaly**.
 ## Design goal
 Pineapple  a general purpose language.
 It is a language that focuses on (ranked by priority):
-- **Every feature must be easily explainable**
+- **Every feature can be explained easily**
     - Can be easily understand by new learners
-- **Flexibility is more important than purity**
-- **Expressiveness**
+- **Computer should understand the user, not the other way round**
     - Can easily declare construct that is readable
+- **Flexibility is more important than conceptual purity**
+- **Debuggability is more important than elegantness**
+- **Fail now is better than fail late**
+- **Side effects are not good**
+- **Every syntax should have one and only one purpose**
 - **Strong type safety**
+    - A chicken can never be treated as a duck
     - This is to enhance the function of Intellisense and also reduce a lot of runtime errors
-- **Referential transparency**
-    - This is to make sure most code written don't have side effects, thus the code will be easier to maintain and test
 - **Easy module import/export**
     - This is to encourage the user to split their code into many tiny files, thus improving modularity
 - **First class unit test**
