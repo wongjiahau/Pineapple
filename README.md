@@ -79,6 +79,7 @@ It is a language that focuses on (ranked by priority):
 - **Fail now is better than fail late**
 - **Side effects are not good**
 - **Every syntax should have one and only one purpose**
+- **What you see is what you get (WYSIYG)**
 - **Strong type safety**
     - A chicken can never be treated as a duck
     - This is to enhance the function of Intellisense and also reduce a lot of runtime errors
