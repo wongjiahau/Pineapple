@@ -6,23 +6,25 @@ let message = 'hello'
 ```
 
 ## String interpolation
-You can interpolate expression into String using curly brackets `{}`.
-```cs
+You can interpolate expression into String using curly brackets `${}` and backtick quote (like Javascript).
+
+The reason why backtick is chosen is because sometimes you need to put single-quote or double-quote inside the interpolated string.
+```js
 let chosenFruit = "durian"
-let message1 = "I like {chosenFruit}" // I like durian 
-let message2 = 'The value of pi is {22/7}' 
+let message1 = `I like ${chosenFruit}` // I like durian 
+let message2 = `The value of pi is ${22/7}` 
 // The value of pi is 3.142
 ```
 
 ## Multiline String
-No extra syntax, just like PHP.
-```php
+It's the same as interpolated string.
+```js
 let html = 
-"
+`
     <div>
         <span>I like pineapple!</span>
     </div>
-"
+`
 ```
 
 ## Comments
