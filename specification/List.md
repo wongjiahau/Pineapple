@@ -132,17 +132,17 @@ The other way (as below) would be more accessible.
 ```ts
 // List of object
 let fruits = 
-    .0 = 
+    .1 = 
         .name  = "Pine"
         .price = 22
-    .1 = 
+    .2 = 
         .name  = "Apple"
         .price = 33
-    .2 = 
+    .3 = 
         .name  = "Durian"
         .price = 44
 ```
-How to access `Pine`?
+How to access `"Pine"`?
 ```
-fruits.0.name
+fruits.1.name
 ```

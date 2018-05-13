@@ -80,73 +80,44 @@ print range2 // [0,2,4,6]
 ```
 
 ## Referential transparency
-By default, all function in Pineapple is clean, which means it won't modify the input and no I/O operation is allow. 
+Every function in `Pineapple`: 
+- is not allowed to modify their input.   
+- must return a value
+- cannot perform I/O operation unless annotated
 
-Therefore, all function parameters are **passed by value**.   
-
-However, if a function need to use I/O function or modify the parameter, it will need to be declared as *dirty*.  
-
-When a function is declared as **dirty**, its parameter will be **passed by reference** no matter how primitive is the data type.
+This is because such function will enhance debuggability and chainability.
 
 
-## How to declare a dirty function?
-By using the `dirtyFunction` annotation.
+
+## How to declare a function that will perform IO operation?
+By using the `iofunction` annotation.
 ```java
-@dirtyFunction
-send (query: String) ToDatabase -> Void
+@iofunction
+send (query:String) ToDatabase -> Void
     // Send query to database
     -> ??
 
 ```
-
-## How to limit a dirtyFunction?
-Sometimes we might pass an object to a function, but we only want it to manipulate some of the properties.  
-To achieve this, you can use the `changing` operator.  
-For example:
-```java
-@type
-Fruit:
-    .name  : String
-    .price : Number
-
-@dirtyFunction
-modifyPrice (fruit: Fruit) -> Void
-    changing fruit.name
-    fruit.name <- "new fruit"
-    fruit.price <- 123  // Error: Cannot modify `.price`
-```
-
-
-If a function is not annotated with `dirtyFunction`, it cannot contain statement that call another `dirtyFunction`.  
+Moreover, if your function is calling an `iofunction`, it needs to be annotated as `iofunction` too.
 
 For example:
 ```java
 @function 
 sayHello -> Void
-    print "hello" // Error, cannot call a dirty function inside a normal function
+    print "hello" // Error, cannot call an iofunction inside a normal function
+
+@iofunction 
+sayBye -> Void
+    print "bye" // No error
 ```
 
 The dirty keyword annotation is purposely made to be hard to type because programmer is discouraged from using `dirtyFunction`. Consequently, the code base will be much more easier to test and maintain due to the cleanliness.
 
 ## How to pass data by reference?
-Same. By using the `dirtyFunction` annotation. 
-
-For example:
-```java
-@dirtyFunction
-add (value: Number) to (target: Number) -> Void
-    target <- target + value
-
-let y = 7
-add 99 to y // Error: `y` is already binded to value `7`
-
-let x <- 5
-add 10 to x // No error
-```
+You cannot pass data by reference.
 
 ## Void functions
 Function that does not return anything must be declared with `-> Void`
-
 ```java
 @dirtyFunction 
 sayHello -> Void
@@ -157,7 +128,7 @@ sayHello -> Void
 The type of a function will be like the following.
 ```java
 @function 
-(x:Number) square -> x * x
+(x:Number) square -> Number -> x * x
 
 _square.type // Number -> Number
 
@@ -165,17 +136,6 @@ _square.type // Number -> Number
 (x:Number) add (y:Number) -> x + y
 
 _add_.type // (Number,Number) -> Number
-```
-
-
-## How to declare a function that will take in function?
-It will looks similar like Typescript.  
-For example, let's look at how to define a simple `map` function in Pineapple.
-```java
-@function
-map (func: Number -> Number -> Number) to (xys: Number[][]) -> Number[]
-    if xys == [] -> []
-    -> [xys.(0)] ++ (map func to xys.(0 till -1))
 ```
 
 ## How to pass a function to a function?
@@ -192,8 +152,6 @@ let result = map _add_ to [[1,2], [3,4]]
 print result // [3,7]
 
 ```
-
-
 ## Anonymous function
 ### Assigning a function to a variable
 The variable name for function must contain 1 underscore if it contains 1 argument;   
@@ -221,8 +179,9 @@ let _add_ = (x:Number, y:Number) -> x + y
 ```java
 @function
 invoke (func_:Number->Number) with (param:Number) -> Number
-    func param
+    func_ param
 ```
+
 ### Double parameter 
 ```java
 @function
