@@ -28,20 +28,21 @@ let html =
 ```
 
 ## Comments
-Single line comment is prefix by `#` or `//`
-```php
-# This is a comment
-let x = 3 # You can place it at the back
-// This  is also a comment
+Single line comment is prefix by `//`.
+```js
+// This  is a comment
+
+let x = 3 // You can place it at the back
 ```
 
-Multiline comment is surrounded by `###`.
-```coffee
-###
+Multiline comment is using `/**/`.
+```js
+let x = 5
+/*
 This is a 
 multiline 
 comment
-###
+*/
 ```
 
 ## Regex
