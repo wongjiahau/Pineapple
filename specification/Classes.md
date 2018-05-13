@@ -5,9 +5,9 @@ There no classes in Pineapple! However you can simulate that using suffix functi
 ```java
 // Definition of BinaryTree
 @type 
-BinaryTree:
-    .left  : Node | null
-    .right : Node | null
+BinaryTree<T>:
+    .left  : BinaryTree<T> | null
+    .right : BinaryTree<T> | null
     .value : T
     where T: Comparable
 
@@ -22,7 +22,7 @@ newTree (value: T) -> tree
 // When a name is binded with a value, it's value cannot be changed anymore
     
 @function
-insert (element: T) to (tree: BinaryTree) -> BinaryTree
+insert (element: T) to (tree: BinaryTree<T>) -> BinaryTree
     if tree.left == null
         tree.left <- newTree element
     elif element > tree.left
@@ -36,15 +36,15 @@ insert (element: T) to (tree: BinaryTree) -> BinaryTree
 
 @function
 (tree: BinaryTree) hasNoChild -> Boolean
-    -> tree.left == null and tree.right == null
+    -> (tree.left == null) and (tree.right == null)
 
 @function
 (tree: BinaryTree) contains (element: T) -> Boolean
-    -> tree.value == element or
-       tree.left  == element or
-       tree.right == element or
-       tree.left  contains element or
-       tree.right contains element
+    -> (tree.value == element) or
+       (tree.left  == element) or
+       (tree.right == element) or
+       (tree.left  contains element) or
+       (tree.right contains element)
 
 ```
 

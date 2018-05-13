@@ -11,7 +11,7 @@ x:Number plus y:Number -> Number
     -> x + y
 
 // Here's how you call the `plus` function
-result = 2 plus 5
+let result = 2 plus 5
 
 ```
 
@@ -20,9 +20,9 @@ result = 2 plus 5
 @function 
 sum xs:Number[] -> Number 
     if xs == [] -> 0
-    -> xs.(0) + sum xs.(1..)
+    -> xs.1 + sum xs.(2..)
 
-result = sum [1,2,3,4]
+let result = sum [1,2,3,4]
 ```
 
 ## Suffix function
@@ -31,7 +31,7 @@ result = sum [1,2,3,4]
 howMany:Int daysFromToday -> Date 
     -> (today.days + howMany) as Date
 
-result = 5 daysFromToday
+let result = 5 daysFromToday
 ```
 
 
@@ -221,9 +221,9 @@ When we declare a Boolean function, don't start it with the *is* word.
 Why? Because we can declare an `is` and `isnt` function.
 ```java
 @function 
-(item:T) is (func_: T -> Boolean) -> func item
+(item:T) is (func_: T -> Boolean) -> func_ item
 @function
-(item:T) isnt (func_: T -> Boolean) -> not (func item)
+(item:T) isnt (func_: T -> Boolean) -> not (func_ item)
 ```
 Then we can use it like this:
 ```java

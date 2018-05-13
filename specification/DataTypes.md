@@ -78,7 +78,7 @@ Generics can be done using the `T` keyword.
 @function
 quicksort xs:T[] -> T[] where T:Comparable
     if xs == [] -> []
-    let pivot = xs.(0)
+    let pivot = xs.1
     let left  = for x in xs take x if x < pivot
     let right = for x in xs take x if x > pivot
     -> (quicksort left) ++ [pivot] ++ (quicksort right)
@@ -109,9 +109,9 @@ People:
 @function
 select (M: member of T) from (list: T[]) -> type of M
     where T: People
-    var result: T[] = []
-    foreach item in list
-        add item[M] to result
+    let result: T[] = []
+    for item in list
+        result <- result ++ [item]
     -> result
 
 let peopleList :People[] = [
