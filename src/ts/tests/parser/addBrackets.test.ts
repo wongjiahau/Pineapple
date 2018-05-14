@@ -59,4 +59,23 @@ else{
         const result = addBrackets(input);
         expect(result).to.eq(expected);
     });
+
+    it.skip("should throw error if the code is indented without parent", () => {
+        // This test case should be for another function
+        const input =
+`
+        let input = "Hello";
+`;
+        expect(() => addBrackets(input)).to.throw();
+    });
+
+    it.skip("should throw error for over-indented statement", () => {
+        // This test case should be for another function
+        const input =
+`
+let myFruit =
+            .name = "Pineapple"
+`;
+        expect(() => addBrackets(input)).to.throw();
+    });
 });
