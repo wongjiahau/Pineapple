@@ -89,9 +89,19 @@ interface ElementNode {
     next: ElementNode;
 }
 
-export type ExpressionNode
+export interface CompoundStatement {
+    kind: "CompoundStatement";
+    current: Statement;
+    next: CompoundStatement;
+}
+
+export type Statement
     = AssignmentNode
-    | BinaryOperatorNode
+    | ExpressionNode
+    ;
+
+export type ExpressionNode
+    = BinaryOperatorNode
     | UnaryOperatorNode
     | VariableNode
     | ArrayNode

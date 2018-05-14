@@ -1,5 +1,6 @@
 /* description: Parses and executes mathematical expressions. */
 %{
+
 const BinaryOperatorNode = (left, operator, right) => ({
     kind: "BinaryOperator",
     left: left,
@@ -90,6 +91,14 @@ const ArraySlicingNode = (expr, start, end, excludeUpperBound=false) => ({
     end: end,
     excludeUpperBound: excludeUpperBound
 });
+
+
+const CompoundStatement = (statement, nextStatment) => ({
+    kind: "CompoundStatement",
+    current: statement,
+    next: nextStatment,
+});
+
 %}
 
 /* lexical grammar */
@@ -135,6 +144,7 @@ const ArraySlicingNode = (expr, start, end, excludeUpperBound=false) => ({
 "..<"                           return '..<'
 ".."                            return '..'
 "."                             return 'DOT'
+";"                             return ';'
 <<EOF>>                         return 'EOF'
 
 /lex
@@ -152,20 +162,30 @@ const ArraySlicingNode = (expr, start, end, excludeUpperBound=false) => ({
 %left BINOP3
 %left UMINUS
 
-%start expressions
+%start compound_statement
 
 %% /* language grammar */
 
-expressions
-    : assignment_expr EOF  { return $1; }
-    | binding_expr EOF     { return $1; }
-    | expr EOF         { return $1; }
+compound_statement
+    : '{' statement_list '}' EOF { return $2 }
+    | statement_list EOF { return $1 }
     ;
 
-expr
-    : arithmetic_expr
-    | '(' expr ')' {$$ = $2;}
-    | relational_expr
+statement_list
+    : statement {$$=CompoundStatement($1, null)}
+    | statement ';' statement_list {$$=CompoundStatement($1,$3)}
+    ;
+
+statement
+    : assignment_statement  
+    | binding_statement    
+    | expression
+    ;
+
+expression
+    : arithmetic_expression
+    | '(' expression ')' {$$ = $2;}
+    | relational_expression
     | value
     | object_access
     | array_slicing
@@ -190,18 +210,19 @@ bool_value
     ;
 
 elements
-    : expr {$$=ElementNode($1, null)}
-    | expr ',' elements {$$=ElementNode($1, $3)}
+    : expression {$$=ElementNode($1, null)}
+    | expression ',' elements {$$=ElementNode($1, $3)}
     ;
 
-assignment_expr
-    : LET VARNAME ASSIGNOP expr {$$=AssignmentNode(VariableNode($2),null,$4)}
-    | LET VARNAME ':' VARNAME ASSIGNOP expr {$$=AssignmentNode(VariableNode($2),$4,$6)}
+assignment_statement
+    : LET VARNAME ASSIGNOP expression {$$=AssignmentNode(VariableNode($2),null,$4)}
+    | LET VARNAME ':' VARNAME ASSIGNOP expression {$$=AssignmentNode(VariableNode($2),$4,$6)}
+    | VARNAME ASSIGNOP expression {$$=AssignmentNode(VariableNode($1), null, $3)}
     ;
 
-binding_expr
-    : LET VARNAME BINDINGOP expr {$$=BindingNode(VariableNode($2),null,$4)}
-    | LET VARNAME ':' VARNAME BINDINGOP expr {$$=BindingNode(VariableNode($2),$4,$6)}
+binding_statement
+    : LET VARNAME BINDINGOP expression {$$=BindingNode(VariableNode($2),null,$4)}
+    | LET VARNAME ':' VARNAME BINDINGOP expression {$$=BindingNode(VariableNode($2),$4,$6)}
     ;
 
 object 
@@ -210,10 +231,10 @@ object
     ;
 
 member
-    : MEMBERNAME ASSIGNOP expr         {$$=ObjectMemberNode($1,$3,null,null,"assignment")}
-    | MEMBERNAME ASSIGNOP expr member  {$$=ObjectMemberNode($1,$3,$4,  null,"assignment")}
-    | MEMBERNAME BINDINGOP expr        {$$=ObjectMemberNode($1,$3,null,null,"binding")}
-    | MEMBERNAME BINDINGOP expr member {$$=ObjectMemberNode($1,$3,$4,  null,"binding")}
+    : MEMBERNAME ASSIGNOP expression         {$$=ObjectMemberNode($1,$3,null,null,"assignment")}
+    | MEMBERNAME ASSIGNOP expression member  {$$=ObjectMemberNode($1,$3,$4,  null,"assignment")}
+    | MEMBERNAME BINDINGOP expression        {$$=ObjectMemberNode($1,$3,null,null,"binding")}
+    | MEMBERNAME BINDINGOP expression member {$$=ObjectMemberNode($1,$3,$4,  null,"binding")}
     ;
 
 object_access
@@ -221,19 +242,19 @@ object_access
     | VARNAME DOT VARNAME {$$=ObjectAccessNode($1,(ObjectAccessNode($3,null)))}
     ; 
 
-relational_expr
-    : arithmetic_expr relational_operator arithmetic_expr {$$=BinaryOperatorNode($1,$2,$3)}
+relational_expression
+    : arithmetic_expression relational_operator arithmetic_expression {$$=BinaryOperatorNode($1,$2,$3)}
     ;
 
 relational_operator : GT | LT | GTE | LTE | EQ | NEQ ;
 
-arithmetic_expr
-    : '-' arithmetic_expr %prec UMINUS {$$=UnaryOperatorNode($1,$2)}
-    | '+' arithmetic_expr %prec UMINUS {$$=UnaryOperatorNode($1,$2)}
-    | arithmetic_expr '+' arithmetic_expr    {$$=BinaryOperatorNode($1,$2,$3)}
-    | arithmetic_expr '-' arithmetic_expr    {$$=BinaryOperatorNode($1,$2,$3)}
-    | arithmetic_expr BINOP2 arithmetic_expr {$$=BinaryOperatorNode($1,$2,$3)}
-    | arithmetic_expr BINOP3 arithmetic_expr {$$=BinaryOperatorNode($1,$2,$3)}
+arithmetic_expression
+    : '-' arithmetic_expression %prec UMINUS {$$=UnaryOperatorNode($1,$2)}
+    | '+' arithmetic_expression %prec UMINUS {$$=UnaryOperatorNode($1,$2)}
+    | arithmetic_expression '+' arithmetic_expression    {$$=BinaryOperatorNode($1,$2,$3)}
+    | arithmetic_expression '-' arithmetic_expression    {$$=BinaryOperatorNode($1,$2,$3)}
+    | arithmetic_expression BINOP2 arithmetic_expression {$$=BinaryOperatorNode($1,$2,$3)}
+    | arithmetic_expression BINOP3 arithmetic_expression {$$=BinaryOperatorNode($1,$2,$3)}
     | NUMBER {$$=NumberNode(yytext)}
     | maybe_arithmetic_value
     ;
@@ -243,8 +264,8 @@ maybe_arithmetic_value
     ;
 
 array_slicing
-    : expr '.(..' expr ')' {$$=ArraySlicingNode($1,NumberNode(0),$3)}
-    | expr '.(' expr '..)' {$$=ArraySlicingNode($1,$3,NumberNode(-1))}
-    | expr '.(' expr '..' expr ')' {$$=ArraySlicingNode($1,$3,$5)}
-    | expr '.(' expr '..<' expr ')' {$$=ArraySlicingNode($1,$3,$5,true)}
+    : expression '.(..' expression ')' {$$=ArraySlicingNode($1,NumberNode(0),$3)}
+    | expression '.(' expression '..)' {$$=ArraySlicingNode($1,$3,NumberNode(-1))}
+    | expression '.(' expression '..' expression ')' {$$=ArraySlicingNode($1,$3,$5)}
+    | expression '.(' expression '..<' expression ')' {$$=ArraySlicingNode($1,$3,$5,true)}
     ;
