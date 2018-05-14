@@ -12,6 +12,7 @@
     "console.table": "^0.10.0"
   },
   "devDependencies": {
+    "@types/mocha": "^5.2.0",
     "chai": "^4.1.2"
   }
 }

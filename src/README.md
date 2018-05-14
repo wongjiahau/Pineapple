@@ -23,7 +23,12 @@ tsc --watch
 ```
 
 ## 4. Run the REPL to test the parser
+Make sure you installed `nodemon`.
+```
+npm i -g nodemon
+```
+Then, 
 ```
 cd src
-node './js/repl.js'
+nodemon './js/repl.js'
 ```

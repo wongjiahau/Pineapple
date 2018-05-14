@@ -157,10 +157,9 @@ const ArraySlicingNode = (expr, start, end, excludeUpperBound=false) => ({
 %% /* language grammar */
 
 expressions
-    : expr EOF         { return $1; }
-    | partial_expr EOF { return $1; }
-    | assignment_expr  { return $1; }
-    | binding_expr     { return $1; }
+    : assignment_expr EOF  { return $1; }
+    | binding_expr EOF     { return $1; }
+    | expr EOF         { return $1; }
     ;
 
 expr
@@ -221,24 +220,6 @@ object_access
     : VARNAME DOT object_access {$$=ObjectAccessNode($1,$3)}
     | VARNAME DOT VARNAME {$$=ObjectAccessNode($1,(ObjectAccessNode($3,null)))}
     ; 
-
-partial_expr
-    : partial_assignment
-    | partial_binding
-    | member
-    ;
-
-partial_assignment
-    : VARNAME ASSIGNOP {$$=AssignmentNode(VariableNode($1),null,null)}
-    | VARNAME ':' VARNAME ASSIGNOP {$$=AssignmentNode(VariableNode($1),$3,null)}
-    | MEMBERNAME ASSIGNOP {$$=ObjectMemberNode($1, null, null)}
-    ;
-
-partial_binding
-    : VARNAME BINDINGOP {$$=BindingNode(VariableNode($1),null,null)}
-    | VARNAME ':' VARNAME BINDINGOP {$$=BindingNode(VariableNode($1),$3,null)}
-    | MEMBERNAME BINDINGOP {$$=ObjectMemberNode($1, null, null)}
-    ;
 
 relational_expr
     : arithmetic_expr relational_operator arithmetic_expr {$$=BinaryOperatorNode($1,$2,$3)}
