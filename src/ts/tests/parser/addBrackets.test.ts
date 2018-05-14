@@ -12,14 +12,14 @@ myFruit =
     .test = 1 + 1 * 0
 `;
 
-        const expected = `
+        const expected = `{
 myFruit ={
     .name = "Durian"
     .price = 100
     .sibiling ={
         .name = "Rambutan"}
     .test = 1 + 1 * 0}
-`;
+}`;
         const result = addBrackets(input);
         expect(result).to.eq(expected);
     });
@@ -32,10 +32,10 @@ myFruit ={
 x = 5`;
 
         const expected =
-`myFruit ={
+`{myFruit ={
     .name = "Pine"}
 
-x = 5`;
+x = 5}`;
         const result = addBrackets(input);
         expect(result).to.eq(expected);
     });
@@ -50,12 +50,12 @@ else
     name = "Yo"`;
 
         const expected =
-`if condition{
+`{if condition{
     name = "Pine"}
 elif condition{
     name = "Hey"}
 else{
-    name = "Yo"}`;
+    name = "Yo"}}`;
         const result = addBrackets(input);
         expect(result).to.eq(expected);
     });

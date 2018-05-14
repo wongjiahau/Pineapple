@@ -32,10 +32,4 @@ describe("statements", () => {
 
     });
 
-    it("without enclosing brackets", () => {
-        const input1 = "{let x=5;let y=6}";
-        const input2 = "let x=5;let y=6";
-        expect(parser.parse(input1)).to.deep.eq(parser.parse(input2));
-    });
-
 });

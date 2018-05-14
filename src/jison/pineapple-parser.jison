@@ -106,6 +106,9 @@ const CompoundStatement = (statement, nextStatment) => ({
 %%
 
 "let "                          return 'LET'
+"if "                           return 'IF'
+"elif "                         return 'ELIF'
+"else "                         return 'ELSE'
 \s+"."[a-zA-Z]+[a-zA-Z0-9]*       return 'MEMBERNAME'                        
 \s+                             /* skip whitespace */
 ("'"|"\"")([^\"\\]|[\\[n\"\']])*?("'"|"\"")  return 'STRING'
@@ -168,7 +171,6 @@ const CompoundStatement = (statement, nextStatment) => ({
 
 compound_statement
     : '{' statement_list '}' EOF { return $2 }
-    | statement_list EOF { return $1 }
     ;
 
 statement_list
@@ -179,7 +181,12 @@ statement_list
 statement
     : assignment_statement  
     | binding_statement    
+    | selection_statement
     | expression
+    ;
+
+selection_statement
+    : IF expression compound_statement 
     ;
 
 expression

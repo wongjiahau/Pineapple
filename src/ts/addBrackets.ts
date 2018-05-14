@@ -6,7 +6,7 @@ export function addBrackets(input: string): string {
             if (numberOfClosingRequired > 0) {
                 lines[i] += "}";
             }
-            return lines.join("\n");
+            return "{" + lines.join("\n") + "}";
         }
         const currentIndentationLevel = indentationLevel(lines[i]);
         const nextIndentationLevel = indentationLevel(lines[i + 1]);
@@ -18,7 +18,7 @@ export function addBrackets(input: string): string {
             numberOfClosingRequired--;
         }
     }
-    return lines.join("\n");
+    return "{" + lines.join("\n") + "}";
 }
 
 function indentationLevel(line: string): number {
