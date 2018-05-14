@@ -15,7 +15,7 @@ describe.skip("object member expresion", () => {
             type: "assignment",
             dataType: null
         };
-        expect(parser.parse(" .name<-5")).to.deep.eq(expected);
+        expect(parser.parse(" .name<-5").current).to.deep.eq(expected);
     });
 
     it("typeless binding", () => {

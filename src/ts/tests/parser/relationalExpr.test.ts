@@ -16,7 +16,7 @@ describe("relational expression", () => {
                 value: 2
             }
         };
-        expect(parser.parse("1>2")).to.deep.eq(expected);
+        expect(parser.parse("1>2").current).to.deep.eq(expected);
     });
 
     it("greater than or equals", () => {
@@ -32,7 +32,7 @@ describe("relational expression", () => {
                 value: 2
             }
         };
-        expect(parser.parse("1>=2")).to.deep.eq(expected);
+        expect(parser.parse("1>=2").current).to.deep.eq(expected);
     });
 
     it("less than", () => {
@@ -48,7 +48,7 @@ describe("relational expression", () => {
                 value: 2
             }
         };
-        expect(parser.parse("1<2")).to.deep.eq(expected);
+        expect(parser.parse("1<2").current).to.deep.eq(expected);
     });
 
     it("less than or equals", () => {
@@ -64,7 +64,7 @@ describe("relational expression", () => {
                 value: 2
             }
         };
-        expect(parser.parse("1<=2")).to.deep.eq(expected);
+        expect(parser.parse("1<=2").current).to.deep.eq(expected);
     });
 
     it("equal", () => {
@@ -80,7 +80,7 @@ describe("relational expression", () => {
                 value: 2
             }
         };
-        expect(parser.parse("1==2")).to.deep.eq(expected);
+        expect(parser.parse("1==2").current).to.deep.eq(expected);
     });
 
     it("not equal", () => {
@@ -96,7 +96,7 @@ describe("relational expression", () => {
                 value: 2
             }
         };
-        expect(parser.parse("1!=2")).to.deep.eq(expected);
+        expect(parser.parse("1!=2").current).to.deep.eq(expected);
     });
 
 });

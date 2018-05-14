@@ -6,11 +6,11 @@ import {parser} from "./imported";
 describe("arithmetic expressions", () => {
     it("number", () => {
         const expected: NumberNode = { kind: "Number", value: 123.999 };
-        expect(parser.parse("123.999")).to.deep.eq(expected);
+        expect(parser.parse("123.999").current).to.deep.eq(expected);
     });
 
     it("plus", () => {
-        const result = parser.parse("1+1");
+        const result = parser.parse("1+1").current;
         const expected: BinaryOperatorNode = {
             kind: "BinaryOperator",
             left: {
@@ -30,7 +30,7 @@ describe("arithmetic expressions", () => {
     });
 
     it("minus", () => {
-        const result = parser.parse("1-1");
+        const result = parser.parse("1-1").current;
         const expected: BinaryOperatorNode = {
             kind: "BinaryOperator",
             left: {
@@ -50,7 +50,7 @@ describe("arithmetic expressions", () => {
     });
 
     it("multiply", () => {
-        const result = parser.parse("1*1");
+        const result = parser.parse("1*1").current;
         const expected: BinaryOperatorNode = {
             kind: "BinaryOperator",
             left: {
@@ -70,7 +70,7 @@ describe("arithmetic expressions", () => {
     });
 
     it("divide", () => {
-        const result = parser.parse("1/1");
+        const result = parser.parse("1/1").current;
         const expected: BinaryOperatorNode = {
             kind: "BinaryOperator",
             left: {
@@ -90,7 +90,7 @@ describe("arithmetic expressions", () => {
     });
 
     it("modulus", () => {
-        const result = parser.parse("1%1");
+        const result = parser.parse("1%1").current;
         const expected: BinaryOperatorNode = {
             kind: "BinaryOperator",
             left: {
@@ -118,7 +118,7 @@ describe("arithmetic expressions", () => {
                 value: 1
             }
         };
-        expect(parser.parse("+1")).deep.eq(expected);
+        expect(parser.parse("+1").current).deep.eq(expected);
     });
 
     it("unary minus", () => {
@@ -130,7 +130,7 @@ describe("arithmetic expressions", () => {
                 value: 1
             }
         };
-        expect(parser.parse("-1")).deep.eq(expected);
+        expect(parser.parse("-1").current).deep.eq(expected);
     });
 
 });
