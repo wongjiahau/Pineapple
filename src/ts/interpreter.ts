@@ -119,31 +119,37 @@ type ValueNode
     | NullNode
     ;
 
-export function evalutateExpression(expression: ExpressionNode): any {
-    switch (expression.kind) {
+export function evalutateExpression(statement: CompoundStatement | Statement): any {
+    if (statement.kind === "CompoundStatement") {
+        if (statement.next !== null) {
+            evalutateExpression(statement.next);
+        }
+        return evalutateExpression(statement.current);
+    }
+    switch (statement.kind) {
         case "Number":
         case "Boolean":
         case "Null":
         case "String":
-            return expression.value;
+            return statement.value;
         case "UnaryOperator":
-            return evalUnaryOperatorNode(expression);
+            return evalUnaryOperatorNode(statement);
         case "BinaryOperator":
-            return evalBinaryOperatorNode(expression);
+            return evalBinaryOperatorNode(statement);
         case "Assignment":
-            return evalAssignmentNode(expression);
+            return evalAssignmentNode(statement);
         case "Binding":
-            return evalBindingNode(expression);
+            return evalBindingNode(statement);
         case "VariableName":
-            return evalVariableNode(expression);
+            return evalVariableNode(statement);
         case "ArrayNode":
-            return evalElementNode(expression.element);
+            return evalElementNode(statement.element);
         case "Object":
-            return evalObjectMemberNode(expression.memberNode);
+            return evalObjectMemberNode(statement.memberNode);
         case "ObjectAccess":
-            return evalObjectAccessNode(expression);
+            return evalObjectAccessNode(statement);
         case "ArraySlicing":
-            return evalArraySlicingNode(expression);
+            return evalArraySlicingNode(statement);
     }
 }
 
