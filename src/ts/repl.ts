@@ -2,6 +2,7 @@ const parser = require("../jison/pineapple-parser.js");
 import { readFileSync } from "fs";
 import * as readline from "readline";
 import { addBrackets } from "./addBrackets";
+import { addSemicolon } from "./addSemicolon";
 import { evalutateExpression, ExpressionNode, VARIABLES_TABLE } from "./interpreter";
 import { smoothify } from "./smoothify";
 
@@ -55,10 +56,15 @@ function evaluateInput(input: string, lineNumber: number) {
     interpret(input);
 }
 
-export function interpret(input: string): any {
-    const bracketized = addBrackets(input);
+export function preprocess(input: string): string {
+    const addedSemicolon = addSemicolon(input);
+    const bracketized = addBrackets(addedSemicolon);
     const smoothifized = smoothify(bracketized);
-    const abstractSyntaxTree = exec(smoothifized);
+    return smoothifized;
+}
+
+export function interpret(input: string): any {
+    const abstractSyntaxTree = exec(preprocess(input));
     log("AST = ");
     log(abstractSyntaxTree);
     const result = evalutateExpression(abstractSyntaxTree);

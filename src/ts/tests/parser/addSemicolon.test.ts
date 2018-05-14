@@ -9,16 +9,15 @@ let fruit =
     .name = "Pine"
         .sibiling =
             .name = "Durian"
+
 let x = 5
 `;
         const expected =
-`
-;let fruit =
+`let fruit =
     .name = "Pine"
         .sibiling =
             .name = "Durian"
-;let x = 5
-`;
+;let x = 5`;
         expect(addSemicolon(input)).to.eq(expected);
 
     });
