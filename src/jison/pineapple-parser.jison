@@ -107,6 +107,19 @@ const IfStatement = (condition, body, elsePart) => ({
     else: elsePart
 });
 
+
+const ElifStatement = (condition, body, elsePart) => ({
+    kind: "Elif",
+    condition: condition,
+    body: body,
+    else: elsePart
+});
+
+const ElseStatement = (body) => ({
+    kind: "Else",
+    body: body
+});
+
 %}
 
 /* lexical grammar */
@@ -116,7 +129,7 @@ const IfStatement = (condition, body, elsePart) => ({
 "let "                          return 'LET'
 "if "                           return 'IF'
 "elif "                         return 'ELIF'
-"else "                         return 'ELSE'
+"else"                          return 'ELSE'
 \s+"."[a-zA-Z]+[a-zA-Z0-9]*       return 'MEMBERNAME'                        
 \s+                             /* skip whitespace */
 ("'"|"\"")([^\"\\]|[\\[n\"\']])*?("'"|"\"")  return 'STRING'
@@ -183,6 +196,7 @@ entry_point
 
 statement_list
     : statement ';' statement_list {$$=CompoundStatement($1,$3)}
+    | statement ';' {$$=CompoundStatement($1, null)}
     | statement {$$=CompoundStatement($1, null)}
     ;
 
@@ -199,13 +213,13 @@ compound_statement
     ;
 
 if_statement
-    : IF expression compound_statement elif_statement
+    : IF expression compound_statement elif_statement {$$=IfStatement($2,$3,$4)}
     | IF expression compound_statement {$$=IfStatement($2,$3,null)}
     ;
 
 elif_statement
-    : ELIF expression compound_statement elif_statement
-    | ELSE compound_statement
+    : ELIF expression compound_statement elif_statement {$$=ElifStatement($2,$3,$4)}
+    | ELSE compound_statement {$$=ElseStatement($2)}
     ;
 
 expression

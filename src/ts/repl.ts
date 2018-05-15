@@ -23,8 +23,8 @@ function log(message: object | string) {
     console.log(JSON.stringify(message, null, 2));
 }
 
-log("Welcome to Pineapple Interactive Shell!");
-log("Type ? to list available commands.");
+// log("Welcome to Pineapple Interactive Shell!");
+// log("Type ? to list available commands.");
 
 const prompt = () => {
     rl.question("pine>", (response: string) => {
@@ -63,12 +63,14 @@ export function preprocess(input: string): string {
     return smoothifized;
 }
 
-export function interpret(input: string): any {
+export function interpret(input: string, printOutput = false): any {
     const abstractSyntaxTree = exec(preprocess(input));
-    log("AST = ");
-    log(abstractSyntaxTree);
     const result = evalutateExpression(abstractSyntaxTree);
-    log(result);
+    if (printOutput) {
+        log("AST = ");
+        log(abstractSyntaxTree);
+        log(result);
+    }
     return result;
 }
 

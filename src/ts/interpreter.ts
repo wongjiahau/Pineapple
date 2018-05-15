@@ -151,6 +151,8 @@ export function evalutateExpression(statement: CompoundStatement | Statement): a
     }
     switch (statement.kind) {
         case "If":
+        case "Elif":
+        case "Else":
             return evalIfStatement(statement);
         case "Number":
         case "Boolean":
@@ -291,7 +293,11 @@ function evalArraySlicingNode(node: ArraySlicingNode): any {
 
 }
 
-function evalIfStatement(stmt: IfStatement): void {
+function evalIfStatement(stmt: IfStatement | ElifStatement | ElseStatement): void {
+    if (stmt.kind === "Else") {
+        evalutateExpression(stmt.body);
+        return;
+    }
     if (evalutateExpression(stmt.condition)) {
         evalutateExpression(stmt.body);
     } else if (stmt.else !== null) {
