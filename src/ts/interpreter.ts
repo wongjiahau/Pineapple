@@ -277,10 +277,12 @@ function evalObjectAccessNode(node: ObjectAccessNode): any {
 
 function evalArraySlicingNode(node: ArraySlicingNode): any {
     const list = evalutateExpression(node.expr) as any[];
-    const start = evalutateExpression(node.start) as number;
+    const start = evalutateExpression(node.start) as number - 1;
     let end = evalutateExpression(node.end) as number;
     if (end === -1) {
         end = list.length;
+    } else {
+        end--;
     }
     if (node.excludeUpperBound) {
         end--;

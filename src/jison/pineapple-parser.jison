@@ -290,7 +290,7 @@ maybe_arithmetic_value
     ;
 
 array_slicing
-    : expression '.(..' expression ')' {$$=ArraySlicingNode($1,NumberNode(0),$3)}
+    : expression '.(..' expression ')' {$$=ArraySlicingNode($1,NumberNode(1),$3)}
     | expression '.(' expression '..)' {$$=ArraySlicingNode($1,$3,NumberNode(-1))}
     | expression '.(' expression '..' expression ')' {$$=ArraySlicingNode($1,$3,$5)}
     | expression '.(' expression '..<' expression ')' {$$=ArraySlicingNode($1,$3,$5,true)}
