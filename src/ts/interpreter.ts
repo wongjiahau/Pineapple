@@ -118,6 +118,8 @@ export type Statement
     = AssignmentNode
     | ExpressionNode
     | IfStatement
+    | ElifStatement
+    | ElseStatement
     ;
 
 export type ExpressionNode
@@ -141,12 +143,15 @@ type ValueNode
 
 export function evalutateExpression(statement: CompoundStatement | Statement): any {
     if (statement.kind === "CompoundStatement") {
+        const result = evalutateExpression(statement.current);
         if (statement.next !== null) {
-            evalutateExpression(statement.next);
+            return evalutateExpression(statement.next);
         }
-        return evalutateExpression(statement.current);
+        return result;
     }
     switch (statement.kind) {
+        case "If":
+            return evalIfStatement(statement);
         case "Number":
         case "Boolean":
         case "Null":
@@ -282,4 +287,12 @@ function evalArraySlicingNode(node: ArraySlicingNode): any {
     }
     return list.slice(start, end + 1);
 
+}
+
+function evalIfStatement(stmt: IfStatement): void {
+    if (evalutateExpression(stmt.condition)) {
+        evalutateExpression(stmt.body);
+    } else if (stmt.else !== null) {
+        evalutateExpression(stmt.else);
+    }
 }

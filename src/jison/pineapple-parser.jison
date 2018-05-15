@@ -99,6 +99,14 @@ const CompoundStatement = (statement, nextStatment) => ({
     next: nextStatment,
 });
 
+
+const IfStatement = (condition, body, elsePart) => ({
+    kind: "If",
+    condition: condition,
+    body: body,
+    else: elsePart
+});
+
 %}
 
 /* lexical grammar */
@@ -192,7 +200,7 @@ compound_statement
 
 if_statement
     : IF expression compound_statement elif_statement
-    | IF expression compound_statement 
+    | IF expression compound_statement {$$=IfStatement($2,$3,null)}
     ;
 
 elif_statement
