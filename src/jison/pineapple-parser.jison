@@ -165,28 +165,39 @@ const CompoundStatement = (statement, nextStatment) => ({
 %left BINOP3
 %left UMINUS
 
-%start compound_statement
+%start entry_point
 
 %% /* language grammar */
 
-compound_statement
-    : '{' statement_list '}' EOF { return $2 }
+entry_point
+    : statement_list EOF {return $1}
     ;
 
 statement_list
-    : statement {$$=CompoundStatement($1, null)}
-    | statement ';' statement_list {$$=CompoundStatement($1,$3)}
+    : statement ';' statement_list {$$=CompoundStatement($1,$3)}
+    | statement {$$=CompoundStatement($1, null)}
     ;
 
 statement
     : assignment_statement  
     | binding_statement    
-    | selection_statement
+    | if_statement
+    | compound_statement
     | expression
     ;
 
-selection_statement
-    : IF expression compound_statement 
+compound_statement
+    : '{' statement_list '}' { $$=$2 }
+    ;
+
+if_statement
+    : IF expression compound_statement elif_statement
+    | IF expression compound_statement 
+    ;
+
+elif_statement
+    : ELIF expression compound_statement elif_statement
+    | ELSE compound_statement
     ;
 
 expression

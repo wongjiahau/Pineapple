@@ -11,7 +11,8 @@ export function addBrackets(input: string): string {
             }
         }
     }
-    return "{" + lines.join("\n") + "}";
+    // return "{" + lines.join("\n") + "}";
+    return lines.join("\n");
 }
 
 function indentationLevel(line: string): number {

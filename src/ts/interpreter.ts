@@ -95,9 +95,29 @@ export interface CompoundStatement {
     next: CompoundStatement;
 }
 
+export interface IfStatement {
+    kind: "If";
+    condition: ExpressionNode;
+    body: CompoundStatement;
+    else: ElifStatement | ElseStatement;
+}
+
+export interface ElifStatement {
+    kind: "Elif";
+    condition: ExpressionNode;
+    body: CompoundStatement;
+    else: ElifStatement | ElseStatement;
+}
+
+export interface ElseStatement {
+    kind: "Else";
+    body: CompoundStatement;
+}
+
 export type Statement
     = AssignmentNode
     | ExpressionNode
+    | IfStatement
     ;
 
 export type ExpressionNode
