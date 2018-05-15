@@ -40,6 +40,24 @@ x = 5}`;
         expect(result).to.eq(expected);
     });
 
+    it("pon 3", () => {
+        const input =
+`let fruit =
+    .sibling =
+        .sibiling =
+            .name = "Durian"
+let x = 6`;
+
+        const expected =
+`{let fruit ={
+    .sibling ={
+        .sibiling ={
+            .name = "Durian"}}}
+let x = 6}`;
+        const result = addBrackets(input);
+        expect(result).to.eq(expected);
+    });
+
     it("if elif else", () => {
         const input =
 `if condition
