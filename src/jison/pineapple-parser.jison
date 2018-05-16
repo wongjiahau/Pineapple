@@ -92,10 +92,10 @@ const ArraySlicingNode = (expr, start, end, excludeUpperBound=false) => ({
     excludeUpperBound: excludeUpperBound
 });
 
-const ArrayAccessNode = (expr, index) => ({
+const ArrayAccessNode = (expr, indexExpr) => ({
     kind: "ArrayAccess",
     expr: expr,
-    index: index,
+    index: indexExpr,
 });
 
 
@@ -237,6 +237,7 @@ expression
     | value
     | object_access
     | array_slicing
+    | array_access
     ;
 
 value
@@ -317,4 +318,8 @@ array_slicing
     | expression '.(' expression '..)' {$$=ArraySlicingNode($1,$3,NumberNode(-1))}
     | expression '.(' expression '..' expression ')' {$$=ArraySlicingNode($1,$3,$5)}
     | expression '.(' expression '..<' expression ')' {$$=ArraySlicingNode($1,$3,$5,true)}
+    ;
+
+array_access
+    : expression '.(' expression ')' {$$=ArrayAccessNode($1,$3)}
     ;

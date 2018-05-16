@@ -83,6 +83,12 @@ interface ArraySlicingNode {
     excludeUpperBound: boolean;
 }
 
+export interface ArrayAccessNode {
+    kind: "ArrayAccess";
+    expr: ExpressionNode;
+    index: ExpressionNode;
+}
+
 interface ElementNode {
     kind: "Element";
     expression: ExpressionNode;
@@ -114,12 +120,20 @@ export interface ElseStatement {
     body: CompoundStatement;
 }
 
+export interface ForStatement {
+    kind: "For";
+    iterator: VariableNode;
+    items: ExpressionNode;
+    body: CompoundStatement;
+}
+
 export type Statement
     = AssignmentNode
     | ExpressionNode
     | IfStatement
     | ElifStatement
     | ElseStatement
+    | ForStatement
     ;
 
 export type ExpressionNode
@@ -132,6 +146,7 @@ export type ExpressionNode
     | ValueNode
     | ObjectAccessNode
     | ArraySlicingNode
+    | ArrayAccessNode
     ;
 
 type ValueNode
@@ -154,6 +169,8 @@ export function evalutateExpression(statement: CompoundStatement | Statement): a
         case "Elif":
         case "Else":
             return evalIfStatement(statement);
+        case "For":
+            return evalForStatement(statement);
         case "Number":
         case "Boolean":
         case "Null":
@@ -177,6 +194,8 @@ export function evalutateExpression(statement: CompoundStatement | Statement): a
             return evalObjectAccessNode(statement);
         case "ArraySlicing":
             return evalArraySlicingNode(statement);
+        case "ArrayAccess":
+            return evalArrayAccess(statement);
     }
 }
 
@@ -293,6 +312,15 @@ function evalArraySlicingNode(node: ArraySlicingNode): any {
 
 }
 
+function evalArrayAccess(node: ArrayAccessNode): any {
+    const items = evalutateExpression(node.expr) as any[];
+    const index = evalutateExpression(node.index);
+    if (index === -1) {
+        return items[items.length - 1];
+    }
+    return items[index - 1];
+}
+
 function evalIfStatement(stmt: IfStatement | ElifStatement | ElseStatement): void {
     if (stmt.kind === "Else") {
         evalutateExpression(stmt.body);
@@ -303,4 +331,21 @@ function evalIfStatement(stmt: IfStatement | ElifStatement | ElseStatement): voi
     } else if (stmt.else !== null) {
         evalutateExpression(stmt.else);
     }
+}
+
+function evalForStatement(stmt: ForStatement): void {
+    const items = evalutateExpression(stmt.items) as any[];
+    // for (let i = 0; i < items.length; i++) {
+    //     let assignmentNode: AssignmentNode = {
+    //         dataType: "",
+    //         expression: {
+    //             kind: ""
+    //         },
+    //         kind: "Assignment",
+    //         variableNode: stmt.iterator
+    //     };
+    //     (`${stmt.iterator} <- ${items[0]}`);
+
+    // }
+
 }
