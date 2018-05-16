@@ -92,6 +92,12 @@ const ArraySlicingNode = (expr, start, end, excludeUpperBound=false) => ({
     excludeUpperBound: excludeUpperBound
 });
 
+const ArrayAccessNode = (expr, index) => ({
+    kind: "ArrayAccess",
+    expr: expr,
+    index: index,
+});
+
 
 const CompoundStatement = (statement, nextStatment) => ({
     kind: "CompoundStatement",
@@ -121,6 +127,7 @@ const ElseStatement = (body) => ({
 });
 
 %}
+
 
 /* lexical grammar */
 %lex
@@ -154,6 +161,7 @@ const ElseStatement = (body) => ({
 "!"                             return 'NOT'
 ("*"|"/")                       return 'BINOP2'
 ("%"|"^")                       return 'BINOP3'
+".(..<"                          return '.(..<'
 ".(.."                          return '.(..'
 "..)"                           return '..)'
 ".("                            return '.('
@@ -304,7 +312,8 @@ maybe_arithmetic_value
     ;
 
 array_slicing
-    : expression '.(..' expression ')' {$$=ArraySlicingNode($1,NumberNode(1),$3)}
+    : expression '.(..<' expression ')' {$$=ArraySlicingNode($1,NumberNode(1),$3,true)}
+    | expression '.(..' expression ')' {$$=ArraySlicingNode($1,NumberNode(1),$3)}
     | expression '.(' expression '..)' {$$=ArraySlicingNode($1,$3,NumberNode(-1))}
     | expression '.(' expression '..' expression ')' {$$=ArraySlicingNode($1,$3,$5)}
     | expression '.(' expression '..<' expression ')' {$$=ArraySlicingNode($1,$3,$5,true)}
