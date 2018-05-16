@@ -68,14 +68,16 @@ for fruit in fruits
     print fruit
 
 
-let i <- 0
+let i <- 1
 repeat fruits.length times
     print fruits.(i)
     i <- i + 1
 
 // Infinite loop
 repeat -1 times
-    let input = await readLine
+    let input = wait readLine
+    if input == "exit" 
+        break // Exit the loop
     print input
 ```
 
