@@ -55,6 +55,29 @@ xs.(..3) // [10,20,30]
 xs.(2..) // [20,30,40]
 ```
 
+## List unpacking
+You can unpack items of a list to variables.
+```ts
+let a, b, c = [1, 2, 3]
+print a // 1
+print b // 2
+print c // 3
+```
+
+## How to have list of items with different type?
+You need to declare the type explicitly. For example: 
+```ts
+let list1 = ["price", 99] // Error: Items in a list must be of the same type
+
+let myList:[String, Number] = ["price", 99] // No error
+
+let listOfPrices:[String, Number][] = [
+    ["apple"    , 12],
+    ["pineapple", 24],
+    ["durian"   , 33]
+] // No error
+```
+
 ## How to get range of Numbers?
 You can do that by using the utility function `to`.
 ```ts

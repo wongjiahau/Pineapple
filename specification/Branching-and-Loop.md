@@ -57,25 +57,34 @@ grade = switch score
 
 
 ## Loop
-```python
+```ts
 let fruits = ['apple', 'banana', 'pineapple']
 
-for i in 0 to (fruits.length - 1)
+for i in 1 to fruits.length
     print fruits.(i)
 
 
 for fruit in fruits
     print fruit
 
+
 let i <- 0
-while i < fruits.length
+loop fruits.length times 
     print fruits.(i)
     i <- i + 1
 ```
 
 ### How to loop through keys of an object?
-By using the `.keys` property.
-```python
-for key in myObject.keys
-    print myObject.(key)
+By using the `.pairs` property.
+```ts
+let myObject = 
+    .first = "Pine"
+    .last  = "Apple"
+    .price = 99
+
+print myObject.pairs // [["first", "Pine"], ["last", "Apple"], ["price", 99]]
+
+for key, value in myObject.pairs
+    print key
+    print value
 ```
