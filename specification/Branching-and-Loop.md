@@ -69,9 +69,14 @@ for fruit in fruits
 
 
 let i <- 0
-loop fruits.length times 
+repeat fruits.length times
     print fruits.(i)
     i <- i + 1
+
+// Infinite loop
+repeat -1 times
+    let input = await readLine
+    print input
 ```
 
 ### How to loop through keys of an object?
@@ -83,6 +88,8 @@ let myObject =
     .price = 99
 
 print myObject.pairs // [["first", "Pine"], ["last", "Apple"], ["price", 99]]
+
+print myObject.pairs.type // [String, Any][]
 
 for key, value in myObject.pairs
     print key

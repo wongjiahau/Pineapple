@@ -64,18 +64,31 @@ print b // 2
 print c // 3
 ```
 
-## How to have list of items with different type?
+## How to have list of items with different type (aka Tuples)?
 You need to declare the type explicitly. For example: 
 ```ts
-let list1 = ["price", 99] // Error: Items in a list must be of the same type
+let tuple1 = ["price", 99] // Error: Items in a list must be of the same type
 
-let myList:[String, Number] = ["price", 99] // No error
+let tuple2:[String,Number] = ["price", 99] // No error
 
-let listOfPrices:[String, Number][] = [
+let listOfTuples:[String, Number][] = [
     ["apple"    , 12],
     ["pineapple", 24],
     ["durian"   , 33]
 ] // No error
+```
+Note that you cannot concat a tuple.
+```ts
+let list1:[String, Number] = ["apple", 99]
+let list2 = list1 ++ ["something else"] // Error
+```
+However, a tuple can be mutable.
+```ts
+let myTuple:[String,Number] = mutable ["price",12]
+myTuple.(0) <- "hey" // No error
+myTuple.(1) <- 99 // No error
+
+myTuple.(0) <- "123" // Error: Expected type of String, but got type of Number
 ```
 
 ## How to get range of Numbers?

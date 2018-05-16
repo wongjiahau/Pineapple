@@ -64,12 +64,14 @@ let myColor: Color = "yellow" // Error
 ## Enumerations
 Enumaration can be declared using `@enum` annotation.
 
-And to access the value, you need to use the 4-dots operator `::`.
 ```java
 @enum
-Color = Red | Green | Blue
+Color = 
+    #Red
+    #Green 
+    #Blue
 
-let myColor = Red::Color
+let myColor = Color#Red
 ```
 
 ## Generics
