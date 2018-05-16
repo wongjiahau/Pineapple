@@ -57,6 +57,11 @@ grade = switch score
 
 
 ## Loop
+There are 2 type of loops:
+- `for..in` loop
+    - For iterating over items in list
+- `repeat..times` loop
+    - For other purposes
 ```ts
 let fruits = ['apple', 'banana', 'pineapple']
 
