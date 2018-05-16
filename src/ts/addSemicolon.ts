@@ -1,17 +1,19 @@
 export function addSemicolon(input: string): string {
     const keywords = "if,elif,else".split(",");
-    const cleansed =  input.split("\n").filter((x) => x.length > 0);
+    const cleansed =  input.split("\n").filter((x) => x.length > 0).filter((x) => !/^\s*$/.test(x));
     const result: string[] = [];
     for (let i = 0; i < cleansed.length; i++) {
-        if (keywords.some((x) => cleansed[i].indexOf(x) > -1)) {
-            result.push(cleansed[i]);
+        const currentLine = cleansed[i];
+        if (keywords.some((x) => currentLine.indexOf(x) > -1)) {
+            result.push(currentLine);
             continue;
         }
         if (i + 1 < cleansed.length) {
-            if (cleansed[i + 1].trim()[0] !== ".") {
-                result.push(cleansed[i] + ";");
-            } else {
+            const nextLine = cleansed[i + 1];
+            if (nextLine.trim()[0] === "." || keywords.slice(1).some((x) => nextLine.indexOf(x) > -1)) {
                 result.push(cleansed[i]);
+            } else {
+                result.push(cleansed[i] + ";");
             }
             continue;
         }

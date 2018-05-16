@@ -42,24 +42,29 @@ let y <- 6`;
     it("if elif else", () => {
         const input =
 `
+let yo = 2
 if condition
     let a = 6
+    let b = 7
 elif condition
     let x = 5
+    let y = 5
 else
-    let y <- 6
-let z = 3
+    let j <- 6
+    let k <- 8
 `;
         const expected =
-`if condition
+`let yo = 2;
+if condition
     let a = 6;
+    let b = 7
 elif condition
     let x = 5;
+    let y = 5
 else
-    let y <- 6;
-let z = 3`;
+    let j <- 6;
+    let k <- 8`;
         expect(addSemicolon(input)).to.eq(expected);
 
     });
-
 });

@@ -57,9 +57,9 @@ function evaluateInput(input: string, lineNumber: number) {
 }
 
 export function preprocess(input: string): string {
-    const addedSemicolon = addSemicolon(input);
-    const bracketized = addBrackets(addedSemicolon);
-    const smoothifized = smoothify(bracketized);
+    const bracketized = addBrackets(input);
+    const addedSemicolon = addSemicolon(bracketized);
+    const smoothifized = smoothify(addedSemicolon);
     return smoothifized;
 }
 
