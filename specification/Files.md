@@ -2,8 +2,8 @@
 To read a file, you can use the utility function `open`.
 ## Reading
 ```js
-let file = open ./myFile.txt in Read::Mode
-let allLines: String[] = readAllLinesFrom file
+let file = open ./myFile.txt in FileMode#Read
+let allLines: String[] = await read file
 ```
 
 ## Writing

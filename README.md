@@ -93,6 +93,10 @@ It is a language that focuses on (ranked by priority):
     - You can past functions to functions
 - **Typability**
     - Most of the code should be easy to type 
+- **No crazy abstraction**
+    - Things that should be abstracted should be abstracted
+    - Things that shouldn't be abstracted shouldn't be abstracted 
+        - for example, I consider the `$_POST` variable in PHP is wrongly abstracted
 
 
 ## Language paradigm

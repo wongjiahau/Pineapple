@@ -5,7 +5,7 @@
 |`@type`|Use for declaring a type
 |`@interface`|Use for declaring an interface
 |`@function`|Use for declaring a clean function
-|`@dirtyFunction`|Use for declaring a dirty function
+|`@iofunction`|Use for declaring a function that involve IO operation
 |`if`|Use for declaring an if block
 |`elif`|Use for declaring a else-if block
 |`else`|Use for declaring a else block

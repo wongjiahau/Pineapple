@@ -88,7 +88,6 @@ Every function in `Pineapple`:
 This is because such function will enhance debuggability and chainability.
 
 
-
 ## How to declare a function that will perform IO operation?
 By using the `iofunction` annotation.
 ```java
@@ -111,7 +110,22 @@ sayBye -> Void
     print "bye" // No error
 ```
 
-The dirty keyword annotation is purposely made to be hard to type because programmer is discouraged from using `dirtyFunction`. Consequently, the code base will be much more easier to test and maintain due to the cleanliness.
+## Optional parameters
+You can have optional parameters in functions.
+For example,
+```java
+@iofunction
+sayHi howMany:Int=1 times -> Void
+    repeat howMany times
+        print "hi"
+
+// Calling with default parameter value
+sayHi
+
+// Calling with different value
+sayHi 5 times
+```
+
 
 ## How to pass data by reference?
 You cannot pass data by reference.
@@ -119,7 +133,7 @@ You cannot pass data by reference.
 ## Void functions
 Function that does not return anything must be declared with `-> Void`
 ```java
-@dirtyFunction 
+@iofunction 
 sayHello -> Void
     print "Hello"
 ```
