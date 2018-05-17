@@ -34,3 +34,29 @@ euclideanDistanceBetween a:Point and y:Point -> Number
     >> sum _ 
     >> squareRoot _
 ```
+
+## Piping multiple values
+You can pipe multiple values by using tuple deconstruction.  For example,
+```ts
+let result = [1, 2, 3] >> _ + _ - _
+print result // 3
+
+let problem = [1, 2, 3] >> _ + _  // Error, cant deconstruct 3 elements into 2
+```
+
+## Piping to access object values
+You can even pipe to access object values!
+```ts
+let fruit = 
+    .name  = "Pineapple"
+    .sweet = true
+
+fruit >> _.name >> print _ // "Pineapple"
+```
+
+## Nested piping
+You can nest piping by grouping them using brackets.
+```ts
+let result = (["pine", "apple"] >> _ ++ _) >> _.length
+print result // "9"
+```

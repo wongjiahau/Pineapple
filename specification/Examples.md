@@ -42,3 +42,26 @@ quicksort xs:T[] -> T[] where T:Comparable
     -> (quicksort left) ++ [pivot] ++ (quicksort right)
 
 ```
+
+## Web scrapping
+```ts
+@function
+from parent:HTMLElement getContestants -> Contestant[]
+    let result: Contestant[] <- [];
+    for element in from parent find "div.progress-wrapper"
+        let nameAndParty = from element find "p.name-candidate" >> _.text >> split _ by "("
+        let votes        = from element find "div.number-of-voters" >> _.text >> split _ by "%"
+        let contestant: Contestant = 
+            .isWinner       = from element find "i.fa-check" >> _.length > 0
+            .name           = nameAndParty.(1) >> trim _
+            .partyName      = nameAndParty.(2) >> trim _ >> _.(1..-2)
+            .voteCount      = votes.(2) 
+                              >> from _ replace "," with "" 
+                              >> trim _ 
+                              >> _.(2..-2) 
+                              >> parse _ asInt
+            .votePercentage = votes.(1) >> parse _ asFloat 
+        
+        result <- result ++ [contestant];
+    -> result
+```
