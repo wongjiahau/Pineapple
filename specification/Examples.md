@@ -54,9 +54,9 @@ from parent:HTMLElement getContestants -> Contestant[]
         let contestant: Contestant = 
             .isWinner       = from element find "i.fa-check" >> _.length > 0
             .name           = nameAndParty.(1) >> trim _
-            .partyName      = nameAndParty.(2) >> trim _ >> _.(1..-2)
+            .partyName      = nameAndParty.(2) >> trim _ >> _.(..-2)
             .voteCount      = votes.(2) 
-                              >> from _ replace "," with "" 
+                              >> from _ remove ","
                               >> trim _ 
                               >> _.(2..-2) 
                               >> parse _ asInt

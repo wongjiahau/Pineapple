@@ -97,6 +97,24 @@ x.type.type // Type
 
 ```
 
+## Safe cast
+You can use the `!:` operator to ensure the data assigned to a variable has the correct type, else runtime error will be thrown.
+
+This feature is important especially you are dealing with data from the outside world.  
+Consider the following example for processing an API request.
+
+```ts
+@type Fruit
+    .name  : String
+    .price : Number
+
+let result !: Fruit = 
+    await request "https://www.pineapple.com/api/fruits"
+    >> parseJSON _
+```
+You can read `!:` as `must-be-a`.  So, in this case, `result` must be a `Fruit`, if not error would be thrown at runtime.
+
+
 ## What is the use of `member` type?
 It is useful when your function needs to take the `member` of a type.  
 This will allow you to create some very powerful function that can emulate another language, for example `SQL`.  
@@ -113,7 +131,7 @@ select (M: member of T) from (list: T[]) -> type of M
     where T: People
     let result: T[] = []
     for item in list
-        result <- result ++ [item]
+        result <- result ++ [item.(M)]
     -> result
 
 let peopleList :People[] = [
