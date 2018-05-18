@@ -199,27 +199,28 @@ export function evalutateExpression(statement: CompoundStatement | Statement): a
     }
 }
 
-function evalUnaryOperatorNode(node: UnaryOperatorNode): number {
+function evalUnaryOperatorNode(node: UnaryOperatorNode): string {
     const value = evalutateExpression(node.inner) as number;
-    return node.operator === "-" ? -value : value;
+    return `(${node.operator}${value})`;
 }
 
-function evalBinaryOperatorNode(node: BinaryOperatorNode): number | boolean {
+function evalBinaryOperatorNode(node: BinaryOperatorNode): string {
     const leftValue = evalutateExpression(node.left) as number;
     const rightValue = evalutateExpression(node.right) as number;
     switch (node.operator) {
-        case "+": return  leftValue + rightValue;
-        case "-": return leftValue - rightValue;
-        case "*": return leftValue * rightValue;
-        case "/": return leftValue / rightValue;
-        case "%": return leftValue % rightValue;
-        case "^": return Math.pow(leftValue, rightValue);
-        case ">": return leftValue > rightValue;
-        case "<": return leftValue < rightValue;
-        case "<=": return leftValue <= rightValue;
-        case ">=": return leftValue >= rightValue;
-        case "==": return leftValue === rightValue;
-        case "!=": return leftValue !== rightValue;
+        case "+":
+        case "-":
+        case "*":
+        case "/":
+        case "%":
+        case ">":
+        case "<":
+        case "<=":
+        case ">=":
+            return `(${leftValue}${node.operator}${rightValue})`;
+        case "^":  return `Math.pow(${leftValue},${rightValue})`;
+        case "==": return `(${leftValue}===${rightValue})`;
+        case "!=": return `(${leftValue}!==${rightValue})`;
     }
 }
 
@@ -335,17 +336,22 @@ function evalIfStatement(stmt: IfStatement | ElifStatement | ElseStatement): voi
 
 function evalForStatement(stmt: ForStatement): void {
     const items = evalutateExpression(stmt.items) as any[];
-    // for (let i = 0; i < items.length; i++) {
-    //     let assignmentNode: AssignmentNode = {
-    //         dataType: "",
-    //         expression: {
-    //             kind: ""
-    //         },
-    //         kind: "Assignment",
-    //         variableNode: stmt.iterator
-    //     };
-    //     (`${stmt.iterator} <- ${items[0]}`);
+    for (let i = 0; i < items.length; i++) {
+        const assignmentNode: AssignmentNode = {
+            dataType: "",
+            expression: {
+                kind: "ArrayAccess",
+                expr: stmt.items,
+                index: {
+                    kind: "Number",
+                    value: i + 1
+                }
+            },
+            kind: "Assignment",
+            variableNode: stmt.iterator
+        };
+        evalAssignmentNode(assignmentNode);
 
-    // }
+    }
 
 }

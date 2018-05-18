@@ -21,7 +21,7 @@ print sample1 // [10, 25]
 ```
 
 Another example for Euclidean distance between two points.
-```
+```java
 @function
 Point:
     .x: Number

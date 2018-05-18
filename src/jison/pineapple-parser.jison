@@ -159,9 +159,8 @@ const ElseStatement = (body) => ({
 "!="                            return 'NEQ'
 "="                             return 'BINDINGOP'
 "!"                             return 'NOT'
-("*"|"/")                       return 'BINOP2'
-("%"|"^")                       return 'BINOP3'
-".(..<"                          return '.(..<'
+("^"|"/"|"%"|"*")               return 'BINOP2'
+".(..<"                         return '.(..<'
 ".(.."                          return '.(..'
 "..)"                           return '..)'
 ".("                            return '.('
@@ -189,9 +188,7 @@ const ElseStatement = (body) => ({
 %right ':'
 %left ',' DOT
 %left LT GT LTE GTE EQ NEQ NOT
-%left '+' '-'
-%left BINOP2
-%left BINOP3
+%left BINOP2 '+' '-'
 %left UMINUS
 
 %start entry_point
@@ -298,12 +295,11 @@ relational_expression
 relational_operator : GT | LT | GTE | LTE | EQ | NEQ ;
 
 arithmetic_expression
-    : '-' arithmetic_expression %prec UMINUS {$$=UnaryOperatorNode($1,$2)}
-    | '+' arithmetic_expression %prec UMINUS {$$=UnaryOperatorNode($1,$2)}
-    | arithmetic_expression '+' arithmetic_expression    {$$=BinaryOperatorNode($1,$2,$3)}
+    : arithmetic_expression '+' arithmetic_expression    {$$=BinaryOperatorNode($1,$2,$3)}
     | arithmetic_expression '-' arithmetic_expression    {$$=BinaryOperatorNode($1,$2,$3)}
     | arithmetic_expression BINOP2 arithmetic_expression {$$=BinaryOperatorNode($1,$2,$3)}
-    | arithmetic_expression BINOP3 arithmetic_expression {$$=BinaryOperatorNode($1,$2,$3)}
+    | '-' arithmetic_expression %prec UMINUS {$$=UnaryOperatorNode($1,$2)}
+    | '+' arithmetic_expression %prec UMINUS {$$=UnaryOperatorNode($1,$2)}
     | NUMBER {$$=NumberNode(yytext)}
     | maybe_arithmetic_value
     ;

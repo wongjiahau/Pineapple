@@ -16,6 +16,7 @@ Note that you don't need to throw any error object, you just need to throw a `St
 x:Int divide y:Int -> Int
     if y == 0 throw "Divisor cannot be 0"
 ```
+
 ## Catching error into variables
 Sometimes, if you don't feel like to write a `try`-`catch` block to handle error, you can pack the error as an object and store it to a variable.
 
