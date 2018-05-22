@@ -26,7 +26,7 @@ By using the `@type` annotation.
 Fruit:
     .name    : String
     .isTasy  : Bool
-    .sibling : Fruit | null
+    .sibling : Fruit?
 ```
 
 ## Types with default value
@@ -37,7 +37,7 @@ For example:
 Fruit:
     .name    : String
     .isTasy  : Bool
-    .sibling : Fruit | null = null
+    .sibling : Fruit? = null
 ```
 So, the default value for `.sibling` is `null`.
 
@@ -67,13 +67,19 @@ let x: String <- "hello"
 x <- null # Compiler error
 ```
 
+## Nullable types
+To have a nullable type, you need to use the `?` operator.
+```js
+let y:String <- null // Error: Cannot assign `null` to `String`
+
+let x:String? <- null // No error
+```
 
 ## Discriminated unions
-You can have a variable which can have both type. For example, you might want to have a nullable String type.
+You can have a variable which can have both type. 
 ```java
-let x: String | null <- "hello"
-x <- null // No error
-
+let x: String | Int <- "hello"
+x <- 4 // No error
 
 @type 
 Color: "red" | "green" | "blue"
@@ -94,15 +100,17 @@ Addable:
     x:T (+) y:T -> T
 ```
 Then, we have a type which will implement both the interfaces.
-```js
+```java
 @type
 Fruit implements Stringifiable & Addable:
     .name:String
     .price:Number
 
+@function
 target:Fruit asString -> String
     -> `Name: ${target.name}, Price: ${target.price}`
 
+@function
 x:Fruit (+) y:Fruit -> Fruit
     -> 
         .name  = x.name ++ y.name
@@ -152,10 +160,29 @@ x.type.type // Type
 
 ```
 
-## Safe cast
-You can use the `!:` operator to ensure the data assigned to a variable has the correct type, else runtime error will be thrown.
+## Type casting
+To cast a type, you can use either `as!` or `as?` operator.
+
+### The `as?` operator
+
+When you use `as?`, if the value is uncastable to the desired type, `null` will be returned.
+
+For example,
+
+```js
+let myNumber = 5
+let casted = myNumber as? String
+print casted // null
+```
+Casted is `null` because the compiler cannot cast `Number` to `String`.
+
+---
+### The `as!` operator
+
+When you use `as!`, if the value is uncastable to the desired type, an error will be thrown.
 
 This feature is important especially you are dealing with data from the outside world.  
+
 Consider the following example for processing an API request.
 
 ```ts
@@ -163,14 +190,15 @@ Consider the following example for processing an API request.
     .name  : String
     .price : Number
 
-let result !: Fruit = 
+let result = 
     await request "https://www.pineapple.com/api/fruits"
     >> parseJSON _
+    >> _ as! Fruit
 ```
-You can read `!:` as `must-be-a`.  So, in this case, `result` must be a `Fruit`, if not error would be thrown at runtime.
+The `as!` operator allows the program to fail fast if the API is not returning the correct type, so the debug time will be reduced.
 
 
-## What is the use of `member` type?
+## What is the use of `member` type? (PENDING)
 It is useful when your function needs to take the `member` of a type.  
 This will allow you to create some very powerful function that can emulate another language, for example `SQL`.  
 Let's look at the example below to understand more.
