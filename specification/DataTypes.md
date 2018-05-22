@@ -29,6 +29,26 @@ Fruit:
     .sibling : Fruit | null
 ```
 
+## Types with default value
+Sometimes, you will need to have default value for a type in order to reduce boilerplate.  
+For example:
+```java
+@type
+Fruit:
+    .name    : String
+    .isTasy  : Boolean
+    .sibling : Fruit | null = null
+```
+So, the default value for `.sibling` is `null`.
+
+Now, whenever you initialize a `Fruit`, you don't need to specify the `.sibling` property.
+```js
+// The following code is valid
+let myFruit:Fruit = 
+    .name = `Pineapple`
+    .isTasty = true
+```
+
 ## Type safety
 If you declare a variable to have a specific type, Pineapple compiler will expect the variable fully fulfils the specification of the type.
 ```js
