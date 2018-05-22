@@ -15,6 +15,7 @@ Note that you don't need to throw any error object, you just need to throw a `St
 @function 
 x:Int divide y:Int -> Int
     if y == 0 throw "Divisor cannot be 0"
+    else -> x / y
 ```
 
 ## Catching error into variables

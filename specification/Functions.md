@@ -20,7 +20,7 @@ let result = 2 plus 5
 @function 
 sum xs:Number[] -> Number 
     if xs == [] -> 0
-    -> xs.1 + sum xs.(2..)
+    else -> xs.1 + sum xs.(2..)
 
 let result = sum [1,2,3,4]
 ```
