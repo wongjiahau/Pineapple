@@ -61,6 +61,41 @@ Color: "red" | "green" | "blue"
 let myColor: Color = "yellow" // Error
 ```
 
+## Type intersections
+You can specify a type to implement more than 1 interface using the `&` operator.  
+For example, let say we have the following interfaces.
+```java
+@interface
+Stringifiable:
+    target:T asString -> String
+
+@interface 
+Addable:
+    x:T (+) y:T -> T
+```
+Then, we have a type which will implement both the interfaces.
+```js
+@type
+Fruit implements Stringifiable & Addable:
+    .name:String
+    .price:Number
+
+target:Fruit asString -> String
+    -> `Name: ${target.name}, Price: ${target.price}`
+
+x:Fruit (+) y:Fruit -> Fruit
+    -> 
+        .name  = x.name ++ y.name
+        .price = x.price + y.prce
+```
+Now, you can have a function that take the types of `Stringifiable & Addable`.
+```java
+@iofunction
+show target:(Stringifiable & Addable) -> Void
+    target asString
+    >> print _
+```
+
 ## Enumerations
 Enumaration can be declared using `@enum` annotation.
 

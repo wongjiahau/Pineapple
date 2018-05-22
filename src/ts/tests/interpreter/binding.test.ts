@@ -3,9 +3,8 @@ import { interpret } from "../../repl";
 
 describe("binding", () => {
     it("case 1", () => {
-        const input = "let x=5";
-        interpret(input);
-        const result = interpret("x");
-        expect(result).to.eq(5);
+        const input = "let x=5+99";
+        const result = interpret(input);
+        expect(result).to.eq("const x=(5+99);");
     });
 });

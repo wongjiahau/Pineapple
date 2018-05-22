@@ -174,8 +174,9 @@ export function evalutateExpression(statement: CompoundStatement | Statement): a
         case "Number":
         case "Boolean":
         case "Null":
+            return statement.value.toString();
         case "String":
-            return statement.value;
+            return `"${statement.value.toString()}"`;
         case "UnaryOperator":
             return evalUnaryOperatorNode(statement);
         case "BinaryOperator":
@@ -187,9 +188,9 @@ export function evalutateExpression(statement: CompoundStatement | Statement): a
         case "VariableName":
             return evalVariableNode(statement);
         case "ArrayNode":
-            return evalElementNode(statement.element);
+            return evalElementNode(statement.element, true);
         case "Object":
-            return evalObjectMemberNode(statement.memberNode);
+            return evalObjectMemberNode(statement.memberNode, true);
         case "ObjectAccess":
             return evalObjectAccessNode(statement);
         case "ArraySlicing":
@@ -205,8 +206,8 @@ function evalUnaryOperatorNode(node: UnaryOperatorNode): string {
 }
 
 function evalBinaryOperatorNode(node: BinaryOperatorNode): string {
-    const leftValue = evalutateExpression(node.left) as number;
-    const rightValue = evalutateExpression(node.right) as number;
+    const leftValue = evalutateExpression(node.left);
+    const rightValue = evalutateExpression(node.right);
     switch (node.operator) {
         case "+":
         case "-":
@@ -224,59 +225,50 @@ function evalBinaryOperatorNode(node: BinaryOperatorNode): string {
     }
 }
 
-export const VARIABLES_TABLE: {[index: string]: {dataType: string, value: any}} = {};
-function evalAssignmentNode(node: AssignmentNode): any {
+function evalAssignmentNode(node: AssignmentNode): string {
     const exprValue = evalutateExpression(node.expression);
-    VARIABLES_TABLE[node.variableNode.name] = {
-        dataType: node.dataType,
-        value: exprValue
-    };
-    return exprValue;
+    return `let ${node.variableNode.name}=${exprValue};`;
 }
 
-export const BINDINGS_TABLE: {[index: string]: {dataType: string, value: any}} = {};
 function evalBindingNode(node: BindingNode): any {
     const exprValue = evalutateExpression(node.expression);
-    BINDINGS_TABLE[node.variableNode.name] = {
-        dataType: node.dataType,
-        value: exprValue
-    };
-    return exprValue;
+    return `const ${node.variableNode.name}=${exprValue};`;
 }
 
-function evalVariableNode(node: VariableNode): number {
-    let variable = VARIABLES_TABLE[node.name];
-    if (variable) {
-        return variable.value;
-    }
-    variable = BINDINGS_TABLE[node.name];
-    if (variable) {
-        return variable.value;
-    }
-    throw new Error(`No such variable: ${node.name}`);
+function evalVariableNode(node: VariableNode): string {
+    return node.name;
 }
 
-function evalObjectMemberNode(node: ObjectMemberNode): object {
+function evalObjectMemberNode(node: ObjectMemberNode, isFirst: boolean): string {
     if (node === null) {
-        return {};
+        return "{}";
     }
-    const result: {[index: string]: any} = {};
+    let result = "";
     // We slice one in order to get rid of the dot prefix
-    result[node.name.trim().slice(1)] = evalutateExpression(node.expression);
-    let next: ObjectMemberNode | null = node.next;
-    while (next) {
-        result[next.name.trim().slice(1)] = evalutateExpression(next.expression);
-        next = next.next;
+    result += `${node.name.trim().slice(1)}:${evalutateExpression(node.expression)},`;
+    if (node.next === null) {
+        return result + "}";
+    }
+    result += evalObjectMemberNode(node.next, false);
+    if (isFirst) {
+        result = "{" + result;
     }
     return result;
 }
 
-function evalElementNode(node: ElementNode): any[] {
+function evalElementNode(node: ElementNode, isFirst: boolean): string {
     if (!node) {
-        return [];
+        return "[]";
     }
-    let result = [evalutateExpression(node.expression)];
-    result = result.concat(evalElementNode(node.next));
+    let result = `${evalutateExpression(node.expression)}`;
+    if (node.next) {
+        result += `,${evalElementNode(node.next, false)}`;
+    } else {
+        result += "]";
+    }
+    if (isFirst) {
+        result = "[" + result;
+    }
     return result;
 }
 
@@ -297,29 +289,27 @@ function evalObjectAccessNode(node: ObjectAccessNode): any {
     }
 }
 
-function evalArraySlicingNode(node: ArraySlicingNode): any {
-    const list = evalutateExpression(node.expr) as any[];
-    const start = evalutateExpression(node.start) as number - 1;
-    let end = evalutateExpression(node.end) as number;
-    if (end === -1) {
-        end = list.length;
-    } else {
-        end--;
+function evalArraySlicingNode(node: ArraySlicingNode): string {
+    const list = evalutateExpression(node.expr);
+    const start = evalutateExpression(node.start);
+    let end = evalutateExpression(node.end);
+    if (end === "-1") {
+        return `${list}.slice(${start}-1)`;
     }
     if (node.excludeUpperBound) {
-        end--;
+        end += "-1";
     }
-    return list.slice(start, end + 1);
+    return `${list}.slice(${start}-1,${end})`;
 
 }
 
 function evalArrayAccess(node: ArrayAccessNode): any {
     const items = evalutateExpression(node.expr) as any[];
     const index = evalutateExpression(node.index);
-    if (index === -1) {
-        return items[items.length - 1];
+    if (index === "(-1)") {
+        return `${items}[${items}.length-1]`;
     }
-    return items[index - 1];
+    return `${items}[${index}-1]`;
 }
 
 function evalIfStatement(stmt: IfStatement | ElifStatement | ElseStatement): void {
