@@ -23,10 +23,10 @@ newTree (value: T) -> tree
     
 @function
 insert (element: T) to (tree: BinaryTree<T>) -> BinaryTree
-    if tree.left == null
+    if tree.left is == null
         tree.left <- newTree element
     elif element > tree.left
-        if tree.right == null
+        if tree.right is == null
             tree.right <- newTree element
         else
             insert element to tree.right
@@ -35,17 +35,16 @@ insert (element: T) to (tree: BinaryTree<T>) -> BinaryTree
     -> tree
 
 @function
-(tree: BinaryTree) hasNoChild -> Boolean
-    -> (tree.left == null) and (tree.right == null)
+(tree: BinaryTree) hasNoChild -> Bool
+    -> tree.left is == null and tree.right is == null
 
 @function
-(tree: BinaryTree) contains (element: T) -> Boolean
-    -> (tree.value == element) or
-       (tree.left  == element) or
-       (tree.right == element) or
-       (tree.left  contains element) or
-       (tree.right contains element)
-
+element:T in tree:BinaryTree -> Bool
+    -> element is == tree.value 
+        or == tree.left 
+        or == tree.right 
+        or in tree.left 
+        or in tree.right
 ```
 
 ```ts
@@ -62,7 +61,7 @@ let myTree: BinaryTree <-
 
 myTree <- insert 5 to myTree
 
-if myTree contains 5 
+if 5 is in myTree
     print "It contains 5"
 else 
     print "Nope"
@@ -88,8 +87,8 @@ Worker:
 
 // multiple inheritance
 @type
-SuperWoman extends Parent, Worker:
-    isBusy: Boolean
+SuperWoman extends Parent & Worker:
+    isBusy: Bool
 
 ```
 
@@ -98,8 +97,8 @@ You can define an interface using `@interface`.
 ```java
 @interface 
 Comparable:
-    (x: T) greaterThan (y: T) -> Boolean
-    (x: T) equals (y: T) -> Boolean
+    x:T (>)  y:T -> Bool
+    x:T (==) y:T -> Bool
 
 @type
 Color implements Comparable:
@@ -108,11 +107,26 @@ Color implements Comparable:
     .blue : int
 
 @function
-(x: Color) greaterThan (y: Color) -> Boolean
-    -> x.red   > y.red   and
-       x.green > y.green and
-       x.blue  > y.blue 
+x:Color (>) y:Color -> Bool
+    -> x.red   is > y.red   and
+       x.green is > y.green and
+       x.blue  is > y.blue 
     
-// Error: type `Color` did not implements `(x: T) equals (y: T)` from interface `Comparable`
+// Error: type `Color` did not implements `x:T (==) y:T` from interface `Comparable`
 ```
 If we didn't declare the required functions, the Pineapple compiler will throw error.
+
+## Why do we need interface?
+Interface is especially useful for making generic function such as sorting function.  
+For example, look at this `quicksort` example.
+
+```js
+@function
+quicksort xs:T[] -> T where T:Comparable
+    if xs is empty -> []
+    let pivot = xs.(1)
+    let left  = from xs where (item not > pivot)
+    let right = from xs where (item is > pivot)
+    -> left ++ [pivot] ++ right
+
+```

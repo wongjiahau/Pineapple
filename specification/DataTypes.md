@@ -7,7 +7,7 @@
 |`String`|`"hello"`, `'hey'`, `$"yoyo"`|
 |`Regex`|`/^[a-z]$/`|
 |`Directory`|`./index.html` , `../folder`|
-|`Boolean`|`true`, `false`|
+|`Bool`|`true`, `false`|
 |`List`|`[1,2,3]`, `["p", "i", "n", "e"]`|
 |`Object`|`{.name='hi' .age=9}`|
 |`Any`|any data type|
@@ -25,7 +25,7 @@ By using the `@type` annotation.
 @type 
 Fruit:
     .name    : String
-    .isTasy  : Boolean
+    .isTasy  : Bool
     .sibling : Fruit | null
 ```
 
@@ -36,7 +36,7 @@ For example:
 @type
 Fruit:
     .name    : String
-    .isTasy  : Boolean
+    .isTasy  : Bool
     .sibling : Fruit | null = null
 ```
 So, the default value for `.sibling` is `null`.

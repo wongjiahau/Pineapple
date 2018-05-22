@@ -9,7 +9,7 @@ Let say you have the file `math.pine`.
     -> x + y
 
 @function
-(x: Number) isEven -> Boolean
+(x: Number) isEven -> Bool
     -> x % 2 == 0
 
 @function

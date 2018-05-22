@@ -38,7 +38,7 @@ let result = 5 daysFromToday
 ## Infix function
 ```ts
 @function
-x:Boolean or y:Boolean -> Boolean 
+x:Bool or y:Bool -> Bool 
     if x == true -> true
     if y == true -> true
     -> false
@@ -225,19 +225,19 @@ select threeMoreThan from [1,2,3,4,5] // [1,2,3]
 
 
 ## Tips
-When we declare a Boolean function, don't start it with the *is* word.
+When we declare a Bool function, don't start it with the *is* word.
 ```java
 @function
-(list: T[]) isEmpty -> Boolean  // bad
-(list: T[]) empty   -> Boolean  // good
+(list: T[]) isEmpty -> Bool  // bad
+(list: T[]) empty   -> Bool  // good
 ```
 
 Why? Because we can declare an `is` and `isnt` function.
 ```java
 @function 
-(item:T) is (func_: T -> Boolean) -> func_ item
+(item:T) is (func_: T -> Bool) -> func_ item
 @function
-(item:T) isnt (func_: T -> Boolean) -> not (func_ item)
+(item:T) isnt (func_: T -> Bool) -> not (func_ item)
 ```
 Then we can use it like this:
 ```java
@@ -260,7 +260,7 @@ _ divide 0 -> error
 
 
 @function 
-select (mapFunc: T -> T) whichIs (filterFunc: T -> Boolean) from (list: T[]) -> T[]
+select (mapFunc: T -> T) whichIs (filterFunc: T -> Bool) from (list: T[]) -> T[]
 select _ whichIs _ from [] = []
 select mapFunc whichIs filterFunc from (x cons xs) -> 
     (mapFunc x) cons remaining
@@ -279,7 +279,7 @@ result = select num whichIs (moreThan 3) from [1,2,3,4]
 Let's look at the imperative version.
 ```java
 @function
-select (mapFunc: T -> T) whichIs (filterFunc: T -> Boolean) from (list: T[]) -> T[]
+select (mapFunc: T -> T) whichIs (filterFunc: T -> Bool) from (list: T[]) -> T[]
     if list is empty_ -> []
     result = mutable []
     foreach x in list
