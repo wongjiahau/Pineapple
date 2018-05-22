@@ -1,23 +1,72 @@
 # Branching and Loop
-It will be like python style.
+## If statements
+It will be similar to Python.  
+However, it must be in the form of:
+- `if` *expression* `is` *boolean function*
+- `if` *expression* `not` *boolean function*
+
+For example,
+```js
+let x = 5
+
+if x is == 5
+    print `x is equal to 5`
+
+if x not even
+    print `x is not even`
+```
+Note that `even` is a boolean function.
 
 ## If elif else
-```python
-if (he is _smart) and (he is _nerdy)
-    print "He is a programmer."
-elif he is _hot
-    print "OMG"
+```js
+if he is nerdy 
+    print `He is a programmer.`
+elif he is hot
+    print `OMG`
 else 
-    print "..."
+    print `...`
 ```
 
-## If else as expression
+## Logical chaining
+You can chain a condition using `and` or `or` keyword.
+
+There are 2 situations:
+- Chaining function that refers to the same expression
+    - `if` *expression* (`is`|`not`) *boolean function* [(`and`|`or`) *boolean function*]
+- Chaining function that refers to different expression
+    - `if` *expr1* (`is`|`not`) *boolean function* [(`and`|`or`) *expr2* (`is`|`not`) *boolean function*]
+
+Note: 
+- You cannot mix 2 situation together.
+- You cannot use `and` with `or` at the same statement
+    - Because you can always split the condition using `elif`
+
+For example,
+```js
+// Chaining function that refers to the same expression
+if score is > 70 and <= 75
+    print `Your grade is B+`
+
+// Chaining function that refers to the different expressions
+if john is crazy or james is crazy
+    print `Someone is crazy`
+
+// The following is invalid as it uses `and` with `or` together
+if something is > 5 and < 9 or even
+    print `What a weird number`
+
+// The following is also invalid as it mix the 2 situations together
+if pineapple is tasty and sour and apple is sweet
+    print `I don't really understand`
+```
+
+## If else as expression (pending)
 ```python
 let x = 5
-leet isMoreThan4 = true if x > 5 else False
+let isMoreThan4 = true if x > 5 else False
 ```
 
-## Switch cases
+## Switch cases (pending)
 Switch cases can be done using `switch`, `when`, and `otherwise` keyword.  
 
 Its even more powerful that you can use the `it` keyword.
