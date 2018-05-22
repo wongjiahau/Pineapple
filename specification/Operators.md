@@ -18,7 +18,6 @@
 | `<=`  |Less than or equals
 | `>=`  |More than or equals
 | `==`  |Equals
-| `!=`  |Not equals
 | `! `  |Not
 
 ## Others

@@ -38,14 +38,10 @@ let result = 5 daysFromToday
 ## Infix function
 ```ts
 @function
-x:Bool or y:Bool -> Bool 
-    if x == true -> true
-    if y == true -> true
-    -> false
-
-let result = true or false
-
+x:Int plus y:Int -> Int
+    -> x + y
 ```
+
 ## Mixfix funtion
 ```ts
 @function
@@ -56,8 +52,13 @@ expect 99 toEqual 88
 ```
 
 ## Function precedence
-```
-Prefix > Suffix > Infix > Hybrid
+There is not function precedence, everything function is executed from left to right.
+
+For example,
+```js
+display 5 asString // Invalid, `5` is not `String`
+
+display (5 asString) // Valid
 ```
 
 ## Optional parameters
@@ -67,14 +68,14 @@ Let's look at the `_to_by` function.
 ```java
 @function
 (start:Int) to (end:Int) by (step:Int=1) -> Int[]
-    if start == end -> [end]
+    if start >= end -> [end]
     -> [start] ++ ((start + step) to end by step)
     
 // Calling it
 let range1 = 0 to 6
 print range1 // [0,1,2,3,4,5,6]
 
-let range2 = 0 to 6 by 2
+let range2 = 0 to 7 by 2
 print range2 // [0,2,4,6]
 
 ```
@@ -82,6 +83,7 @@ print range2 // [0,2,4,6]
 ## Referential transparency
 Every function in `Pineapple`: 
 - is not allowed to modify their input.   
+- is not allowed to access variable that is out of scope
 - must return a value
 - cannot perform I/O operation unless annotated
 
@@ -224,31 +226,24 @@ select threeMoreThan from [1,2,3,4,5] // [1,2,3]
 ```
 
 
-## Tips
-When we declare a Bool function, don't start it with the *is* word.
-```java
-@function
-(list: T[]) isEmpty -> Bool  // bad
-(list: T[]) empty   -> Bool  // good
-```
+## Calling a Bool function
+When we call a Bool function, we must use the `is` or `not` keyword.
 
-Why? Because we can declare an `is` and `isnt` function.
-```java
-@function 
-(item:T) is (func_: T -> Bool) -> func_ item
+For example, let say we have a `empty` function to detect whether a list is empty or not.
+
+```js
 @function
-(item:T) isnt (func_: T -> Bool) -> not (func_ item)
+empty xs:T[] -> Bool
+    -> xs.length is == 0
 ```
-Then we can use it like this:
-```java
-[] is _empty // true
-[1,2,3] isnt _empty // true
+Then, this is how to call it
+```js
+let result = [] is empty // valid
+let result = [] not empty // valid
+
+let result = empty [] // invalid
 ```
-Of course, you can also call it without the `is` function, but it is not recommended as it seems unnatural.
-```java
-[] empty // true
-not ([1,2,3,4] empty) // false
-```
+The purpose of this design is to enhance readability.
 
 ## Pattern matching (Pending)
 *This feature is still under consideration, as it seems to violate the objective of Pineapple.*
