@@ -71,7 +71,7 @@ bin -> Int
 
 @metafunction
 validate str:Literal<bin> -> String | null
-    if str dont (match /^[01]+$/)
+    if str not (match /^[01]+$/)
         -> `Must consist of one and zeroes only`
     else
         -> null
@@ -89,3 +89,44 @@ let myNumber = bin`0110110`
 let invalid = bin`0123` // Compile error: `Must consist of one and zeroes only`
 ```
 Why use literals? Because literals can help you spot error during compile time.
+
+### Let's look at another example for complex number.
+
+First, we need to define the Complex type.
+```js
+@type
+Complex:
+    .real: Number
+    .imaginary: Number
+```
+
+Then, we define a literal for it.
+```js
+@literal
+c -> Complex
+
+validate str:Literal<c> -> String | null
+    if str not match /^[+-]?\d+([.]\d+)?[+-]\d+([.]\d+)?[ij]$/
+        -> `Invalid format for complex number`
+    else
+        -> null
+
+@metafunction
+convert str:Literal<c> -> Complex
+    let tokens = split str by /[+-]/
+    let real = parse tokens.(1) asNumber
+    let imaginery <- parse tokens.(2) asNumber
+    if (from str capture /[+-]/).(1) is == `-`
+        imaginery <- -imaginery
+    -> 
+        .real = real
+        .imaginery = imaginery
+    
+// Example usage
+let x = c`99.2-0.8j` // valid
+let y = c`99` // Error: `Invalid format for complex number`
+
+print x.imaginery // -0.8
+
+
+```
