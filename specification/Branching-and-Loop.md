@@ -32,9 +32,9 @@ You can chain a condition using `and` or `or` keyword.
 
 There are 2 situations:
 - Chaining function that refers to the same expression
-    - `if` *expression* (`is`|`not`) *boolean function* [(`and`|`or`) *boolean function*]
+    - if *expression* (is|not) *boolean function* [(and|or) (is|not) *boolean function*]
 - Chaining function that refers to different expression
-    - `if` *expr1* (`is`|`not`) *boolean function* [(`and`|`or`) *expr2* (`is`|`not`) *boolean function*]
+    - if *expr1* (is|not) *boolean function* [(and|or) *expr2* (is|not) *boolean function*]
 
 Note: 
 - You cannot mix 2 situation together.
@@ -44,19 +44,21 @@ Note:
 For example,
 ```js
 // Chaining function that refers to the same expression
-if score is > 70 and <= 75
+if score is > 70 and is <= 75
     print `Your grade is B+`
 
+if x is even and not in [1,2,3,4,5]
+
 // Chaining function that refers to the different expressions
-if john is crazy or james is crazy
+if john is crazy or james not crazy
     print `Someone is crazy`
 
 // The following is invalid as it uses `and` with `or` together
-if something is > 5 and < 9 or even
+if something is > 5 and is < 9 or is even
     print `What a weird number`
 
 // The following is also invalid as it mix the 2 situations together
-if pineapple is tasty and sour and apple is sweet
+if pineapple is tasty and is sour and apple is sweet
     print `I don't really understand`
 ```
 
