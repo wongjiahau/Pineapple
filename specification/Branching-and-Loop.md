@@ -1,9 +1,33 @@
 # Branching and Loop
+## Boolean expressions (BE)
+Before we talk about `if` statement, we need to understand Boolean expression in Pineapple.  
+
+### Basic boolean expressions
+The most basic BE is `true` or `false`.
+
+### Calling boolean function
+In Pineapple, to call a boolean function, you need to use the `is` or `not` keyword.
+
+
+## Chaining boolea expression
+You can chain a boolean expression using `and` or `or` keyword.
+
+There are 2 situations:
+- Chaining that refers to the same expression
+    - *expression* (is|not) *boolean function* [(and|or) (is|not) *boolean function*]
+- Chaining that refers to different expression
+    - *expr1* (is|not) *boolean function* [(and|or) *expr2* (is|not) *boolean function*]
+ 
+ For example,
+ ```
+ let credit = score is > 70 and <= 80
+ let isTasty = fruit is sweet and not bitter
+ ```
+    
 ## If statements
 It will be similar to Python.  
 However, it must be in the form of:
-- `if` *expression* `is` *boolean function*
-- `if` *expression* `not` *boolean function*
+- `if` *boolean expression* 
 
 For example,
 ```js
@@ -28,13 +52,7 @@ else
 ```
 
 ## Logical chaining
-You can chain a condition using `and` or `or` keyword.
 
-There are 2 situations:
-- Chaining function that refers to the same expression
-    - if *expression* (is|not) *boolean function* [(and|or) (is|not) *boolean function*]
-- Chaining function that refers to different expression
-    - if *expr1* (is|not) *boolean function* [(and|or) *expr2* (is|not) *boolean function*]
 
 Note: 
 - You cannot mix 2 situation together.
