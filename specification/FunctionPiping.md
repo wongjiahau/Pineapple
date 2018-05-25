@@ -10,7 +10,9 @@ let sample0 = "pine" >> _ ++ "apple"
 
 print sample0 // "pineapple"
 
-let sample1 = 22 >> _ + 3 >> [10] ++ [_]
+let sample1 = 22 
+            >> _ + 3 
+            >> [10] ++ [_]
 
 // The operation above is same as the following
 let sample2 = [10] ++ [20 + 3]
@@ -28,7 +30,7 @@ Point:
     .y: Number
 
 @function 
-euclideanDistanceBetween a:Point and y:Point -> Number
+euclideanDistanceBetween a:Point and b:Point -> Number
     -> [a.x - b.x , a.y - b.y]
     >> for x in _ take x^2
     >> sum _ 

@@ -55,6 +55,18 @@ if x not even
 ```
 Note that `even` is a boolean function.
 
+## If statements with logical chaining
+```js
+if score is > 70 and is <= 80
+    print `Good job!`
+
+if myFruit or hisFruit not sweet
+    print `Someone's fruit is not sweet`
+
+if John is nice and Mary is sweet
+    print `Wow`
+```
+
 ## If elif else
 ```js
 if he is nerdy 
