@@ -6,40 +6,37 @@ There no classes in Pineapple! However you can simulate that using suffix functi
 // Definition of BinaryTree
 @type 
 BinaryTree<T>:
-    .left  : BinaryTree<T> | null
-    .right : BinaryTree<T> | null
+    .left  : BinaryTree<T>? = nil
+    .right : BinaryTree<T>? = nil
     .value : T
     where T: Comparable
 
 @function
-newTree (value: T) -> tree
+newTree value:T -> tree
     result =
-        .left  <- null
-        .right <- null
+        .left  <- nil
+        .right <- nil
         .value =  value
     -> result
 // Note that `<-` is assignment operator, while `=` is binding operator.  
 // When a name is binded with a value, it's value cannot be changed anymore
     
 @function
-insert (element: T) to (tree: BinaryTree<T>) -> BinaryTree
-    if tree.left is == null
-        tree.left <- newTree element
-    elif element > tree.left
-        if tree.right is == null
-            tree.right <- newTree element
-        else
-            insert element to tree.right
-    else 
-        insert element to tree.left
-    -> tree
+insert element:T to tree:BinaryTree<T> -> BinaryTree<T>
+    if tree.value is == nil
+        tree.value <- element
+        -> tree
+    elif element is <= tree.value
+        -> insert element to tree.left
+    else
+        -> insert element to tree.right
 
 @function
-(tree: BinaryTree) hasNoChild -> Bool
-    -> tree.left is == null and tree.right is == null
+tree:BinaryTree<T> hasNoChild -> Bool
+    -> tree.value and tree.left and tree.right is == nil
 
 @function
-element:T in tree:BinaryTree -> Bool
+element:T in tree:BinaryTree<T> -> Bool
     -> element is == tree.value 
         or == tree.left 
         or == tree.right 
@@ -55,16 +52,14 @@ from ./binaryTree.pine import
     _contains_
 
 let myTree: BinaryTree <-
-    .left = null
-    .right = null
     .value = 99
 
 myTree <- insert 5 to myTree
 
 if 5 is in myTree
-    print "It contains 5"
+    print `It contains 5`
 else 
-    print "Nope"
+    print `Nope`
 ```
 
 ## Inheritance
@@ -120,7 +115,7 @@ If we didn't declare the required functions, the Pineapple compiler will throw e
 Interface is especially useful for making generic function such as sorting function.  
 For example, look at this `quicksort` example.
 
-```js
+```hs
 @function
 quicksort xs:T[] -> T where T:Comparable
     if xs is empty -> []

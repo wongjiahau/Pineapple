@@ -11,7 +11,7 @@
 |`List`|`[1,2,3]`, `["p", "i", "n", "e"]`|
 |`Object`|`{.name='hi' .age=9}`|
 |`Any`|any data type|
-|`Null`|`null`|
+|`Null`|`nil`|
 |`Type`|`12.type`|
 |`Member`|`member-of People`|
 |`Function`|`($:Number) -> Number`|
@@ -37,9 +37,9 @@ For example:
 Fruit:
     .name    : String
     .isTasy  : Bool
-    .sibling : Fruit? = null
+    .sibling : Fruit? = nil
 ```
-So, the default value for `.sibling` is `null`.
+So, the default value for `.sibling` is `nil`.
 
 Now, whenever you initialize a `Fruit`, you don't need to specify the `.sibling` property.
 ```js
@@ -60,19 +60,19 @@ let myFruit: Fruit =
 
 
 ## Null-safe
-By default, a variable cannot be set to `null`.  
-Pineapple used this approach to prevent a very common error like `null pointer`.
+By default, a variable cannot be set to `nil`.  
+Pineapple used this approach to prevent a very common error like `nil pointer`.
 ```coffee
 let x: String <- "hello"
-x <- null # Compiler error
+x <- nil # Compiler error
 ```
 
 ## Nullable types
-To have a nullable type, you need to use the `?` operator.
+To have a nilable type, you need to use the `?` operator.
 ```js
-let y:String <- null // Error: Cannot assign `null` to `String`
+let y:String <- nil // Error: Cannot assign `nil` to `String`
 
-let x:String? <- null // No error
+let x:String? <- nil // No error
 ```
 
 ## Discriminated unions
@@ -165,16 +165,16 @@ To cast a type, you can use either `as!` or `as?` operator.
 
 ### The `as?` operator
 
-When you use `as?`, if the value is uncastable to the desired type, `null` will be returned.
+When you use `as?`, if the value is uncastable to the desired type, `nil` will be returned.
 
 For example,
 
 ```js
 let myNumber = 5
 let casted = myNumber as? String
-print casted // null
+print casted // nil
 ```
-Casted is `null` because the compiler cannot cast `Number` to `String`.
+Casted is `nil` because the compiler cannot cast `Number` to `String`.
 
 ---
 ### The `as!` operator

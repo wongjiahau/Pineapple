@@ -70,11 +70,11 @@ For example, let us create a binary literal.
 bin -> Int
 
 @metafunction
-validate str:Literal<bin> -> String | null
+validate str:Literal<bin> -> String | nil
     if str not (match /^[01]+$/)
         -> `Must consist of one and zeroes only`
     else
-        -> null
+        -> nil
 
 @metafunction
 convert str:Literal<bin> -> Int
@@ -105,11 +105,11 @@ Then, we define a literal for it.
 @literal
 c -> Complex
 
-validate str:Literal<c> -> String | null
+validate str:Literal<c> -> String | nil
     if str not match /^[+-]?\d+([.]\d+)?[+-]\d+([.]\d+)?[ij]$/
         -> `Invalid format for complex number`
     else
-        -> null
+        -> nil
 
 @metafunction
 convert str:Literal<c> -> Complex
