@@ -21,18 +21,22 @@ print sample1 // [10, 25]
 
 
 ```
-
-Another example for Euclidean distance between two points.
-```java
+Now, let's look at a example of Euclidean distance (without function piping)
+```
 @function
-Point:
-    .x: Number
-    .y: Number
-
+euclideanDistanceBetween a:Number[] and b:Number[] -> Number
+    let diff   = b - a
+    let square = map (^2) to diff
+    let sums   = sum square
+    let root   = squareRoot sums
+    -> root
+```
+With function piping, it will look a lot cleaner (see the following)
+```js
 @function 
-euclideanDistanceBetween a:Point and b:Point -> Number
-    -> [a.x - b.x , a.y - b.y]
-    >> for x in _ take x^2
+euclideanDistanceBetween a:Number[] and b:Number[] -> Number
+    -> b - a
+    >> map (^2) to _
     >> sum _ 
     >> squareRoot _
 ```
