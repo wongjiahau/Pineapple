@@ -20,7 +20,7 @@ sum (xs: Number[]) -> Number
     -> result
 ```
 
-Note that underscore ( `_` ) is a reserved symbol to identify if a function is suffix, prefix, infix or hybrid.
+Note that underscore ( `_` ) is a reserved symbol to identify if a function is suffix, prefix, infix or mixfix.
 
 The file path is using UNIX filepath notation, such as
 - Current directory `./`  

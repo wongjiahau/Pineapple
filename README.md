@@ -119,13 +119,14 @@ It is a language that focuses on (ranked by priority):
 - Haskell
 - Typescript
 - CoffeeScript
+- Swift
 - Python
 - C#
 - YAML
-- PHP
 - Java
 - Eiffel
 - Smalltalk
+- Bash
 
 ## Reference
 - Quora: [Which programming language is/was the prettiest and/or most readable?](http://qr.ae/TUT8tw)
