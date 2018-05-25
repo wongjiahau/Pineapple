@@ -23,6 +23,12 @@ bool_func
     | partial_func_call
     ;
 
+partial_func_call
+    = func_id expr func_id expr
+    | func_id expr
+    | func_id 
+    ;
+
 block 
     = NEWLINE INDENT stmt+ DEDENT
     ;
