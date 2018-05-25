@@ -1,0 +1,28 @@
+(*The grammar is trying to adapt to ISO-14977 EBNF (https://www.cl.cam.ac.uk/~mgk25/iso-14977.pdf)*)
+if_stmt
+    = "if" bool_expr block ('elif' bool_expr block)* ['else' block]
+    ;
+
+bool_expr
+    = expr (logic_op bool_func_call)+
+    | expr (logic_op expr)+ bool_func_call
+    | expr bool_func_call (logic_op expr bool_func_call)*
+    ;
+
+logic_op
+    = "and"
+    | "or"
+    ;
+
+bool_func_call
+    = ("is"|"not") bool_func
+    ;
+
+bool_func 
+    = relational_op expr
+    | partial_func_call
+    ;
+
+block 
+    = NEWLINE INDENT stmt+ DEDENT
+    ;
