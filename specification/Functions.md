@@ -3,7 +3,7 @@ Every function can be annotated with the `@function` keywords. This is optional,
 Note that the `??` operator means the function is unimplemented yet.
 
 ## How to call a function?
-Just like how you will do it in Haskell. No need brackets, only space.  
+Just like how you will do it in Haskell. No need brackets, only **space**.  
 Suppose we have this function `plus`.
 ```java
 @function 
@@ -19,8 +19,10 @@ let result = 2 plus 5
 ```java
 @function 
 sum xs:Number[] -> Number 
-    if xs == [] -> 0
-    else -> xs.1 + sum xs.(2..)
+    if xs is == [] 
+        -> 0
+    else 
+        -> xs.1 + sum xs.(2..)
 
 let result = sum [1,2,3,4]
 ```
@@ -45,7 +47,7 @@ x:Int plus y:Int -> Int
 ## Mixfix funtion
 ```ts
 @function
-expect (x:Number) toEqual (y:Number) -> Void 
+expect x:Number toEqual y:Number -> Void 
     -> ?? 
 
 expect 99 toEqual 88 
@@ -64,12 +66,14 @@ display (5 asString) // Valid
 ## Optional parameters
 You can set a function to have optional parameters.
 
-Let's look at the `_to_by` function.
+Let's look at the `_to_by_` function.
 ```java
 @function
-(start:Int) to (end:Int) by (step:Int=1) -> Int[]
-    if start >= end -> [end]
-    -> [start] ++ ((start + step) to end by step)
+start:Int to end:Int by step:Int=1 -> Int[]
+    if start is >= end 
+        -> [end]
+    else
+        -> [start] ++ ((start + step) to end by step)
     
 // Calling it
 let range1 = 0 to 6
@@ -128,6 +132,38 @@ sayHi
 sayHi 5 times
 ```
 
+## Function overloading
+Pineapple allow function with same signature to overload with different parameter type.
+For example, the following function declaration are valid.
+```java
+@function
+x:Int add y:Int -> Int
+    -> x + y
+
+@function
+xs:Int[] add ys:Int[] -> Int[]
+    -> zip xs and ys with (+)
+```
+However, when you are overloading function with subtypes, the compiler will resolve to the more specific type whenever possible.
+
+For example, let say we have two `plus` functions.
+```java
+// First function
+@function
+x:Int plus y:Int -> Int
+    -> x + y
+
+// Second function
+@function
+x:Number plus y:Number -> Number
+    -> x + y
+
+1 plus 2     // Resolve to first function
+1.1 plus 2.2 // Resolve to second function
+1.1 plus 2   // Resolve to second function
+1 plus 2.2   // Resolve to second function
+```
+
 
 ## How to pass data by reference?
 You cannot pass data by reference.
@@ -144,32 +180,40 @@ sayHello -> Void
 The type of a function will be like the following.
 ```java
 @function 
-(x:Number) square -> Number -> x * x
+x:Number square -> Number -> x * x
 
-_square.type // Number -> Number
+square.type // Number -> Number
 
 @function 
-(x:Number) add (y:Number) -> x + y
+x:Number add y:Number -> x + y
 
-_add_.type // (Number,Number) -> Number
+add.type // (Number,Number) -> Number
 ```
 
 ## How to pass a function to a function?
-Just like how you will import them from other file, using the `underscore` notation.  
 For example, suppose we have the `map` function defined as above.
 ```java
 @function 
-(x: Number) add (y: Number) -> Number
+x:Number add y:Number -> Number
     -> x + y
 
 // This is how you pass the `add` function to `map`
-let result = map _add_ to [[1,2], [3,4]]
+let result = map add to [[1,2], [3,4]]
 
 print result // [3,7]
 
 ```
-## Anonymous function
-### Assigning a function to a variable
+However, for mixfix function, you need to use the `underscore` notation.
+For example,
+```java
+@function 
+start:Int to end:Int by step:Int -> Int[]
+    -> ??
+
+let func = _to_by_
+```
+## Anonymous function (pending)
+### Assigning a function to a variable 
 The variable name for function must contain 1 underscore if it contains 1 argument;   
 2 underscore for 2 arguments, so on and so forth.  
 
@@ -179,7 +223,7 @@ If it contains no argument, no underscore is needed.
 
 Note that you cannot have consecutive underscore.
 ```ts
-let even_ = (x:Number) -> x % 2 == 0
+let even_ = (x:Number) -> x % 2 is == 0
 
 // Here's how to call even_
 even 5
@@ -203,8 +247,8 @@ invoke (func_:Number->Number) with (param:Number) -> Number
 @function
 invoke (_func_:(Number,Number)->Number) on (list:Number[]) -> Number
     let result <- 0
-    for i in 0 to (list.length - 2)
-        result <- result + (list[i] _func_ list[i+1])
+    for i in 1 to (list.length - 1)
+        result <- result + (list.(i) func list.(i+1))
     -> result
 ```
 
@@ -212,38 +256,18 @@ invoke (_func_:(Number,Number)->Number) on (list:Number[]) -> Number
 ## Currying
 ```java
 @function
-(x:Number) moreThan (y:Number) -> boolean
+x:Number moreThan y:Number -> boolean
     -> x > y
 
-let moreThanThree = _moreThan 3
+let moreThanThree = moreThan 3
 
 // invert it
-let threeMoreThan = 3 moreThan_
+let threeMoreThan = 3 moreThan
 
 select moreThanThree from [1,2,3,4,5] // [4,5]
 
 select threeMoreThan from [1,2,3,4,5] // [1,2,3]
 ```
-
-
-## Calling a Bool function
-When we call a Bool function, we must use the `is` or `not` keyword.
-
-For example, let say we have a `empty` function to detect whether a list is empty or not.
-
-```js
-@function
-empty xs:T[] -> Bool
-    -> xs.length is == 0
-```
-Then, this is how to call it
-```js
-let result = [] is empty // valid
-let result = [] not empty // valid
-
-let result = empty [] // invalid
-```
-The purpose of this design is to enhance readability.
 
 ## Pattern matching (Pending)
 *This feature is still under consideration, as it seems to violate the objective of Pineapple.*
@@ -274,12 +298,13 @@ result = select num whichIs (moreThan 3) from [1,2,3,4]
 Let's look at the imperative version.
 ```java
 @function
-select (mapFunc: T -> T) whichIs (filterFunc: T -> Bool) from (list: T[]) -> T[]
-    if list is empty_ -> []
-    result = mutable []
-    foreach x in list
+select (mapFunc:T->T) whichIs (filterFunc:T->Bool) from (list:T[]) -> T[]
+    if list is empty 
+        -> []
+    let result = mutable []
+    for x in list
         if filterFunc x
-            add (mapFunc x) into result
+            result <- result ++ mapFunc x
     -> result
 ```
 To be honest, the imperative version is actually much shorter can much cleaner than the functional counterpart. OOPS.
