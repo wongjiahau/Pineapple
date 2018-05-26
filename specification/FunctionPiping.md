@@ -6,9 +6,9 @@ Let's look at an simple example.
 
 
 ```js
-let sample0 = "pine" >> _ ++ "apple" 
+let sample0 = `pine` >> _ ++ `apple` 
 
-print sample0 // "pineapple"
+print sample0 // `pineapple`
 
 let sample1 = 22 
             >> _ + 3 
@@ -22,7 +22,7 @@ print sample1 // [10, 25]
 
 ```
 Now, let's look at a example of Euclidean distance (without function piping)
-```
+```js
 @function
 euclideanDistanceBetween a:Number[] and b:Number[] -> Number
     let diff   = b - a
@@ -54,15 +54,15 @@ let problem = [1, 2, 3] >> _ + _  // Error, cant deconstruct 3 elements into 2
 You can even pipe to access object values!
 ```ts
 let fruit = 
-    .name  = "Pineapple"
+    .name  = `Pineapple`
     .sweet = true
 
-fruit >> _.name >> print _ // "Pineapple"
+fruit >> _.name >> print _ // `Pineapple`
 ```
 
 ## Nested piping
 You can nest piping by grouping them using brackets.
 ```ts
-let result = (["pine", "apple"] >> _ ++ _) >> _.length
+let result = ([`pine`, `apple`] >> _ ++ _) >> _.length
 print result // "9"
 ```
