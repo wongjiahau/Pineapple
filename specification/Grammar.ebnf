@@ -15,12 +15,21 @@ LogicOp
     ;
 
 BoolFuncCall
-    = ('is'|'not') BoolFunc
-    ;
+    = 'is' BoolFunc
+    | 'not' BoolFunc
+    ; 
 
 BoolFunc 
     = CompOp MonoExpr
     | PartialFuncCalll
+    ;
+
+CompOp
+    = '=='
+    | '<'
+    | '>'
+    | '<='
+    | '>='
     ;
 
 PartialFuncCalll
