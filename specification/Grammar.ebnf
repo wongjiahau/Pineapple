@@ -1,34 +1,69 @@
 (*The grammar is trying to adapt to ISO-14977 EBNF (https://www.cl.cam.ac.uk/~mgk25/iso-14977.pdf)*)
-if_stmt
-    = 'if' test block ('elif' test block)* ['else' block]
+IfStmt
+    = 'if' Test Block ('elif' Test Block)* ['else' Block]
     ;
 
-test
-    = expr (logic_op bool_func_call)+
-    | expr (logic_op expr)+ bool_func_call
-    | expr bool_func_call (logic_op expr bool_func_call)*
+Test
+    = MonoExpr (LogicOp BoolFuncCall)+
+    | MonoExpr (LogicOp MonoExpr)+ BoolFuncCall
+    | MonoExpr BoolFuncCall (LogicOp MonoExpr BoolFuncCall)*
     ;
 
-logic_op
+LogicOp
     = 'and'
     | 'or'
     ;
 
-bool_func_call
-    = ('is'|'not') bool_func
+BoolFuncCall
+    = ('is'|'not') BoolFunc
     ;
 
-bool_func 
-    = relational_op expr
-    | partial_func_call
+BoolFunc 
+    = CompOp MonoExpr
+    | PartialFuncCalll
     ;
 
-partial_func_call
-    = func_id expr func_id expr
-    | func_id expr
-    | func_id 
+PartialFuncCalll
+    = IDENTIFIER MonoExpr IDENTIFIER MonoExpr
+    | IDENTIFIER MonoExpr 
+    | IDENTIFIER 
     ;
 
-block 
-    = NEWLINE INDENT stmt+ DEDENT
+MonoExpr
+    = '(' Expr ')'
+    | IDENTIFIER
+    | Value
+    ;
+
+Value
+    = NUMBER
+    | STRING
+    | List
+    | Object        
+    | 'true'
+    | 'false'
+    | 'nil'
+    ;
+
+List
+    = '[' ']'
+    | '[' Value+ ']'
+    ;
+
+Object  
+    = '{' '}'
+    | NEWLINE INDENT Members+ DEDENT
+    ;
+
+Members
+    = MEMBERNAME LinkOp Expr
+    ;
+
+LinkOp
+    = '='
+    | '<-'
+    ;
+
+Block 
+    = NEWLINE INDENT Stmt+ DEDENT
     ;
