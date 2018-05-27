@@ -6,20 +6,20 @@ Before we talk about `if` statement, we need to understand Boolean expression in
 The most basic BE is `true` or `false`.
 
 ### Calling boolean function
-In Pineapple, to call a boolean function, you need to use the `is` or `not` keyword.
+In Pineapple, to call a boolean function, you need to use the `is` or `isnt` keyword.
 
 ## Chaining boolean expression
 You can chain a boolean expression using `and` or `or` keyword.
 
 There are 3 situations:
 - Chaining boolean functions that refers to the same expression
-    - *expr* (is|not) *boolFunc* [(and|or) (is|not) *boolFunc*]
+    - *expr* (is|isnt) *boolFunc* [(and|or) (is|isnt) *boolFunc*]
     - Example: `score is > 70 and is <= 80`
 - Chaining expressions that refers to the same boolean functions
-    - *expr1* [ (and|or) *expr2* ] (is|not) *boolFunc*
-    - Example: `myFruit or hisFruit not sweet`
+    - *expr1* [ (and|or) *expr2* ] (is|isnt) *boolFunc*
+    - Example: `myFruit or hisFruit isnt sweet`
 - Chaining that refers to different expression
-    - *expr1* (is|not) *boolFunc1* [(and|or) *expr2* (is|not) *boolFunc2*]
+    - *expr1* (is|isnt) *boolFunc1* [(and|or) *expr2* (is|isnt) *boolFunc2*]
     - Example: `John is nice and Mary is sweet`
 
 
@@ -50,7 +50,7 @@ let x = 5
 if x is == 5
     print `x is equal to 5`
 
-if x not even
+if x isnt even
     print `x is not even`
 ```
 Note that `even` is a boolean function.
@@ -60,7 +60,7 @@ Note that `even` is a boolean function.
 if score is > 70 and is <= 80
     print `Good job!`
 
-if myFruit or hisFruit not sweet
+if myFruit or hisFruit isnt sweet
     print `Someone's fruit is not sweet`
 
 if John is nice and Mary is sweet
@@ -158,11 +158,11 @@ repeat
 By using the `.pairs` property.
 ```ts
 let myObject = 
-    .first = "Pine"
-    .last  = "Apple"
+    .first = `Pine`
+    .last  = `Apple`
     .price = 99
 
-print myObject.pairs // [["first", "Pine"], ["last", "Apple"], ["price", 99]]
+print myObject.pairs // [[`first`, `Pine`], [`last`, `Apple`], [`price`, 99]]
 
 print myObject.pairs.type // [String, Any][]
 
