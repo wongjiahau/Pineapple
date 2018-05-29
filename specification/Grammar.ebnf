@@ -1,4 +1,31 @@
 (*The grammar is trying to adapt to ISO-14977 EBNF (https://www.cl.cam.ac.uk/~mgk25/iso-14977.pdf)*)
+FuncCall 
+    = MixfixFuncCall
+    | InfixFuncCall
+    | PrefixFuncCall
+    | PostFixFuncCall
+    ;
+
+PrefixFuncCall
+    = IDENTIFIER MonoExpr
+    ;
+
+PostFixFuncCall
+    = MonoExpr IDENTIFIER
+    ;
+
+InfixFuncCall
+    = InfixFuncCall IDENTIFIER MonoExpr
+    | MonoExpr
+    ;
+
+MixfixFuncCall
+    = IDENTIFIER MonoExpr IDENTIFIER 
+    | IDENTIFIER MonoExpr IDENTIFIER MonoExpr
+    | MonoExpr IDENTIFIER MonoExpr IDENTIFIER
+    | MonoExpr IDENTIFIER MonoExpr IDENTIFIER MonoExpr
+    ;
+
 IfStmt
     = 'if' Test Block ('elif' Test Block)* ['else' Block]
     ;
@@ -16,23 +43,10 @@ LogicOp
 
 BoolFuncCall
     = 'is' BoolFunc
-    | 'not' BoolFunc
+    | 'isnt' BoolFunc
     ; 
 
-BoolFunc 
-    = CompOp MonoExpr
-    | PartialFuncCalll
-    ;
-
-CompOp
-    = '=='
-    | '<'
-    | '>'
-    | '<='
-    | '>='
-    ;
-
-PartialFuncCalll
+BoolFunc
     = IDENTIFIER MonoExpr IDENTIFIER MonoExpr
     | IDENTIFIER MonoExpr 
     | IDENTIFIER 
