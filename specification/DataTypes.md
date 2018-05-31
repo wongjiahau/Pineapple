@@ -24,9 +24,33 @@ By using the `@type` annotation.
 // Definition
 @type 
 Fruit:
-    .name    : String
-    .isTasy  : Bool
+    .name    : String 
+    .isTasty  : Bool
     .sibling : Fruit?
+```
+
+## How to create a subtype of a type?
+For example, let say we want to create a `Month` type. 
+```js
+@type
+Month extends Integer:
+    where self is >= 0 and is <= 31 
+```
+Or, let say phone number.
+```js
+@type
+PhoneNumber extends String:
+    where self is matching /^[0-9]{10}$/
+```
+Then, when we initialized a value with those type, the compiler will check if it satisfy the defined condition.
+```ts
+let adamsPhone: PhoneNumber = `abc` 
+// Error: Doesn't match condition of `is matching /^[0-9]{10}$/`
+```
+You can also do casting with it.
+```ts
+let myPhone = `012345678` as! PhoneNumber
+print myPhone.type // PhoneNumber
 ```
 
 ## Types with default value
@@ -36,7 +60,7 @@ For example:
 @type
 Fruit:
     .name    : String
-    .isTasy  : Bool
+    .isTasty  : Bool
     .sibling : Fruit? = nil
 ```
 So, the default value for `.sibling` is `nil`.

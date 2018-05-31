@@ -66,6 +66,20 @@ if myFruit or hisFruit isnt sweet
 if John is nice and Mary is sweet
     print `Wow`
 ```
+It is the same as the following in Javascript:
+```js
+if (score > 70 && score <= 80) {
+    alert(`Good job!`)(;
+}
+
+if (!myFruit.isSweet() || !hisFruit.isSweet()) {
+    alert(`Someone's fruit is not sweet`);
+}
+
+if (John.isNice() && Mary.isSweet()) {
+    alert(`Wow`);
+}
+```
 
 ## If elif else
 ```js

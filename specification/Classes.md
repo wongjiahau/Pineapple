@@ -120,7 +120,7 @@ For example, look at this `quicksort` example.
 quicksort xs:T[] -> T where T:Comparable
     if xs is empty -> []
     let pivot = xs.(1)
-    let left  = from xs where (item not > pivot)
+    let left  = from xs where (item isnt > pivot)
     let right = from xs where (item is > pivot)
     -> left ++ [pivot] ++ right
 
