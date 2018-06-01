@@ -148,7 +148,7 @@ const InfixFuncCallNode = (left, operator, right) => ({
 "::"          return '::'
 "["           return '['
 "]"           return ']'
-","           return ','
+","           return  COMMA
 [0-9]+        return 'TOKEN_ID'
 "OPERATOR"    return 'OPERATOR'
 "EOF"         return 'EOF'
@@ -204,6 +204,33 @@ Statement
     | IfStatement
     ;
 
+IfStatement
+    : IF Test Block
+    ;
+
+Test
+    : Expression IsOrIsnt PartialBoolFuncCall PartialBoolFuncCallChain
+    | ExpressionChain IsOrIsnt PartialBoolFuncCall
+    ;
+
+IsOrIsnt
+    : IS
+    | ISNT
+    ;
+
+PartialBoolFuncCallChain
+    : LogicOp PartialBoolFuncCall PartialBoolFuncCallChain
+    | LogicOp PartialBoolFuncCall
+    ;
+
+LogicOp
+    : AND
+    | OR
+    ;
+    
+Block
+    : NEWLINE INDENT StatementList DEDENT
+    ;
 
 LinkStatement
     : LET VariableAtom LinkOperator Expression
@@ -216,7 +243,7 @@ LinkOperator
     ;
 
 TypeExpressionList
-    : TypeExpressionList ',' TypeExpression
+    : TypeExpressionList COMMA TypeExpression
     | TypeExpression
     ;
 
@@ -330,7 +357,7 @@ Array
 
 Elements
     : Expression
-    | Elements ',' Expression
+    | Elements COMMA Expression
     ;
 
 BooleanAtom
