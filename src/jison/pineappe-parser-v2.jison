@@ -206,34 +206,46 @@ Statement
 
 IfStatement
     : IF Test Block
+    | IF Test Block ElifChain
     ;
 
+ElifChain
+    : ELIF Test Block ElifChain
+    | ELIF Test Block
+    | ELSE Block
+    ;
+    
 Test
-    : Expression IsOrIsnt PartialBoolFuncCall PartialBoolFuncCallChain
-    | ExpressionChain IsOrIsnt PartialBoolFuncCall
-    | Expression IsOrIsnt PartialBoolFuncCall LogicOp Test
-    | Expression IsOrIsnt PartialBoolFuncCall
+    : TestChain 
+    | Expression PartialBoolFuncCallChain
+    | ExpressionChain PartialBoolFuncCall
     ;
 
-IsOrIsnt
-    : IS
-    | ISNT
+TestChain
+    : TestChain LogicOp Expression PartialBoolFuncCall 
+    | Expression PartialBoolFuncCall
     ;
 
 PartialBoolFuncCallChain
-    : LogicOp PartialBoolFuncCall PartialBoolFuncCallChain
-    | LogicOp PartialBoolFuncCall
+    : PartialBoolFuncCallChain LogicOp PartialBoolFuncCall 
+    | PartialBoolFuncCall LogicOp PartialBoolFuncCall
     ;
 
 ExpressionChain
     : ExpressionChain LogicOp Expression
     | Expression LogicOp Expression
     ;
+   
 LogicOp
     : AND
     | OR
     ;
-    
+ 
+IsOrIsnt
+    : IS
+    | ISNT
+    ;
+ 
 Block
     : NEWLINE INDENT StatementList DEDENT
     ;
