@@ -228,6 +228,7 @@ TypeExpression
 
 Expression
     : FuncCall
+    | MonoExpr
     ;
 
 FuncCall
@@ -272,7 +273,23 @@ MixfixFuncCall
 MonoExpr
     : LEFT_PAREN Expression RIGHT_PAREN
     | Value
+    | ArrayAccess
+    | ArraySlicing
     ;
+
+ArrayAccess
+    : MonoExpr '.{' Expression '}'
+    ;
+
+
+ArraySlicing
+    : MonoExpr '.{..<' Expression '}' 
+    | MonoExpr '.{..' Expression  '}' 
+    | MonoExpr '.{' Expression  '..}'
+    | MonoExpr '.{' Expression  '..' Expression  '}' 
+    | MonoExpr '.{' Expression  '..<' Expression '}' 
+    ;
+
 
 Value
     : NIL
