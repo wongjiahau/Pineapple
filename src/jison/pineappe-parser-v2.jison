@@ -152,6 +152,7 @@ const InfixFuncCallNode = (left, operator, right) => ({
 [0-9]+        return 'TOKEN_ID'
 "OPERATOR"    return 'OPERATOR'
 "EOF"         return 'EOF'
+"DOT"         return 'DOT'
 "LEFT_PAREN"  return 'LEFT_PAREN'
 "RIGHT_PAREN" return 'RIGHT_PAREN'
 "PREFIX_FUNCNAME"    return 'PREFIX_FUNCNAME'
@@ -200,7 +201,9 @@ StatementList
 
 Statement
     : LinkStatement
+    | IfStatement
     ;
+
 
 LinkStatement
     : LET VariableAtom LinkOperator Expression
@@ -224,6 +227,7 @@ TypeExpression
     | TypenameAtom '[' TypeExpressionList ']'
     | TypeExpression UNION_OP TypenameAtom
     | TypeExpression INTERSECT_OP TypenameAtom
+    | '(' TypeExpression ')'
     ;
 
 Expression
@@ -275,12 +279,12 @@ MonoExpr
     | Value
     | ArrayAccess
     | ArraySlicing
+    | ObjectAccess
     ;
 
 ArrayAccess
     : MonoExpr '.{' Expression '}'
     ;
-
 
 ArraySlicing
     : MonoExpr '.{..<' Expression '}' 
@@ -290,6 +294,10 @@ ArraySlicing
     | MonoExpr '.{' Expression  '..<' Expression '}' 
     ;
 
+ObjectAccess
+    : ObjectAccess DOT VariableAtom
+    | VariableAtom DOT VariableAtom
+    ;
 
 Value
     : NIL
