@@ -225,6 +225,10 @@ PartialBoolFuncCallChain
     | LogicOp PartialBoolFuncCall
     ;
 
+ExpressionChain
+    : ExpressionChain LogicOp Expression
+    | Expression LogicOp Expression
+    ;
 LogicOp
     : AND
     | OR
