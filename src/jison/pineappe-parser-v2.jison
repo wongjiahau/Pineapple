@@ -211,6 +211,8 @@ IfStatement
 Test
     : Expression IsOrIsnt PartialBoolFuncCall PartialBoolFuncCallChain
     | ExpressionChain IsOrIsnt PartialBoolFuncCall
+    | Expression IsOrIsnt PartialBoolFuncCall LogicOp Test
+    | Expression IsOrIsnt PartialBoolFuncCall
     ;
 
 IsOrIsnt
