@@ -5,24 +5,22 @@ There no classes in Pineapple! However you can simulate that using suffix functi
 ```java
 // Definition of BinaryTree
 @type 
-BinaryTree<T>:
-    .left  : BinaryTree<T>? = nil
-    .right : BinaryTree<T>? = nil
+BinaryTree{T extends Comparable}:
+    .left  : BinaryTree{T}? = nil
+    .right : BinaryTree{T}? = nil
     .value : T
-    where T: Comparable
 
 @function
-newTree value:T -> tree
-    result =
+newTree value:T -> BinaryTree{T}
+    -> #
         .left  <- nil
         .right <- nil
         .value =  value
-    -> result
 // Note that `<-` is assignment operator, while `=` is binding operator.  
 // When a name is binded with a value, it's value cannot be changed anymore
     
 @function
-insert element:T to tree:BinaryTree<T> -> BinaryTree<T>
+insert element:T to tree:BinaryTree{T} -> BinaryTree{T}
     if tree.value is == nil
         tree.value <- element
         -> tree
@@ -32,11 +30,14 @@ insert element:T to tree:BinaryTree<T> -> BinaryTree<T>
         -> insert element to tree.right
 
 @function
-tree:BinaryTree<T> hasNoChild -> Bool
-    -> tree.value and tree.left and tree.right is == nil
+tree:BinaryTree{T} hasNoChild -> Bool
+    -> tree.value 
+        and tree.left 
+        and tree.right 
+        is == nil
 
 @function
-element:T in tree:BinaryTree<T> -> Bool
+element:T in tree:BinaryTree{T} -> Bool
     -> element is == tree.value 
         or == tree.left 
         or == tree.right 

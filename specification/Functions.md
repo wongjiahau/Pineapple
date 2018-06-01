@@ -40,17 +40,19 @@ let result = 5 daysFromToday
 ## Infix function
 ```ts
 @function
-x:Int plus y:Int -> Int
-    -> x + y
+:Int plus :Int -> Int
+    -> $1 + $2
+
+let $result = 2 plus 5
 ```
 
 ## Mixfix funtion
-```ts
+```js
 @function
-expect x:Number toEqual y:Number -> Void 
+split :String by :String -> String[]
     -> ?? 
 
-expect 99 toEqual 88 
+let $result = split `one/two/three` by `/`
 ```
 
 ## Function precedence

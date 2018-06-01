@@ -69,7 +69,7 @@ if John is nice and Mary is sweet
 It is the same as the following in Javascript:
 ```js
 if (score > 70 && score <= 80) {
-    alert(`Good job!`)(;
+    alert(`Good job!`);
 }
 
 if (!myFruit.isSweet() || !hisFruit.isSweet()) {
