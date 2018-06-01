@@ -154,7 +154,9 @@ const InfixFuncCallNode = (left, operator, right) => ({
 "EOF"         return 'EOF'
 "LEFT_PAREN"  return 'LEFT_PAREN'
 "RIGHT_PAREN" return 'RIGHT_PAREN'
-"FUNCNAME"    return 'FUNCNAME'
+"PREFIX_FUNCNAME"    return 'PREFIX_FUNCNAME'
+"INFIX_FUNCNAME"     return 'INFIX_FUNCNAME'
+"POSTFIX_FUNCNAME"   return 'POSTFIX_FUNCNAME'
 "VARNAME"     return 'VARNAME'
 "MEMBERNAME"  return 'MEMBERNAME'
 "TYPENAME"    return 'TYPENAME'
@@ -237,7 +239,7 @@ FuncCall
     ;
 
 NofixFuncCall
-    : FuncAtom
+    : PrefixFuncAtom
     ;
 
 InfixFuncCall
@@ -246,25 +248,25 @@ InfixFuncCall
     ;
 
 FuncId
-    : FuncAtom
+    : InfixFuncAtom
     | OperatorAtom
     ;
 
 PrefixFuncCall
-    : FuncAtom MonoExpr
+    : PrefixFuncAtom MonoExpr
     ;
 
 PostfixFuncCall
-    : MonoExpr FuncAtom
+    : MonoExpr PostfixFuncAtom
     ;
 
 MixfixFuncCall
-    : FuncAtom MonoExpr FuncAtom 
-    | FuncAtom MonoExpr FuncAtom MonoExpr
-    | FuncAtom MonoExpr FuncAtom MonoExpr FuncAtom 
-    | FuncAtom MonoExpr FuncAtom MonoExpr FuncAtom MonoExpr
-    | FuncAtom MonoExpr FuncAtom MonoExpr FuncAtom MonoExpr FuncAtom
-    | FuncAtom MonoExpr FuncAtom MonoExpr FuncAtom MonoExpr FuncAtom MonoExpr
+    : PrefixFuncAtom MonoExpr InfixFuncAtom 
+    | PrefixFuncAtom MonoExpr InfixFuncAtom MonoExpr
+    | PrefixFuncAtom MonoExpr InfixFuncAtom MonoExpr PostfixFuncAtom
+    | PrefixFuncAtom MonoExpr InfixFuncAtom MonoExpr InfixFuncAtom MonoExpr
+    | PrefixFuncAtom MonoExpr InfixFuncAtom MonoExpr InfixFuncAtom MonoExpr PostfixFuncAtom
+    | PrefixFuncAtom MonoExpr InfixFuncAtom MonoExpr InfixFuncAtom MonoExpr InfixFuncAtom MonoExpr
     ;
 
 MonoExpr
@@ -317,6 +319,18 @@ StringAtom
 
 NumberAtom
     : NUMBER '::' TOKEN_ID {$$=Node($1,$3)}
+    ;
+
+PrefixFuncAtom
+    : PREFIX_FUNCNAME '::' TOKEN_ID
+    ;
+
+PostfixFuncAtom
+    : POSTFIX_FUNCNAME '::' TOKEN_ID
+    ;
+
+InfixFuncAtom
+    : INFIX_FUNCNAME '::' TOKEN_ID
     ;
 
 FuncAtom

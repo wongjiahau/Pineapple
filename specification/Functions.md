@@ -5,54 +5,80 @@ Note that the `??` operator means the function is unimplemented yet.
 ## How to call a function?
 Just like how you will do it in Haskell. No need brackets, only **space**.  
 Suppose we have this function `plus`.
-```java
-@function 
-x:Number plus y:Number -> Number
-    -> x + y
+```js
+function 
+x@Number :plus: y@Number >> Number
+    >> x + y
 
 // Here's how you call the `plus` function
-let result = 2 plus 5
+let result = 2 :plus: 5
+```
 
+## Nofix function
+Also means function without parameters.
+```ts
+function
+pi: >> Number
+    >> 3.141592653
+
+let x = pi:
 ```
 
 ## Prefix function
-```java
-@function 
-sum xs:Number[] -> Number 
+```ts
+function 
+sum: xs@Number[] >> Number 
     if xs is == [] 
-        -> 0
+        >> 0
     else 
-        -> xs.1 + sum xs.(2..)
+        >> xs.{1} + sum: xs.{1}
 
-let result = sum [1,2,3,4]
+let result = sum: [1,2,3,4]
 ```
 
 ## Suffix function
 ```ts
-@function
-howMany:Int daysFromToday -> Date 
-    -> (today.days + howMany) as Date
+function
+howMany@Int :daysFromToday >> Date 
+    >> (today.days + howMany) as Date
 
-let result = 5 daysFromToday
+let result = 5 :daysFromToday
+```
+Note that the space after `5` is necessary.  
+This is because we might come to the following situation if we did not use space:
+```
+pine:apple
+```
+In this case, is `pine` the function or variable? Is `apple` the function or variable?  
+With space, everything will be clear.
+```js
+pine: apple // pine is function
+pine :apple // apple is function
 ```
 
 
 ## Infix function
 ```ts
-@function
-:Int plus :Int -> Int
-    -> $1 + $2
+function
+x@Int :plus: y@Int >> Int
+    >> x + y
 
-let $result = 2 plus 5
+let result = 2 :plus: 5
 ```
 
 ## Mixfix funtion
-```js
-@function
-split :String by :String -> String[]
-    -> ?? 
+```ts
+function
+split: x@String :by: delimiter@String >> String[]
+    >> ?? 
 
-let $result = split `one/two/three` by `/`
+let myString = `one/two/three`
+let delim = `/`
+let result = split: myString :by: delim
+
+
+let result@String = `hello world`
+let y@Int = 234
 ```
 
 ## Function precedence
@@ -69,19 +95,19 @@ display (5 asString) // Valid
 You can set a function to have optional parameters.
 
 Let's look at the `_to_by_` function.
-```java
-@function
-start:Int to end:Int by step:Int=1 -> Int[]
+```ts
+function
+start@Int :to: end@Int :by: step@Int=1 -> Int[]
     if start is >= end 
         -> [end]
     else
-        -> [start] ++ ((start + step) to end by step)
+        -> [start] ++ ((start + step) :to: end :by: step)
     
 // Calling it
-let range1 = 0 to 6
+let range1 = 0 :to: 6
 print range1 // [0,1,2,3,4,5,6]
 
-let range2 = 0 to 7 by 2
+let range2 = 0 :to: 7 :by: 2
 print range2 // [0,2,4,6]
 
 ```

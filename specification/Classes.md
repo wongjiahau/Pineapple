@@ -2,47 +2,49 @@
 There no classes in Pineapple! However you can simulate that using suffix function.
 
 ## Example: BinaryTree
-```java
+```ts
 // Definition of BinaryTree
-@type 
+type 
 BinaryTree{T extends Comparable}:
-    .left  : BinaryTree{T}? = nil
-    .right : BinaryTree{T}? = nil
-    .value : T
+    .left  @ BinaryTree{T}? = nil
+    .right @ BinaryTree{T}? = nil
+    .value @ T
 
-@function
-newTree value:T -> BinaryTree{T}
-    -> #
+function
+newTree: value@T >> BinaryTree{T}
+    >> #
         .left  <- nil
         .right <- nil
         .value =  value
 // Note that `<-` is assignment operator, while `=` is binding operator.  
 // When a name is binded with a value, it's value cannot be changed anymore
     
-@function
-insert element:T to tree:BinaryTree{T} -> BinaryTree{T}
-    if tree.value is == nil
-        tree.value <- element
-        -> tree
-    elif element is <= tree.value
-        -> insert element to tree.left
-    else
-        -> insert element to tree.right
 
-@function
-tree:BinaryTree{T} hasNoChild -> Bool
-    -> tree.value 
+function
+insert: element@T :to: tree@BinaryTree{T} >> BinaryTree{T}
+    if tree.value is == nil
+        tree.value << element
+        >> tree
+    elif element is <= tree.value
+        >> insert: element :to: tree.left
+    els
+        >> insert: element :to: tree.right
+    
+
+function
+tree@BinaryTree{T} :hasNoChild >> Bool
+    >> tree.value 
         and tree.left 
         and tree.right 
         is == nil
 
-@function
-element:T in tree:BinaryTree{T} -> Bool
-    -> element is == tree.value 
-        or == tree.left 
-        or == tree.right 
-        or in tree.left 
-        or in tree.right
+function
+element@T :in: tree@BinaryTree{T} >> Bool
+    >> element is == tree.value 
+        or is == tree.left 
+        or is == tree.right 
+        or is :in: tree.left 
+        or is :in: tree.right
 ```
 
 ```ts

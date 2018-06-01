@@ -8,28 +8,31 @@ let xs = [1,2,3,4]
 let invalidList = [1, "b"] // Error: Cannot contain different type in a list
 
 let manyFruits = [
-    {.name="Apple"     .color="red"},
-    {.name="Pineapple" .color="yellow"}
+    #(.name="Apple"     .color="red"),
+    #(.name="Pineapple" .color="yellow")
 ]
 
 
 ```
 
 ## Indexing
-Indexing is done using the dot-bracket (`.()`) operator (same as OCaml).
+Indexing is done using the dot-bracket (`.{}`) operator.
 The first element will have the index of **ONE**.
 ```ts
 let xs = [11,22,33,44]
 
 // Get first element
-xs.(1) // 11
+xs.{1} // 11
 
 // Get last element
-xs.(-1) // 44
+xs.{-1} // 44
+
+// Get the second last element
+xs.{-2} // 33
 ```
 ### Design decision
 #### Why we use one instead of zero in Pinapple? 
-Because this aligns with one of the design goal of Pineapple, which is *What you see is what you get*.  If you see `xs.(1)`, it means the first element, you don't have to plus 1 in your head like you would do in other language such as C.
+Because this aligns with one of the design goal of Pineapple, which is *What you see is what you get*.  If you see `xs.{1}`, it means the first element, you don't have to plus 1 in your head like you would do in other language such as C.
 
 
 ## Slicing
@@ -40,19 +43,19 @@ To slice a list, you can use the following operators:
 xs = [10, 20, 30, 40]
 
 // Get from first element to third element
-xs.(1..3) // [10, 20, 30]
+xs.{1..3} // [10, 20, 30]
 
 // Get from second element to 2nd last element
-xs.(2..-2) // [20,30]
+xs.{2..-2} // [20,30]
 
 // Get from second element to before 3rd element
-xs.(1..<3) // [10,20]
+xs.{1..<3} // [10,20]
 
 // Get until third element from start
-xs.(..3) // [10,20,30]
+xs.{..3} // [10,20,30]
 
 // Get from second element till end
-xs.(2..) // [20,30,40]
+xs.{2..} // [20,30,40]
 ```
 
 ## List unpacking
@@ -69,9 +72,9 @@ You need to declare the type explicitly. For example:
 ```ts
 let tuple1 = ["price", 99] // Error: Items in a list must be of the same type
 
-let tuple2:[String,Number] = ["price", 99] // No error
+let tuple2@[String,Number] = ["price", 99] // No error
 
-let listOfTuples:[String, Number][] = [
+let listOfTuples@[String, Number][] = [
     ["apple"    , 12],
     ["pineapple", 24],
     ["durian"   , 33]
@@ -79,16 +82,16 @@ let listOfTuples:[String, Number][] = [
 ```
 Note that you cannot concat a tuple.
 ```ts
-let list1:[String, Number] = ["apple", 99]
+let list1@[String, Number] = ["apple", 99]
 let list2 = list1 ++ ["something else"] // Error
 ```
 However, a tuple can be mutable.
 ```ts
-let myTuple:[String,Number] = mutable ["price",12]
-myTuple.(0) <- "hey" // No error
-myTuple.(1) <- 99 // No error
+let myTuple@[String,Number] = mutable ["price",12]
+myTuple.{0} <- "hey" // No error
+myTuple.{1} <- 99 // No error
 
-myTuple.(0) <- "123" // Error: Expected type of String, but got type of Number
+myTuple.{0} <- "123" // Error: Expected type of String, but got type of Number
 ```
 
 ## How to get range of Numbers?
@@ -100,9 +103,10 @@ let y = -2 to 2 // [-2,-1,0,1,2]
 ### Definition of `to`
 ```java
 @function
-start:Int to end:Int -> Int[]
-    if start == end -> [end]
-    -> [start] ++ ((start - 1) to end)
+start@Int :to: end@Int -> Int[]
+    if start is == end -> [end]
+    -> [start] ++ ((start - 1) :to: end)
+
 ```
 
 ## Mutability
@@ -111,23 +115,23 @@ By default, you cannot change the member of an list.  For example :
 let xs = [1, 2, 3, 4]
 
 // Change the last element to 99
-xs.(-1) <- 99 // Compile error
+xs.{-1} <- 99 // Compile error
 ```
 However, if you want to declare an list which is immutable, you need to use the `mutable` keyword.  
 ```ts
 let xs = mutable [1,2,3,4]
-xs.(-1) <- 99 // No error
+xs.{-1} <- 99 // No error
 ```
 
 ## Strings
 Strings are actually list of characters, so you can apply list operation on `string` as well.
 ```ts
 let message = "Pineapple"
-message.(5..-1) // "apple"
+message.{5..-1} // "apple"
 ```
 
 
-## List comprehension
+## List comprehension (pending)
 ```ts
 let fruits = ['apple', 'banana', 'pineapple']
 let longNameFruits = for f in fruits take f if f.length > 5 
@@ -150,7 +154,7 @@ The recommended way is to use list concatenation.
 ```js
 let myList <- [1,2,3]
 myList <- myList ++ [99]
-print myList // [1,2,3,99]
+print: myList // [1,2,3,99]
 
 
 ```
@@ -169,18 +173,18 @@ The other way (as below) would be more accessible.
 
 ```ts
 // List of object
-let fruits = 
-    .1 = 
+let fruits = #
+    .1 = #
         .name  = "Pine"
         .price = 22
-    .2 = 
+    .2 = #
         .name  = "Apple"
         .price = 33
-    .3 = 
+    .3 = #
         .name  = "Durian"
         .price = 44
 ```
 How to access `"Pine"`?
 ```
-fruits.1.name
+fruits.{1}.name
 ```
