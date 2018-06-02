@@ -157,7 +157,7 @@ const InfixFuncCallNode = (left, operator, right) => ({
 "RIGHT_PAREN" return 'RIGHT_PAREN'
 "PREFIX_FUNCNAME"    return 'PREFIX_FUNCNAME'
 "INFIX_FUNCNAME"     return 'INFIX_FUNCNAME'
-"POSTFIX_FUNCNAME"   return 'POSTFIX_FUNCNAME'
+"SUFFIX_FUNCNAME"   return 'SUFFIX_FUNCNAME'
 "VARNAME"     return 'VARNAME'
 "MEMBERNAME"  return 'MEMBERNAME'
 "TYPENAME"    return 'TYPENAME'
@@ -207,12 +207,21 @@ Statement
 IfStatement
     : IF Test Block
     | IF Test Block ElifChain
+    | IF Test Block ElseStatement
     ;
 
 ElifChain
-    : ELIF Test Block ElifChain
-    | ELIF Test Block
-    | ELSE Block
+    : ElifChain ElifStatement
+    | ElifStatement ElseStatement
+    | ElifStatement
+    ;
+
+ElifStatement
+    : ELIF Test Block
+    ;
+
+ElseStatement
+    : ELSE Block
     ;
     
 Test
@@ -244,12 +253,23 @@ LogicOperatorAtom
     : AND
     | OR
     ;
-   
+
+PartialBoolFuncCall
+    : IsOrIsnt CurriedBoolFunc
+    ;
+
 IsOrIsnt
     : IS
     | ISNT
     ;
- 
+
+CurriedBoolFunc
+    : SuffixFuncAtom 
+    | InfixFuncAtom MonoExpr 
+    | InfixFuncAtom MonoExpr SuffixFuncAtom
+    | InfixFuncAtom MonoExpr InfixFuncAtom MonoExpr
+    ;
+
 Block
     : NEWLINE INDENT StatementList DEDENT
     ;
@@ -287,7 +307,7 @@ Expression
 FuncCall
     : InfixFuncCall
     | PrefixFuncCall
-    | PostfixFuncCall
+    | SuffixFuncCall
     | MixfixFuncCall
     | NofixFuncCall
     ;
@@ -310,16 +330,16 @@ PrefixFuncCall
     : PrefixFuncAtom MonoExpr
     ;
 
-PostfixFuncCall
-    : MonoExpr PostfixFuncAtom
+SuffixFuncCall
+    : MonoExpr SuffixFuncAtom
     ;
 
 MixfixFuncCall
     : PrefixFuncAtom MonoExpr InfixFuncAtom 
     | PrefixFuncAtom MonoExpr InfixFuncAtom MonoExpr
-    | PrefixFuncAtom MonoExpr InfixFuncAtom MonoExpr PostfixFuncAtom
+    | PrefixFuncAtom MonoExpr InfixFuncAtom MonoExpr SuffixFuncAtom
     | PrefixFuncAtom MonoExpr InfixFuncAtom MonoExpr InfixFuncAtom MonoExpr
-    | PrefixFuncAtom MonoExpr InfixFuncAtom MonoExpr InfixFuncAtom MonoExpr PostfixFuncAtom
+    | PrefixFuncAtom MonoExpr InfixFuncAtom MonoExpr InfixFuncAtom MonoExpr SuffixFuncAtom
     | PrefixFuncAtom MonoExpr InfixFuncAtom MonoExpr InfixFuncAtom MonoExpr InfixFuncAtom MonoExpr
     ;
 
@@ -399,8 +419,8 @@ PrefixFuncAtom
     : PREFIX_FUNCNAME '::' TOKEN_ID
     ;
 
-PostfixFuncAtom
-    : POSTFIX_FUNCNAME '::' TOKEN_ID
+SuffixFuncAtom
+    : SUFFIX_FUNCNAME '::' TOKEN_ID
     ;
 
 InfixFuncAtom
