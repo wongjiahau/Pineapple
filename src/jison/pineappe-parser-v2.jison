@@ -216,31 +216,35 @@ ElifChain
     ;
     
 Test
-    : TestChain 
-    | Expression PartialBoolFuncCallChain
+    : BoolFuncCall TestChain 
+    | BoolFuncCall PartialBoolFuncCallChain
     | ExpressionChain PartialBoolFuncCall
     ;
 
 TestChain
-    : TestChain LogicOp Expression PartialBoolFuncCall 
-    | Expression PartialBoolFuncCall
+    : TestChain LogicOperatorAtom BoolFuncCall 
+    | LogicOperatorAtom BoolFuncCall
+    ;
+
+BoolFuncCall
+    : Expression PartialBoolFuncCall
     ;
 
 PartialBoolFuncCallChain
-    : PartialBoolFuncCallChain LogicOp PartialBoolFuncCall 
-    | PartialBoolFuncCall LogicOp PartialBoolFuncCall
+    : PartialBoolFuncCallChain LogicOperatorAtom PartialBoolFuncCall 
+    | LogicOperatorAtom PartialBoolFuncCall
     ;
 
 ExpressionChain
-    : ExpressionChain LogicOp Expression
-    | Expression LogicOp Expression
+    : ExpressionChain LogicOperatorAtom Expression
+    | Expression LogicOperatorAtom Expression
     ;
-   
-LogicOp
+
+LogicOperatorAtom
     : AND
     | OR
     ;
- 
+   
 IsOrIsnt
     : IS
     | ISNT

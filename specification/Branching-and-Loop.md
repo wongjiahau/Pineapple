@@ -32,8 +32,8 @@ Wait. Why is `>70` a boolean function?  Due to [currying]( https://stackoverflow
 
 Let's look at it's type.
 ```js
-print (>).type    // (left:Comparable, right:Comparable) -> Bool
-print (> 70).type // left:Comparable -> Bool
+print: (>).type    // (left:Comparable, right:Comparable) -> Bool
+print: (> 70).type // left:Comparable -> Bool
 ```
 
 
@@ -48,24 +48,26 @@ For example,
 let x = 5
 
 if x is == 5
-    print `x is equal to 5`
+    print: `x is equal to 5`
 
-if x isnt even
-    print `x is not even`
+if x isnt :even
+    print: `x is not even`
 ```
 Note that `even` is a boolean function.
 
 ## If statements with logical chaining
 ```js
 if score is > 70 and is <= 80
-    print `Good job!`
+    print: `Good job!`
 
-if myFruit or hisFruit isnt sweet
-    print `Someone's fruit is not sweet`
+if myFruit or hisFruit isnt :sweet
+    print: `Someone's fruit is not sweet`
 
-if John is nice and Mary is sweet
-    print `Wow`
+if John is :nice and Mary is :sweet
+    print: `Wow`
 ```
+Note that `:sweet` and `:nice` is a boolean function.
+
 It is the same as the following in Javascript:
 ```js
 if (score > 70 && score <= 80) {
@@ -83,12 +85,12 @@ if (John.isNice() && Mary.isSweet()) {
 
 ## If elif else
 ```js
-if he is nerdy 
-    print `He is a programmer.`
-elif he is hot
-    print `OMG`
+if he is :nerdy 
+    print: `He is a programmer.`
+elif he is :hot
+    print: `OMG`
 else 
-    print `...`
+    print: `...`
 ```
 
 ## If else as expression (pending)
@@ -147,12 +149,12 @@ There are 2 type of loops:
 let fruits = [`apple`, `banana`, `pineapple`]
 
 // Note that 1 to fruits.length will yield [1,2,3]
-for i in 1 to fruits.length 
-    print fruits.(i)
+for i in 1 :to: fruits.length 
+    print: fruits.(i)
 
 
 for fruit in fruits
-    print fruit
+    print: fruit
 
 
 let i <- 1
