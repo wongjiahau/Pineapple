@@ -277,6 +277,7 @@ Block
 LinkStatement
     : LET VariableAtom LinkOperator Expression
     | LET VariableAtom TYPE_OP TypeExpression LinkOperator Expression
+    | VariableAtom LinkOperator Expression
     ;
 
 LinkOperator
@@ -301,6 +302,7 @@ TypeExpression
 
 Expression
     : FuncCall
+    | Object
     | MonoExpr
     ;
 
@@ -348,7 +350,7 @@ MonoExpr
     | Value
     | ArrayAccess
     | ArraySlicing
-    | ObjectAccess
+    | ObjectAccessExpr
     ;
 
 ArrayAccess
@@ -363,14 +365,17 @@ ArraySlicing
     | MonoExpr '.{' Expression  '..<' Expression '}' 
     ;
 
+ObjectAccessExpr
+    : MonoExpr ObjectAccess
+    ;
+
 ObjectAccess
-    : ObjectAccess DOT VariableAtom
-    | VariableAtom DOT VariableAtom
+    : MembernameAtom
+    | '{' Expression '}'
     ;
 
 Value
     : NIL
-    | Object
     | Array
     | BooleanAtom
     | StringAtom
@@ -380,7 +385,7 @@ Value
 
 Object
     : EMPTY_OBJECT_DECLARATOR
-    | OBJECT_DECLARATOR NEWLINE INDENT KeyValueList DEDENT
+    | NEWLINE INDENT KeyValueList DEDENT
     ;
 
 KeyValueList

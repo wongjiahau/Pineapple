@@ -6,10 +6,10 @@ Not only it is easier to read, it is also easier to retrieve the value of the de
 
 ```js
 // Pineapple 
-let myFruit = #
+let myFruit = 
     .name    = `Mango` 
     .isTasty = true
-    .sibling = #
+    .sibling = 
         .name    = `Durian`
         .isTasty = false
     .amount  = (10 + 5)
@@ -34,10 +34,10 @@ let myFruit = {
 ## How to access the data?
 Using the dot notation or dot-bracket notation.
 ```js
-let myFruit = #
+let myFruit = 
     .name = `Durian`
     .price = 100
-    .sibiling = #
+    .sibiling = 
         .name = `Rambutan`
 
 // Using dot notation
@@ -48,7 +48,7 @@ myFruit.{`sibling`}.{`name`} // Rambutan
 
 ```
 
-## How to create an empty object?
+## How to create an empty object? (pending)
 You can create an empty object using the `#()` notation.
 ```js
 let me = #()
