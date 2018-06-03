@@ -191,7 +191,62 @@ const InfixFuncCallNode = (left, operator, right) => ({
 %% /* language grammar */
 
 EntryPoint
-    : StatementList EOF {return $1}
+    : Declaration EOF {return $1}
+    ;
+
+Declaration
+    : TypeDeclaration
+    | FunctionDeclaration
+    ;
+
+TypeDeclaration
+    : TYPE NEWLINE TypenameAtom NEWLINE INDENT MembernameTypeList DEDENT
+    ;
+
+MembernameTypeList
+    : MembernameTypeList MembernameAtom TYPE_OP TypeExpression
+    ;
+
+FunctionDeclaration
+    : FunctionAnnotation InfixFuncDeclaration
+    | FunctionAnnotation PrefixFuncDeclaration
+    | FunctionAnnotation SuffixFuncDeclaration
+    | FunctionAnnotation NofixFuncDeclaration
+    | FunctionAnnotation MixfixFuncDeclaration
+    ;
+
+FunctionAnnotation
+    : FUNCTION NEWLINE
+    | IOFUNCTION NEWLINE
+    ;
+
+InfixFuncDeclaration
+    : Parameter InfixFuncAtom Parameter RETURN TypeExpression Block
+    ;
+
+PrefixFuncDeclaration
+    : PrefixFuncAtom Parameter RETURN TypeExpression Block
+    ;
+
+SuffixFuncDeclaration
+    : Parameter SuffixFuncAtom RETURN TypeExpression Block
+    ;
+
+NofixFuncDeclaration
+    : PrefixFuncAtom RETURN TypeExpression Block
+    ;
+
+MixfixFuncDeclaration
+    : PrefixFuncAtom Parameter InfixFuncAtom RETURN TypeExpression Block
+    | PrefixFuncAtom Parameter InfixFuncAtom Parameter RETURN TypeExpression Block
+    | PrefixFuncAtom Parameter InfixFuncAtom Parameter SuffixFuncAtom RETURN TypeExpression Block
+    | PrefixFuncAtom Parameter InfixFuncAtom Parameter InfixFuncAtom Parameter RETURN TypeExpression Block
+    | PrefixFuncAtom Parameter InfixFuncAtom Parameter InfixFuncAtom Parameter SuffixFuncAtom RETURN TypeExpression Block
+    | PrefixFuncAtom Parameter InfixFuncAtom Parameter InfixFuncAtom Parameter InfixFuncAtom Parameter RETURN TypeExpression Block
+    ;
+
+Parameter
+    : VariableAtom TYPE_OP TypeExpression
     ;
 
 Block
@@ -206,9 +261,14 @@ StatementList
 
 Statement
     : LinkStatement
+    | ReturnStatement
     | ForStatement
     | WhileStatement
     | IfStatement
+    ;
+
+ReturnStatement
+    : RETURN Expression
     ;
 
 ForStatement
@@ -297,11 +357,6 @@ LinkOperator
     | ASSIGN_OP
     ;
 
-TypeExpressionList
-    : TypeExpressionList COMMA TypeExpression
-    | TypeExpression
-    ;
-
 TypeExpression
     : TypenameAtom
     | TypenameAtom '[' ']'
@@ -311,6 +366,12 @@ TypeExpression
     | TypeExpression INTERSECT_OP TypenameAtom
     | '(' TypeExpression ')'
     ;
+
+TypeExpressionList
+    : TypeExpressionList COMMA TypeExpression
+    | TypeExpression
+    ;
+
 
 Expression
     : FuncCall
