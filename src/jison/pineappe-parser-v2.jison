@@ -194,14 +194,24 @@ EntryPoint
     : StatementList EOF {return $1}
     ;
 
+Block
+    : NEWLINE INDENT StatementList DEDENT
+    ;
+
 StatementList
     : StatementList NEWLINE Statement
     | Statement 
     ;
 
+
 Statement
     : LinkStatement
+    | ForStatement
     | IfStatement
+    ;
+
+ForStatement
+    : FOR VariableAtom IN Expression Block
     ;
 
 IfStatement
@@ -270,9 +280,6 @@ CurriedBoolFunc
     | InfixFuncAtom MonoExpr InfixFuncAtom MonoExpr
     ;
 
-Block
-    : NEWLINE INDENT StatementList DEDENT
-    ;
 
 LinkStatement
     : LET VariableAtom LinkOperator Expression
