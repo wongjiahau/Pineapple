@@ -200,7 +200,7 @@ Declaration
     ;
 
 TypeDeclaration
-    : TYPE NEWLINE TypenameAtom NEWLINE INDENT MembernameTypeList DEDENT
+    : TYPE TypenameAtom NEWLINE INDENT MembernameTypeList DEDENT
     ;
 
 MembernameTypeList
