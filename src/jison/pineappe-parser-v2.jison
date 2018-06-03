@@ -207,11 +207,16 @@ StatementList
 Statement
     : LinkStatement
     | ForStatement
+    | WhileStatement
     | IfStatement
     ;
 
 ForStatement
     : FOR VariableAtom IN Expression Block
+    ;
+
+WhileStatement
+    : WHILE Test Block
     ;
 
 IfStatement
