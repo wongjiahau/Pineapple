@@ -7,7 +7,7 @@
 |`String`|`"hello"`, `'hey'`, `$"yoyo"`|
 |`Regex`|`/^[a-z]$/`|
 |`Directory`|`./index.html` , `../folder`|
-|`Bool`|`true`, `false`|
+|`Boolean`|`true`, `false`|
 |`List`|`[1,2,3]`, `["p", "i", "n", "e"]`|
 |`Object`|`#(.name='hi' .age=9)`|
 |`Any`|any data type|
@@ -24,7 +24,7 @@ By using the `@type` annotation.
 // Definition
 type Fruit
     .name    @ String 
-    .isTasty @ Bool
+    .isTasty @ Boolean
     .sibling @ Fruit?
 ```
 
@@ -38,7 +38,7 @@ type Month reduce Integer
 Or, let say phone number.
 ```js
 type PhoneNumber reduce String
-    where self is matching /^[0-9]{10}$/
+    where self is :matching: /^[0-9]{10}$/
 ```
 Then, when we initialized a value with those type, the compiler will check if it satisfy the defined condition.
 ```ts
@@ -51,13 +51,31 @@ let myPhone = `012345678` as! PhoneNumber
 print: myPhone.type // PhoneNumber
 ```
 
+## How to create a derived type?
+You can do that by using the `extend` keyword.  
+For example,
+```ts
+type Human
+    .name @ String
+
+type Worker extend Human
+    .salary @ Decimal
+
+let me @ Human =
+    .name = `Adam`
+
+let him @ Worker = 
+    .name = `John`
+    .salary = 999.99
+```
+
 ## Types with default value
 Sometimes, you will need to have default value for a type in order to reduce boilerplate.  
 For example:
-```
+```ts
 type Fruit
     .name    @ String
-    .isTasty @ Bool
+    .isTasty @ Boolean
     .sibling @ Fruit? = nil
 ```
 So, the default value for `.sibling` is `nil`.
@@ -74,9 +92,9 @@ let myFruit @ Fruit =
 If you declare a variable to have a specific type, Pineapple compiler will expect the variable fully fulfils the specification of the type.
 ```js
 let myFruit @ Fruit = 
-    .name = 123 // Error, `.name` should be type of `String`
+    .name = 123 // Error: `.name` should be type of `String`
     .isTasty = true
-    // Error, missing member `.sibling`
+    // Error: missing member `.sibling`
 ```
 
 
@@ -84,23 +102,23 @@ let myFruit @ Fruit =
 By default, a variable cannot be set to `nil`.  
 Pineapple used this approach to prevent a very common error like `nil pointer`.
 ```js
-let x @ String <- "hello"
-x <- nil // Compiler error
+let x @ String << "hello"
+x << nil // Compiler error
 ```
 
 ## Nullable types
 To have a nilable type, you need to use the `?` operator.
-```
-let y @ String <- nil // Error: Cannot assign `nil` to `String`
+```ts
+let y @ String << nil // Error: Cannot assign `nil` to `String`
 
-let x @ String? <- nil // No error
+let x @ String? << nil // No error
 ```
 
 ## Discriminated unions
 You can have a variable which can have both type. 
 ```java
-let x @ String | Int <- "hello"
-x <- 4 // No error
+let x @ String | Int << "hello"
+x << 4 // No error
 ```
 
 ## Type intersections
@@ -222,11 +240,11 @@ type People
     .age  @ Number
 
 function
-select (M @ member of T) from (list @ T[]) -> type of M where T@People
+select (M @ member of T) from (list @ T[]) >> type of M where T@People
     let result: T[] = []
     for item in list
-        result <- result ++ [item.(M)]
-    -> result
+        result << result ++ [item.(M)]
+    >> result
 
 let peopleList :People[] = [
     {.name='John' .age=12},

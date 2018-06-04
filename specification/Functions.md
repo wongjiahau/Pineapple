@@ -97,11 +97,11 @@ You can set a function to have optional parameters.
 Let's look at the `_to_by_` function.
 ```ts
 function
-start@Int :to: end@Int :by: step@Int=1 -> Int[]
+start@Int :to: end@Int :by: step@Int=1 >> Int[]
     if start is >= end 
-        -> [end]
+        >> [end]
     else
-        -> [start] ++ ((start + step) :to: end :by: step)
+        >> [start] ++ ((start + step) :to: end :by: step)
     
 // Calling it
 let range1 = 0 :to: 6
@@ -126,9 +126,9 @@ This is because such function will enhance debuggability and chainability.
 By using the `iofunction` annotation.
 ```java
 @iofunction
-send (query:String) ToDatabase -> Void
+send (query:String) ToDatabase >> Void
     // Send query to database
-    -> ??
+    >> ??
 
 ```
 Moreover, if your function is calling an `iofunction`, it needs to be annotated as `iofunction` too.
@@ -136,11 +136,11 @@ Moreover, if your function is calling an `iofunction`, it needs to be annotated 
 For example:
 ```java
 @function 
-sayHello -> Void
+sayHello >> Void
     print "hello" // Error, cannot call an iofunction inside a normal function
 
 @iofunction 
-sayBye -> Void
+sayBye >> Void
     print "bye" // No error
 ```
 
@@ -149,7 +149,7 @@ You can have optional parameters in functions.
 For example,
 ```java
 @iofunction
-sayHi howMany:Int=1 times -> Void
+sayHi howMany:Int=1 times >> Void
     repeat howMany times
         print "hi"
 
@@ -165,12 +165,12 @@ Pineapple allow function with same signature to overload with different paramete
 For example, the following function declaration are valid.
 ```java
 @function
-x:Int add y:Int -> Int
-    -> x + y
+x:Int add y:Int >> Int
+    >> x + y
 
 @function
-xs:Int[] add ys:Int[] -> Int[]
-    -> zip xs and ys with (+)
+xs:Int[] add ys:Int[] >> Int[]
+    >> zip xs and ys with (+)
 ```
 However, when you are overloading function with subtypes, the compiler will resolve to the more specific type whenever possible.
 
@@ -178,13 +178,13 @@ For example, let say we have two `plus` functions.
 ```java
 // First function
 @function
-x:Int plus y:Int -> Int
-    -> x + y
+x:Int plus y:Int >> Int
+    >> x + y
 
 // Second function
 @function
-x:Number plus y:Number -> Number
-    -> x + y
+x:Number plus y:Number >> Number
+    >> x + y
 
 1 plus 2     // Resolve to first function
 1.1 plus 2.2 // Resolve to second function
@@ -197,10 +197,10 @@ x:Number plus y:Number -> Number
 You cannot pass data by reference.
 
 ## Void functions
-Function that does not return anything must be declared with `-> Void`
+Function that does not return anything must be declared with `>> Void`
 ```java
 @iofunction 
-sayHello -> Void
+sayHello >> Void
     print "Hello"
 ```
 
@@ -208,22 +208,22 @@ sayHello -> Void
 The type of a function will be like the following.
 ```java
 @function 
-x:Number square -> Number -> x * x
+x:Number square >> Number >> x * x
 
-square.type // Number -> Number
+square.type // Number >> Number
 
 @function 
-x:Number add y:Number -> x + y
+x:Number add y:Number >> x + y
 
-add.type // (Number,Number) -> Number
+add.type // (Number,Number) >> Number
 ```
 
 ## How to pass a function to a function?
 For example, suppose we have the `map` function defined as above.
 ```java
 @function 
-x:Number add y:Number -> Number
-    -> x + y
+x:Number add y:Number >> Number
+    >> x + y
 
 // This is how you pass the `add` function to `map`
 let result = map add to [[1,2], [3,4]]
@@ -235,8 +235,8 @@ However, for mixfix function, you need to use the `underscore` notation.
 For example,
 ```java
 @function 
-start:Int to end:Int by step:Int -> Int[]
-    -> ??
+start:Int to end:Int by step:Int >> Int[]
+    >> ??
 
 let func = _to_by_
 ```
@@ -251,12 +251,12 @@ If it contains no argument, no underscore is needed.
 
 Note that you cannot have consecutive underscore.
 ```ts
-let even_ = (x:Number) -> x % 2 is == 0
+let even_ = (x:Number) >> x % 2 is == 0
 
 // Here's how to call even_
 even 5
 
-let _add_ = (x:Number, y:Number) -> x + y
+let _add_ = (x:Number, y:Number) >> x + y
 
 // How to call _add_
 5 add 3
@@ -266,26 +266,26 @@ let _add_ = (x:Number, y:Number) -> x + y
 ### Single parameter 
 ```java
 @function
-invoke (func_:Number->Number) with (param:Number) -> Number
+invoke (func_:Number>>Number) with (param:Number) >> Number
     func_ param
 ```
 
 ### Double parameter 
 ```java
 @function
-invoke (_func_:(Number,Number)->Number) on (list:Number[]) -> Number
-    let result <- 0
+invoke (_func_:(Number,Number)>>Number) on (list:Number[]) >> Number
+    let result << 0
     for i in 1 to (list.length - 1)
-        result <- result + (list.(i) func list.(i+1))
-    -> result
+        result << result + (list.(i) func list.(i+1))
+    >> result
 ```
 
 
 ## Currying
 ```java
 @function
-x:Number moreThan y:Number -> boolean
-    -> x > y
+x:Number moreThan y:Number >> boolean
+    >> x > y
 
 let moreThanThree = moreThan 3
 
@@ -301,15 +301,15 @@ select threeMoreThan from [1,2,3,4,5] // [1,2,3]
 *This feature is still under consideration, as it seems to violate the objective of Pineapple.*
 ```hs
 @function
-(x:Number) divide (y:Number) -> Number
-x divide y -> x / y
-_ divide 0 -> error
+(x:Number) divide (y:Number) >> Number
+x divide y >> x / y
+_ divide 0 >> error
 
 
 @function 
-select (mapFunc: T -> T) whichIs (filterFunc: T -> Bool) from (list: T[]) -> T[]
+select (mapFunc: T >> T) whichIs (filterFunc: T >> Boolean) from (list: T[]) >> T[]
 select _ whichIs _ from [] = []
-select mapFunc whichIs filterFunc from (x cons xs) -> 
+select mapFunc whichIs filterFunc from (x cons xs) >> 
     (mapFunc x) cons remaining
     if (filterFunc x) 
     else remaining
@@ -317,22 +317,22 @@ select mapFunc whichIs filterFunc from (x cons xs) ->
 ```
 Usage
 ```java
-moreThan (x:Number) -> (y:Number) -> y > x
+moreThan (x:Number) >> (y:Number) >> y > x
 result = select num whichIs (moreThan 3) from [1,2,3,4]
-//Little note: num will be expanded to (num -> num)
+//Little note: num will be expanded to (num >> num)
 ```
 *To be honest, not many people can understand pattern matching and object deconstruction. LOL*
 
 Let's look at the imperative version.
 ```java
 @function
-select (mapFunc:T->T) whichIs (filterFunc:T->Bool) from (list:T[]) -> T[]
+select (mapFunc:T>>T) whichIs (filterFunc:T>>Boolean) from (list:T[]) >> T[]
     if list is empty 
-        -> []
+        >> []
     let result = mutable []
     for x in list
         if filterFunc x
-            result <- result ++ mapFunc x
-    -> result
+            result << result ++ mapFunc x
+    >> result
 ```
 To be honest, the imperative version is actually much shorter can much cleaner than the functional counterpart. OOPS.

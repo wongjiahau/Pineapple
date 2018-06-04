@@ -5,7 +5,7 @@ There no classes in Pineapple! However you can simulate that using suffix functi
 ```ts
 // Definition of BinaryTree
 type 
-BinaryTree{T extends Comparable}:
+BinaryTree{T extend Comparable}:
     .left  @ BinaryTree{T}? = nil
     .right @ BinaryTree{T}? = nil
     .value @ T
@@ -13,10 +13,10 @@ BinaryTree{T extends Comparable}:
 function
 newTree: value@T >> BinaryTree{T}
     >> #
-        .left  <- nil
-        .right <- nil
+        .left  << nil
+        .right << nil
         .value =  value
-// Note that `<-` is assignment operator, while `=` is binding operator.  
+// Note that `<<` is assignment operator, while `=` is binding operator.  
 // When a name is binded with a value, it's value cannot be changed anymore
     
 
@@ -32,14 +32,14 @@ insert: element@T :to: tree@BinaryTree{T} >> BinaryTree{T}
     
 
 function
-tree@BinaryTree{T} :hasNoChild >> Bool
+tree@BinaryTree{T} :hasNoChild >> Boolean
     >> tree.value 
         and tree.left 
         and tree.right 
         is == nil
 
 function
-element@T :in: tree@BinaryTree{T} >> Bool
+element@T :in: tree@BinaryTree{T} >> Boolean
     >> element is == tree.value 
         or is == tree.left 
         or is == tree.right 
@@ -54,10 +54,10 @@ from ./binaryTree.pine import
     insert_to_
     _contains_
 
-let myTree: BinaryTree <-
+let myTree: BinaryTree <<
     .value = 99
 
-myTree <- insert 5 to myTree
+myTree << insert 5 to myTree
 
 if 5 is in myTree
     print `It contains 5`
@@ -66,51 +66,47 @@ else
 ```
 
 ## Inheritance
-You can inherit a type by using the keyword `extends`.
+You can inherit a type by using the keyword `extend`.
 
 Multiple inheritance is also allowed.
 ```ts
-@type 
-Human:
-    name: String
-    dob: Date
+type Human
+    .name @ String
+    .dob  @ Date
 
-@type 
-Parent extends Human:
-    kids: Human[]
+type Parent extend Human
+    .kids @ Human[]
 
-@type
-Worker:
-    salary: Number
+type Worker
+    .salary @ Decimal
 
 // multiple inheritance
-@type
-SuperWoman extends Parent & Worker:
-    isBusy: Bool
+type SuperWoman extend Parent & Worker
+    .busy @ Boolean
+    
 
 ```
 
 ## Interface
-You can define an interface using `@interface`.  
-```java
-@interface 
-Comparable:
-    x:T (>)  y:T -> Bool
-    x:T (==) y:T -> Bool
+You can define an interface using `interface`.  
+```
+interface Comparable
+    x@T (>)  y@T >> Boolean
+    x@T (==) y@T >> Boolean
 
-@type
-Color implements Comparable:
-    .red  : int
-    .green: int
-    .blue : int
+type Color 
+    .red   @ int
+    .green @ int
+    .blue  @ int
+    implement Comparable
 
-@function
-x:Color (>) y:Color -> Bool
-    -> x.red   is > y.red   and
+function
+x@Color (>) y@Color >> Boolean
+    >> x.red   is > y.red   and
        x.green is > y.green and
        x.blue  is > y.blue 
     
-// Error: type `Color` did not implements `x:T (==) y:T` from interface `Comparable`
+// Error: type `Color` did not implement `x@T (==) y@T` from interface `Comparable`
 ```
 If we didn't declare the required functions, the Pineapple compiler will throw error.
 
@@ -119,12 +115,11 @@ Interface is especially useful for making generic function such as sorting funct
 For example, look at this `quicksort` example.
 
 ```hs
-@function
-quicksort xs:T[] -> T where T:Comparable
-    if xs is empty -> []
-    let pivot = xs.(1)
-    let left  = from xs where (item isnt > pivot)
-    let right = from xs where (item is > pivot)
-    -> left ++ [pivot] ++ right
-
+function
+quicksort xs@T[] >> T where T@Comparable
+    if xs is :empty 
+        >> []
+    let pivot = xs.{1}
+    let left,right  = partition: xs :by: (is > pivot)
+    >> (quicksort: left) ++ [pivot] ++ (quicksort: right)
 ```

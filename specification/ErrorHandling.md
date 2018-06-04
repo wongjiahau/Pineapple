@@ -13,9 +13,9 @@ Just use the `throw` operator.
 Note that you don't need to throw any error object, you just need to throw a `String`, and it will automatically help you wrap into an `Error` object.
 ```java
 @function 
-x:Int divide y:Int -> Int
+x:Int divide y:Int >> Int
     if y == 0 throw "Divisor cannot be 0"
-    else -> x / y
+    else >> x / y
 ```
 
 ## Catching error into variables

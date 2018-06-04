@@ -67,22 +67,22 @@ You can create custom literals in Pineapple using the `@literal` annotation and 
 For example, let us create a binary literal.
 ```js
 @literal
-bin -> Int
+bin >> Int
 
 @metafunction
-validate str:Literal<bin> -> String | nil
+validate str:Literal<bin> >> String | nil
     if str not (match /^[01]+$/)
-        -> `Must consist of one and zeroes only`
+        >> `Must consist of one and zeroes only`
     else
-        -> nil
+        >> nil
 
 @metafunction
-convert str:Literal<bin> -> Int
-    let result <- 0
+convert str:Literal<bin> >> Int
+    let result << 0
     for i in 1 to str.length
         let char = str.(i)
-        result <- result + ((parse char asInt) * (2 ** (i - 1)))
-    -> result
+        result << result + ((parse char asInt) * (2 ** (i - 1)))
+    >> result
 
 // How to use it?
 let myNumber = bin`0110110`
@@ -103,22 +103,22 @@ Complex:
 Then, we define a literal for it.
 ```js
 @literal
-c -> Complex
+c >> Complex
 
-validate str:Literal<c> -> String | nil
+validate str:Literal<c> >> String | nil
     if str not match /^[+-]?\d+([.]\d+)?[+-]\d+([.]\d+)?[ij]$/
-        -> `Invalid format for complex number`
+        >> `Invalid format for complex number`
     else
-        -> nil
+        >> nil
 
 @metafunction
-convert str:Literal<c> -> Complex
+convert str:Literal<c> >> Complex
     let tokens = split str by /[+-]/
     let real = parse tokens.(1) asNumber
-    let imaginery <- parse tokens.(2) asNumber
+    let imaginery << parse tokens.(2) asNumber
     if (from str capture /[+-]/).(1) is == `-`
-        imaginery <- -imaginery
-    -> 
+        imaginery << -imaginery
+    >> 
         .real = real
         .imaginery = imaginery
     

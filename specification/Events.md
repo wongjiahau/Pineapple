@@ -5,7 +5,7 @@ Currently still out of idea for this part.
 You can use the `run..forever` keyword.
 ```js
 @iofunction
-main -> Void
+main >> Void
     let request = await listenRequest
     let response = 
         .status = 200 if request.target == "/home" else 404

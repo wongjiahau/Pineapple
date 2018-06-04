@@ -88,10 +88,10 @@ let list2 = list1 ++ ["something else"] // Error
 However, a tuple can be mutable.
 ```ts
 let myTuple@[String,Number] = mutable ["price",12]
-myTuple.{0} <- "hey" // No error
-myTuple.{1} <- 99 // No error
+myTuple.{0} << "hey" // No error
+myTuple.{1} << 99 // No error
 
-myTuple.{0} <- "123" // Error: Expected type of String, but got type of Number
+myTuple.{0} << "123" // Error: Expected type of String, but got type of Number
 ```
 
 ## How to get range of Numbers?
@@ -103,9 +103,9 @@ let y = -2 to 2 // [-2,-1,0,1,2]
 ### Definition of `to`
 ```java
 @function
-start@Int :to: end@Int -> Int[]
-    if start is == end -> [end]
-    -> [start] ++ ((start - 1) :to: end)
+start@Int :to: end@Int >> Int[]
+    if start is == end >> [end]
+    >> [start] ++ ((start - 1) :to: end)
 
 ```
 
@@ -115,12 +115,12 @@ By default, you cannot change the member of an list.  For example :
 let xs = [1, 2, 3, 4]
 
 // Change the last element to 99
-xs.{-1} <- 99 // Compile error
+xs.{-1} << 99 // Compile error
 ```
 However, if you want to declare an list which is immutable, you need to use the `mutable` keyword.  
 ```ts
 let xs = mutable [1,2,3,4]
-xs.{-1} <- 99 // No error
+xs.{-1} << 99 // No error
 ```
 
 ## Strings
@@ -152,8 +152,8 @@ You can concat 2 list using the double plus operator (`++`).
 Since Pineapple promote functional-style programming, there is no built-in function such as `push` or `append`.   
 The recommended way is to use list concatenation.  
 ```js
-let myList <- [1,2,3]
-myList <- myList ++ [99]
+let myList << [1,2,3]
+myList << myList ++ [99]
 print: myList // [1,2,3,99]
 
 

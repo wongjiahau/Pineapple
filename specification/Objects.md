@@ -64,7 +64,7 @@ print: me
 
 ## How to declare map type of object?
 ```js
-let $map : Object<Int,String> = #()
+let map @ Object{Int,String} = #()
 ```
 
 

@@ -25,9 +25,9 @@
 |Symbol|Name|
 |-|-|  
 |`=`|clean assignment|
-|`<-`|dirty assignment|
+|`<<`|dirty assignment|
 |`:`|Type scoping|
-|`->`|Return|
+|`>>`|Return|
 |`??`|Unimplemented|  
 |`>>`|Pipe forward|
 |`..`|Slice operator(upper-bound inclusive)|

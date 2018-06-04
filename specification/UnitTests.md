@@ -7,9 +7,9 @@ You can denote a test using `@test` annotation.
 
 ```java
 @function
-(dividend:Number) divide (divisor:Number) -> Number  
+(dividend:Number) divide (divisor:Number) >> Number  
     if divisor == 0 throw "Divisor cannot be zero"
-    -> y / x
+    >> y / x
 
 @test _divide_
     @case 1

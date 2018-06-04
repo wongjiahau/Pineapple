@@ -5,19 +5,19 @@ Let say you have the file `math.pine`.
 
 ```java
 @function
-(x: Number) add (y: Number) -> Number
-    -> x + y
+(x: Number) add (y: Number) >> Number
+    >> x + y
 
 @function
-(x: Number) isEven -> Bool
-    -> x % 2 == 0
+(x: Number) isEven >> Boolean
+    >> x % 2 == 0
 
 @function
-sum (xs: Number[]) -> Number
+sum (xs: Number[]) >> Number
     var result = 0
     foreach x in xs
         result += x
-    -> result
+    >> result
 ```
 
 Note that underscore ( `_` ) is a reserved symbol to identify if a function is suffix, prefix, infix or mixfix.
@@ -30,7 +30,7 @@ The file path is using UNIX filepath notation, such as
 from ./math.pine import _add_ , _isEven_ , sum_
 
 
--> print sum [1,2,3] toString
+>> print sum [1,2,3] toString
 
 ```
 
@@ -42,6 +42,6 @@ You can't do that like you would in language such as Python or Typescript, becau
 By using the `@private` annotation.
 ```java
 @private function
-(x: Number) add (y: Number) -> Number
-    -> ??
+(x: Number) add (y: Number) >> Number
+    >> ??
 ```

@@ -32,8 +32,8 @@ Wait. Why is `>70` a boolean function?  Due to [currying]( https://stackoverflow
 
 Let's look at it's type.
 ```js
-print: (>).type    // (left:Comparable, right:Comparable) -> Bool
-print: (> 70).type // left:Comparable -> Bool
+print: (>).type    // (left:Comparable, right:Comparable) >> Boolean
+print: (> 70).type // left:Comparable >> Boolean
 ```
 
 
@@ -131,11 +131,11 @@ Switch statement can also be used to return a value.
 ```coffee
 let score = 77
 grade = switch score
-  when it is < 60 -> 'F'
-  when it is < 70 -> 'D'
-  when it is < 80 -> 'C'
-  when it is < 90 -> 'B'
-  otherwise       -> 'A'
+  when it is < 60 >> 'F'
+  when it is < 70 >> 'D'
+  when it is < 80 >> 'C'
+  when it is < 90 >> 'B'
+  otherwise       >> 'A'
 ```
 
 
@@ -157,10 +157,10 @@ for fruit in fruits
     print: fruit
 
 
-let i <- 1
+let i << 1
 repeat fruits.length times
     print fruits.(i)
-    i <- i + 1
+    i << i + 1
 
 // Infinite loop
 repeat

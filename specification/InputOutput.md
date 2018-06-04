@@ -18,10 +18,10 @@ await print "Hello world" // Error
 As mentioned in the Function.md section, every function that involve I/O operation must be annotated with `@iofunction`.
 ```js
 @iofunction
-askForName -> String
+askForName >> String
     print "What is your name?" 
     let result = await readLine
-    -> result
+    >> result
 ```
 Note that, if you call a function that contains `await`, you must also await that function too.
 

@@ -8,15 +8,15 @@ x = 5 # Error: `x` is already binded to the value `4`
 
 let people = {.name="John"}
 
-people.name <- "Ali" # Error: `people.name` is already binded to the value "John"
+people.name << "Ali" # Error: `people.name` is already binded to the value "John"
 ```
 ## Assignment
-You can declare a variable by using the left arrow operator (`<-` ).
+You can declare a variable by using the left arrow operator (`<<` ).
 ```python
-x <- 5
-x <- 6 # No error
+x << 5
+x << 6 # No error
 
-people = {.name <- "John"}
+people = {.name << "John"}
 people.name = "Ali" # No error
 ```
 
@@ -35,8 +35,8 @@ Fruit:
 Then, we have a function that will modify the price of a `Fruit` to 99.
 ```java
 @function
-changePriceOf (fruit:Fruit) -> Void
-    fruit.price <- 99
+changePriceOf (fruit:Fruit) >> Void
+    fruit.price << 99
 ```
 Now, let say in our main program we created a new `Fruit` object.
 ```java
@@ -52,24 +52,24 @@ The statement above will result in compile error, because we already binded the 
 
 So, how can we fix this?  
 
-Easy, just by changing the binding operator (`=`) to assignment operator (`<-`) .
+Easy, just by changing the binding operator (`=`) to assignment operator (`<<`) .
 ```python
 let myFruit: Fruit =
     .name   = 'Pineapple'
-    .price <- 88
+    .price << 88
 
 changePriceOf myFruit # No error
 ```
 But, you may ask *'How can this idea help me to debug my code?'*.  
-The answer is simple,  **just look for the `<-` symbol** !  
+The answer is simple,  **just look for the `<<` symbol** !  
 Because all the unexpected things happen when we change the value of a variable.
 
 ### Smart detection
 Not only you can't re-assign value to a binded variable, you also can't use assignment on a variable which its future value is not changed!  For example:  
 ```Java
-let x <- 5 // Warning: The value of `x` is not reassigned, please consider changing `<-` to `=`.
-let y <- 6
-y <- 7
+let x << 5 // Warning: The value of `x` is not reassigned, please consider changing `<<` to `=`.
+let y << 6
+y << 7
 ```
 
 ## How to specify type?
