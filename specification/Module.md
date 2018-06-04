@@ -39,11 +39,21 @@ print: (sum: [1,2,3])
 ```
 
 ## How to not export a function from a file? 
-QUESTION: Is this function necessary?
-
 By using the `private` annotation.
 ```
 private function
 x@Number :add: y@Number >> Number
     >> x + y
+```
+
+
+## Package
+You can defined a package using the `package` keyword.
+```
+package Math
+
+function
+x@Number :add: y@Number >> Number
+    >> x + y
+
 ```
