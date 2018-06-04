@@ -56,13 +56,13 @@ Regex are first class just like Javascript. They are enquoted using `/` .
 ```js
 let phoneNumberPattern = /^[0-9]{3}-\d{7}$/
 
-if `012-34567` match phoneNumberPattern
-    print `oh yea`
+if `012-34567` is :matching: phoneNumberPattern
+    print: `oh yea`
 else
-    print `oh no`
+    print: `oh no`
 ```
 
-## Custom literals
+## Custom literals (Pending)
 You can create custom literals in Pineapple using the `@literal` annotation and `@metafunction` annotation.
 For example, let us create a binary literal.
 ```js
@@ -127,6 +127,4 @@ let x = c`99.2-0.8j` // valid
 let y = c`99` // Error: `Invalid format for complex number`
 
 print x.imaginery // -0.8
-
-
 ```
