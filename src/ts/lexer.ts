@@ -6,15 +6,23 @@ type TokenType
     | "elif"
     | "else"
     | "newline"
-    | "space"
     | "indent"
     | "dedent"
+    | "space"
     | "eof"
     | "number"
-    | "linking_operator"
+    | "assign_op"
+    | "bind_op"
+    | "type_op"
+    | "return"
     | "operator"
-    | "identifier"
-    | "string";
+    | "string"
+    | "varname"
+    | "typename"
+    | "prefix_funcname"
+    | "infix_funcname"
+    | "suffix_funcname"
+    ;
 
 class Token {
     public static readonly TokenTable: {[key: number]: Token}  = {};
@@ -51,8 +59,20 @@ const lexer = new Lexer((char: string) => {
 });
 
 lexer
-.addRule(/if/, (): Token => {
-    return new Token("if");
+.addRule(/[a-z][A-Z]*[:]/i, (lexeme: string): Token => {
+    return new Token("prefix_funcname", lexeme);
+})
+.addRule(/@/, (): Token => {
+    return new Token("type_op");
+})
+.addRule(/=/, (): Token => {
+    return new Token("bind_op");
+})
+.addRule(/<</, (): Token => {
+    return new Token("assign_op");
+})
+.addRule(/>>/, (): Token => {
+    return new Token("return");
 })
 .addRule(/\n/, (): Token => {
     Token.line++;
@@ -63,15 +83,20 @@ lexer
     this.reject = true;
     Token.column++;
 }, [])
-.addRule(/[a-z][a-z0-9]*/i, (lexeme: string) => {
-    this.yytext = lexeme;
-    return new Token("identifier", lexeme);
+.addRule(/(if|elif|else|function|iofunction|let)/, (lexeme: string): Token => {
+    return new Token(lexeme as TokenType);
+})
+.addRule(/`.*`/, (lexeme: string) => {
+    return new Token("string", lexeme);
+})
+.addRule(/[a-z][a-zA-Z0-9]*/, (lexeme: string) => {
+    return new Token("varname", lexeme);
+})
+.addRule(/[A-Z][a-z0-9]*/, (lexeme: string) => {
+    return new Token("typename", lexeme);
 })
 .addRule(/\d+([.]\d+)?(e[+-]?\d+)?/i, (lexeme: string) => {
     return new Token("number", lexeme);
-})
-.addRule(/(=|<\-)/i, (lexeme: string) => {
-    return new Token("linkingOperator", lexeme);
 })
 .addRule(/[-!$%^&*()_+|~=`{}\[\]:";'<>?,.\/]+/, (lexeme: string) => {
     return new Token("operator", lexeme);
@@ -97,6 +122,7 @@ lexer.addRule(/^[\t ]*/gm, (lexeme: string): Token | Token[] | undefined => {
     if (tokens.length) {
         return tokens;
     }
+    return;
 });
 
 lexer.addRule(/[ ]+/, function(lexeme: string): Token {
@@ -108,17 +134,17 @@ lexer.addRule(/$/, () => {
     return new Token("eof");
 });
 
-const sample =
-`if >= 3
-    if hey
-        hey hey
-    elif yo
-        ho
-hi
-`;
+// const sample =
+// `if >= 3
+//     if hey
+//         hey hey
+//     elif yo
+//         ho
+// hi
+// `;
 
 export function tokenize(input: string): string {
-    lexer.input = input;
+    lexer.input = input.trimLeft();
     const tokens = [];
     let result = null;
     do {
@@ -128,12 +154,24 @@ export function tokenize(input: string): string {
     return tokens
         .filter((x) => x !== undefined)
         .map((x) => x.toString())
-        .join("\n");
+        .join("\n")
+        .replace(/SPACE/g, ""); // remove SPACE token
 }
 
-const tokenized = tokenize("1+32-99");
+const tokenized = tokenize(`
+iofunction
+main: >> Void
+    let myName @ String << \`123\`
+    print: myName
+`
+);
 
-// console.log(tokenized);
+console.log(tokenized);
+// console.log(Token.TokenTable);
 
-const ast = parser.parse(tokenized);
-console.log(JSON.stringify(ast, null, 2));
+try {
+    const ast = parser.parse(tokenized);
+    console.log(JSON.stringify(ast, null, 2));
+} catch (error) {
+    console.log(error);
+}

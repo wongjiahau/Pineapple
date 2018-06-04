@@ -144,35 +144,43 @@ const InfixFuncCallNode = (left, operator, right) => ({
 /* lexical grammar */
 %lex
 %%
-\s+           /* skip whitespace */
-"::"          return '::'
-"["           return '['
-"]"           return ']'
-","           return  COMMA
-[0-9]+        return 'TOKEN_ID'
-"OPERATOR"    return 'OPERATOR'
-"EOF"         return 'EOF'
-"DOT"         return 'DOT'
-"LEFT_PAREN"  return 'LEFT_PAREN'
-"RIGHT_PAREN" return 'RIGHT_PAREN'
+\s+                  /* skip whitespace */
+"::"                 return '::'
+"["                  return '['
+"]"                  return ']'
+","                  return  COMMA
+[0-9]+               return 'TOKEN_ID'
+"OPERATOR"           return 'OPERATOR'
+"INDENT"             return 'INDENT'
+"DEDENT"             return 'DEDENT'
+"EOF"                return 'EOF'
+"DOT"                return 'DOT'
+"LEFT_PAREN"         return 'LEFT_PAREN'
+"RIGHT_PAREN"        return 'RIGHT_PAREN'
 "PREFIX_FUNCNAME"    return 'PREFIX_FUNCNAME'
 "INFIX_FUNCNAME"     return 'INFIX_FUNCNAME'
-"SUFFIX_FUNCNAME"   return 'SUFFIX_FUNCNAME'
-"VARNAME"     return 'VARNAME'
-"MEMBERNAME"  return 'MEMBERNAME'
-"TYPENAME"    return 'TYPENAME'
-"ASSIGN_OP"   return 'ASSIGNOP'
-"BIND_OP"     return 'BIND_OP'
-"UNION_OP"    return 'UNION_OP'
-"INTERSECT_OP" return 'INTERSECT_OP'
-"TYPE_OP"     return 'TYPE_OP'
-"NEWLINE"     return 'NEWLINE'
-"LET"         return 'LET'
-"NIL"         return 'NIL'
-"NUMBER"      return 'NUMBER' 
-"STRING"      return 'STRING'
-"TRUE"        return 'TRUE'
-"FALSE"       return 'FALSE'
+"SUFFIX_FUNCNAME"    return 'SUFFIX_FUNCNAME'
+"VARNAME"            return 'VARNAME'
+"MEMBERNAME"         return 'MEMBERNAME'
+"TYPENAME"           return 'TYPENAME'
+"ASSIGN_OP"          return 'ASSIGN_OP'
+"BIND_OP"            return 'BIND_OP'
+"UNION_OP"           return 'UNION_OP'
+"INTERSECT_OP"       return 'INTERSECT_OP'
+"TYPE_OP"            return 'TYPE_OP'
+"NEWLINE"            return 'NEWLINE'
+"LET"                return 'LET'
+"NIL"                return 'NIL'
+"NUMBER"             return 'NUMBER' 
+"STRING"             return 'STRING'
+"TRUE"               return 'TRUE'
+"FALSE"              return 'FALSE'
+"IOFUNCTION"         return 'IOFUNCTION'
+"FUNCTION"           return 'FUNCTION'
+"IF"                 return 'IF'
+"ELIF"               return 'ELIF'
+"ELSE"               return 'ELSE'
+"RETURN"             return 'RETURN'
 /lex
 
 /* operator associations and precedence */
@@ -181,7 +189,6 @@ const InfixFuncCallNode = (left, operator, right) => ({
 
 %right ASSIGN_OP BIND_OP TYPE_OP
 %left ',' DOT
-%left LT GT LTE GTE EQ NEQ NOT  
 %left BINOP2 '+' '-'
 %left UMINUS
 %left '::' TOKEN_ID OPERATOR NUMBER
@@ -254,8 +261,8 @@ Block
     ;
 
 StatementList
-    : StatementList NEWLINE Statement
-    | Statement 
+    : StatementList Statement NEWLINE
+    | Statement NEWLINE
     ;
 
 
@@ -265,6 +272,7 @@ Statement
     | ForStatement
     | WhileStatement
     | IfStatement
+    | FuncCall
     ;
 
 ReturnStatement
