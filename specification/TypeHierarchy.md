@@ -6,6 +6,8 @@ MotherOfAllType // non-existent
     Any
         Object
             String
+                Regex
+                Directory
             Number
                 Decimal
                 Float
@@ -14,6 +16,6 @@ MotherOfAllType // non-existent
             List
             Type
             Function
-            Directory
+            Error
         Nil
 ```

@@ -93,84 +93,31 @@ else
     print: `...`
 ```
 
-## If else as expression (pending)
-```js
-let x = 5
-let isMoreThan4 = true if x is > 5 else false
-```
-
-## Switch cases (pending)
-Switch cases can be done using `switch`, `when`, and `otherwise` keyword.  
-
-Its even more powerful that you can use the `it` keyword.
-
-
-```js
-let day = 1
-
-switch day 
-    when it is between 1 and 5
-        print `Go to work`
-    when it is == 6
-        print `Go shopping`
-    otherwise
-        print `Relax`
-```
-You can have fall through statement.
-```js
-let fruit = `Pineapple`
-switch fruit
-    when `apple` 
-    when `banana`
-        print `Dont eat!`
-    when `Pineapple`
-        // Eat it!
-```
-
-Switch statement can also be used to return a value.
-```coffee
-let score = 77
-grade = switch score
-  when it is < 60 >> 'F'
-  when it is < 70 >> 'D'
-  when it is < 80 >> 'C'
-  when it is < 90 >> 'B'
-  otherwise       >> 'A'
-```
-
-
 ## Loop
 There are 2 type of loops:
 - `for..in` loop
     - For iterating over items in list
-- `repeat..times` loop
+- `while` loop
     - For other purposes
 ```ts
 let fruits = [`apple`, `banana`, `pineapple`]
 
 // Note that 1 to fruits.length will yield [1,2,3]
 for i in 1 :to: fruits.length 
-    print: fruits.(i)
+    print: fruits.{i}
 
 
 for fruit in fruits
     print: fruit
 
 
-let i << 1
-repeat fruits.length times
-    print fruits.(i)
-    i << i + 1
-
-// Infinite loop
-repeat
-    let input = readLine
-    if input is == `exit` 
-        break // Exit the loop
-    print input
+let input @ String = ``
+while input isnt == `exit`
+    input << readLine:
+    print: `Your input is ${input}`
 ```
 
-### How to loop through keys of an object?
+## How to loop through keys of an object?
 By using the `.pairs` property.
 ```ts
 let myObject = 
@@ -178,11 +125,11 @@ let myObject =
     .last  = `Apple`
     .price = 99
 
-print myObject.pairs // [[`first`, `Pine`], [`last`, `Apple`], [`price`, 99]]
+print: myObject.pairs // [[`first`, `Pine`], [`last`, `Apple`], [`price`, 99]]
 
-print myObject.pairs.type // [String, Any][]
+print: myObject.pairs.type // [String, Any][]
 
-for key, value in myObject.pairs
-    print key
-    print value
+for key,value in myObject.pairs
+    print: key
+    print: value
 ```

@@ -1,23 +1,4 @@
 # Data types
-
-|Type|Example|  
-|--|--|  
-|`Number`|-9, 23, 77.77|
-|`Int`|-2, -1, 0, 1, 2|
-|`String`|`"hello"`, `'hey'`, `$"yoyo"`|
-|`Regex`|`/^[a-z]$/`|
-|`Directory`|`./index.html` , `../folder`|
-|`Boolean`|`true`, `false`|
-|`List`|`[1,2,3]`, `["p", "i", "n", "e"]`|
-|`Object`|`#(.name='hi' .age=9)`|
-|`Any`|any data type|
-|`Null`|`nil`|
-|`Type`|`12.type`|
-|`Member`|`member-of People`|
-|`Function`|`(x@Number) >> Number`|
-|`Error`|No examples yet|
-
-
 ## How to declare my own data type?
 By using the `@type` annotation.
 ```ts

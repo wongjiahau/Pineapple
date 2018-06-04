@@ -4,15 +4,14 @@ There no classes in Pineapple! However you can simulate that using suffix functi
 ## Example: BinaryTree
 ```ts
 // Definition of BinaryTree
-type 
-BinaryTree{T extend Comparable}:
+type BinaryTree{T extend Comparable}
     .left  @ BinaryTree{T}? = nil
     .right @ BinaryTree{T}? = nil
     .value @ T
 
 function
 newTree: value@T >> BinaryTree{T}
-    >> #
+    >> 
         .left  << nil
         .right << nil
         .value =  value
@@ -27,12 +26,12 @@ insert: element@T :to: tree@BinaryTree{T} >> BinaryTree{T}
         >> tree
     elif element is <= tree.value
         >> insert: element :to: tree.left
-    els
+    else
         >> insert: element :to: tree.right
     
 
 function
-tree@BinaryTree{T} :hasNoChild >> Boolean
+tree@BinaryTree{T} :childless >> Boolean
     >> tree.value 
         and tree.left 
         and tree.right 
@@ -49,20 +48,17 @@ element@T :in: tree@BinaryTree{T} >> Boolean
 
 ```ts
 // Using binary tree
-from ./binaryTree.pine import 
-    BinaryTree
-    insert_to_
-    _contains_
+import ./BinaryTree.pine
 
-let myTree: BinaryTree <<
+let myTree @ BinaryTree <<
     .value = 99
 
-myTree << insert 5 to myTree
+myTree << insert: 5 :to: myTree
 
-if 5 is in myTree
-    print `It contains 5`
+if 5 is :in: myTree
+    print: `It contains 5`
 else 
-    print `Nope`
+    print: `Nope`
 ```
 
 ## Inheritance
