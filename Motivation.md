@@ -1,7 +1,7 @@
 # Motivation
 Since the Pineapple language is largely influenced by Haskell, Python, Javascript and Typescript, let's talk about what developers hate about them.
 
-## What developers hate about Python?
+## Drawbacks of Python
 ### 1. Weakly/Dynamically Typed Members
 Because Python is weakly typed, you will have a lot of runtime errors, for example:
 ```py
@@ -58,3 +58,24 @@ print(result)
 Referece: 
 - https://medium.com/@natemurthy/all-the-things-i-hate-about-python-5c5ff5fda95e
 - https://softwareengineering.stackexchange.com/questions/15468/what-are-the-drawbacks-of-python
+
+
+## Drawbacks of Haskell
+### 1. Very steep learning curve
+Because learning Haskell is not just about learning the syntax, it's also about learning a new theory such as:
+- functional purity
+- currying
+- monads
+- laziness
+
+### 2. Not popular
+Althought Haskell offer a lot of benefits to programming, however it suffers in terms of popularity due to the steep learning curve, thus causing even professional Haskell programmer to NOT use Haskell in production because:
+- It might be hard to communicate the code to other developers who does not know functional programming
+- Hard to find community support (even though StackOverflow offer some amount help)
+
+Reference:
+- https://www.quora.com/What-are-the-main-weaknesses-of-Haskell-as-a-programming-language
+- https://stackoverflow.com/questions/1786969/pitfalls-disadvantages-of-functional-programming
+
+## Conclusion
+So, Pineapple is like a language that wish to combine the readability of Python with the functional paradigm of Haskell.
