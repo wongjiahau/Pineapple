@@ -180,6 +180,10 @@ const InfixFuncCallNode = (left, operator, right) => ({
 "IF"                 return 'IF'
 "ELIF"               return 'ELIF'
 "ELSE"               return 'ELSE'
+"ISNT"               return 'ISNT'
+"IS"                 return 'IS'
+"AND"                return 'AND'
+"OR"                 return 'OR'
 "RETURN"             return 'RETURN'
 /lex
 
@@ -229,6 +233,7 @@ FunctionAnnotation
 
 InfixFuncDeclaration
     : Parameter InfixFuncAtom Parameter RETURN TypeExpression Block
+    | Parameter LEFT_PAREN OperatorAtom RIGHT_PAREN Parameter RETURN TypeExpression Block
     ;
 
 PrefixFuncDeclaration
@@ -308,7 +313,8 @@ ElseStatement
     ;
     
 Test
-    : BoolFuncCall TestChain 
+    : BoolFuncCall
+    | BoolFuncCall TestChain 
     | BoolFuncCall PartialBoolFuncCallChain
     | ExpressionChain PartialBoolFuncCall
     ;
@@ -351,6 +357,7 @@ CurriedBoolFunc
     | InfixFuncAtom MonoExpr 
     | InfixFuncAtom MonoExpr SuffixFuncAtom
     | InfixFuncAtom MonoExpr InfixFuncAtom MonoExpr
+    | OperatorAtom MonoExpr
     ;
 
 

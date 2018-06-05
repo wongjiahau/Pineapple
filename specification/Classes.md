@@ -90,11 +90,10 @@ interface Comparable
     x@T (>)  y@T >> Boolean
     x@T (==) y@T >> Boolean
 
-type Color 
+type Color realize Comparable
     .red   @ int
     .green @ int
     .blue  @ int
-    implement Comparable
 
 function
 x@Color (>) y@Color >> Boolean

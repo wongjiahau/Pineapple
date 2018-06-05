@@ -67,7 +67,8 @@ let result = 2 :plus: 5
 ```
 
 ## Mixfix funtion
-```ts
+For example, you want a function that will split a string by a delimiter.
+```
 function
 split: x@String :by: delimiter@String >> String[]
     >> ?? 
@@ -80,22 +81,65 @@ let result = split: myString :by: delim
 let result@String = `hello world`
 let y@Int = 234
 ```
+**NOTE**: Every mixfix function must start with a prefix identifier, so the following is consider invalid.
+```
+// Invalid
+function
+start@Int :to: end@Int :by: step@Int >> Int[]
+    >> ?
+```
+To fix that, you can add an identifier in front:
+```
+function
+range: start@Int :to: end@Int :by: step@Int >> Int[]
+    >> ?
+```
 
+## Symbolic infix function
+You can also use symbols as signature for infix function.   
+For exampe, let say you want to declare a function that adds two arrays: 
+```
+left@Number[] (+) right@Number[] >> Number[]
+    makesure left.length is == right.length
+    let result << []
+    for i in 1 :to: left.length
+        result << append: (left.{i} + right.{i}) :to: result
+    >> result
+```
+In fact, you can use any symbols combination except the following symbols:
+- period/dot (`.`)
+- comma (`,`)
+- alias (`@`)
+- colon (`:`)
+- backtick (\`)
+- question mark(`?`)
+- double less than (`<<`)
+- double more than (`>>`)
+- equal (`=`)
+- pipe (`|`)
+- ampersand (`&`)
+- any brackets (`[](){}`)
+- whitespace
+
+For example, the following are valid symbols:
+- `==>`
+- `^%`
+- `$`
 ## Function precedence
 There is not function precedence, everything function is executed from left to right.
 
 For example,
 ```js
-display 5 asString // Invalid, `5` is not `String`
+display: 5 :asString // Invalid, `5` is not `String`
 
-display (5 asString) // Valid
+display: (5 :asString) // Valid
 ```
 
 ## Optional parameters
 You can set a function to have optional parameters.
 
 Let's look at the `_to_by_` function.
-```ts
+```
 function
 start@Int :to: end@Int :by: step@Int=1 >> Int[]
     if start is >= end 
@@ -124,121 +168,114 @@ This is because such function will enhance debuggability and chainability.
 
 ## How to declare a function that will perform IO operation?
 By using the `iofunction` annotation.
-```java
-@iofunction
-send (query:String) ToDatabase >> Void
+```
+iofunction
+send: query@String :ToDatabase >> Void
     // Send query to database
-    >> ??
-
 ```
 Moreover, if your function is calling an `iofunction`, it needs to be annotated as `iofunction` too.
 
 For example:
 ```java
-@function 
-sayHello >> Void
-    print "hello" // Error, cannot call an iofunction inside a normal function
+function 
+sayHello: >> Void
+    print: "hello" // Error, cannot call an iofunction inside a normal function
 
-@iofunction 
-sayBye >> Void
-    print "bye" // No error
+iofunction 
+sayBye: >> Void
+    print: "bye" // No error
 ```
 
 ## Optional parameters
 You can have optional parameters in functions.
 For example,
-```java
-@iofunction
-sayHi howMany:Int=1 times >> Void
-    repeat howMany times
-        print "hi"
+```js
+iofunction
+sayHi: howMany@Int=1 :times >> Void
+    makesure howMany is > 0
+    for i in 1 :to: howMany
+        print: "hi"
 
 // Calling with default parameter value
-sayHi
+sayHi:
 
 // Calling with different value
-sayHi 5 times
+sayHi: 5 :times
 ```
 
 ## Function overloading
 Pineapple allow function with same signature to overload with different parameter type.
 For example, the following function declaration are valid.
-```java
-@function
-x:Int add y:Int >> Int
+```js
+function
+x@Int :add: y@Int >> Int
     >> x + y
 
-@function
-xs:Int[] add ys:Int[] >> Int[]
-    >> zip xs and ys with (+)
+function
+xs@Int[] :add: ys@Int[] >> Int[]
+    >> zip: xs :and: ys :with: (+)
 ```
 However, when you are overloading function with subtypes, the compiler will resolve to the more specific type whenever possible.
 
 For example, let say we have two `plus` functions.
 ```java
 // First function
-@function
-x:Int plus y:Int >> Int
+function
+x@Int :plus: y@Int >> Int
     >> x + y
 
 // Second function
-@function
-x:Number plus y:Number >> Number
+function
+x@Number :plus: y@Number >> Number
     >> x + y
 
-1 plus 2     // Resolve to first function
-1.1 plus 2.2 // Resolve to second function
-1.1 plus 2   // Resolve to second function
-1 plus 2.2   // Resolve to second function
+1   :plus: 2     // Resolve to first function
+1.1 :plus: 2.2 // Resolve to second function
+1.1 :plus: 2   // Resolve to second function
+1   :plus: 2.2   // Resolve to second function
 ```
 
 
 ## How to pass data by reference?
-You cannot pass data by reference.
+**You cannot pass data by reference.**  
+This is to ensure that every function is pure, so that the program will be easier to debug.
 
 ## Void functions
 Function that does not return anything must be declared with `>> Void`
 ```java
-@iofunction 
-sayHello >> Void
-    print "Hello"
+iofunction 
+sayHello: >> Void
+    print: "Hello"
 ```
 
 ## What is the type of a function?
 The type of a function will be like the following.
 ```java
-@function 
-x:Number square >> Number >> x * x
+function 
+x@Number :square >> Number 
+    >> x * x
 
-square.type // Number >> Number
+(square:).type // Number >> Number
 
-@function 
-x:Number add y:Number >> x + y
+function 
+x:Number :add: y:Number >> Number
+    x + y
 
-add.type // (Number,Number) >> Number
+(:add:).type // (Number,Number) >> Number
 ```
 
 ## How to pass a function to a function?
 For example, suppose we have the `map` function defined as above.
 ```java
-@function 
-x:Number add y:Number >> Number
+function 
+x:Number :add: y:Number >> Number
     >> x + y
 
 // This is how you pass the `add` function to `map`
-let result = map add to [[1,2], [3,4]]
+let result = map: (:add: 2) :to: [1,2,3,4]
 
-print result // [3,7]
+print: result // [3,4,5,6]
 
-```
-However, for mixfix function, you need to use the `underscore` notation.
-For example,
-```java
-@function 
-start:Int to end:Int by step:Int >> Int[]
-    >> ??
-
-let func = _to_by_
 ```
 ## Anonymous function (pending)
 ### Assigning a function to a variable 
