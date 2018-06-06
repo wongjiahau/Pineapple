@@ -19,9 +19,7 @@ type TokenType
     | "string"
     | "varname"
     | "typename"
-    | "prefix_funcname"
-    | "infix_funcname"
-    | "suffix_funcname"
+    | "funcname"
     ;
 
 class Token {
@@ -59,10 +57,10 @@ const lexer = new Lexer((char: string) => {
 });
 
 lexer
-.addRule(/[a-z][A-Z]*[:]/i, (lexeme: string): Token => {
-    return new Token("prefix_funcname", lexeme);
+.addRule(/[$][a-z][a-zA-Z0-9]*/, (lexeme: string): Token => {
+    return new Token("varname", lexeme);
 })
-.addRule(/@/, (): Token => {
+.addRule(/:/, (): Token => {
     return new Token("type_op");
 })
 .addRule(/=/, (): Token => {
@@ -83,14 +81,14 @@ lexer
     this.reject = true;
     Token.column++;
 }, [])
-.addRule(/(if|elif|else|function|iofunction|let)/, (lexeme: string): Token => {
+.addRule(/(if|elif|else|isnt|is|and|or|function|iofunction|let)/, (lexeme: string): Token => {
     return new Token(lexeme as TokenType);
 })
 .addRule(/`.*`/, (lexeme: string) => {
     return new Token("string", lexeme);
 })
 .addRule(/[a-z][a-zA-Z0-9]*/, (lexeme: string) => {
-    return new Token("varname", lexeme);
+    return new Token("funcname", lexeme);
 })
 .addRule(/[A-Z][a-z0-9]*/, (lexeme: string) => {
     return new Token("typename", lexeme);
@@ -160,9 +158,9 @@ export function tokenize(input: string): string {
 
 const tokenized = tokenize(`
 iofunction
-main: >> Void
-    let myName @ String << \`123\`
-    print: myName
+main >> Void
+    let $myName:String << \`123\`
+    print $myName
 `
 );
 
