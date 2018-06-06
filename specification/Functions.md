@@ -1,97 +1,85 @@
 # Functions
-Every function can be annotated with the `@function` keywords. This is optional, it is just to improve the readability.  
+Every function can be annotated with the `function` keywords. This is optional, it is just to improve the readability.  
 Note that the `??` operator means the function is unimplemented yet.
+
+## Some note
+All function name must be in `camelCase`. 
 
 ## How to call a function?
 Just like how you will do it in Haskell. No need brackets, only **space**.  
 Suppose we have this function `plus`.
 ```js
 function 
-x@Number :plus: y@Number >> Number
-    >> x + y
+$x:Number plus $y:Number >> Number
+    >> $x + $y
 
 // Here's how you call the `plus` function
-let result = 2 :plus: 5
+let result = 2 plus 5
 ```
 
 ## Nofix function
 Also means function without parameters.
-```ts
-function
-pi: >> Number
+```
+function pi >> Number
     >> 3.141592653
 
-let x = pi:
+let $x = pi
 ```
 
 ## Prefix function
-```ts
+```
 function 
-sum: xs@Number[] >> Number 
-    if xs is == [] 
+sum $xs:Number[] >> Number 
+    if $xs is == [] 
         >> 0
     else 
-        >> xs.{1} + sum: xs.{1}
+        >> $xs.{1} + (sum $xs.{2..})
 
-let result = sum: [1,2,3,4]
+let $result = sum [1,2,3,4]
 ```
 
 ## Suffix function
-```ts
+```
 function
-howMany@Int :daysFromToday >> Date 
-    >> (today.days + howMany) as Date
+$howMany:Int daysFromToday >> Date 
+    >> ((today).days + $howMany) as Date
 
-let result = 5 :daysFromToday
+let $result = 5 daysFromToday
 ```
 Note that the space after `5` is necessary.  
-This is because we might come to the following situation if we did not use space:
-```
-pine:apple
-```
-In this case, is `pine` the function or variable? Is `apple` the function or variable?  
-With space, everything will be clear.
-```js
-pine: apple // pine is function
-pine :apple // apple is function
-```
-
 
 ## Infix function
-```ts
+```
 function
-x@Int :plus: y@Int >> Int
-    >> x + y
+$x:Int plus $y:Int >> Int
+    >> $x + $y
 
-let result = 2 :plus: 5
+let $result = 2 plus 5
 ```
 
 ## Mixfix funtion
-For example, you want a function that will split a string by a delimiter.
+For example, you want a function that will split a string by a separator.
 ```
 function
-split: x@String :by: delimiter@String >> String[]
+split $x:String by $delimiter:String >> String[]
     >> ?? 
 
-let myString = `one/two/three`
-let delim = `/`
-let result = split: myString :by: delim
-
-
-let result@String = `hello world`
-let y@Int = 234
+let $myString = `one/two/three`
+let $separator = `/`
+let $result = split $myString by $separator
 ```
 **NOTE**: Every mixfix function must start with a prefix identifier, so the following is consider invalid.
 ```
 // Invalid
 function
-start@Int :to: end@Int :by: step@Int >> Int[]
+$start:Int to $end:Int by $step:Int >> Int[]
     >> ?
 ```
 To fix that, you can add an identifier in front:
 ```
+// Valid
 function
-range: start@Int :to: end@Int :by: step@Int >> Int[]
+range $start:Int to $end:Int by $step:Int >> Int[]
     >> ?
 ```
 
@@ -99,12 +87,12 @@ range: start@Int :to: end@Int :by: step@Int >> Int[]
 You can also use symbols as signature for infix function.   
 For exampe, let say you want to declare a function that adds two arrays: 
 ```
-left@Number[] (+) right@Number[] >> Number[]
-    makesure left.length is == right.length
-    let result << []
-    for i in 1 :to: left.length
-        result << append: (left.{i} + right.{i}) :to: result
-    >> result
+$x:Number[] (+) $y:Number[] >> Number[]
+    makesure $left.length is == $right.length
+    let $result << []
+    for $i in range 1 to $y.length
+        $result << $result ++ [$x.{i} + $y.{i}]
+    >> $result
 ```
 In fact, you can use any symbols combination except the following symbols:
 - period/dot (`.`)
@@ -124,36 +112,36 @@ In fact, you can use any symbols combination except the following symbols:
 For example, the following are valid symbols:
 - `==>`
 - `^%`
-- `$`
+- `+`
+
 ## Function precedence
 There is not function precedence, everything function is executed from left to right.
 
 For example,
 ```js
-display: 5 :asString // Invalid, `5` is not `String`
+display 5 asString // Invalid, `5` is not `String`
 
-display: (5 :asString) // Valid
+display (5 asString) // Valid
 ```
 
 ## Optional parameters
 You can set a function to have optional parameters.
 
-Let's look at the `_to_by_` function.
+Let's look at the `range_to_by_` function.
 ```
 function
-start@Int :to: end@Int :by: step@Int=1 >> Int[]
-    if start is >= end 
-        >> [end]
+range $start:Int to $end:Int step $step:Int=1 >> Int[]
+    if $start is >= $end 
+        >> [$end]
     else
-        >> [start] ++ ((start + step) :to: end :by: step)
+        >> [$start] ++ (($start + $step) to $end by $step)
     
 // Calling it
-let range1 = 0 :to: 6
-print range1 // [0,1,2,3,4,5,6]
+let $range1 = range 0 to 6
+print $range1 // [0,1,2,3,4,5,6]
 
-let range2 = 0 :to: 7 :by: 2
-print range2 // [0,2,4,6]
-
+let $range2 = range 0 to 7 by 2
+print $range2 // [0,2,4,6]
 ```
 
 ## Referential transparency
@@ -170,20 +158,20 @@ This is because such function will enhance debuggability and chainability.
 By using the `iofunction` annotation.
 ```
 iofunction
-send: query@String :ToDatabase >> Void
+send $query:String toDatabase >> Void
     // Send query to database
 ```
 Moreover, if your function is calling an `iofunction`, it needs to be annotated as `iofunction` too.
 
 For example:
-```java
+```js
 function 
-sayHello: >> Void
-    print: "hello" // Error, cannot call an iofunction inside a normal function
+sayHello >> Void
+    print `hello` // Error, cannot call an iofunction inside a normal function
 
 iofunction 
-sayBye: >> Void
-    print: "bye" // No error
+sayBye >> Void
+    print `bye` // No error
 ```
 
 ## Optional parameters
@@ -191,16 +179,16 @@ You can have optional parameters in functions.
 For example,
 ```js
 iofunction
-sayHi: howMany@Int=1 :times >> Void
-    makesure howMany is > 0
-    for i in 1 :to: howMany
-        print: "hi"
+sayHi $howMany:Int=1 times >> Void
+    makesure $howMany is > 0
+    for $i in range 1 to $howMany
+        print `hi`
 
 // Calling with default parameter value
-sayHi:
+sayHi
 
 // Calling with different value
-sayHi: 5 :times
+sayHi 5 times
 ```
 
 ## Function overloading
@@ -208,12 +196,12 @@ Pineapple allow function with same signature to overload with different paramete
 For example, the following function declaration are valid.
 ```js
 function
-x@Int :add: y@Int >> Int
-    >> x + y
+$x:Int add $y:Int >> Int
+    >> $x + $y
 
 function
-xs@Int[] :add: ys@Int[] >> Int[]
-    >> zip: xs :and: ys :with: (+)
+$xs:Int[] add $ys:Int[] >> Int[]
+    >> zip $xs and $ys with (+)
 ```
 However, when you are overloading function with subtypes, the compiler will resolve to the more specific type whenever possible.
 
@@ -221,18 +209,18 @@ For example, let say we have two `plus` functions.
 ```java
 // First function
 function
-x@Int :plus: y@Int >> Int
-    >> x + y
+$x:Int plus $y:Int >> Int
+    >> $x + $y
 
 // Second function
 function
-x@Number :plus: y@Number >> Number
-    >> x + y
+$x:Number plus $y:Number >> Number
+    >> $x + $y
 
-1   :plus: 2     // Resolve to first function
-1.1 :plus: 2.2 // Resolve to second function
-1.1 :plus: 2   // Resolve to second function
-1   :plus: 2.2   // Resolve to second function
+1   plus 2     // Resolve to first function
+1.1 plus 2.2 // Resolve to second function
+1.1 plus 2   // Resolve to second function
+1   plus 2.2   // Resolve to second function
 ```
 
 
@@ -242,10 +230,10 @@ This is to ensure that every function is pure, so that the program will be easie
 
 ## Void functions
 Function that does not return anything must be declared with `>> Void`
-```java
+```js
 iofunction 
-sayHello: >> Void
-    print: "Hello"
+sayHello >> Void
+    print `Hello`
 ```
 
 ## What is the type of a function?
@@ -279,59 +267,56 @@ print: result // [3,4,5,6]
 ```
 ## Anonymous function (pending)
 ### Assigning a function to a variable 
-The variable name for function must contain 1 underscore if it contains 1 argument;   
-2 underscore for 2 arguments, so on and so forth.  
-
-The underscore determine where the argument should be placed.
-
-If it contains no argument, no underscore is needed.
-
-Note that you cannot have consecutive underscore.
+Note that `$1` means the first parameter and `$2` means the second paramter.
 ```ts
-let even_ = (x:Number) >> x % 2 is == 0
+let %even = $1 % 2 is == 0 
 
-// Here's how to call even_
-even 5
+let %add = $1 + $2
 
-let _add_ = (x:Number, y:Number) >> x + y
+
+// Here's how to invoke %even
+let result = 5 is %even 
+
+// Here's how to invoke %add
+3 %add 5
 
 // How to call _add_
 5 add 3
-
 ```
+
 ## Declaring function that takes function as parameter
 ### Single parameter 
-```java
-@function
-invoke (func_:Number>>Number) with (param:Number) >> Number
-    func_ param
+```js
+function
+invoke %func:(Number >> Number) with $param:Number >> Number
+    %func $param
 ```
 
 ### Double parameter 
 ```java
 @function
-invoke (_func_:(Number,Number)>>Number) on (list:Number[]) >> Number
-    let result << 0
-    for i in 1 to (list.length - 1)
-        result << result + (list.(i) func list.(i+1))
-    >> result
+invoke $_func_:(Number>>Number>>Number) on $list:Number[] >> Number
+    let $result << 0
+    for $i in range 1 to $list.length
+        $result << $result + ($list.{i} func $list.{i+1})
+    >> $result
 ```
 
 
 ## Currying
-```java
-@function
-x:Number moreThan y:Number >> boolean
-    >> x > y
+```js
+function
+$x:Number moreThan $y:Number >> Boolean
+    >> $x > $y
 
-let moreThanThree = moreThan 3
+let $moreThanThree = _ moreThan 3
 
 // invert it
-let threeMoreThan = 3 moreThan
+let $threeMoreThan = 3 moreThan _
 
-select moreThanThree from [1,2,3,4,5] // [4,5]
+select $moreThanThree from [1,2,3,4,5] // [4,5]
 
-select threeMoreThan from [1,2,3,4,5] // [1,2,3]
+select $threeMoreThan from [1,2,3,4,5] // [1,2,3]
 ```
 
 ## Pattern matching (Pending)
