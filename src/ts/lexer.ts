@@ -155,21 +155,3 @@ export function tokenize(input: string): string {
         .join("\n")
         .replace(/SPACE/g, ""); // remove SPACE token
 }
-
-const tokenized = tokenize(`
-iofunction
-main >> Void
-    let $myName:String << \`123\`
-    print $myName
-`
-);
-
-console.log(tokenized);
-// console.log(Token.TokenTable);
-
-try {
-    const ast = parser.parse(tokenized);
-    console.log(JSON.stringify(ast, null, 2));
-} catch (error) {
-    console.log(error);
-}

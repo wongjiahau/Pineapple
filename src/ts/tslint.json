@@ -10,7 +10,8 @@
         "trailing-comma": false,
         "no-var-requires": false,
         "prefer-for-of": false,
-        "no-eval":false
+        "no-eval": false,
+        "object-literal-shorthand": false
     },
     "rulesDirectory": []
 }

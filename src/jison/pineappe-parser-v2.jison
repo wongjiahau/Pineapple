@@ -1,142 +1,42 @@
 
 /* description: Parses and executes mathematical expressions. */
 %{
+const _Declaration = (body,next) => ({body,next});
 
-const BinaryOperatorNode = (left, operator, right) => ({
-    kind: "BinaryOperator",
-    left: left,
-    operator: operator,
-    right: right,
+const _Statement = (body,next) => ({body,next});
+
+const _FunctionDeclaration = (signature, returnType, parameters, statements, next) => ({
+    kind: "FunctionDeclaration",
+    signature , 
+    returnType, 
+    parameters, 
+    statements, 
+    next
 });
 
-const UnaryOperatorNode = (operator, inner) => ({
-    kind: "UnaryOperator",
-    operator: operator,
-    inner: inner
+const _LinkStatement = (variable,linkType,expression) => ({
+    kind: "LinkStatement",
+    variable,
+    linkType,
+    expression
 });
 
-const NumberNode = (value) => ({
-    kind: "Number",
-    value: Number(value)
+const _Variable = (name,type) => ({
+    kind: "Variable",
+    name,
+    type
 });
 
-const StringNode = (value) => ({
-    kind: "String",
-    value: eval(value)
+const _FunctionCall = (fix,signature,parameters) => ({
+    kind: "FunctionCall",
+    fix,
+    signature,
+    parameters,
 });
 
-const BooleanNode = (value) => ({
-    kind: "Boolean",
-    value: eval(value)
-});
+const _Atom = (type, tokenId) => ({type,tokenId});
 
-const NullNode = () => ({
-    kind: "Null"
-});
-
-const AssignmentNode = (varname, dataType, expr) => ({
-    kind: "Assignment",
-    variableNode: varname,
-    dataType: dataType,
-    expression: expr
-});
-
-const BindingNode = (varname, dataType, expr) => ({
-    kind: "Binding",
-    variableNode: varname,
-    dataType: dataType,
-    expression: expr
-});
-
-const VariableNode = (varname) => ({
-    kind: "VariableName",
-    name: varname
-});
-
-
-const ObjectNode = (member) => ({
-    kind: "Object",
-    memberNode: member
-});
-
-const ObjectMemberNode = (name, expr, next, dataType, type) => ({ 
-    kind: "ObjectMember",
-    name: name,
-    type: type,
-    dataType: dataType,
-    expression: expr,
-    next: next,
-});
-
-const ObjectAccessNode = (name, expr) => ({
-    kind: "ObjectAccess",
-    name: name,
-    accessProperty: expr
-});
-
-const ArrayNode = (element) => ({
-    kind: "ArrayNode",
-    element: element
-});
-
-const ElementNode = (expr, next) =>  ({
-    kind: "Element",
-    expression: expr,
-    next: next
-});
-
-const ArraySlicingNode = (expr, start, end, excludeUpperBound=false) => ({
-    kind: "ArraySlicing",
-    expr: expr,
-    start: start,
-    end: end,
-    excludeUpperBound: excludeUpperBound
-});
-
-const ArrayAccessNode = (expr, indexExpr) => ({
-    kind: "ArrayAccess",
-    expr: expr,
-    index: indexExpr,
-});
-
-
-const CompoundStatement = (statement, nextStatment) => ({
-    kind: "CompoundStatement",
-    current: statement,
-    next: nextStatment,
-});
-
-
-const IfStatement = (condition, body, elsePart) => ({
-    kind: "If",
-    condition: condition,
-    body: body,
-    else: elsePart
-});
-
-
-const ElifStatement = (condition, body, elsePart) => ({
-    kind: "Elif",
-    condition: condition,
-    body: body,
-    else: elsePart
-});
-
-const ElseStatement = (body) => ({
-    kind: "Else",
-    body: body
-});
-
-const Node = (type, tokenId) => ({
-    type: type,
-    tokenId: tokenId
-});
-
-const InfixFuncCallNode = (left, operator, right) => ({
-    left: left,
-    operator: operator,
-    right: right
-});
+const _StringExpression = (value) => ({value});
 
 %}
 
@@ -200,8 +100,14 @@ const InfixFuncCallNode = (left, operator, right) => ({
 %% /* language grammar */
 
 EntryPoint
-    : Declaration EOF {return $1}
+    : DeclarationList EOF {return $1}
     ;
+
+DeclarationList
+    : Declaration NEWLINE DeclarationList {$$=_Declaration($1,$3)}
+    | Declaration 
+    ;
+
 
 Declaration
     : TypeDeclaration
@@ -217,16 +123,16 @@ MembernameTypeList
     ;
 
 FunctionDeclaration
-    : FunctionAnnotation InfixFuncDeclaration
-    | FunctionAnnotation PrefixFuncDeclaration
-    | FunctionAnnotation SuffixFuncDeclaration
-    | FunctionAnnotation NofixFuncDeclaration
-    | FunctionAnnotation MixfixFuncDeclaration
+    : FunctionAnnotation NofixFuncDeclaration  {$$=$2}
+    | FunctionAnnotation PrefixFuncDeclaration {console.log("prefix"); $$=$2}
+    | FunctionAnnotation SuffixFuncDeclaration {console.log("suffix")}
+    | FunctionAnnotation InfixFuncDeclaration  {console.log("infix")}
+    | FunctionAnnotation MixfixFuncDeclaration {console.log("mixfix")}
     ;
 
 FunctionAnnotation
     : FUNCTION NEWLINE
-    | IOFUNCTION NEWLINE
+    | IOFUNCTION NEWLINE 
     ;
 
 InfixFuncDeclaration
@@ -235,7 +141,8 @@ InfixFuncDeclaration
     ;
 
 PrefixFuncDeclaration
-    : FuncAtom Parameter RETURN TypeExpression Block
+    : FuncAtom Parameter RETURN TypeExpression Block 
+        {$$=_FunctionDeclaration($1,$4,$2,$5)}
     ;
 
 SuffixFuncDeclaration
@@ -244,6 +151,7 @@ SuffixFuncDeclaration
 
 NofixFuncDeclaration
     : FuncAtom RETURN TypeExpression Block
+        {$$=_FunctionDeclaration($1,$3,[],$4)}
     ;
 
 MixfixFuncDeclaration
@@ -260,12 +168,12 @@ Parameter
     ;
 
 Block
-    : NEWLINE INDENT StatementList DEDENT
+    : NEWLINE INDENT StatementList DEDENT {$$=$3}
     ;
 
 StatementList
-    : StatementList Statement NEWLINE
-    | Statement NEWLINE
+    : Statement NEWLINE StatementList {$$=_Statement($1,$3)}
+    | Statement NEWLINE {$$=_Statement($1,null)}
     ;
 
 
@@ -360,9 +268,13 @@ CurriedBoolFunc
 
 
 LinkStatement
-    : LET VariableAtom LinkOperator Expression
-    | LET VariableAtom TYPE_OP TypeExpression LinkOperator Expression
-    | VariableAtom LinkOperator Expression
+    : LET Variable LinkOperator Expression {$$=_LinkStatement($2,$3,$4)}
+    | VariableAtom LinkOperator Expression {$$=_LinkStatement($1,$2,$3)}
+    ;
+
+Variable 
+    : VariableAtom {$$=_Variable($1,null)}
+    | VariableAtom TYPE_OP TypeExpression {$$=_Variable($1,$3)}
     ;
 
 LinkOperator
@@ -374,14 +286,14 @@ TypeExpression
     : TypenameAtom
     | TypenameAtom '[' ']'
     | TypenameAtom '[' Expression ']'
-    | TypenameAtom '[' TypeExpressionList ']'
+    | TypenameAtom '[' TupleTypeExpression ']'
     | TypeExpression UNION_OP TypenameAtom
     | TypeExpression INTERSECT_OP TypenameAtom
     | '(' TypeExpression ')'
     ;
 
-TypeExpressionList
-    : TypeExpressionList COMMA TypeExpression
+TupleTypeExpression
+    : TupleTypeExpression COMMA TypeExpression
     | TypeExpression
     ;
 
@@ -415,7 +327,7 @@ FuncId
     ;
 
 PrefixFuncCall
-    : FuncAtom MonoExpr
+    : FuncAtom MonoExpr {$$=_FunctionCall("prefix",$1,$2)}
     ;
 
 SuffixFuncCall
@@ -499,7 +411,7 @@ BooleanAtom
     ;
 
 StringAtom
-    : STRING '::' TOKEN_ID
+    : STRING '::' TOKEN_ID {$$=_Atom($1,$3)}
     ;
 
 NumberAtom
@@ -511,7 +423,7 @@ FuncAtom
     ;
 
 VariableAtom
-    : VARNAME '::' TOKEN_ID
+    : VARNAME '::' TOKEN_ID {$$=_Atom($1,$3)}
     ;
 
 MembernameAtom
@@ -519,9 +431,9 @@ MembernameAtom
     ;
 
 OperatorAtom    
-    : OPERATOR '::' TOKEN_ID {$$=Node($1,$3)}
+    : OPERATOR '::' TOKEN_ID {$$=_Atom($1,$3)}
     ;
 
 TypenameAtom
-    : TYPENAME '::' TOKEN_ID
+    : TYPENAME '::' TOKEN_ID {$$=_Atom($1,$3)}
     ;
