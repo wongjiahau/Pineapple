@@ -157,9 +157,7 @@ const InfixFuncCallNode = (left, operator, right) => ({
 "DOT"                return 'DOT'
 "LEFT_PAREN"         return 'LEFT_PAREN'
 "RIGHT_PAREN"        return 'RIGHT_PAREN'
-"PREFIX_FUNCNAME"    return 'PREFIX_FUNCNAME'
-"INFIX_FUNCNAME"     return 'INFIX_FUNCNAME'
-"SUFFIX_FUNCNAME"    return 'SUFFIX_FUNCNAME'
+"FUNCNAME"           return 'FUNCNAME'
 "VARNAME"            return 'VARNAME'
 "MEMBERNAME"         return 'MEMBERNAME'
 "TYPENAME"           return 'TYPENAME'
@@ -232,29 +230,29 @@ FunctionAnnotation
     ;
 
 InfixFuncDeclaration
-    : Parameter InfixFuncAtom Parameter RETURN TypeExpression Block
+    : Parameter FuncAtom Parameter RETURN TypeExpression Block
     | Parameter LEFT_PAREN OperatorAtom RIGHT_PAREN Parameter RETURN TypeExpression Block
     ;
 
 PrefixFuncDeclaration
-    : PrefixFuncAtom Parameter RETURN TypeExpression Block
+    : FuncAtom Parameter RETURN TypeExpression Block
     ;
 
 SuffixFuncDeclaration
-    : Parameter SuffixFuncAtom RETURN TypeExpression Block
+    : Parameter FuncAtom RETURN TypeExpression Block
     ;
 
 NofixFuncDeclaration
-    : PrefixFuncAtom RETURN TypeExpression Block
+    : FuncAtom RETURN TypeExpression Block
     ;
 
 MixfixFuncDeclaration
-    : PrefixFuncAtom Parameter InfixFuncAtom RETURN TypeExpression Block
-    | PrefixFuncAtom Parameter InfixFuncAtom Parameter RETURN TypeExpression Block
-    | PrefixFuncAtom Parameter InfixFuncAtom Parameter SuffixFuncAtom RETURN TypeExpression Block
-    | PrefixFuncAtom Parameter InfixFuncAtom Parameter InfixFuncAtom Parameter RETURN TypeExpression Block
-    | PrefixFuncAtom Parameter InfixFuncAtom Parameter InfixFuncAtom Parameter SuffixFuncAtom RETURN TypeExpression Block
-    | PrefixFuncAtom Parameter InfixFuncAtom Parameter InfixFuncAtom Parameter InfixFuncAtom Parameter RETURN TypeExpression Block
+    : FuncAtom Parameter FuncAtom RETURN TypeExpression Block
+    | FuncAtom Parameter FuncAtom Parameter RETURN TypeExpression Block
+    | FuncAtom Parameter FuncAtom Parameter FuncAtom RETURN TypeExpression Block
+    | FuncAtom Parameter FuncAtom Parameter FuncAtom Parameter RETURN TypeExpression Block
+    | FuncAtom Parameter FuncAtom Parameter FuncAtom Parameter FuncAtom RETURN TypeExpression Block
+    | FuncAtom Parameter FuncAtom Parameter FuncAtom Parameter FuncAtom Parameter RETURN TypeExpression Block
     ;
 
 Parameter
@@ -403,7 +401,7 @@ FuncCall
     ;
 
 NofixFuncCall
-    : PrefixFuncAtom
+    : FuncAtom
     ;
 
 InfixFuncCall
@@ -412,25 +410,25 @@ InfixFuncCall
     ;
 
 FuncId
-    : InfixFuncAtom
+    : FuncAtom
     | OperatorAtom
     ;
 
 PrefixFuncCall
-    : PrefixFuncAtom MonoExpr
+    : FuncAtom MonoExpr
     ;
 
 SuffixFuncCall
-    : MonoExpr SuffixFuncAtom
+    : MonoExpr FuncAtom
     ;
 
 MixfixFuncCall
-    : PrefixFuncAtom MonoExpr InfixFuncAtom 
-    | PrefixFuncAtom MonoExpr InfixFuncAtom MonoExpr
-    | PrefixFuncAtom MonoExpr InfixFuncAtom MonoExpr SuffixFuncAtom
-    | PrefixFuncAtom MonoExpr InfixFuncAtom MonoExpr InfixFuncAtom MonoExpr
-    | PrefixFuncAtom MonoExpr InfixFuncAtom MonoExpr InfixFuncAtom MonoExpr SuffixFuncAtom
-    | PrefixFuncAtom MonoExpr InfixFuncAtom MonoExpr InfixFuncAtom MonoExpr InfixFuncAtom MonoExpr
+    : FuncAtom MonoExpr FuncAtom 
+    | FuncAtom MonoExpr FuncAtom MonoExpr
+    | FuncAtom MonoExpr FuncAtom MonoExpr FuncAtom
+    | FuncAtom MonoExpr FuncAtom MonoExpr FuncAtom MonoExpr
+    | FuncAtom MonoExpr FuncAtom MonoExpr FuncAtom MonoExpr FuncAtom
+    | FuncAtom MonoExpr FuncAtom MonoExpr FuncAtom MonoExpr FuncAtom MonoExpr
     ;
 
 MonoExpr
@@ -506,18 +504,6 @@ StringAtom
 
 NumberAtom
     : NUMBER '::' TOKEN_ID {$$=Node($1,$3)}
-    ;
-
-PrefixFuncAtom
-    : PREFIX_FUNCNAME '::' TOKEN_ID
-    ;
-
-SuffixFuncAtom
-    : SUFFIX_FUNCNAME '::' TOKEN_ID
-    ;
-
-InfixFuncAtom
-    : INFIX_FUNCNAME '::' TOKEN_ID
     ;
 
 FuncAtom
