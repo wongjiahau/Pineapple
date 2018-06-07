@@ -1,5 +1,4 @@
 const Lexer = require("lex");
-const parser = require("../jison/pineappe-parser-v2");
 
 type TokenType
     = "if"

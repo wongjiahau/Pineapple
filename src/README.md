@@ -12,7 +12,7 @@ npm i -g typescript --save
 ## 2. Generate the parser
 ```
 cd ./src/jison
-jison ./pineapple-parser.jison
+jison pineapple-parser-v2.jison
 ```
 
 ## 3. Run the typescript transipler for REPL
