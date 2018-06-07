@@ -1,4 +1,4 @@
-import { Token, tokenize } from "./lexer";
+import { Token, tokenize } from "./tokenize";
 import { tpDeclaration } from "./transpile";
 
 export function pine2js(input: string): string {
