@@ -44,7 +44,17 @@ addTwo >> Number
     >> $x + 5 // Error, $x is not a variable
 ```
 
-## 4. Pineapple Object Notation
+## 4. First class If statements
+```js
+if $he is nerdy 
+    print `He is a programmer.`
+elif $he isnt nice
+    print `oops`
+else 
+    print `...`
+```
+
+## 5. Pineapple Object Notation
 A more readble JSON.
 ```js
 let $myObject = 
@@ -63,7 +73,7 @@ print $myObject.friends.{2} // `banana`
 print $myObject.taste.sweet // true
 ```
 
-## 5. Javascript interop
+## 6. Javascript interop
 For example, the following Pineapple code:
 ```java
 function 
@@ -79,7 +89,7 @@ function split_by_($target, $separator) {
 }
 ```
 
-## 6. Design by contract
+## 7. Design by contract
 You can do that by using the `makesure` keyword
 ```java
 function 
@@ -94,7 +104,7 @@ factorial $x:Int >> Int
 let result = factorial (-1) // Compile error: violation of rule "makesure $x > 0"
 ```
 
-## 7. Differentiation between binding and assignment
+## 8. Differentiation between binding and assignment
 Binding is using `=` symbol while assignment is using `<<` symbol.
 ```js
 

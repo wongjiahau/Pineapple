@@ -1,14 +1,15 @@
 // Abstract Syntax Tree Node Interfaces
 export interface Declaration {
+    kind: "Declaration";
     body: FunctionDeclaration;
     next: Declaration;
 }
 
 export interface FunctionDeclaration {
     kind: "FunctionDeclaration";
-    signature: string;
+    signature: TokenAtom;
     returnType: TypeExpression;
-    parameters: Parameter[];
+    parameters: Variable[];
     statements: Statement;
     next: Declaration;
 }
@@ -20,14 +21,10 @@ export interface Statement {
 
 export interface LinkStatement {
     kind: "LinkStatement";
+    isDeclaration: boolean;
     variable: Variable;
     linkType: "bind" | "assign";
     expression: Expression;
-}
-
-export interface Parameter {
-    type: TypeExpression;
-    name: string;
 }
 
 export interface TypeExpression {
@@ -42,20 +39,21 @@ export interface TypeExpression {
 export type Expression
     = FunctionCall
     | StringExpression
-    | Pon // Pineapple Object Notation (PON)
+    | Variable
+    // | Pon // Pineapple Object Notation (PON)
     // | MonoExpression
     ;
 
 export interface FunctionCall {
     kind: "FunctionCall";
     fix: "nofix" | "prefix" | "suffix" | "infix" | "mixfix";
-    signature: string;
-    parameters: Variable[];
+    signature: TokenAtom;
+    parameters: Expression[];
 }
 
 export interface Variable {
     kind: "Variable";
-    name: string;
+    name: TokenAtom;
     type: TypeExpression;
 }
 
@@ -71,5 +69,16 @@ export interface KeyValue {
 }
 
 export interface StringExpression {
-    value: string;
+    kind: "String";
+    value: TokenAtom;
+}
+
+export interface TokenAtom {
+    token: {
+        type: string;
+        id: number;
+        line: number;
+        column: number;
+        value: string;
+    };
 }

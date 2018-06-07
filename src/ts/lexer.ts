@@ -22,7 +22,7 @@ type TokenType
     | "funcname"
     ;
 
-class Token {
+export class Token {
     public static readonly TokenTable: {[key: number]: Token}  = {};
     public static line: number = 1;
     public static column: number = 1;
@@ -131,15 +131,6 @@ lexer.addRule(/[ ]+/, function(lexeme: string): Token {
 lexer.addRule(/$/, () => {
     return new Token("eof");
 });
-
-// const sample =
-// `if >= 3
-//     if hey
-//         hey hey
-//     elif yo
-//         ho
-// hi
-// `;
 
 export function tokenize(input: string): string {
     lexer.input = input.trimLeft();

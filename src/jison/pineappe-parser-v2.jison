@@ -14,8 +14,9 @@ const _FunctionDeclaration = (signature, returnType, parameters, statements, nex
     next
 });
 
-const _LinkStatement = (variable,linkType,expression) => ({
+const _LinkStatement = (variable,linkType,expression,isDeclaration) => ({
     kind: "LinkStatement",
+    isDeclaration,
     variable,
     linkType,
     expression
@@ -36,7 +37,7 @@ const _FunctionCall = (fix,signature,parameters) => ({
 
 const _Atom = (type, tokenId) => ({type,tokenId});
 
-const _StringExpression = (value) => ({value});
+const _StringExpression = (value) => ({kind:"String", value});
 
 %}
 
@@ -105,7 +106,7 @@ EntryPoint
 
 DeclarationList
     : Declaration NEWLINE DeclarationList {$$=_Declaration($1,$3)}
-    | Declaration 
+    | Declaration {$$=_Declaration($1,null)} 
     ;
 
 
@@ -268,8 +269,8 @@ CurriedBoolFunc
 
 
 LinkStatement
-    : LET Variable LinkOperator Expression {$$=_LinkStatement($2,$3,$4)}
-    | VariableAtom LinkOperator Expression {$$=_LinkStatement($1,$2,$3)}
+    : LET Variable LinkOperator Expression {$$=_LinkStatement($2,$3,$4,true)}
+    | VariableAtom LinkOperator Expression {$$=_LinkStatement($1,$2,$3,false)}
     ;
 
 Variable 
@@ -327,7 +328,7 @@ FuncId
     ;
 
 PrefixFuncCall
-    : FuncAtom MonoExpr {$$=_FunctionCall("prefix",$1,$2)}
+    : FuncAtom MonoExpr {$$=_FunctionCall("prefix",$1,[$2])}
     ;
 
 SuffixFuncCall
@@ -378,7 +379,7 @@ Value
     | BooleanAtom
     | StringAtom
     | NumberAtom
-    | VariableAtom
+    | VariableAtom {$$=_Variable($1,null)}
     ;
 
 Object
@@ -411,7 +412,7 @@ BooleanAtom
     ;
 
 StringAtom
-    : STRING '::' TOKEN_ID {$$=_Atom($1,$3)}
+    : STRING '::' TOKEN_ID {$$=_StringExpression(_Atom($1,$3))}
     ;
 
 NumberAtom
@@ -419,7 +420,7 @@ NumberAtom
     ;
 
 FuncAtom
-    : FUNCNAME '::' TOKEN_ID
+    : FUNCNAME '::' TOKEN_ID {$$=_Atom($1,$3)}
     ;
 
 VariableAtom
