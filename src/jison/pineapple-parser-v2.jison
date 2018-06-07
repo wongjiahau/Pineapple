@@ -39,6 +39,8 @@ const _Atom = (type, tokenId) => ({type,tokenId});
 
 const _StringExpression = (value) => ({kind:"String", value});
 
+const _JavascriptCode = (token) => ({kind:"JavascriptCode",value:token});
+
 %}
 
 
@@ -84,6 +86,7 @@ const _StringExpression = (value) => ({kind:"String", value});
 "AND"                return 'AND'
 "OR"                 return 'OR'
 "RETURN"             return 'RETURN'
+"JAVASCRIPT"         return 'JAVASCRIPT'
 /lex
 
 /* operator associations and precedence */
@@ -137,17 +140,17 @@ FunctionAnnotation
     ;
 
 InfixFuncDeclaration
-    : Parameter FuncAtom Parameter RETURN TypeExpression Block
-    | Parameter LEFT_PAREN OperatorAtom RIGHT_PAREN Parameter RETURN TypeExpression Block
+    : Variable FuncAtom Variable RETURN TypeExpression Block
+    | Variable LEFT_PAREN OperatorAtom RIGHT_PAREN Variable RETURN TypeExpression Block
     ;
 
 PrefixFuncDeclaration
-    : FuncAtom Parameter RETURN TypeExpression Block 
-        {$$=_FunctionDeclaration($1,$4,$2,$5)}
+    : FuncAtom Variable RETURN TypeExpression Block 
+        {$$=_FunctionDeclaration($1,$4,[$2],$5)}
     ;
 
 SuffixFuncDeclaration
-    : Parameter FuncAtom RETURN TypeExpression Block
+    : Variable FuncAtom RETURN TypeExpression Block
     ;
 
 NofixFuncDeclaration
@@ -156,27 +159,23 @@ NofixFuncDeclaration
     ;
 
 MixfixFuncDeclaration
-    : FuncAtom Parameter FuncAtom RETURN TypeExpression Block
-    | FuncAtom Parameter FuncAtom Parameter RETURN TypeExpression Block
-    | FuncAtom Parameter FuncAtom Parameter FuncAtom RETURN TypeExpression Block
-    | FuncAtom Parameter FuncAtom Parameter FuncAtom Parameter RETURN TypeExpression Block
-    | FuncAtom Parameter FuncAtom Parameter FuncAtom Parameter FuncAtom RETURN TypeExpression Block
-    | FuncAtom Parameter FuncAtom Parameter FuncAtom Parameter FuncAtom Parameter RETURN TypeExpression Block
-    ;
-
-Parameter
-    : VariableAtom TYPE_OP TypeExpression
+    : FuncAtom Variable FuncAtom RETURN TypeExpression Block
+    | FuncAtom Variable FuncAtom Variable RETURN TypeExpression Block
+    | FuncAtom Variable FuncAtom Variable FuncAtom RETURN TypeExpression Block
+    | FuncAtom Variable FuncAtom Variable FuncAtom Variable RETURN TypeExpression Block
+    | FuncAtom Variable FuncAtom Variable FuncAtom Variable FuncAtom RETURN TypeExpression Block
+    | FuncAtom Variable FuncAtom Variable FuncAtom Variable FuncAtom Variable RETURN TypeExpression Block
     ;
 
 Block
     : NEWLINE INDENT StatementList DEDENT {$$=$3}
+    | NEWLINE INDENT JavascriptCodeAtom NEWLINE DEDENT {$$=_Statement($3,null)}
     ;
 
 StatementList
     : Statement NEWLINE StatementList {$$=_Statement($1,$3)}
     | Statement NEWLINE {$$=_Statement($1,null)}
     ;
-
 
 Statement
     : LinkStatement
@@ -437,4 +436,8 @@ OperatorAtom
 
 TypenameAtom
     : TYPENAME '::' TOKEN_ID {$$=_Atom($1,$3)}
+    ;
+
+JavascriptCodeAtom
+    : JAVASCRIPT '::' TOKEN_ID {$$=_JavascriptCode(_Atom($1,$3))}
     ;

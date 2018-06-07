@@ -19,6 +19,7 @@ type TokenType
     | "varname"
     | "typename"
     | "funcname"
+    | "javascript"
     ;
 
 export class Token {
@@ -56,6 +57,9 @@ const lexer = new Lexer((char: string) => {
 });
 
 lexer
+.addRule(/<javascript>(.|[\s\S])*<\/javascript>/, (lexeme: string): Token => {
+    return new Token("javascript", lexeme.replace(/(<javascript>|<\/javascript>)/g, "").trim());
+})
 .addRule(/[$][a-z][a-zA-Z0-9]*/, (lexeme: string): Token => {
     return new Token("varname", lexeme);
 })

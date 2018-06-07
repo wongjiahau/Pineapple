@@ -3,6 +3,7 @@ import {
     Expression,
     FunctionCall,
     FunctionDeclaration,
+    JavascriptCode,
     LinkStatement,
     Statement,
     StringExpression,
@@ -36,6 +37,7 @@ export function tpStatement(s: Statement): string {
     switch (s.body.kind) {
         case "FunctionCall": return tpFunctionCall(s.body) + next;
         case "LinkStatement": return tpLinkStatement(s.body) + next;
+        case "JavascriptCode": return tpJavascriptCode(s.body) + next;
     }
 }
 
@@ -58,6 +60,14 @@ export function tpExpression(e: Expression): string {
         case "String": return tpStringExpression(e);
         case "Variable": return e.name.token.value;
     }
+}
+
+export function tpJavascriptCode(s: JavascriptCode): string {
+    return "" +
+`// <javascript>
+${s.value.token.value}
+// </javascript>
+`;
 }
 
 export function tpStringExpression(s: StringExpression): string {

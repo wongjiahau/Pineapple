@@ -15,7 +15,7 @@ export interface FunctionDeclaration {
 }
 
 export interface Statement {
-    body: LinkStatement | FunctionCall;
+    body: LinkStatement | FunctionCall | JavascriptCode;
     next: Statement;
 }
 
@@ -70,6 +70,11 @@ export interface KeyValue {
 
 export interface StringExpression {
     kind: "String";
+    value: TokenAtom;
+}
+
+export interface JavascriptCode {
+    kind: "JavascriptCode";
     value: TokenAtom;
 }
 
