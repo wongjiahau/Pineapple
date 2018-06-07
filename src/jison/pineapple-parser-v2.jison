@@ -5,13 +5,13 @@ const _Declaration = (body,next) => ({body,next});
 
 const _Statement = (body,next) => ({body,next});
 
-const _FunctionDeclaration = (signature, returnType, parameters, statements, next) => ({
+const _FunctionDeclaration = (signature,returnType,parameters,statements,fix) => ({
     kind: "FunctionDeclaration",
-    signature , 
+    signature, 
     returnType, 
     parameters, 
     statements, 
-    next
+    fix,
 });
 
 const _LinkStatement = (variable,linkType,expression,isDeclaration) => ({
@@ -26,6 +26,16 @@ const _Variable = (name,type) => ({
     kind: "Variable",
     name,
     type
+});
+
+const _TypeExpression = (name, isList, listSize) => ({
+    kind: "TypeExpression",
+    name,
+    isList,
+    listSize,
+    // tuple: TupleTypeExpression;
+    // operator: "union" | "intersect";
+    // next: TypeExpression;
 });
 
 const _FunctionCall = (fix,signature,parameters) => ({
@@ -128,7 +138,7 @@ MembernameTypeList
 
 FunctionDeclaration
     : FunctionAnnotation NofixFuncDeclaration  {$$=$2}
-    | FunctionAnnotation PrefixFuncDeclaration {console.log("prefix"); $$=$2}
+    | FunctionAnnotation PrefixFuncDeclaration {$$=$2}
     | FunctionAnnotation SuffixFuncDeclaration {console.log("suffix")}
     | FunctionAnnotation InfixFuncDeclaration  {console.log("infix")}
     | FunctionAnnotation MixfixFuncDeclaration {console.log("mixfix")}
@@ -146,7 +156,7 @@ InfixFuncDeclaration
 
 PrefixFuncDeclaration
     : FuncAtom Variable RETURN TypeExpression Block 
-        {$$=_FunctionDeclaration($1,$4,[$2],$5)}
+        {$$=_FunctionDeclaration($1,$4,[$2],$5,"prefix")}
     ;
 
 SuffixFuncDeclaration
@@ -155,7 +165,7 @@ SuffixFuncDeclaration
 
 NofixFuncDeclaration
     : FuncAtom RETURN TypeExpression Block
-        {$$=_FunctionDeclaration($1,$3,[],$4)}
+        {$$=_FunctionDeclaration($1,$3,[],$4,"nofix")}
     ;
 
 MixfixFuncDeclaration
@@ -283,7 +293,7 @@ LinkOperator
     ;
 
 TypeExpression
-    : TypenameAtom
+    : TypenameAtom {$$=_TypeExpression($1,false,0)}
     | TypenameAtom '[' ']'
     | TypenameAtom '[' Expression ']'
     | TypenameAtom '[' TupleTypeExpression ']'

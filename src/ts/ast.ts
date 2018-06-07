@@ -7,11 +7,11 @@ export interface Declaration {
 
 export interface FunctionDeclaration {
     kind: "FunctionDeclaration";
+    fix: "nofix" | "prefix" | "suffix" | "infix" | "mixfix";
     signature: TokenAtom;
     returnType: TypeExpression;
     parameters: Variable[];
     statements: Statement;
-    next: Declaration;
 }
 
 export interface Statement {
@@ -28,7 +28,8 @@ export interface LinkStatement {
 }
 
 export interface TypeExpression {
-    name: string;
+    kind: "TypeExpression";
+    name: TokenAtom;
     isList: boolean;
     listSize: Expression;
     // tuple: TupleTypeExpression;
@@ -44,9 +45,11 @@ export type Expression
     // | MonoExpression
     ;
 
+export type FunctionFix = "nofix" | "prefix" | "suffix" | "infix" | "mixfix";
+
 export interface FunctionCall {
     kind: "FunctionCall";
-    fix: "nofix" | "prefix" | "suffix" | "infix" | "mixfix";
+    fix: FunctionFix;
     signature: TokenAtom;
     parameters: Expression[];
 }

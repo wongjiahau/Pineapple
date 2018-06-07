@@ -7,16 +7,14 @@ describe("q001", () => {
 `iofunction
 main >> Void
     let $myName:String << \`123\`
-    print $myName
 `;
         const expectedOutput =
 `
-function main() {
+function nofix_main_() {
 let $myName = "123";
-prefix_print($myName);
 }
-
 `;
+        // console.log(pine2js(input));
         expect(pine2js(input)).to.eq(expectedOutput);
     });
 

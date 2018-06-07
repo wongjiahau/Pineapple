@@ -7,6 +7,7 @@ import {
     LinkStatement,
     Statement,
     StringExpression,
+    TypeExpression,
     Variable
 } from "./ast";
 
@@ -17,19 +18,30 @@ export function tpDeclaration(input: Declaration): string {
     if (!input) {
         return "";
     }
+    const next = input.next ? tpDeclaration(input.next) : "";
     if (input.body.kind === "FunctionDeclaration") {
-        return tpFunctionDeclaration(input.body);
+        return tpFunctionDeclaration(input.body) + next;
     }
 }
 
 export function tpFunctionDeclaration(f: FunctionDeclaration): string {
     return "" +
 `
-function ${f.signature.token.value}(${tpParameters(f.parameters)}) {
+function ${f.fix}_${f.signature.token.value}_${getParamsType(f.parameters)}(${tpParameters(f.parameters)}) {
 ${tpStatement(f.statements)};
 }
-${tpDeclaration(f.next)}
 `;
+}
+
+function getParamsType(p: Variable[]): string {
+    if (p.length === 0) {
+        return "";
+    }
+    return p.map((x) => stringifyTypeExpression(x.type)).join("_");
+}
+
+function stringifyTypeExpression(t: TypeExpression): string {
+    return t.name.token.value + (t.isList ? "List" : "");
 }
 
 export function tpStatement(s: Statement): string {
@@ -69,7 +81,6 @@ ${s.value.token.value}
 // </javascript>
 `;
 }
-
 export function tpStringExpression(s: StringExpression): string {
     return `"${s.value.token.value.slice(1, -1)}"`;
 }

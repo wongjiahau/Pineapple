@@ -1,4 +1,4 @@
-const Lexer = require("lex");
+const jsLexer = require("lex");
 
 type TokenType
     = "if"
@@ -52,91 +52,103 @@ export class Token {
 
 }
 
-const lexer = new Lexer((char: string) => {
-    throw new Error("Unexpected character at row " + Token.line + ", col " + Token.column + ": " + char);
-});
+class Lexer {
+    private indent: number[];
+    private lexer: any;
+    public constructor() {
+        this.lexer = new jsLexer((char: string) => {
+            throw new Error("Unexpected character at row " + Token.line + ", col " + Token.column + ": " + char);
+        });
 
-lexer
-.addRule(/<javascript>(.|[\s\S])*<\/javascript>/, (lexeme: string): Token => {
-    return new Token("javascript", lexeme.replace(/(<javascript>|<\/javascript>)/g, "").trim());
-})
-.addRule(/[$][a-z][a-zA-Z0-9]*/, (lexeme: string): Token => {
-    return new Token("varname", lexeme);
-})
-.addRule(/:/, (): Token => {
-    return new Token("type_op");
-})
-.addRule(/=/, (): Token => {
-    return new Token("bind_op");
-})
-.addRule(/<</, (): Token => {
-    return new Token("assign_op");
-})
-.addRule(/>>/, (): Token => {
-    return new Token("return");
-})
-.addRule(/\n/, (): Token => {
-    Token.line++;
-    Token.column = 1;
-    return new Token("newline");
-}, [])
-.addRule(/./, function() {
-    this.reject = true;
-    Token.column++;
-}, [])
-.addRule(/(if|elif|else|isnt|is|and|or|function|iofunction|let)/, (lexeme: string): Token => {
-    return new Token(lexeme as TokenType);
-})
-.addRule(/`.*`/, (lexeme: string) => {
-    return new Token("string", lexeme);
-})
-.addRule(/[a-z][a-zA-Z0-9]*/, (lexeme: string) => {
-    return new Token("funcname", lexeme);
-})
-.addRule(/[A-Z][a-z0-9]*/, (lexeme: string) => {
-    return new Token("typename", lexeme);
-})
-.addRule(/\d+([.]\d+)?(e[+-]?\d+)?/i, (lexeme: string) => {
-    return new Token("number", lexeme);
-})
-.addRule(/[-!$%^&*()_+|~=`{}\[\]:";'<>?,.\/]+/, (lexeme: string) => {
-    return new Token("operator", lexeme);
-})
-;
+        this.lexer
+        .addRule(/<javascript>(.|[\s\S])*<\/javascript>/, (lexeme: string): Token => {
+            return new Token("javascript", lexeme.replace(/(<javascript>|<\/javascript>)/g, "").trim());
+        })
+        .addRule(/[$][a-z][a-zA-Z0-9]*/, (lexeme: string): Token => {
+            return new Token("varname", lexeme);
+        })
+        .addRule(/:/, (): Token => {
+            return new Token("type_op");
+        })
+        .addRule(/=/, (): Token => {
+            return new Token("bind_op");
+        })
+        .addRule(/<</, (): Token => {
+            return new Token("assign_op");
+        })
+        .addRule(/>>/, (): Token => {
+            return new Token("return");
+        })
+        .addRule(/\n/, (): Token => {
+            Token.line++;
+            Token.column = 1;
+            return new Token("newline");
+        }, [])
+        .addRule(/./, function() {
+            this.reject = true;
+            Token.column++;
+        }, [])
+        .addRule(/(if|elif|else|isnt|is|and|or|function|iofunction|let)/, (lexeme: string): Token => {
+            return new Token(lexeme as TokenType);
+        })
+        .addRule(/`.*`/, (lexeme: string) => {
+            return new Token("string", lexeme);
+        })
+        .addRule(/[a-z][a-zA-Z0-9]*/, (lexeme: string) => {
+            return new Token("funcname", lexeme);
+        })
+        .addRule(/[A-Z][a-z0-9]*/, (lexeme: string) => {
+            return new Token("typename", lexeme);
+        })
+        .addRule(/\d+([.]\d+)?(e[+-]?\d+)?/i, (lexeme: string) => {
+            return new Token("number", lexeme);
+        })
+        .addRule(/[-!$%^&*()_+|~=`{}\[\]:";'<>?,.\/]+/, (lexeme: string) => {
+            return new Token("operator", lexeme);
+        })
+        ;
 
-const indent = [0];
-lexer.addRule(/^[\t ]*/gm, (lexeme: string): Token | Token[] | undefined => {
-    const indentation = lexeme.length;
+        this.indent = [0];
+        this.lexer.addRule(/^[\t ]*/gm, (lexeme: string): Token | Token[] | undefined => {
+            const indentation = lexeme.length;
 
-    if (indentation > indent[0]) {
-        indent.unshift(indentation); // unshift means insert element at index 0
-        return new Token("indent");
+            if (indentation > this.indent[0]) {
+                this.indent.unshift(indentation); // unshift means insert element at index 0
+                return new Token("indent");
+            }
+
+            const tokens: Token[] = [];
+
+            while (indentation < this.indent[0]) {
+                tokens.push(new Token("dedent"));
+                this.indent.shift(); // shift means remove the first element
+            }
+            if (tokens.length) {
+                return tokens;
+            }
+            return;
+        });
+
+        this.lexer.addRule(/[ ]+/, (lexeme: string): Token => {
+            return new Token("space");
+        });
+        this.lexer.addRule(/$/, () => {
+            return new Token("eof");
+        });
     }
 
-    const tokens: Token[] = [];
-
-    while (indentation < indent[0]) {
-        tokens.push(new Token("dedent"));
-        indent.shift(); // shift means remove the first element
+    public setInput(input: string): void {
+        this.lexer.input = input;
     }
 
-    if (tokens.length) {
-        return tokens;
+    public lex(): Token {
+        return this.lexer.lex();
     }
-    return;
-});
-
-lexer.addRule(/[ ]+/, function(lexeme: string): Token {
-    this.yytext = lexeme;
-    return new Token("space");
-});
-
-lexer.addRule(/$/, () => {
-    return new Token("eof");
-});
+}
 
 export function tokenize(input: string): string {
-    lexer.input = input.trimLeft();
+    const lexer = new Lexer();
+    lexer.setInput(input.trimLeft());
     const tokens = [];
     let result = null;
     do {

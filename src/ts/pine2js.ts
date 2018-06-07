@@ -4,7 +4,6 @@ import { tpDeclaration } from "./transpile";
 export function pine2js(input: string): string {
     const parser     = require("../jison/pineapple-parser-v2");
     const tokenized  = tokenize(input);
-    // console.log(tokenized);
     const ast        = parser.parse(tokenized);
     // console.log(JSON.stringify(ast, null, 2));
     const symbolized = retrieveSymbol(Token.TokenTable, ast);

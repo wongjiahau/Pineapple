@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "acorn": "^5.5.3",
+    "commander": "^2.15.1",
     "console.table": "^0.10.0",
     "jison": "^0.4.18",
     "lex": "^1.7.9"

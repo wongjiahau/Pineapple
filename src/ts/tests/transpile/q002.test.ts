@@ -12,15 +12,15 @@ print $input:String >> Void
 `;
         const expectedOutput =
 `
-function print($input) {
+function prefix_print_String($input) {
 // <javascript>
 console.log($input);
 // </javascript>
 ;
 }
-
 `;
         // console.log(pine2js(input));
+        // console.log(expectedOutput);
         expect(pine2js(input)).to.eq(expectedOutput);
     });
 
