@@ -1,35 +1,36 @@
 # Data types
 ## How to declare my own data type?
-By using the `@type` annotation.
+By using the `type` keyword.
 ```ts
 // Definition
-type Fruit
-    .name    @ String 
-    .isTasty @ Boolean
-    .sibling @ Fruit?
+type Fruit 
+    .name    : String 
+    .isTasty : Boolean
+    .sibling : Fruit?
+
 ```
 
 ## How to create a subtype of a type?
-By using the `reduce` keyword.  
+By using the `reducing` keyword.  
 For example, let say we want to create a `Month` type. 
 ```js
-type Month reduce Integer
-    where self is >= 0 and is <= 31 
+type Month reducing Integer 
+    where $self is >= 0 and is <= 31 
 ```
 Or, let say phone number.
 ```js
-type PhoneNumber reduce String
-    where self is :matching: /^[0-9]{10}$/
+type PhoneNumber reducing String 
+    where $self is matching /^[0-9]{10}$/
 ```
 Then, when we initialized a value with those type, the compiler will check if it satisfy the defined condition.
 ```ts
-let adamsPhone @ PhoneNumber = `abc` 
+let $adamsPhone : PhoneNumber = `abc` 
 // Error: Doesn't match condition of `is matching /^[0-9]{10}$/`
 ```
 You can also do casting with it.
 ```ts
-let myPhone = `012345678` as! PhoneNumber
-print: myPhone.type // PhoneNumber
+let $myPhone = `012345678` as! PhoneNumber
+print $myPhone.type // PhoneNumber
 ```
 
 ## How to create a derived type?
@@ -37,16 +38,16 @@ You can do that by using the `extend` keyword.
 For example,
 ```ts
 type Human
-    .name @ String
+    .name : String
 
 type Worker extend Human
-    .salary @ Decimal
+    .salary : Decimal
 
-let me @ Human =
+let $me : Human =
     .name = `Adam`
 
-let him @ Worker = 
-    .name = `John`
+let $him : Worker = 
+    .name   = `John`
     .salary = 999.99
 ```
 
@@ -55,16 +56,16 @@ Sometimes, you will need to have default value for a type in order to reduce boi
 For example:
 ```ts
 type Fruit
-    .name    @ String
-    .isTasty @ Boolean
-    .sibling @ Fruit? = nil
+    .name    : String
+    .isTasty : Boolean
+    .sibling : mutable Fruit? << nil
 ```
 So, the default value for `.sibling` is `nil`.
 
 Now, whenever you initialize a `Fruit`, you don't need to specify the `.sibling` property.
 ```js
 // The following code is valid
-let myFruit @ Fruit = 
+let myFruit : Fruit = 
     .name = `Pineapple`
     .isTasty = true
 ```
@@ -72,7 +73,7 @@ let myFruit @ Fruit =
 ## Type safety
 If you declare a variable to have a specific type, Pineapple compiler will expect the variable fully fulfils the specification of the type.
 ```js
-let myFruit @ Fruit = 
+let $myFruit : Fruit = 
     .name = 123 // Error: `.name` should be type of `String`
     .isTasty = true
     // Error: missing member `.sibling`
@@ -82,57 +83,55 @@ let myFruit @ Fruit =
 ## Null-safe
 By default, a variable cannot be set to `nil`.  
 Pineapple used this approach to prevent a very common error like `nil pointer`.
-```js
-let x @ String << "hello"
-x << nil // Compiler error
+```ts
+let $x : String << "hello"
+$x << nil // Compiler error
 ```
 
 ## Nullable types
 To have a nilable type, you need to use the `?` operator.
 ```ts
-let y @ String << nil // Error: Cannot assign `nil` to `String`
+let $y : mutable String << nil // Error: Cannot assign `nil` to `String`
 
-let x @ String? << nil // No error
+let $x : mutable String? << nil // No error
 ```
 
 ## Discriminated unions
 You can have a variable which can have both type. 
-```java
-let x @ String | Int << "hello"
-x << 4 // No error
+```ts
+let $x : mutable (String|Int) << `hello`
+$x << 4 // No error
 ```
 
 ## Type intersections
 You can specify a type to implement more than 1 interface using the `&` operator.  
 For example, let say we have the following interfaces.
-```
-interface Stringifiable
-    target@T :asString >> String
+```ts
+interface Stringifiable<T>
+    $target:T asString >> String
 
 interface Addable
-    x@T (+) y@T >> T
+    $x:T (+) $y:T >> T
 ```
 Then, we have a type which will implement both the interfaces.
 ```
 type Fruit implement Stringifiable & Addable
-    .name  @ String
-    .price @ Number
+    .name  : String
+    .price : Number
 
-function
-target@Fruit :asString >> String
-    >> `Name: ${target.name}, Price: ${target.price}`
+function $target:Fruit asString >> String
+    >> `Name: $target.name, Price: $target.price`
 
-function
-x@Fruit (+) y@Fruit >> Fruit
+function $x:Fruit (+) $y:Fruit >> Fruit
     >> 
-        .name  = x.name ++ y.name
-        .price = x.price + y.price
+        .name  = $x.name ++ $y.name
+        .price = $x.price + $y.price
 ```
 Now, you can have a function that take the types of `Stringifiable & Addable`.
 ```
 iofunction
-show: target@(Stringifiable & Addable) >> Void
-    print: (target :asString)
+show $target:(Stringifiable & Addable) >> Void
+    print ($target asString)
 ```
 
 ## Enumerations (Pending)
@@ -152,24 +151,23 @@ let myColor = Color#Red
 Generics can be done using the `T` keyword.
 ```
 function
-quicksort: xs@T[] >> T[] where T@Comparable
-    if xs == [] 
+quicksort $xs:T[] >> T[] where T:Comparable
+    if $xs == [] 
         >> []
     else
-        let pivot = xs.{1}
-        let left,right = partition: xs :by: (> pivot)
-        >> (quicksort: left) ++ [pivot] ++ (quicksort: right)
+        let $pivot = xs.{1}
+        let [$left, $right] = partition $xs by (_ > $pivot)
+        >> (quicksort $left) ++ [$pivot] ++ (quicksort $right)
 ```
 
 ## How to get the type of a thing?
 By using the `.type` member. 
 ```java
-let x = 5
+let $x = 5
 
-x.type // Number
+$x.type // Number
 
-x.type.type // Type
-
+$x.type.type // Type
 ```
 
 ## Type casting
@@ -182,9 +180,9 @@ When you use `as?`, if the value is uncastable to the desired type, `nil` will b
 For example,
 
 ```js
-let myNumber = 5
-let casted = myNumber as? String
-print casted // nil
+let $myNumber = 5
+let $casted = $myNumber as? String
+print $casted // nil
 ```
 Casted is `nil` because the compiler cannot cast `Number` to `String`.
 
@@ -199,12 +197,12 @@ Consider the following example for processing an API request.
 
 ```ts
 type Fruit
-    .name  @ String
-    .price @ Number
+    .name  : String
+    .price : Number
 
-let result = 
-    await request: `https://www.pineapple.com/api/fruits`
-    |> parseJSON: _
+let $result = 
+    await request `https://www.pineapple.com/api/fruits`
+    |> parseJSON _
     |> _ as! Fruit
 ```
 The `as!` operator allows the program to fail fast if the API is not returning the correct type, so the debug time will be reduced.

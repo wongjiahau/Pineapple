@@ -203,7 +203,7 @@ function
 $xs:Int[] add $ys:Int[] >> Int[]
     >> zip $xs and $ys with (+)
 ```
-However, when you are overloading function with subtypes, the compiler will resolve to the more specific type whenever possible.
+However, when you are overloading function with subtypes, the compiler will **resolve to the more specific type whenever possible**.
 
 For example, let say we have two `plus` functions.
 ```java
