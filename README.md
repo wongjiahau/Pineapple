@@ -131,6 +131,7 @@ It is a language that focuses on (ranked by priority):
 ## Reference
 - Quora: [Which programming language is/was the prettiest and/or most readable?](http://qr.ae/TUT8tw)
 - [A Quick Introduction to Handling Conflicts in Yacc Parsers](https://www2.cs.arizona.edu/classes/cs453/fall14/DOCS/conflicts.pdf)
+- [Principal type-schemes for functional programs](http://web.cs.wpi.edu/~cs4536/c12/milner-damas_principal_types.pdf)
  
 
 

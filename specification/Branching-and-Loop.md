@@ -45,28 +45,30 @@ However, it must be in the form of:
 
 For example,
 ```js
-let x = 5
+let $x = 5
 
-if x is == 5
+if $x == 5
     print: `x is equal to 5`
 
-if x isnt :even
+if $x isOdd
     print: `x is not even`
 ```
 Note that `even` is a boolean function.
 
 ## If statements with logical chaining
 ```js
-if score is > 70 and is <= 80
-    print: `Good job!`
+// Situtation 1: Same expression different boolean function
+if $score > 70 and <= 80
+    print `Good job!`
 
-if myFruit or hisFruit isnt :sweet
-    print: `Someone's fruit is not sweet`
+// Situation 2: Different expression same boolean function
+if $myFruit or $hisFruit isntSweet
+    print `Someone's fruit is not sweet`
 
-if John is :nice and Mary is :sweet
-    print: `Wow`
+// Situation 3: Different expression and different boolean function
+if $john isNice and $mary isSweet
+    print `Wow`
 ```
-Note that `:sweet` and `:nice` is a boolean function.
 
 It is the same as the following in Javascript:
 ```js
@@ -74,23 +76,23 @@ if (score > 70 && score <= 80) {
     alert(`Good job!`);
 }
 
-if (!myFruit.isSweet() || !hisFruit.isSweet()) {
+if (myFruit.isntSweet() || hisFruit.isntSweet()) {
     alert(`Someone's fruit is not sweet`);
 }
 
-if (John.isNice() && Mary.isSweet()) {
+if (john.isNice() && mary.isSweet()) {
     alert(`Wow`);
 }
 ```
 
 ## If elif else
 ```js
-if he is :nerdy 
-    print: `He is a programmer.`
-elif he is :hot
-    print: `OMG`
+if $he isNerdy 
+    print `He is a programmer.` 
+elif $he isHot
+    print `OMG`
 else 
-    print: `...`
+    print `...`
 ```
 
 ## Loop
@@ -99,37 +101,38 @@ There are 2 type of loops:
     - For iterating over items in list
 - `while` loop
     - For other purposes
-```ts
-let fruits = [`apple`, `banana`, `pineapple`]
+```
+let $fruits = [`apple`, `banana`, `pineapple`]
 
 // Note that 1 to fruits.length will yield [1,2,3]
-for i in 1 :to: fruits.length 
-    print: fruits.{i}
+for $i in range 1 to fruits.length 
+    print $fruits.{$i}
+    $fruits.{$i}
 
 
-for fruit in fruits
-    print: fruit
+for $fruit in $fruits
+    print $fruit
 
 
-let input @ String = ``
-while input isnt == `exit`
-    input << readLine:
-    print: `Your input is ${input}`
+let $input << ``
+while $input != `exit`
+    $input << readLine
+    print `Your input is $input`
 ```
 
 ## How to loop through keys of an object?
 By using the `.pairs` property.
 ```ts
-let myObject = 
+let $myObject = 
     .first = `Pine`
     .last  = `Apple`
     .price = 99
 
-print: myObject.pairs // [[`first`, `Pine`], [`last`, `Apple`], [`price`, 99]]
+print $myObject.pairs // [[`first`, `Pine`], [`last`, `Apple`], [`price`, 99]]
 
-print: myObject.pairs.type // [String, Any][]
+print $myObject.pairs.type // [String, Any][]
 
-for key,value in myObject.pairs
-    print: key
-    print: value
+for [$key, $value] in $myObject.pairs
+    print $key
+    print $value
 ```

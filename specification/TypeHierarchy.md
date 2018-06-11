@@ -3,6 +3,7 @@ The Pineapple language type hierarchy will be desribed using YAML.
 ```yaml
 MotherOfAllType // non-existent
     Void
+    Nil
     Any
         Object
             String
@@ -17,5 +18,18 @@ MotherOfAllType // non-existent
             Type
             Function
             Error
-        Nil
+```
+
+## The Object type
+```java
+@blueprint
+Object
+    .type: Type
+```
+
+## The blueprint of Type
+```
+@blueprint
+Type
+    .parent: Type
 ```

@@ -1,9 +1,10 @@
 # Data types
-## How to declare my own data type?
-By using the `type` keyword.
+## How to declare my own blueprint?
+By using the `@blueprint` annotation.
 ```ts
 // Definition
-type Fruit 
+@blueprint
+Fruit 
     .name    : String 
     .isTasty : Boolean
     .sibling : Fruit?
@@ -14,12 +15,14 @@ type Fruit
 By using the `reducing` keyword.  
 For example, let say we want to create a `Month` type. 
 ```js
-type Month reducing Integer 
+@type 
+Month reducing Integer 
     where $self is >= 0 and is <= 31 
 ```
 Or, let say phone number.
 ```js
-type PhoneNumber reducing String 
+@type 
+PhoneNumber reducing String 
     where $self is matching /^[0-9]{10}$/
 ```
 Then, when we initialized a value with those type, the compiler will check if it satisfy the defined condition.
@@ -33,14 +36,18 @@ let $myPhone = `012345678` as! PhoneNumber
 print $myPhone.type // PhoneNumber
 ```
 
-## How to create a derived type?
+## How to create a derived blueprint?
 You can do that by using the `extend` keyword.  
 For example,
 ```ts
-type Human
+// Define a blueprint of Human, which has a `name` property
+@blueprint 
+Human
     .name : String
 
-type Worker extend Human
+// Create a blueprint of Worker, which extend from the Human blueprint
+@blueprint 
+Worker extend Human
     .salary : Decimal
 
 let $me : Human =
@@ -51,21 +58,21 @@ let $him : Worker =
     .salary = 999.99
 ```
 
-## Types with default value
+## Types with default value (pending)
 Sometimes, you will need to have default value for a type in order to reduce boilerplate.  
 For example:
 ```ts
 type Fruit
     .name    : String
     .isTasty : Boolean
-    .sibling : mutable Fruit? << nil
+    .sibling : mutable (Fruit|nil) << nil
 ```
 So, the default value for `.sibling` is `nil`.
 
 Now, whenever you initialize a `Fruit`, you don't need to specify the `.sibling` property.
 ```js
 // The following code is valid
-let myFruit : Fruit = 
+let myFruit:Fruit = 
     .name = `Pineapple`
     .isTasty = true
 ```
@@ -73,7 +80,7 @@ let myFruit : Fruit =
 ## Type safety
 If you declare a variable to have a specific type, Pineapple compiler will expect the variable fully fulfils the specification of the type.
 ```js
-let $myFruit : Fruit = 
+let $myFruit:Fruit = 
     .name = 123 // Error: `.name` should be type of `String`
     .isTasty = true
     // Error: missing member `.sibling`
@@ -89,11 +96,11 @@ $x << nil // Compiler error
 ```
 
 ## Nullable types
-To have a nilable type, you need to use the `?` operator.
+To have a nilable type, you need to use the discrimanated union of nil.
 ```ts
 let $y : mutable String << nil // Error: Cannot assign `nil` to `String`
 
-let $x : mutable String? << nil // No error
+let $x : mutable (String|nil) << nil // No error
 ```
 
 ## Discriminated unions
@@ -107,32 +114,43 @@ $x << 4 // No error
 You can specify a type to implement more than 1 interface using the `&` operator.  
 For example, let say we have the following interfaces.
 ```ts
-interface Stringifiable<T>
+@behavior 
+Stringifiable<T>
     $target:T asString >> String
 
-interface Addable
+@behavior
+Addable
     $x:T (+) $y:T >> T
 ```
 Then, we have a type which will implement both the interfaces.
-```
-type Fruit implement Stringifiable & Addable
+```java
+@blueprint 
+Fruit realize (Stringifiable & Addable)
     .name  : String
     .price : Number
 
-function $target:Fruit asString >> String
-    >> `Name: $target.name, Price: $target.price`
+@function 
+$target:Fruit asString >> String
+    return `Name: $target.name, Price: $target.price`
 
-function $x:Fruit (+) $y:Fruit >> Fruit
-    >> 
+@function 
+$x:Fruit (+) $y:Fruit >> Fruit
+    return 
         .name  = $x.name ++ $y.name
         .price = $x.price + $y.price
 ```
 Now, you can have a function that take the types of `Stringifiable & Addable`.
 ```
-iofunction
+@iofunction
 show $target:(Stringifiable & Addable) >> Void
     print ($target asString)
 ```
+
+## Special nil type
+`nil` is a trinity:
+    - it is a function
+    - it is a data type
+    - it is a literal value
 
 ## Enumerations (Pending)
 Enumaration can be declared using `@enum` annotation.
@@ -196,7 +214,8 @@ This feature is important especially you are dealing with data from the outside 
 Consider the following example for processing an API request.
 
 ```ts
-type Fruit
+@blueprint 
+Fruit
     .name  : String
     .price : Number
 
