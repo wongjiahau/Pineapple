@@ -241,7 +241,7 @@ TestChain
     ;
 
 BoolFuncCall
-    : Expression PartialBoolFuncCall
+    : MonoExpr PartialBoolFuncCall
     ;
 
 PartialBoolFuncCallChain
@@ -250,8 +250,8 @@ PartialBoolFuncCallChain
     ;
 
 ExpressionChain
-    : ExpressionChain LogicOperatorAtom Expression
-    | Expression LogicOperatorAtom Expression
+    : ExpressionChain LogicOperatorAtom MonoExpr
+    | MonoExpr LogicOperatorAtom MonoExpr
     ;
 
 LogicOperatorAtom
@@ -260,22 +260,12 @@ LogicOperatorAtom
     ;
 
 PartialBoolFuncCall
-    : IsOrIsnt CurriedBoolFunc
-    ;
-
-IsOrIsnt
-    : IS
-    | ISNT
-    ;
-
-CurriedBoolFunc
-    : SuffixFuncAtom 
-    | InfixFuncAtom MonoExpr 
-    | InfixFuncAtom MonoExpr SuffixFuncAtom
-    | InfixFuncAtom MonoExpr InfixFuncAtom MonoExpr
+    : FuncAtom 
+    | FuncAtom MonoExpr 
+    | FuncAtom MonoExpr FuncAtom
+    | FuncAtom MonoExpr FuncAtom MonoExpr
     | OperatorAtom MonoExpr
     ;
-
 
 LinkStatement
     : LET Variable LinkOperator Expression {$$=_LinkStatement($2,$3,$4,true)}
