@@ -8,32 +8,33 @@ All function name must be in `camelCase`.
 ## How to call a function?
 Just like how you will do it in Haskell. No need brackets, only **space**.  
 Suppose we have this function `plus`.
-```js
-function 
-$x:Number plus $y:Number >> Number
-    >> $x + $y
+```
+@function 
+($x as Number) plus ($y as Number) >> Number
+    return $x + $y
 
 // Here's how you call the `plus` function
-let result = 2 plus 5
+let $result = 2 plus 5
 ```
 
 ## Nofix function
 Also means function without parameters.
-```
-function pi >> Number
-    >> 3.141592653
+```js
+@function 
+pi >> Number
+    return 3.141592653
 
 let $x = pi
 ```
 
 ## Prefix function
-```
-function 
-sum $xs:Number[] >> Number 
-    if $xs is == [] 
-        >> 0
+```js
+@function 
+sum ($xs as Number[]) >> Number 
+    if $xs == []
+        return 0
     else 
-        >> $xs.{1} + (sum $xs.{2..})
+        return $xs.{1} + (sum $xs.{2..})
 
 let $result = sum [1,2,3,4]
 ```
@@ -41,7 +42,7 @@ let $result = sum [1,2,3,4]
 ## Suffix function
 ```
 function
-$howMany:Int daysFromToday >> Date 
+($howMany as Int) daysFromToday >> Date 
     >> ((today).days + $howMany) as Date
 
 let $result = 5 daysFromToday
@@ -50,18 +51,18 @@ Note that the space after `5` is necessary.
 
 ## Infix function
 ```
-function
-$x:Int plus $y:Int >> Int
+@function
+($x as Int) plus ($y as Int) >> Int
     >> $x + $y
 
-let $result = 2 plus 5
+let $result = 2 plus 5 plus 7
 ```
 
 ## Mixfix funtion
 For example, you want a function that will split a string by a separator.
 ```
-function
-split $x:String by $delimiter:String >> String[]
+@function
+split ($x as String) by ($delimiter as String) >> String[]
     >> ?? 
 
 let $myString = `one/two/three`
@@ -71,15 +72,15 @@ let $result = split $myString by $separator
 **NOTE**: Every mixfix function must start with a prefix identifier, so the following is consider invalid.
 ```
 // Invalid
-function
-$start:Int to $end:Int by $step:Int >> Int[]
-    >> ?
+@function
+($start as Int) to ($end as Int) by ($step as Int) >> Int[]
+    return ?
 ```
 To fix that, you can add an identifier in front:
 ```
 // Valid
-function
-range $start:Int to $end:Int by $step:Int >> Int[]
+@function
+range ($start as Int) to ($end as Int) by ($step as Int) >> Int[]
     >> ?
 ```
 
@@ -87,12 +88,13 @@ range $start:Int to $end:Int by $step:Int >> Int[]
 You can also use symbols as signature for infix function.   
 For exampe, let say you want to declare a function that adds two arrays: 
 ```
-$x:Number[] (+) $y:Number[] >> Number[]
-    makesure $left.length is == $right.length
+@function
+($x as Number[]) + ($y as Number[]) >> Number[]
+    makesure $left.length == $right.length
     let $result << []
     for $i in range 1 to $y.length
         $result << $result ++ [$x.{i} + $y.{i}]
-    >> $result
+    return $result
 ```
 In fact, you can use any symbols combination except the following symbols:
 - period/dot (`.`)
@@ -130,11 +132,11 @@ You can set a function to have optional parameters.
 Let's look at the `range_to_by_` function.
 ```
 function
-range $start:Int to $end:Int step $step:Int=1 >> Int[]
+range ($start as Int) to ($end as Int) step ($step as Int = 1) >> Int[]
     if $start is >= $end 
-        >> [$end]
+        return [$end]
     else
-        >> [$start] ++ (($start + $step) to $end by $step)
+        return [$start] ++ (($start + $step) to $end by $step)
     
 // Calling it
 let $range1 = range 0 to 6
@@ -158,7 +160,7 @@ This is because such function will enhance debuggability and chainability.
 By using the `iofunction` annotation.
 ```
 iofunction
-send $query:String toDatabase >> Void
+send ($query as String) toDatabase >> Void
     // Send query to database
 ```
 Moreover, if your function is calling an `iofunction`, it needs to be annotated as `iofunction` too.
@@ -191,31 +193,31 @@ sayHi
 sayHi 5 times
 ```
 
-## Function overloading
+## Function overloading (Polymorphism)
 Pineapple allow function with same signature to overload with different parameter type.
 For example, the following function declaration are valid.
-```js
-function
-$x:Int add $y:Int >> Int
-    >> $x + $y
+```
+@function
+($x as Int) add ($y as Int) >> Int
+    return $x + $y
 
-function
-$xs:Int[] add $ys:Int[] >> Int[]
-    >> zip $xs and $ys with (+)
+@function
+($xs as Int[]) add ($ys as Int[]) >> Int[]
+    return zip [$xs, $ys] with (+)
 ```
 However, when you are overloading function with subtypes, the compiler will **resolve to the more specific type whenever possible**.
 
 For example, let say we have two `plus` functions.
 ```java
 // First function
-function
-$x:Int plus $y:Int >> Int
-    >> $x + $y
+@function
+($x as Int) plus ($y as Int) >> Int
+    return $x + $y
 
 // Second function
-function
-$x:Number plus $y:Number >> Number
-    >> $x + $y
+@function
+($x as Number) plus ($y as Number) >> Number
+    return $x + $y
 
 1   plus 2     // Resolve to first function
 1.1 plus 2.2 // Resolve to second function
