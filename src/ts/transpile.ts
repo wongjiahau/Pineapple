@@ -32,9 +32,10 @@ function ${f.signature.token.value}(${tpParameters(f.parameters)}){
 ${tpStatement(f.statements)};
 }
 `;
-    } else {
-        return `${f.parameters[0].typeExpected.name.token.value}.` +
+    } else if (f.parameters.length === 1) {
+        return `${f.parameters[0].typeExpected.name.token.value}.prototype.` +
 `${f.signature.token.value}=function(){
+let ${f.parameters[0].name.token.value} = this;
 ${tpStatement(f.statements)}}`;
     }
 }

@@ -1,0 +1,5 @@
+@iofunction
+print ($input:String) >> Void
+    <javascript>
+    console.log($input.valueOf());
+    </javascript>

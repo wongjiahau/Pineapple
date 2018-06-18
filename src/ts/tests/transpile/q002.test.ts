@@ -11,7 +11,8 @@ print ($input:String) >> Void
     </javascript>
 `;
         const expectedOutput =
-`String.print=function(){
+`String.prototype.print=function(){
+let $input = this;
 // <javascript>
 console.log($input);
 // </javascript>
