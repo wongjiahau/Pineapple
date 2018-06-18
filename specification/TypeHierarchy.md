@@ -5,19 +5,20 @@ MotherOfAllType // non-existent
     Void
     Nil
     Any
-        Object
-            String
-                Regex
-                Directory
-            Number
-                Decimal
-                Float
-                Int
-            Boolean
-            List
-            Type
-            Function
-            Error
+    Object
+        String
+            Regex
+            Directory
+        Number
+            Double
+            Float
+            Rational
+            Int
+        Boolean
+        List
+        Type
+        Function
+        Error
 ```
 
 ## The Object type

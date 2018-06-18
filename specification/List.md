@@ -3,32 +3,26 @@ List in Pineapple are just like list in Python. However, they must consist of th
 
 ## Initialization
 ```js
-let xs = [1,2,3,4]
+let $xs = [1 2 3 4]
 
-let invalidList = [1, "b"] // Error: Cannot contain different type in a list
-
-let manyFruits = [
-    #(.name="Apple"     .color="red"),
-    #(.name="Pineapple" .color="yellow")
-]
-
+let $invalidList = [1 `b`] // Error: Cannot contain different type in a list
 
 ```
 
 ## Indexing
-Indexing is done using the dot-bracket (`.{}`) operator.
+Indexing is done using the dot-bracket (`.[]`) operator.
 The first element will have the index of **ONE**.
 ```ts
-let xs = [11,22,33,44]
+let $xs = [11 22 33 44]
 
 // Get first element
-xs.{1} // 11
+$xs.[1] // 11
 
 // Get last element
-xs.{-1} // 44
+$xs.[-1] // 44
 
 // Get the second last element
-xs.{-2} // 33
+$xs.[-2] // 33
 ```
 ### Design decision
 #### Why we use one instead of zero in Pinapple? 
@@ -40,50 +34,45 @@ To slice a list, you can use the following operators:
 - double-dot (`..`)
 - double-dot-lessThan (`..<`)
 ```swift
-xs = [10, 20, 30, 40]
+$xs = [10, 20, 30, 40]
 
 // Get from first element to third element
-xs.{1..3} // [10, 20, 30]
+$xs.[1..3] // [10, 20, 30]
 
 // Get from second element to 2nd last element
-xs.{2..-2} // [20,30]
+$xs.[2..-2] // [20,30]
 
 // Get from second element to before 3rd element
-xs.{1..<3} // [10,20]
+$xs.[1..<3] // [10,20]
 
 // Get until third element from start
-xs.{..3} // [10,20,30]
+$xs.[..3] // [10,20,30]
 
 // Get from second element till end
-xs.{2..} // [20,30,40]
+$xs.[2..] // [20,30,40]
 ```
 
 ## List unpacking
 You can unpack items of a list to variables.
 ```ts
-let a, b, c = [1, 2, 3]
-print a // 1
-print b // 2
-print c // 3
+let $a $b $c = [1 2 3]
+print $a // 1
+print $b // 2
+print $c // 3
 ```
 
-## How to have list of items with different type (aka Tuples)?
-You need to declare the type explicitly. For example: 
+## How to have tuples?
+Using round brackets.
 ```ts
-let tuple1 = ["price", 99] // Error: Items in a list must be of the same type
+let $tuple1 = (`price` 99)
 
-let tuple2@[String,Number] = ["price", 99] // No error
+let $tuple2:(Tuple of String Number) = (`price` 123) 
 
-let listOfTuples@[String, Number][] = [
-    ["apple"    , 12],
-    ["pineapple", 24],
-    ["durian"   , 33]
+let $listOfTuples:(List of Tuple of String Number) = [
+    ("apple"     12)
+    ("pineapple" 24)
+    ("durian"    33)
 ] // No error
-```
-Note that you cannot concat a tuple.
-```ts
-let list1@[String, Number] = ["apple", 99]
-let list2 = list1 ++ ["something else"] // Error
 ```
 However, a tuple can be mutable.
 ```ts
