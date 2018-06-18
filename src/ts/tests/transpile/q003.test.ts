@@ -1,24 +1,21 @@
 import { expect } from "chai";
 import { pine2js } from "../../pine2js";
 
-describe("q002", () => {
+describe("q003", () => {
     it("case1", () => {
         const input =
 `@iofunction
-print $input:String >> Void
-    <javascript>
-    console.log($input);
-    </javascript>
+main >> Void
+    print \`hello world\`
 `;
         const expectedOutput =
-`String.print=function(){
-// <javascript>
-console.log($input);
-// </javascript>
+`
+function main(){
+"hello world".print();
 }`;
         // console.log(pine2js(input));
         // console.log(expectedOutput);
-        expect(pine2js(input)).to.eq(expectedOutput);
+        expect(pine2js(input).trim()).to.eq(expectedOutput.trim());
     });
 
 });

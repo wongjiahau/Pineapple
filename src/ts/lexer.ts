@@ -38,8 +38,11 @@ export class Lexer {
             this.reject = true;
             Token.column++;
         }, [])
-        .addRule(/(if|elif|else|isnt|is|and|or|function|iofunction|let)/, (lexeme: string): Token => {
+        .addRule(/(if|elif|else|isnt|is|and|or|let)/, (lexeme: string): Token => {
             return new Token(lexeme as TokenType);
+        })
+        .addRule(/@(function|iofunction)/, (lexeme: string): Token => {
+            return new Token(lexeme.slice(1) as TokenType);
         })
         .addRule(/`.*`/, (lexeme: string) => {
             return new Token("string", lexeme);

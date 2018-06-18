@@ -5,13 +5,13 @@ const _Declaration = (body,next) => ({body,next});
 
 const _Statement = (body,next) => ({body,next});
 
-const _FunctionDeclaration = (signature,returnType,parameters,statements,fix) => ({
+const _FunctionDeclaration = (signature,returnType,parameters,statements,affix) => ({
     kind: "FunctionDeclaration",
     signature, 
     returnType, 
     parameters, 
     statements, 
-    fix,
+    affix,
 });
 
 const _LinkStatement = (variable,linkType,expression,isDeclaration) => ({
@@ -22,10 +22,10 @@ const _LinkStatement = (variable,linkType,expression,isDeclaration) => ({
     expression
 });
 
-const _Variable = (name,type) => ({
+const _Variable = (name,typeExpected) => ({
     kind: "Variable",
     name,
-    type
+    typeExpected
 });
 
 const _TypeExpression = (name, isList, listSize) => ({

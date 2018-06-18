@@ -25,12 +25,18 @@ export function tpDeclaration(input: Declaration): string {
 }
 
 export function tpFunctionDeclaration(f: FunctionDeclaration): string {
-    return "" +
-`
-function ${f.fix}_${f.signature.token.value}_${getParamsType(f.parameters)}(${tpParameters(f.parameters)}) {
+    if (f.parameters.length === 0) {
+        return "" +
+        `
+function ${f.signature.token.value}(${tpParameters(f.parameters)}){
 ${tpStatement(f.statements)};
 }
 `;
+    } else {
+        return `${f.parameters[0].typeExpected.name.token.value}.` +
+`${f.signature.token.value}=function(){
+${tpStatement(f.statements)}}`;
+    }
 }
 
 function getParamsType(p: Variable[]): string {
@@ -54,9 +60,22 @@ export function tpStatement(s: Statement): string {
 }
 
 export function tpFunctionCall(f: FunctionCall): string {
-    return `${f.fix}_${f.signature.token.value}` +
-    `(${removeLastComma(f.parameters.map((x) => tpExpression(x)).join(","))})`;
+    if (f.parameters.length === 0) {
+        return `${f.signature}();`;
+    }
+    if (f.parameters.length === 1) {
+        return `${tpExpression(f.parameters[0])}.${f.signature.token.value}()`;
+    }
 }
+
+// export function getExpressionType(e: Expression): string {
+//     switch (e.kind) {
+//         case "FunctionCall": return break;
+//         case "String": return "String";
+//         case "Variable": return;
+//     }
+//     throw new Error("unimplemented yet");
+// }
 
 export function tpLinkStatement(l: LinkStatement): string {
     return `${l.isDeclaration ? "let" : ""} ${l.variable.name.token.value} = ${tpExpression(l.expression)}`;
@@ -86,8 +105,5 @@ export function tpStringExpression(s: StringExpression): string {
 }
 
 export function removeLastComma(s: string): string {
-    return s[s.length - 1] === ","
-        ? s.slice(0, -1)
-        : s
-    ;
+    return s[s.length - 1] === "," ? s.slice(0, -1) : s ;
 }

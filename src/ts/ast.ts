@@ -7,7 +7,7 @@ export interface Declaration {
 
 export interface FunctionDeclaration {
     kind: "FunctionDeclaration";
-    fix: "nofix" | "prefix" | "suffix" | "infix" | "mixfix";
+    affix: FunctionAffix;
     signature: TokenAtom;
     returnType: TypeExpression;
     parameters: Variable[];
@@ -32,9 +32,9 @@ export interface TypeExpression {
     name: TokenAtom;
     isList: boolean;
     listSize: Expression;
+    or: TypeExpression;
+    and: TypeExpression;
     // tuple: TupleTypeExpression;
-    operator: "union" | "intersect";
-    next: TypeExpression;
 }
 
 export type Expression
@@ -45,19 +45,22 @@ export type Expression
     // | MonoExpression
     ;
 
-export type FunctionFix = "nofix" | "prefix" | "suffix" | "infix" | "mixfix";
+export type FunctionAffix = "nofix" | "prefix" | "suffix" | "infix" | "mixfix";
 
 export interface FunctionCall {
     kind: "FunctionCall";
-    fix: FunctionFix;
+    fix: FunctionAffix;
     signature: TokenAtom;
     parameters: Expression[];
+    returnType: TypeExpression;
 }
 
 export interface Variable {
     kind: "Variable";
     name: TokenAtom;
-    type: TypeExpression;
+    typeExpected: TypeExpression; // This info is captured by parser
+    typeCaught: TypeExpression; // This info should be fill in by type checker
+    value: Expression;
 }
 
 export interface Pon {
