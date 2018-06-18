@@ -17,6 +17,12 @@ export class Lexer {
         .addRule(/[$][a-z][a-zA-Z0-9]*/, (lexeme: string): Token => {
             return new Token("varname", lexeme);
         })
+        .addRule(/\(/, (): Token => {
+            return new Token("left_paren");
+        })
+        .addRule(/\)/, (): Token => {
+            return new Token("right_paren");
+        })
         .addRule(/:/, (): Token => {
             return new Token("type_op");
         })
@@ -56,7 +62,7 @@ export class Lexer {
         .addRule(/\d+([.]\d+)?(e[+-]?\d+)?/i, (lexeme: string) => {
             return new Token("number", lexeme);
         })
-        .addRule(/[-!$%^&*()_+|~=`{}\[\]:";'<>?,.\/]+/, (lexeme: string) => {
+        .addRule(/[-!$%^&*_+|~=`\[\]:";'<>?,.\/]+/, (lexeme: string) => {
             return new Token("operator", lexeme);
         })
         ;

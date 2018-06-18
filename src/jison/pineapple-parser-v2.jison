@@ -275,6 +275,7 @@ LinkStatement
 Variable 
     : VariableAtom {$$=_Variable($1,null)}
     | VariableAtom TYPE_OP TypeExpression {$$=_Variable($1,$3)}
+    | LEFT_PAREN VariableAtom TYPE_OP TypeExpression RIGHT_PAREN {$$=_Variable($2,$4)}
     ;
 
 LinkOperator

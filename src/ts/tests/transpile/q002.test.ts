@@ -5,7 +5,7 @@ describe("q002", () => {
     it("case1", () => {
         const input =
 `@iofunction
-print $input:String >> Void
+print ($input:String) >> Void
     <javascript>
     console.log($input);
     </javascript>

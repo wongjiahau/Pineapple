@@ -4,6 +4,8 @@ export type TokenType
     = "if"
     | "elif"
     | "else"
+    | "left_paren"
+    | "right_paren"
     | "newline"
     | "indent"
     | "dedent"
