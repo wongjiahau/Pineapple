@@ -2,6 +2,9 @@
 Every function can be annotated with the `function` keywords. This is optional, it is just to improve the readability.  
 Note that the `??` operator means the function is unimplemented yet.
 
+## Precedence
+String-named functions have higher precedence than symbol-named functions.
+
 ## Some note
 All function name must be in `camelCase`. 
 
@@ -9,8 +12,14 @@ All function name must be in `camelCase`.
 Just like how you will do it in Haskell. No need brackets, only **space**.  
 Suppose we have this function `plus`.
 ```
-@function 
-($x as Number) plus ($y as Number) >> Number
+// Choice 1
+@function  
+($x:Number) plus ($y:Number) >> Number
+    return $x + $y
+    
+// Choice 2
+@function  
+$x:Number plus $y:Number >> Number
     return $x + $y
 
 // Here's how you call the `plus` function
@@ -30,39 +39,43 @@ let $x = pi
 ## Prefix function
 ```js
 @function 
-sum ($xs as Number[]) >> Number 
+sum ($xs:Number[]) >> Number  
+sum ($xs:List of Number) >> Number 
     if $xs == []
         return 0
-    else 
-        return $xs.{1} + (sum $xs.{2..})
+    else
+        return $xs.[1] + sum $xs.[2..]
 
-let $result = sum [1,2,3,4]
+let $result = sum [1 2 3 4]
+print $result
 ```
 
 ## Suffix function
+Suffix function is useful for initializing SI units.
 ```
-function
-($howMany as Int) daysFromToday >> Date 
-    >> ((today).days + $howMany) as Date
+@function
+($howMany:Int) km >> SIMetre
+    return ($howMany * 1000) m
 
-let $result = 5 daysFromToday
+let $result = 5 km
 ```
 Note that the space after `5` is necessary.  
 
 ## Infix function
 ```
 @function
-($x as Int) plus ($y as Int) >> Int
-    >> $x + $y
+($x:Int) plus ($y:Int) >> Int
+    return $x + $y
 
 let $result = 2 plus 5 plus 7
 ```
+Note: Infix function can be chain indefinitely.
 
 ## Mixfix funtion
 For example, you want a function that will split a string by a separator.
 ```
 @function
-split ($x as String) by ($delimiter as String) >> String[]
+split ($target:String) by ($separator:String) >> List of String
     >> ?? 
 
 let $myString = `one/two/three`
@@ -73,14 +86,14 @@ let $result = split $myString by $separator
 ```
 // Invalid
 @function
-($start as Int) to ($end as Int) by ($step as Int) >> Int[]
+($start:Int) to ($end:Int) by ($step:Int) >> List of Int
     return ?
 ```
 To fix that, you can add an identifier in front:
 ```
 // Valid
 @function
-range ($start as Int) to ($end as Int) by ($step as Int) >> Int[]
+range ($start:Int) to ($end:Int) by ($step:Int) >> List of Int
     >> ?
 ```
 
@@ -89,11 +102,11 @@ You can also use symbols as signature for infix function.
 For exampe, let say you want to declare a function that adds two arrays: 
 ```
 @function
-($x as Number[]) + ($y as Number[]) >> Number[]
-    makesure $left.length == $right.length
+($x:List of Number) + ($y:List of Number) >> List of Number
+    makesure $x.length == $y.length
     let $result << []
-    for $i in range 1 to $y.length
-        $result << $result ++ [$x.{i} + $y.{i}]
+    for $i in 1 to $y.length
+        $result << $result append ($x.[i] + $y.[i])
     return $result
 ```
 In fact, you can use any symbols combination except the following symbols:
@@ -132,18 +145,18 @@ You can set a function to have optional parameters.
 Let's look at the `range_to_by_` function.
 ```
 function
-range ($start as Int) to ($end as Int) step ($step as Int = 1) >> Int[]
-    if $start is >= $end 
+range ($start:Int) to ($end:Int) step ($step:Int=1) >> List of Int
+    if $start >= $end 
         return [$end]
     else
         return [$start] ++ (($start + $step) to $end by $step)
     
 // Calling it
 let $range1 = range 0 to 6
-print $range1 // [0,1,2,3,4,5,6]
+print $range1 // [0 1 2 3 4 5 6]
 
 let $range2 = range 0 to 7 by 2
-print $range2 // [0,2,4,6]
+print $range2 // [0 2 4 6]
 ```
 
 ## Referential transparency
@@ -155,18 +168,17 @@ Every function in `Pineapple`:
 
 This is because such function will enhance debuggability and chainability.
 
-
 ## How to declare a function that will perform IO operation?
 By using the `iofunction` annotation.
 ```
-iofunction
-send ($query as String) toDatabase >> Void
+@iofunction
+send ($query:String) toDatabase >> Void
     // Send query to database
 ```
 Moreover, if your function is calling an `iofunction`, it needs to be annotated as `iofunction` too.
 
 For example:
-```js
+```
 function 
 sayHello >> Void
     print `hello` // Error, cannot call an iofunction inside a normal function
@@ -271,45 +283,34 @@ print: result // [3,4,5,6]
 ### Assigning a function to a variable 
 Note that `$1` means the first parameter and `$2` means the second paramter.
 ```ts
-let %even = $1 % 2 is == 0 
+let $add = ($1:Number $2:Number) >> $1 + $2
 
-let %add = $1 + $2
+// Here's how to invoke $even
+let result = $add->(1 2) 
 
-
-// Here's how to invoke %even
-let result = 5 is %even 
-
-// Here's how to invoke %add
-3 %add 5
-
-// How to call _add_
-5 add 3
 ```
 
 ## Declaring function that takes function as parameter
 ### Single parameter 
 ```js
 function
-invoke %func:(Number >> Number) with $param:Number >> Number
-    %func $param
+invoke $func:(Number >> Number) with ($param:Number) >> Number
+    return $func->($param)
 ```
 
 ### Double parameter 
-```java
+```
 @function
-invoke $_func_:(Number>>Number>>Number) on $list:Number[] >> Number
-    let $result << 0
-    for $i in range 1 to $list.length
-        $result << $result + ($list.{i} func $list.{i+1})
-    >> $result
+apply ($func: T T >> T) on ($xs:T) >> T
+    return $func->($xs $xs)
 ```
 
 
 ## Currying
 ```js
-function
-$x:Number moreThan $y:Number >> Boolean
-    >> $x > $y
+@function
+($x:Number) moreThan ($y:Number) >> Boolean
+    return $x > $y
 
 let $moreThanThree = _ moreThan 3
 
@@ -321,42 +322,21 @@ select $moreThanThree from [1,2,3,4,5] // [4,5]
 select $threeMoreThan from [1,2,3,4,5] // [1,2,3]
 ```
 
-## Pattern matching (Pending)
-*This feature is still under consideration, as it seems to violate the objective of Pineapple.*
-```hs
+```
 @function
-(x:Number) divide (y:Number) >> Number
-x divide y >> x / y
-_ divide 0 >> error
+take ($mapFunc:T>>T) where ($filterFunc:T>>Boolean) from ($list:List of T) >> List of T
+    if $list isEmpty
+        return []
+    let $result << []
+    for $item in $list
+        if $filterFunc->(x)
+            $result << $result append ($mapFunc->(x))
+    return $result
 
-
-@function 
-select (mapFunc: T >> T) whichIs (filterFunc: T >> Boolean) from (list: T[]) >> T[]
-select _ whichIs _ from [] = []
-select mapFunc whichIs filterFunc from (x cons xs) >> 
-    (mapFunc x) cons remaining
-    if (filterFunc x) 
-    else remaining
-    where remaining = (select mapFunc whichIs filterFunc from xs)
+let $result = take (_ * 2) where (_ > 3) from [1 2 3 4 5]
+print $result // [8 10]
 ```
-Usage
-```java
-moreThan (x:Number) >> (y:Number) >> y > x
-result = select num whichIs (moreThan 3) from [1,2,3,4]
-//Little note: num will be expanded to (num >> num)
+Comparison to Javascript
+```js
+let result = [1,2,3,4,5].filter(x => x > 3).map(x => x * 2)
 ```
-*To be honest, not many people can understand pattern matching and object deconstruction. LOL*
-
-Let's look at the imperative version.
-```java
-@function
-select (mapFunc:T>>T) whichIs (filterFunc:T>>Boolean) from (list:T[]) >> T[]
-    if list is empty 
-        >> []
-    let result = mutable []
-    for x in list
-        if filterFunc x
-            result << result ++ mapFunc x
-    >> result
-```
-To be honest, the imperative version is actually much shorter can much cleaner than the functional counterpart. OOPS.
