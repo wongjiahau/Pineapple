@@ -1,14 +1,47 @@
+// import { getFunctionTable } from "./getFunctionTable";
 import { Token, tokenize } from "./tokenize";
 import { tpDeclaration } from "./transpile";
+const parser     = require("../jison/pineapple-parser-v2");
 
 export function pine2js(input: string): string {
-    const parser     = require("../jison/pineapple-parser-v2");
     const tokenized  = tokenize(input);
-    const ast        = parser.parse(tokenized);
+    const preprocessed = removeConsequetingNewlines(tokenized);
+    const ast        = parser.parse(preprocessed);
     // console.log(JSON.stringify(ast, null, 2));
     const symbolized = retrieveSymbol(Token.TokenTable, ast);
     // console.log(Token.TokenTable);
     // console.log(JSON.stringify(symbolized, null, 2));
+    // const functionTables = getFunctionTable(symbolized);
+
+    // TODO: Fill in missing type info in AST
+    // (a) Function call argument types
+    //      1. Loop throught every function entry
+    //      2. $matchingFunc = everyFunctionEntries.filter($1.signature == current.signature)
+    //      3. $scores = $matchingFunc.map(getScore($1.args, current.args))
+    //      4. return $matchingFunc.{indexOfMinValueOf $scores}
+    //
+    // function getScore [$args1,$args2]:[Type[],Type[]] >> int[]
+    //      let $result : mutable Int[] << []
+    //      for $i in range 1 to $args1.length
+    //          let $dist = distanceBetween $args1.[$i] $args2.[$i]
+    //          $result << $result append $dist
+    //      return $result
+    //
+    // function distanceBetween(args1, args2) {
+    //      if(args1 == args2)
+    //          return 0
+    //      else
+    //          return
+    // }
+    //
+    // (b) Variable declaration types
+    /**
+     * How to do generic type?
+     * 1. When calling a generic function
+     * 2. The function-call-node should be replace with the body of the function
+     * 3. Then the generic type T, should be replace by the calling type
+     */
+
     const code       = tpDeclaration(symbolized);
     // console.log(code);
     return code;
@@ -32,4 +65,9 @@ export function retrieveSymbol(tokenTable: {[key: number]: Token}, ast: any): an
         }
     }
     return ast;
+}
+
+function removeConsequetingNewlines(input: string): string {
+    return input.replace(/NEWLINE\s(NEWLINE\s)+/g, "NEWLINE\n");
+
 }
