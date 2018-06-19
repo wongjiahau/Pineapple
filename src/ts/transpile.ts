@@ -36,7 +36,8 @@ ${tpStatement(f.statements)};
         return `${f.parameters[0].typeExpected.name.token.value}.prototype.` +
 `${f.signature.token.value}=function(){
 let ${f.parameters[0].name.token.value} = this;
-${tpStatement(f.statements)}}`;
+${tpStatement(f.statements)}}
+`;
     }
 }
 

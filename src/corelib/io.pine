@@ -3,3 +3,9 @@ print ($input:String) >> Void
     <javascript>
     console.log($input.valueOf());
     </javascript>
+
+@iofunction
+say ($input:String) >> Void
+    <javascript>
+    console.log($input.valueOf());
+    </javascript>

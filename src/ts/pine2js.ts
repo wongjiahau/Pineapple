@@ -68,6 +68,8 @@ export function retrieveSymbol(tokenTable: {[key: number]: Token}, ast: any): an
 }
 
 function removeConsequetingNewlines(input: string): string {
-    return input.replace(/NEWLINE\s(NEWLINE\s)+/g, "NEWLINE\n");
+    return input
+        .replace(/NEWLINE\s(NEWLINE\s)+/g, "NEWLINE\n")
+        .replace(/NEWLINE\sEOF/g, "EOF");
 
 }

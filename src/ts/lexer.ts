@@ -10,8 +10,29 @@ export class Lexer {
             throw new Error("Unexpected character at row " + Token.line + ", col " + Token.column + ": " + char);
         });
 
+        this.indent = [0];
+        this.lexer.addRule(/^[\t ]*/gm, (lexeme: string): Token | Token[] | undefined => {
+            const indentation = lexeme.length;
+
+            if (indentation > this.indent[0]) {
+                this.indent.unshift(indentation); // unshift means insert element at index 0
+                return new Token("indent");
+            }
+
+            const tokens: Token[] = [];
+
+            while (indentation < this.indent[0]) {
+                tokens.push(new Token("dedent"));
+                this.indent.shift(); // shift means remove the first element
+            }
+            if (tokens.length) {
+                return tokens;
+            }
+            return;
+        });
+
         this.lexer
-        .addRule(/<javascript>(.|[\s\S])*<\/javascript>/, (lexeme: string): Token => {
+        .addRule(/<javascript>(.|[\s\S])*?<\/javascript>/, (lexeme: string): Token => {
             return new Token("javascript", lexeme.replace(/(<javascript>|<\/javascript>)/g, "").trim());
         })
         .addRule(/[$][a-z][a-zA-Z0-9]*/, (lexeme: string): Token => {
@@ -66,27 +87,6 @@ export class Lexer {
             return new Token("operator", lexeme);
         })
         ;
-
-        this.indent = [0];
-        this.lexer.addRule(/^[\t ]*/gm, (lexeme: string): Token | Token[] | undefined => {
-            const indentation = lexeme.length;
-
-            if (indentation > this.indent[0]) {
-                this.indent.unshift(indentation); // unshift means insert element at index 0
-                return new Token("indent");
-            }
-
-            const tokens: Token[] = [];
-
-            while (indentation < this.indent[0]) {
-                tokens.push(new Token("dedent"));
-                this.indent.shift(); // shift means remove the first element
-            }
-            if (tokens.length) {
-                return tokens;
-            }
-            return;
-        });
 
         this.lexer.addRule(/[ ]+/, (lexeme: string): Token => {
             return new Token("space");
