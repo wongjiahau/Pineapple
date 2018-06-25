@@ -4,7 +4,10 @@ import {
     FunctionCall,
     FunctionDeclaration,
     JavascriptCode,
+    KeyValueList,
     LinkStatement,
+    NumberExpression,
+    PonExpression,
     Statement,
     StringExpression,
     TypeExpression,
@@ -98,8 +101,9 @@ export function tpExpression(e: Expression): string {
     switch (e.kind) {
         case "FunctionCall": return tpFunctionCall(e);
         case "String": return tpStringExpression(e);
-        case "Number": return e.value;
+        case "Number": return tpNumberExpression(e);
         case "Variable": return e.name.value;
+        case "Pon": return tpPonExpression(e);
     }
 }
 
@@ -114,6 +118,28 @@ export function tpStringExpression(s: StringExpression): string {
     return `"${s.value.slice(1, -1)}"`;
 }
 
+export function tpNumberExpression(e: NumberExpression): string {
+    if (e.value.indexOf(".") > -1) {
+        return `(${e.value})`;
+    } else {
+        return `new Int(${e.value})`;
+    }
+}
+
+export function tpPonExpression(e: PonExpression): string {
+    return `{
+${tpKeyValueList(e.keyValueList)}
+}`;
+}
+
+export function tpKeyValueList(e: KeyValueList): string {
+    return e.keyValue.memberName.value.slice(1)
+        + " : "
+        + tpExpression(e.keyValue.expression)
+        + (e.next ? ",\n" + tpKeyValueList(e.next) : "")
+        ;
+}
+
 export function removeLastComma(s: string): string {
-    return s[s.length - 1] === "," ? s.slice(0, -1) : s ;
+    return s[s.length - 1] === ",\n" ? s.slice(0, -1) : s ;
 }

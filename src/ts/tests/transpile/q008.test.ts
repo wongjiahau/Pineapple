@@ -2,21 +2,29 @@ import { expect } from "chai";
 import { pine2js } from "../../pine2js";
 
 describe("q006", () => {
-    it("infix function call", () => {
+    it("object literals", () => {
         const input =
 `
 --function
 main:
-    let x as Int = 4
-    let y as Int = 6
-    let result = x + y
+    let people =
+        .name  = 'john'
+        .age   = 123
+        .wife  =
+            .name = 'Natelie'
+            .age  = 99
 `;
         const expectedOutput =
 `
 function main(){
-const x = new Int(4);
-const y = new Int(6);
-const result = x.$plus_Int(y);
+const people = {
+name : "john",
+age : new Int(123),
+wife : {
+name : "Natelie",
+age : new Int(99)
+}
+};
 }
 `;
         // console.log(pine2js(input));

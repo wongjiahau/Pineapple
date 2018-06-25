@@ -45,7 +45,17 @@ const _FunctionCall = (fix,signature,parameters) => ({
     parameters,
 });
 
-const _Atom = (type, tokenId) => ({type,tokenId});
+const _Pon = (keyValue) => ({
+    kind: "Pon",
+    keyValueList: keyValue
+});
+
+const _KeyValueList = (keyValue, next) => ({keyValue, next});
+
+const _KeyValue = (memberName, expression) => ({
+    memberName,
+    expression,
+});
 
 const _StringExpression = (value) => ({kind:"String", value});
 
@@ -98,6 +108,7 @@ function _getOperatorName(op) {
 [a-z][a-zA-Z0-9]*[:]            return 'FUNCNAME'    
 [A-Z][a-zA-Z0-9]*               return 'TYPENAME'
 [a-z][a-zA-Z]*                  return 'VARNAME'
+[.][a-z][a-zA-Z]*               return 'MEMBERNAME'
 [-!$%^&*_+|~=`\[\]:";'<>?,.\/]+ return 'OPERATOR'
 
 
@@ -108,7 +119,6 @@ function _getOperatorName(op) {
 ","                  return  COMMA
 [0-9]+               return 'TOKEN_ID'
 "DOT"                return 'DOT'
-"MEMBERNAME"         return 'MEMBERNAME'
 "ASSIGN_OP"          return 'ASSIGN_OP'
 "UNION_OP"           return 'UNION_OP'
 "INTERSECT_OP"       return 'INTERSECT_OP'
@@ -270,7 +280,7 @@ TestChain
     ;
 
 BoolFuncCall
-    : MonoExpr PartialBoolFuncCall
+    : AtomicExpr PartialBoolFuncCall
     ;
 
 PartialBoolFuncCallChain
@@ -279,8 +289,8 @@ PartialBoolFuncCallChain
     ;
 
 ExpressionChain
-    : ExpressionChain LogicOperatorAtom MonoExpr
-    | MonoExpr LogicOperatorAtom MonoExpr
+    : ExpressionChain LogicOperatorAtom AtomicExpr
+    | AtomicExpr LogicOperatorAtom AtomicExpr
     ;
 
 LogicOperatorAtom
@@ -290,10 +300,10 @@ LogicOperatorAtom
 
 PartialBoolFuncCall
     : FuncAtom 
-    | FuncAtom MonoExpr 
-    | FuncAtom MonoExpr FuncAtom
-    | FuncAtom MonoExpr FuncAtom MonoExpr
-    | OperatorAtom MonoExpr
+    | FuncAtom AtomicExpr 
+    | FuncAtom AtomicExpr FuncAtom
+    | FuncAtom AtomicExpr FuncAtom AtomicExpr
+    | OperatorAtom AtomicExpr
     ;
 
 LinkStatement
@@ -331,7 +341,7 @@ TupleTypeExpression
 Expression
     : FuncCall
     | Object
-    | MonoExpr
+    | AtomicExpr
     ;
 
 FuncCall
@@ -347,8 +357,8 @@ NofixFuncCall
     ;
 
 InfixFuncCall
-    : InfixFuncCall FuncId MonoExpr 
-    | MonoExpr FuncId MonoExpr {$$=_FunctionCall("infix",$2,[$1,$3])}
+    : InfixFuncCall FuncId AtomicExpr 
+    | AtomicExpr FuncId AtomicExpr {$$=_FunctionCall("infix",$2,[$1,$3])}
     ;
 
 FuncId
@@ -357,23 +367,23 @@ FuncId
     ;
 
 PrefixFuncCall
-    : FuncAtom MonoExpr {$$=_FunctionCall("prefix",$1,[$2])}
+    : FuncAtom AtomicExpr {$$=_FunctionCall("prefix",$1,[$2])}
     ;
 
 SuffixFuncCall
-    : MonoExpr FuncAtom
+    : AtomicExpr FuncAtom
     ;
 
 MixfixFuncCall
-    : FuncAtom MonoExpr FuncAtom 
-    | FuncAtom MonoExpr FuncAtom MonoExpr
-    | FuncAtom MonoExpr FuncAtom MonoExpr FuncAtom
-    | FuncAtom MonoExpr FuncAtom MonoExpr FuncAtom MonoExpr
-    | FuncAtom MonoExpr FuncAtom MonoExpr FuncAtom MonoExpr FuncAtom
-    | FuncAtom MonoExpr FuncAtom MonoExpr FuncAtom MonoExpr FuncAtom MonoExpr
+    : FuncAtom AtomicExpr FuncAtom 
+    | FuncAtom AtomicExpr FuncAtom AtomicExpr
+    | FuncAtom AtomicExpr FuncAtom AtomicExpr FuncAtom
+    | FuncAtom AtomicExpr FuncAtom AtomicExpr FuncAtom AtomicExpr
+    | FuncAtom AtomicExpr FuncAtom AtomicExpr FuncAtom AtomicExpr FuncAtom
+    | FuncAtom AtomicExpr FuncAtom AtomicExpr FuncAtom AtomicExpr FuncAtom AtomicExpr
     ;
 
-MonoExpr
+AtomicExpr
     : LEFT_PAREN Expression RIGHT_PAREN
     | Value
     | ArrayAccess
@@ -382,19 +392,19 @@ MonoExpr
     ;
 
 ArrayAccess
-    : MonoExpr '.{' Expression '}'
+    : AtomicExpr '.{' Expression '}'
     ;
 
 ArraySlicing
-    : MonoExpr '.{..<' Expression '}' 
-    | MonoExpr '.{..' Expression  '}' 
-    | MonoExpr '.{' Expression  '..}'
-    | MonoExpr '.{' Expression  '..' Expression  '}' 
-    | MonoExpr '.{' Expression  '..<' Expression '}' 
+    : AtomicExpr '.{..<' Expression '}' 
+    | AtomicExpr '.{..' Expression  '}' 
+    | AtomicExpr '.{' Expression  '..}'
+    | AtomicExpr '.{' Expression  '..' Expression  '}' 
+    | AtomicExpr '.{' Expression  '..<' Expression '}' 
     ;
 
 ObjectAccessExpr
-    : MonoExpr ObjectAccess
+    : AtomicExpr ObjectAccess
     ;
 
 ObjectAccess
@@ -413,16 +423,16 @@ Value
 
 Object
     : EMPTY_OBJECT_DECLARATOR
-    | NEWLINE INDENT KeyValueList DEDENT
+    | NEWLINE INDENT KeyValueList DEDENT {$$=_Pon($3)}
     ;
 
 KeyValueList
-    : KeyValueList NEWLINE KeyValue 
-    | KeyValue
+    : KeyValue NEWLINE KeyValueList {$$=_KeyValueList($1,$3)}
+    | KeyValue {$$=_KeyValueList($1,null)}
     ;
 
 KeyValue
-    : MembernameAtom LinkOperator Expression
+    : MembernameAtom LinkOperator Expression {$$=_KeyValue($1,$3)}
     ;
 
 Array 
@@ -457,7 +467,7 @@ VariableAtom
     ;
 
 MembernameAtom
-    : MEMBERNAME '::' TOKEN_ID
+    : MEMBERNAME {$$=_Token($1, this._$)}
     ;
 
 OperatorAtom    

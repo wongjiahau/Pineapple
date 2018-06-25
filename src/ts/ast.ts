@@ -42,7 +42,7 @@ export type Expression
     | StringExpression
     | NumberExpression
     | Variable
-    // | Pon // Pineapple Object Notation (PON)
+    | PonExpression // Pineapple Object Notation (PON)
     // | MonoExpression
     ;
 
@@ -64,15 +64,19 @@ export interface Variable {
     value: Expression;
 }
 
-export interface Pon {
+export interface PonExpression {
     kind: "Pon";
-    keyValueList: KeyValue;
+    keyValueList: KeyValueList;
+}
+
+export interface KeyValueList {
+    keyValue: KeyValue;
+    next: KeyValueList | null;
 }
 
 export interface KeyValue {
-    memberName: string;
+    memberName: Token;
     expression: Expression;
-    next: KeyValue;
 }
 
 export interface StringExpression {

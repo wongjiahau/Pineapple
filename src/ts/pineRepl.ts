@@ -12,7 +12,8 @@ if (program.log) {
 
 const fs = require("fs");
 program.args.forEach((arg: string) => {
-    let output = loadLibraryFunctions();
+    let output = loadPrimitiveTypes();
+    output += loadLibraryFunctions();
     output += transpileSourceFile(arg);
     output += "\nmain();"; // Call the main function
     console.log(output);
@@ -28,4 +29,18 @@ function loadLibraryFunctions(): string {
     return fs.readdirSync(CORE_LIBRARY_DIRECTORY).map((x: string) => {
         return transpileSourceFile(CORE_LIBRARY_DIRECTORY + x);
     }).join("\n");
+}
+
+function loadPrimitiveTypes(): string {
+    return `
+class Int {
+    constructor(initValue) {
+        this.value = initValue;
+    }
+
+    valueOf() {
+        return this.value;
+    }
+}
+`;
 }
