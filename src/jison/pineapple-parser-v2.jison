@@ -53,6 +53,8 @@ const _NumberExpression = (value) => ({kind:"Number", value});
 
 const _JavascriptCode = (token) => ({kind:"JavascriptCode",value:token});
 
+const _Token = (value, location) => ({value, location});
+
 function _getOperatorName(op) {
     const dic = {
         "+" : "plus"
@@ -451,7 +453,7 @@ FuncAtom
     ;
 
 VariableAtom
-    : VARNAME
+    : VARNAME {$$=_Token($1, this._$)} // Note: _$ means yyloc
     ;
 
 MembernameAtom
@@ -463,7 +465,7 @@ OperatorAtom
     ;
 
 TypenameAtom
-    : TYPENAME 
+    : TYPENAME
     ;
 
 JavascriptCodeAtom

@@ -58,7 +58,7 @@ export interface FunctionCall {
 
 export interface Variable {
     kind: "Variable";
-    name: string;
+    name: Token;
     typeExpected: TypeExpression; // This info is captured by parser
     returnType: TypeExpression; // This info should be fill in by type checker
     value: Expression;
@@ -90,4 +90,16 @@ export interface NumberExpression {
 export interface JavascriptCode {
     kind: "JavascriptCode";
     value: string;
+}
+
+export interface Token {
+    value: string;
+    location: TokenLocation;
+}
+
+export interface TokenLocation {
+    first_line: number;
+    last_line: number;
+    first_column: number;
+    last_column: number;
 }

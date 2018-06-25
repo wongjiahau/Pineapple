@@ -36,14 +36,14 @@ ${tpStatement(f.statements)};
     const targetType = f.parameters[0].typeExpected.name;
     if (f.parameters.length === 1) {
         return `${targetType}.prototype.${f.signature}=function(){
-let ${f.parameters[0].name} = this;
+let ${f.parameters[0].name.value} = this;
 ${tpStatement(f.statements)}}
 `;
     }
     if (f.parameters.length === 2) {
         return `${targetType}.prototype.${f.signature}_${f.parameters[1].typeExpected.name}`
-        + `=function(${f.parameters.slice(1).map((x) => x.name).join(",")}){
-const ${f.parameters[0].name} = this;
+        + `=function(${f.parameters.slice(1).map((x) => x.name.value).join(",")}){
+const ${f.parameters[0].name.value} = this;
 ${tpStatement(f.statements)}}
 `;
     }
@@ -87,11 +87,11 @@ export function stringifyType(t: TypeExpression): string {
 }
 
 export function tpLinkStatement(l: LinkStatement): string {
-    return `${l.isDeclaration ? "const" : ""} ${l.variable.name} = ${tpExpression(l.expression)}`;
+    return `${l.isDeclaration ? "const" : ""} ${l.variable.name.value} = ${tpExpression(l.expression)}`;
 }
 
 export function tpParameters(v: Variable[]): string {
-    return removeLastComma(v.map((x) => x.name.token.value).join(","));
+    return removeLastComma(v.map((x) => x.name.value).join(","));
 }
 
 export function tpExpression(e: Expression): string {
@@ -99,7 +99,7 @@ export function tpExpression(e: Expression): string {
         case "FunctionCall": return tpFunctionCall(e);
         case "String": return tpStringExpression(e);
         case "Number": return e.value;
-        case "Variable": return e.name;
+        case "Variable": return e.name.value;
     }
 }
 
