@@ -49,6 +49,8 @@ const _Atom = (type, tokenId) => ({type,tokenId});
 
 const _StringExpression = (value) => ({kind:"String", value});
 
+const _NumberExpression = (value) => ({kind:"Number", value});
+
 const _JavascriptCode = (token) => ({kind:"JavascriptCode",value:token});
 
 function _getOperatorName(op) {
@@ -441,7 +443,7 @@ StringAtom
     ;
 
 NumberAtom
-    : NUMBER 
+    : NUMBER {$$=_NumberExpression($1)}
     ;
 
 FuncAtom

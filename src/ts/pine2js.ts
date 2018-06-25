@@ -1,14 +1,18 @@
 // import { getFunctionTable } from "./getFunctionTable";
+import { Declaration } from "./ast";
+import { fillUpTypeInformation } from "./fillUpTypeInformation";
 import { preprocess } from "./preprocess";
 import { Token, tokenize } from "./tokenize";
 import { tpDeclaration } from "./transpile";
 const parser     = require("../jison/pineapple-parser-v2");
 
 export function pine2js(input: string): string {
-    const tokenized    = tokenize(input);
-    const preprocessed = removeConsequetingNewlines(tokenized);
-    const result       = preprocess(input);
-    const ast          = parser.parse(result);
+    // const tokenized    = tokenize(input);
+    // const preprocessed = removeConsequetingNewlines(tokenized);
+    const result = preprocess(input);
+    let ast     = parser.parse(result);
+    ast     = fillUpTypeInformation(ast);
+
     // console.log(JSON.stringify(ast, null, 2));
     const symbolized = retrieveSymbol(Token.TokenTable, ast);
     // console.log(Token.TokenTable);
@@ -44,7 +48,7 @@ export function pine2js(input: string): string {
      * 3. Then the generic type T, should be replace by the calling type
      */
 
-    const code       = tpDeclaration(symbolized);
+    const code       = tpDeclaration(ast);
     // console.log(code);
     return code;
 }

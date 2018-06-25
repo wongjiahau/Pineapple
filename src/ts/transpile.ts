@@ -76,16 +76,15 @@ export function tpFunctionCall(f: FunctionCall): string {
     if (f.parameters.length === 1) {
         return `${tpExpression(f.parameters[0])}.${f.signature}()`;
     }
+    if (f.parameters.length === 2) {
+        return `${tpExpression(f.parameters[0])}` +
+        `.${f.signature}_${stringifyType(f.parameters[1].returnType)}(${tpExpression(f.parameters[1])})`;
+    }
 }
 
-// export function getExpressionType(e: Expression): string {
-//     switch (e.kind) {
-//         case "FunctionCall": return break;
-//         case "String": return "String";
-//         case "Variable": return;
-//     }
-//     throw new Error("unimplemented yet");
-// }
+export function stringifyType(t: TypeExpression): string {
+    return t.name;
+}
 
 export function tpLinkStatement(l: LinkStatement): string {
     return `${l.isDeclaration ? "const" : ""} ${l.variable.name} = ${tpExpression(l.expression)}`;
@@ -99,6 +98,7 @@ export function tpExpression(e: Expression): string {
     switch (e.kind) {
         case "FunctionCall": return tpFunctionCall(e);
         case "String": return tpStringExpression(e);
+        case "Number": return e.value;
         case "Variable": return e.name;
     }
 }

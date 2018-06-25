@@ -2,13 +2,13 @@
 export interface Declaration {
     kind: "Declaration";
     body: FunctionDeclaration;
-    next: Declaration;
+    next: Declaration | null;
 }
 
 export interface FunctionDeclaration {
     kind: "FunctionDeclaration";
     affix: FunctionAffix;
-    signature: TokenAtom;
+    signature: string;
     returnType: TypeExpression;
     parameters: Variable[];
     statements: Statement;
@@ -16,7 +16,7 @@ export interface FunctionDeclaration {
 
 export interface Statement {
     body: LinkStatement | FunctionCall | JavascriptCode;
-    next: Statement;
+    next: Statement | null;
 }
 
 export interface LinkStatement {
@@ -29,17 +29,18 @@ export interface LinkStatement {
 
 export interface TypeExpression {
     kind: "TypeExpression";
-    name: TokenAtom;
+    name: string;
     isList: boolean;
-    listSize: Expression;
-    or: TypeExpression;
-    and: TypeExpression;
+    listSize: Expression | null;
+    or: TypeExpression | null;
+    and: TypeExpression | null;
     // tuple: TupleTypeExpression;
 }
 
 export type Expression
     = FunctionCall
     | StringExpression
+    | NumberExpression
     | Variable
     // | Pon // Pineapple Object Notation (PON)
     // | MonoExpression
@@ -50,16 +51,16 @@ export type FunctionAffix = "nofix" | "prefix" | "suffix" | "infix" | "mixfix";
 export interface FunctionCall {
     kind: "FunctionCall";
     fix: FunctionAffix;
-    signature: TokenAtom;
+    signature: string;
     parameters: Expression[];
     returnType: TypeExpression;
 }
 
 export interface Variable {
     kind: "Variable";
-    name: TokenAtom;
+    name: string;
     typeExpected: TypeExpression; // This info is captured by parser
-    typeCaught: TypeExpression; // This info should be fill in by type checker
+    returnType: TypeExpression; // This info should be fill in by type checker
     value: Expression;
 }
 
@@ -76,12 +77,17 @@ export interface KeyValue {
 
 export interface StringExpression {
     kind: "String";
-    value: TokenAtom;
+    value: string;
+    returnType: TypeExpression;
+}
+
+export interface NumberExpression {
+    kind: "Number";
+    value: string;
+    returnType: TypeExpression;
 }
 
 export interface JavascriptCode {
     kind: "JavascriptCode";
-    value: TokenAtom;
+    value: string;
 }
-
-export type TokenAtom = string;
