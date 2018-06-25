@@ -4,9 +4,9 @@ import { pine2js } from "../../pine2js";
 describe("q003", () => {
     it("case1", () => {
         const input =
-`@iofunction
-main >> Void
-    print \`hello world\`
+`--function
+main:
+    print: 'hello world'
 `;
         const expectedOutput =
 `

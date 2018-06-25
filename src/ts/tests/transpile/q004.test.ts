@@ -4,9 +4,9 @@ import { pine2js } from "../../pine2js";
 describe("q004", () => {
     it("should ignore consequting newlines", () => {
         const input =
-`@iofunction
-main >> Void
-    print \`hello world\`
+`--function
+main:
+    print: 'hello world'
 
 
 `;

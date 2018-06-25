@@ -41,7 +41,7 @@ const _TypeExpression = (name, isList, listSize) => ({
 const _FunctionCall = (fix,signature,parameters) => ({
     kind: "FunctionCall",
     fix,
-    signature,
+    signature: signature.slice(0,-1), // Remove trailing colon
     parameters,
 });
 
@@ -171,6 +171,7 @@ InfixFuncDeclaration
 PrefixFuncDeclaration
     : FuncAtom Variable RETURN TypeExpression Block 
         {$$=_FunctionDeclaration($1,$4,[$2],$5,"prefix")}
+    | FuncAtom Variable Block {$$=_FunctionDeclaration($1,null,[$2],$3,"prefix")}
     ;
 
 SuffixFuncDeclaration
@@ -180,6 +181,7 @@ SuffixFuncDeclaration
 NofixFuncDeclaration
     : FuncAtom RETURN TypeExpression Block
         {$$=_FunctionDeclaration($1,$3,[],$4,"nofix")}
+    | FuncAtom Block {$$=_FunctionDeclaration($1,null,[],$2,"nofix")}
     ;
 
 MixfixFuncDeclaration

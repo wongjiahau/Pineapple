@@ -66,7 +66,7 @@ export function tpFunctionCall(f: FunctionCall): string {
         return `${f.signature}();`;
     }
     if (f.parameters.length === 1) {
-        return `${tpExpression(f.parameters[0])}.${f.signature.token.value}()`;
+        return `${tpExpression(f.parameters[0])}.${f.signature}()`;
     }
 }
 
