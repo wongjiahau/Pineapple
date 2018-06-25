@@ -7,7 +7,7 @@ const _Statement = (body,next) => ({body,next});
 
 const _FunctionDeclaration = (signature,returnType,parameters,statements,affix) => ({
     kind: "FunctionDeclaration",
-    signature, 
+    signature: signature.slice(0,-1),  // Remove trailing colon
     returnType, 
     parameters, 
     statements, 
@@ -83,7 +83,8 @@ const _JavascriptCode = (token) => ({kind:"JavascriptCode",value:token});
 "="     return 'BIND_OP'
 
 // Literals
-['].*?[']   return 'STRING'
+['].*?[']                                  return 'STRING'
+\<javascript\>(.|[\s\S])*?\<\/javascript\> return 'JAVASCRIPT'
 
 "::"                 return '::'
 "["                  return '['
@@ -110,7 +111,6 @@ const _JavascriptCode = (token) => ({kind:"JavascriptCode",value:token});
 "IS"                 return 'IS'
 "AND"                return 'AND'
 "OR"                 return 'OR'
-"JAVASCRIPT"         return 'JAVASCRIPT'
 /lex
 
 /* operator associations and precedence */
@@ -454,5 +454,5 @@ TypenameAtom
     ;
 
 JavascriptCodeAtom
-    : JAVASCRIPT '::' TOKEN_ID {$$=_JavascriptCode(_Atom($1,$3))}
+    : JAVASCRIPT {$$=_JavascriptCode($1)}
     ;

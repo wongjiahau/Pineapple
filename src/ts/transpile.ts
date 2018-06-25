@@ -28,14 +28,14 @@ export function tpFunctionDeclaration(f: FunctionDeclaration): string {
     if (f.parameters.length === 0) {
         return "" +
         `
-function ${f.signature.slice(0, -1)}(${tpParameters(f.parameters)}){
+function ${f.signature}(${tpParameters(f.parameters)}){
 ${tpStatement(f.statements)};
 }
 `;
     } else if (f.parameters.length === 1) {
-        return `${f.parameters[0].typeExpected.name.token.value}.prototype.` +
-`${f.signature.token.value}=function(){
-let ${f.parameters[0].name.token.value} = this;
+        return `${f.parameters[0].typeExpected.name}.prototype.` +
+`${f.signature}=function(){
+let ${f.parameters[0].name} = this;
 ${tpStatement(f.statements)}}
 `;
     }
@@ -98,7 +98,7 @@ export function tpExpression(e: Expression): string {
 export function tpJavascriptCode(s: JavascriptCode): string {
     return "" +
 `// <javascript>
-${s.value.token.value}
+${s.value.replace(/(<javascript>|<\/javascript>|@.+)/g, "").trim()}
 // </javascript>
 `;
 }

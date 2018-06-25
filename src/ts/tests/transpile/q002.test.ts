@@ -4,17 +4,17 @@ import { pine2js } from "../../pine2js";
 describe("q002", () => {
     it("case1", () => {
         const input =
-`@iofunction
-print ($input:String) >> Void
+`--function
+print: message as String -> Void
     <javascript>
-    console.log($input);
+    console.log(message);
     </javascript>
 `;
         const expectedOutput =
 `String.prototype.print=function(){
-let $input = this;
+let message = this;
 // <javascript>
-console.log($input);
+console.log(message);
 // </javascript>
 }
 `;
