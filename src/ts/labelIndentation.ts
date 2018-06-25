@@ -1,13 +1,13 @@
-export function addBrackets(input: string): string {
+export function labelIndentation(input: string): string {
     const lines = input.split("\n");
     for (let i = 0; i < lines.length; i++) {
         const currentIndentationLevel = indentationLevel(lines[i]);
         const nextIndentationLevel = i < lines.length - 1 ? indentationLevel(lines[i + 1]) : 0;
         if (currentIndentationLevel < nextIndentationLevel) {
-            lines[i] += "{";
+            lines[i] += "@INDENT";
         } else if (currentIndentationLevel > nextIndentationLevel) {
             for (let j = 0; j < currentIndentationLevel - nextIndentationLevel; j++) {
-                lines[i] += "}";
+                lines[i] += "@DEDENT";
             }
         }
     }
