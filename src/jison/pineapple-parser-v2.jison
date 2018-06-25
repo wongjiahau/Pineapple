@@ -51,6 +51,12 @@ const _StringExpression = (value) => ({kind:"String", value});
 
 const _JavascriptCode = (token) => ({kind:"JavascriptCode",value:token});
 
+function _getOperatorName(op) {
+    const dic = {
+        "+" : "plus"
+    };
+    return "$" + dic[op] + ":";
+}
 %}
 
 
@@ -73,34 +79,36 @@ const _JavascriptCode = (token) => ({kind:"JavascriptCode",value:token});
 "@DEDENT"   return 'DEDENT'
 "@EOF"      return 'EOF'
 
-// Identifiers
-[a-z][a-zA-Z0-9]*[:]  return 'FUNCNAME'    
-[A-Z][a-zA-Z0-9]*     return 'TYPENAME'
-[a-z][a-zA-Z]+        return 'VARNAME'
-
 // Built-in symbols
 "->"    return 'RETURN'
 "="     return 'BIND_OP'
+"("     return 'LEFT_PAREN' 
+")"     return 'RIGHT_PAREN'
 
 // Literals
-['].*?[']                                  return 'STRING'
-\<javascript\>(.|[\s\S])*?\<\/javascript\> return 'JAVASCRIPT'
+['].*?[']                                   return 'STRING'
+\<javascript\>(.|[\s\S])*?\<\/javascript\>  return 'JAVASCRIPT'
+\d+([.]\d+)?((e|E)[+-]?\d+)?                return 'NUMBER' 
+
+// Identifiers
+[a-z][a-zA-Z0-9]*[:]            return 'FUNCNAME'    
+[A-Z][a-zA-Z0-9]*               return 'TYPENAME'
+[a-z][a-zA-Z]*                  return 'VARNAME'
+[-!$%^&*_+|~=`\[\]:";'<>?,.\/]+ return 'OPERATOR'
+
+
 
 "::"                 return '::'
 "["                  return '['
 "]"                  return ']'
 ","                  return  COMMA
 [0-9]+               return 'TOKEN_ID'
-"OPERATOR"           return 'OPERATOR'
 "DOT"                return 'DOT'
-"LEFT_PAREN"         return 'LEFT_PAREN'
-"RIGHT_PAREN"        return 'RIGHT_PAREN'
 "MEMBERNAME"         return 'MEMBERNAME'
 "ASSIGN_OP"          return 'ASSIGN_OP'
 "UNION_OP"           return 'UNION_OP'
 "INTERSECT_OP"       return 'INTERSECT_OP'
 "NIL"                return 'NIL'
-"NUMBER"             return 'NUMBER' 
 "TRUE"               return 'TRUE'
 "FALSE"              return 'FALSE'
 "IOFUNCTION"         return 'IOFUNCTION'
@@ -154,7 +162,7 @@ FunctionDeclaration
     : FunctionAnnotation NofixFuncDeclaration  {$$=$2}
     | FunctionAnnotation PrefixFuncDeclaration {$$=$2}
     | FunctionAnnotation SuffixFuncDeclaration {console.log("suffix")}
-    | FunctionAnnotation InfixFuncDeclaration  {console.log("infix")}
+    | FunctionAnnotation InfixFuncDeclaration  {$$=$2}
     | FunctionAnnotation MixfixFuncDeclaration {console.log("mixfix")}
     ;
 
@@ -166,6 +174,7 @@ FunctionAnnotation
 InfixFuncDeclaration
     : Variable FuncAtom Variable RETURN TypeExpression Block
     | Variable LEFT_PAREN OperatorAtom RIGHT_PAREN Variable RETURN TypeExpression Block
+        {$$=_FunctionDeclaration($3,$7,[$1,$5],$8,"infix")}
     ;
 
 PrefixFuncDeclaration
@@ -334,8 +343,8 @@ NofixFuncCall
     ;
 
 InfixFuncCall
-    : InfixFuncCall FuncId MonoExpr {$$=InfixFuncCallNode($1,$2,$3)}
-    | MonoExpr FuncId MonoExpr {$$=InfixFuncCallNode($1,$2,$3)}
+    : InfixFuncCall FuncId MonoExpr 
+    | MonoExpr FuncId MonoExpr {$$=_FunctionCall("infix",$2,[$1,$3])}
     ;
 
 FuncId
@@ -432,7 +441,7 @@ StringAtom
     ;
 
 NumberAtom
-    : NUMBER '::' TOKEN_ID {$$=Node($1,$3)}
+    : NUMBER 
     ;
 
 FuncAtom
@@ -448,7 +457,7 @@ MembernameAtom
     ;
 
 OperatorAtom    
-    : OPERATOR '::' TOKEN_ID {$$=_Atom($1,$3)}
+    : OPERATOR {$$=_getOperatorName($1)}
     ;
 
 TypenameAtom

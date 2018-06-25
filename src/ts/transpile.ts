@@ -32,10 +32,18 @@ function ${f.signature}(${tpParameters(f.parameters)}){
 ${tpStatement(f.statements)};
 }
 `;
-    } else if (f.parameters.length === 1) {
-        return `${f.parameters[0].typeExpected.name}.prototype.` +
-`${f.signature}=function(){
+    }
+    const targetType = f.parameters[0].typeExpected.name;
+    if (f.parameters.length === 1) {
+        return `${targetType}.prototype.${f.signature}=function(){
 let ${f.parameters[0].name} = this;
+${tpStatement(f.statements)}}
+`;
+    }
+    if (f.parameters.length === 2) {
+        return `${targetType}.prototype.${f.signature}_${f.parameters[1].typeExpected.name}`
+        + `=function(${f.parameters.slice(1).map((x) => x.name).join(",")}){
+const ${f.parameters[0].name} = this;
 ${tpStatement(f.statements)}}
 `;
     }

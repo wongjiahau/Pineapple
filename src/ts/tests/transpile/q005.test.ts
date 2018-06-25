@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { pine2js } from "../../pine2js";
 
-describe("q004", () => {
+describe("q005", () => {
     it("should ignore consequting newlines", () => {
         const input =
 `
