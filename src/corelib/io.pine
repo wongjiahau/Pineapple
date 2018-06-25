@@ -1,11 +1,11 @@
-@iofunction
-print ($input:String) >> Void
+--function
+print: input as String -> Void
     <javascript>
-    console.log($input.valueOf());
+    console.log(input.valueOf());
     </javascript>
 
-@iofunction
-say ($input:String) >> Void
+--function
+say: input as String -> Void
     <javascript>
-    console.log($input.valueOf());
+    console.log(input.valueOf());
     </javascript>
