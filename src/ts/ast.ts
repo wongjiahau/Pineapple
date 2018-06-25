@@ -84,12 +84,4 @@ export interface JavascriptCode {
     value: TokenAtom;
 }
 
-export interface TokenAtom {
-    token: {
-        type: string;
-        id: number;
-        line: number;
-        column: number;
-        value: string;
-    };
-}
+export type TokenAtom = string;

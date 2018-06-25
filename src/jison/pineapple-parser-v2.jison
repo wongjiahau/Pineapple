@@ -57,37 +57,52 @@ const _JavascriptCode = (token) => ({kind:"JavascriptCode",value:token});
 /* lexical grammar */
 %lex
 %%
-\s+                  /* skip whitespace */
+// Ignorable
+\s+     /* skip whitespace */
+
+// Annotations
+"--function"    return 'FUNCTION'
+
+// Keywords
+"let"   return 'LET'
+"as"    return 'TYPE_OP'
+
+// Inivisible token
+"@NEWLINE"  return 'NEWLINE'
+"@INDENT"   return 'INDENT'
+"@DEDENT"   return 'DEDENT'
+"@EOF"      return 'EOF'
+
+// Identifiers
+[a-z][a-zA-Z0-9]*[:]  return 'FUNCNAME'    
+[A-Z][a-zA-Z0-9]*     return 'TYPENAME'
+[a-z][a-zA-Z]+        return 'VARNAME'
+
+// Built-in symbols
+"->"    return 'RETURN'
+"="     return 'BIND_OP'
+
+// Literals
+['].*?[']   return 'STRING'
+
 "::"                 return '::'
 "["                  return '['
 "]"                  return ']'
 ","                  return  COMMA
 [0-9]+               return 'TOKEN_ID'
 "OPERATOR"           return 'OPERATOR'
-"INDENT"             return 'INDENT'
-"DEDENT"             return 'DEDENT'
-"EOF"                return 'EOF'
 "DOT"                return 'DOT'
 "LEFT_PAREN"         return 'LEFT_PAREN'
 "RIGHT_PAREN"        return 'RIGHT_PAREN'
-"FUNCNAME"           return 'FUNCNAME'
-"VARNAME"            return 'VARNAME'
 "MEMBERNAME"         return 'MEMBERNAME'
-"TYPENAME"           return 'TYPENAME'
 "ASSIGN_OP"          return 'ASSIGN_OP'
-"BIND_OP"            return 'BIND_OP'
 "UNION_OP"           return 'UNION_OP'
 "INTERSECT_OP"       return 'INTERSECT_OP'
-"TYPE_OP"            return 'TYPE_OP'
-"NEWLINE"            return 'NEWLINE'
-"LET"                return 'LET'
 "NIL"                return 'NIL'
 "NUMBER"             return 'NUMBER' 
-"STRING"             return 'STRING'
 "TRUE"               return 'TRUE'
 "FALSE"              return 'FALSE'
 "IOFUNCTION"         return 'IOFUNCTION'
-"FUNCTION"           return 'FUNCTION'
 "IF"                 return 'IF'
 "ELIF"               return 'ELIF'
 "ELSE"               return 'ELSE'
@@ -95,7 +110,6 @@ const _JavascriptCode = (token) => ({kind:"JavascriptCode",value:token});
 "IS"                 return 'IS'
 "AND"                return 'AND'
 "OR"                 return 'OR'
-"RETURN"             return 'RETURN'
 "JAVASCRIPT"         return 'JAVASCRIPT'
 /lex
 
@@ -412,7 +426,7 @@ BooleanAtom
     ;
 
 StringAtom
-    : STRING '::' TOKEN_ID {$$=_StringExpression(_Atom($1,$3))}
+    : STRING {$$=_StringExpression($1)}
     ;
 
 NumberAtom
@@ -420,11 +434,11 @@ NumberAtom
     ;
 
 FuncAtom
-    : FUNCNAME '::' TOKEN_ID {$$=_Atom($1,$3)}
+    : FUNCNAME 
     ;
 
 VariableAtom
-    : VARNAME '::' TOKEN_ID {$$=_Atom($1,$3)}
+    : VARNAME
     ;
 
 MembernameAtom
@@ -436,7 +450,7 @@ OperatorAtom
     ;
 
 TypenameAtom
-    : TYPENAME '::' TOKEN_ID {$$=_Atom($1,$3)}
+    : TYPENAME 
     ;
 
 JavascriptCodeAtom

@@ -1,12 +1,14 @@
 // import { getFunctionTable } from "./getFunctionTable";
+import { preprocess } from "./preprocess";
 import { Token, tokenize } from "./tokenize";
 import { tpDeclaration } from "./transpile";
 const parser     = require("../jison/pineapple-parser-v2");
 
 export function pine2js(input: string): string {
-    const tokenized  = tokenize(input);
+    const tokenized    = tokenize(input);
     const preprocessed = removeConsequetingNewlines(tokenized);
-    const ast        = parser.parse(preprocessed);
+    const result       = preprocess(input);
+    const ast          = parser.parse(result);
     // console.log(JSON.stringify(ast, null, 2));
     const symbolized = retrieveSymbol(Token.TokenTable, ast);
     // console.log(Token.TokenTable);

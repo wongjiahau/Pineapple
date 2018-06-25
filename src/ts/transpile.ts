@@ -28,7 +28,7 @@ export function tpFunctionDeclaration(f: FunctionDeclaration): string {
     if (f.parameters.length === 0) {
         return "" +
         `
-function ${f.signature.token.value}(${tpParameters(f.parameters)}){
+function ${f.signature.slice(0, -1)}(${tpParameters(f.parameters)}){
 ${tpStatement(f.statements)};
 }
 `;
@@ -80,7 +80,7 @@ export function tpFunctionCall(f: FunctionCall): string {
 // }
 
 export function tpLinkStatement(l: LinkStatement): string {
-    return `${l.isDeclaration ? "let" : ""} ${l.variable.name.token.value} = ${tpExpression(l.expression)}`;
+    return `${l.isDeclaration ? "const" : ""} ${l.variable.name} = ${tpExpression(l.expression)}`;
 }
 
 export function tpParameters(v: Variable[]): string {
@@ -91,7 +91,7 @@ export function tpExpression(e: Expression): string {
     switch (e.kind) {
         case "FunctionCall": return tpFunctionCall(e);
         case "String": return tpStringExpression(e);
-        case "Variable": return e.name.token.value;
+        case "Variable": return e.name;
     }
 }
 
@@ -103,7 +103,7 @@ ${s.value.token.value}
 `;
 }
 export function tpStringExpression(s: StringExpression): string {
-    return `"${s.value.token.value.slice(1, -1)}"`;
+    return `"${s.value.slice(1, -1)}"`;
 }
 
 export function removeLastComma(s: string): string {
