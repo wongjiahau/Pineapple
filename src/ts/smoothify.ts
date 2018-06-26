@@ -3,10 +3,16 @@
  * @param input
  */
 export function smoothify(input: string): string {
-    return input
-        .replace(/@DEDENT\s*@EOF/g, "@NEWLINE@DEDENT@EOF")
-        .replace(/(@NEWLINE)\s*(@NEWLINE)+/g, "@NEWLINE")
-        .replace(/@NEWLINE\s*@EOF/g, "@EOF")
-        ;
-
+    let result = "";
+    const lines = input.split("\n");
+    let currentIndentation = "";
+    for (let i = 0; i < lines.length; i++) {
+        if (/^\s*@NEWLINE\s*$/.test(lines[i])) {
+            result += currentIndentation + "\n";
+        } else {
+            currentIndentation = lines[i].match(/^\s*/g)[0];
+            result += lines[i] + "\n";
+        }
+    }
+    return result;
 }

@@ -78,7 +78,7 @@ function _getOperatorName(op) {
 %lex
 %%
 // Ignorable
-\s+     /* skip whitespace */
+\s+         /* skip whitespace */
 
 // Annotations
 "--function"    return 'FUNCTION'
@@ -88,10 +88,17 @@ function _getOperatorName(op) {
 "as"    return 'TYPE_OP'
 
 // Inivisible token
-"@NEWLINE"  return 'NEWLINE'
-"@INDENT"   return 'INDENT'
-"@DEDENT"   return 'DEDENT'
-"@EOF"      return 'EOF'
+"@NEWLINE"       %{
+    this.yy_ = this;
+    if(this.yylloc.first_column > 0) {
+        return 'NEWLINE'
+    } else { 
+        /*skip empty whitelines*/ 
+    }
+%}
+"@INDENT"        return 'INDENT'
+"@DEDENT"        return 'DEDENT'
+"@EOF"           return 'EOF'
 
 // Built-in symbols
 "->"    return 'RETURN'
@@ -155,7 +162,7 @@ EntryPoint
 
 DeclarationList
     : Declaration NEWLINE DeclarationList {$$=_Declaration($1,$3)}
-    | Declaration {$$=_Declaration($1,null)} 
+    | Declaration NEWLINE {$$=_Declaration($1,null)} 
     ;
 
 
@@ -428,6 +435,7 @@ Object
 
 KeyValueList
     : KeyValue NEWLINE KeyValueList {$$=_KeyValueList($1,$3)}
+    | KeyValue NEWLINE {$$=_KeyValueList($1,null)}
     | KeyValue {$$=_KeyValueList($1,null)}
     ;
 

@@ -1,36 +1,22 @@
 import { expect } from "chai";
 import { pine2js } from "../../pine2js";
 
-describe("q008", () => {
-    it("object literals", () => {
+describe("q009", () => {
+    it("should ignore dangling newlines", () => {
         const input =
 `
 --function
 main:
     let y = 6
 
-    let people =
-        .name  = 'john'
-        .age   = 123
-        .wife  =
-            .name = 'Natelie'
-            .age  = 99
 
-    let x = 5
+    let x = 8
 `;
         const expectedOutput =
 `
 function main(){
 const y = new Int(6);
-const people = {
-name : "john",
-age : new Int(123),
-wife : {
-name : "Natelie",
-age : new Int(99)
-}
-};
-const x = new Int(5);
+const x = new Int(8);
 }
 `;
         // console.log(pine2js(input));
