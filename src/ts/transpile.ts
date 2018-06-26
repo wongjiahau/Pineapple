@@ -80,8 +80,8 @@ export function tpFunctionCall(f: FunctionCall): string {
         return `${tpExpression(f.parameters[0])}.${f.signature}()`;
     }
     if (f.parameters.length === 2) {
-        return `${tpExpression(f.parameters[0])}` +
-        `.${f.signature}_${stringifyType(f.parameters[1].returnType)}(${tpExpression(f.parameters[1])})`;
+        return `(${tpExpression(f.parameters[0])}` +
+        `.${f.signature}_${stringifyType(f.parameters[1].returnType)}(${tpExpression(f.parameters[1])}))`;
     }
 }
 

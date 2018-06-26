@@ -364,7 +364,7 @@ NofixFuncCall
     ;
 
 InfixFuncCall
-    : InfixFuncCall FuncId AtomicExpr 
+    : InfixFuncCall FuncId AtomicExpr {$$=_FunctionCall("infix",$2,[$1,$3])}
     | AtomicExpr FuncId AtomicExpr {$$=_FunctionCall("infix",$2,[$1,$3])}
     ;
 

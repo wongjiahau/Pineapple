@@ -4,13 +4,11 @@ import { smoothify } from "./smoothify";
 
 export function preprocess(input: string): string {
     let result = input.replace(/(\r\n|\r|\n)+/g, "\n");
-    console.log(labelLineNumbers(result));
     result = labelNewlines(input);
     result = smoothify(result);
     result = labelIndentation(result);
-    // console.log(result);
     result += "@EOF";
-    console.log(labelLineNumbers(result));
+    // console.log(labelLineNumbers(result));
     return result;
 }
 
