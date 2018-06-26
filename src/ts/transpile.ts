@@ -1,4 +1,5 @@
 import {
+    BooleanExpression,
     Declaration,
     Expression,
     FunctionCall,
@@ -80,7 +81,6 @@ export function tpFunctionCall(f: FunctionCall): string {
 }
 
 export function stringifyFuncSignature(signature: Token[]): string {
-    console.log(signature);
     return signature.map((x) => x.value.slice(0, -1)).join("_");
 }
 
@@ -104,6 +104,7 @@ export function tpExpression(e: Expression): string {
         case "Variable": return e.name.value;
         case "Pon": return tpPonExpression(e);
         case "List": return tpListExpression(e);
+        case "Boolean": return tpBooleanExpression(e);
     }
 }
 
@@ -124,6 +125,10 @@ export function tpNumberExpression(e: NumberExpression): string {
     } else {
         return `new Int(${e.value})`;
     }
+}
+
+export function tpBooleanExpression(e: BooleanExpression): string {
+    return e.value;
 }
 
 export function tpListExpression(e: ListExpression): string {

@@ -31,6 +31,7 @@ export interface TypeExpression {
     kind: "TypeExpression";
     name: Token;
     isList: boolean;
+    nullable: boolean;
     listSize: Expression | null;
     or: TypeExpression | null;
     and: TypeExpression | null;
@@ -41,6 +42,7 @@ export type Expression
     = FunctionCall
     | StringExpression
     | NumberExpression
+    | BooleanExpression
     | Variable
     | PonExpression // Pineapple Object Notation (PON)
     | ListExpression // a.k.a. Array
@@ -92,15 +94,19 @@ export interface ListElement {
     next: ListElement | null;
 }
 
-export interface StringExpression {
+export interface StringExpression extends Token {
     kind: "String";
     value: string;
     returnType: TypeExpression;
 }
 
-export interface NumberExpression {
+export interface NumberExpression extends Token {
     kind: "Number";
-    value: string;
+    returnType: TypeExpression;
+}
+
+export interface BooleanExpression extends Token {
+    kind: "Boolean";
     returnType: TypeExpression;
 }
 

@@ -61,9 +61,11 @@ const _ListExpression = (elements) => ({ kind: "List", elements });
 
 const _ListElement = (value,next) => ({ kind: "ListElement", value, next});
 
-const _StringExpression = (value) => ({kind:"String", value});
+const _StringExpression = (value, location) => ({kind:"String", value, location});
 
-const _NumberExpression = (value) => ({kind:"Number", value});
+const _NumberExpression = (value, location) => ({kind:"Number", value, location});
+
+const _BooleanExpression = (value, location) => ({kind:"Boolean", value, location});
 
 const _JavascriptCode = (token) => ({kind:"JavascriptCode",value:token});
 
@@ -118,6 +120,9 @@ function _getOperatorName(op) {
 ['].*?[']                                   return 'STRING'
 \<javascript\>(.|[\s\S])*?\<\/javascript\>  return 'JAVASCRIPT'
 \d+([.]\d+)?((e|E)[+-]?\d+)?                return 'NUMBER' 
+"true"                                      return 'TRUE'
+"false"                                     return 'FALSE'
+"nil"                                       return 'NIL'
 
 // Identifiers
 [a-z][a-zA-Z0-9]*[:]            return 'FUNCNAME'    
@@ -137,9 +142,6 @@ function _getOperatorName(op) {
 "ASSIGN_OP"          return 'ASSIGN_OP'
 "UNION_OP"           return 'UNION_OP'
 "INTERSECT_OP"       return 'INTERSECT_OP'
-"NIL"                return 'NIL'
-"TRUE"               return 'TRUE'
-"FALSE"              return 'FALSE'
 "IOFUNCTION"         return 'IOFUNCTION'
 "IF"                 return 'IF'
 "ELIF"               return 'ELIF'
@@ -477,16 +479,16 @@ MultilineElements
     ;
 
 BooleanAtom
-    : TRUE
-    | FALSE
+    : TRUE  {$$=_BooleanExpression($1, this._$)}
+    | FALSE {$$=_BooleanExpression($1, this._$)}
     ;
 
 StringAtom
-    : STRING {$$=_StringExpression($1)}
+    : STRING {$$=_StringExpression($1, this._$)}
     ;
 
 NumberAtom
-    : NUMBER {$$=_NumberExpression($1)}
+    : NUMBER {$$=_NumberExpression($1, this._$)}
     ;
 
 FuncAtom

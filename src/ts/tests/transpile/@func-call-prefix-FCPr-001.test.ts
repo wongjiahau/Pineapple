@@ -4,7 +4,7 @@ import { pine2js } from "../../pine2js";
 describe("q003", () => {
     it("@func-call-prefix-FCPr-001", () => {
         const input =
-`--function
+`
 main:
     print: 'hello world'
 `;
