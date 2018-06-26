@@ -1,18 +1,21 @@
 import { expect } from "chai";
 import { pine2js } from "../../pine2js";
 
-describe("@literal-list-LL-001", () => {
-    it("list with some elements", () => {
+describe("@literal-list-LL-002", () => {
+    it("multiline lists", () => {
         const input =
 `
 --function
 main:
-    let x = [1.1 2.2 3.3 4.4]
+    let fruits =
+        o 'pineapple'
+        o 'apple'
+        o 'banana'
 `;
         const expectedOutput =
 `
 function main(){
-const x = [(1.1),(2.2),(3.3),(4.4),];
+const fruits = ["pineapple","apple","banana",];
 }
 `;
         // console.log(pine2js(input));

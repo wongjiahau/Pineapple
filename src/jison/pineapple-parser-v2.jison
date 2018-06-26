@@ -111,6 +111,7 @@ function _getOperatorName(op) {
 ")"     return 'RIGHT_PAREN'
 "["     return 'LIST_START'
 "]"     return 'LIST_END'
+"o"     return 'LIST_BULLET'
 
 // Literals
 ['].*?[']                                   return 'STRING'
@@ -354,6 +355,7 @@ TupleTypeExpression
 Expression
     : FuncCall
     | Object
+    | MultilineList
     | AtomicExpr
     ;
 
@@ -457,6 +459,15 @@ ArrayList
 Elements
     : AtomicExpr {$$=_ListElement($1,null)}
     | AtomicExpr Elements  {$$=_ListElement($1,$2)}
+    ;
+
+MultilineList
+    : NEWLINE INDENT MultilineElements DEDENT {$$=_ListExpression($3)}
+    ;
+
+MultilineElements
+    : LIST_BULLET Expression NEWLINE MultilineElements {$$=_ListElement($2,$4)}
+    | LIST_BULLET Expression NEWLINE {$$=_ListElement($2,null)}
     ;
 
 BooleanAtom
