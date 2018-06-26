@@ -1,18 +1,23 @@
 import { expect } from "chai";
 import { pine2js } from "../../pine2js";
 
-describe("q010", () => {
-    it("nested infix function call", () => {
+describe("@func-decl-infix-FDI-001", () => {
+    it("infix function declaration", () => {
         const input =
 `
 --function
-main:
-    let y = 6 + 6 + 6
+x as Int (+) y as Int -> Int
+    <javascript>
+    return x + y;
+    </javascript>
 `;
         const expectedOutput =
 `
-function main(){
-const y = ((new Int(6).$plus_Int(new Int(6))).$plus_Int(new Int(6)));
+Int.prototype.$plus_Int=function(y){
+const x = this;
+// <javascript>
+return x + y;
+// </javascript>
 }
 `;
         // console.log(pine2js(input));

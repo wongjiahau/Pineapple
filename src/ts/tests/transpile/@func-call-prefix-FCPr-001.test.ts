@@ -1,24 +1,18 @@
 import { expect } from "chai";
 import { pine2js } from "../../pine2js";
 
-describe("q009", () => {
-    it("should ignore dangling newlines", () => {
+describe("q003", () => {
+    it("@func-call-prefix-FCPr-001", () => {
         const input =
-`
---function
+`--function
 main:
-    let y = 6
-
-
-    let x = 8
+    print: 'hello world'
 `;
         const expectedOutput =
 `
 function main(){
-const y = new Int(6);
-const x = new Int(8);
-}
-`;
+"hello world".print();
+}`;
         // console.log(pine2js(input));
         // console.log(expectedOutput);
         expect(pine2js(input).trim()).to.eq(expectedOutput.trim());

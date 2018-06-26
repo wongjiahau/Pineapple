@@ -1,8 +1,8 @@
 import { expect } from "chai";
 import { pine2js } from "../../pine2js";
 
-describe("q005", () => {
-    it("should ignore consequting newlines", () => {
+describe("@preprocess-PP-002", () => {
+    it("should ignore consequtive newlines", () => {
         const input =
 `
 --function

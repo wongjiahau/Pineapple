@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { pine2js } from "../../pine2js";
 
-describe("q001", () => {
+describe("@func-decl-nofix-FDN-001", () => {
     it("case1", () => {
         const input =
 `--function
