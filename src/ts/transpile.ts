@@ -6,6 +6,8 @@ import {
     JavascriptCode,
     KeyValueList,
     LinkStatement,
+    ListElement,
+    ListExpression,
     NumberExpression,
     PonExpression,
     Statement,
@@ -104,6 +106,7 @@ export function tpExpression(e: Expression): string {
         case "Number": return tpNumberExpression(e);
         case "Variable": return e.name.value;
         case "Pon": return tpPonExpression(e);
+        case "List": return tpListExpression(e);
     }
 }
 
@@ -124,6 +127,14 @@ export function tpNumberExpression(e: NumberExpression): string {
     } else {
         return `new Int(${e.value})`;
     }
+}
+
+export function tpListExpression(e: ListExpression): string {
+    return `[${tpListElements(e.elements)}]`;
+}
+
+export function tpListElements(e: ListElement): string {
+    return `${tpExpression(e.value)},${e.next ? tpListElements(e.next) : ""}`;
 }
 
 export function tpPonExpression(e: PonExpression): string {

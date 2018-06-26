@@ -57,6 +57,10 @@ const _KeyValue = (memberName, expression) => ({
     expression,
 });
 
+const _ListExpression = (elements) => ({ kind: "List", elements });
+
+const _ListElement = (value,next) => ({ kind: "ListElement", value, next});
+
 const _StringExpression = (value) => ({kind:"String", value});
 
 const _NumberExpression = (value) => ({kind:"Number", value});
@@ -105,6 +109,8 @@ function _getOperatorName(op) {
 "="     return 'BIND_OP'
 "("     return 'LEFT_PAREN' 
 ")"     return 'RIGHT_PAREN'
+"["     return 'LIST_START'
+"]"     return 'LIST_END'
 
 // Literals
 ['].*?[']                                   return 'STRING'
@@ -421,7 +427,7 @@ ObjectAccess
 
 Value
     : NIL
-    | Array
+    | ArrayList
     | BooleanAtom
     | StringAtom
     | NumberAtom
@@ -443,14 +449,14 @@ KeyValue
     : MembernameAtom LinkOperator Expression {$$=_KeyValue($1,$3)}
     ;
 
-Array 
-    : '[' Elements ']'
-    | '[' ']'
+ArrayList 
+    : LIST_START Elements LIST_END {$$=_ListExpression($2)}
+    | LIST_START LIST_END 
     ;
 
 Elements
-    : Expression
-    | Elements COMMA Expression
+    : AtomicExpr {$$=_ListElement($1,null)}
+    | AtomicExpr Elements  {$$=_ListElement($1,$2)}
     ;
 
 BooleanAtom
