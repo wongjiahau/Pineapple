@@ -7,7 +7,7 @@ const _Statement = (body,next) => ({body,next});
 
 const _FunctionDeclaration = (signature,returnType,parameters,statements,affix) => ({
     kind: "FunctionDeclaration",
-    signature: signature.slice(0,-1),  // Remove trailing colon
+    signature,
     returnType, 
     parameters, 
     statements, 
@@ -41,7 +41,7 @@ const _TypeExpression = (name, isList, listSize) => ({
 const _FunctionCall = (fix,signature,parameters) => ({
     kind: "FunctionCall",
     fix,
-    signature: signature.slice(0,-1), // Remove trailing colon
+    signature,
     parameters,
 });
 
@@ -73,7 +73,8 @@ function _getOperatorName(op) {
     const dic = {
         "+" : "plus"
     };
-    return "$" + dic[op] + ":";
+    let result = "$" + op.split("").map(x => dic[x]).join("") + ":";
+    return result;
 }
 %}
 
@@ -109,8 +110,8 @@ function _getOperatorName(op) {
 "="     return 'BIND_OP'
 "("     return 'LEFT_PAREN' 
 ")"     return 'RIGHT_PAREN'
-"["     return 'LIST_START'
-"]"     return 'LIST_END'
+"["     return '['
+"]"     return ']'
 "o"     return 'LIST_BULLET'
 
 // Literals
@@ -197,18 +198,19 @@ FunctionDeclaration
 FunctionAnnotation
     : FUNCTION NEWLINE
     | IOFUNCTION NEWLINE 
+    |
     ;
 
 InfixFuncDeclaration
     : Variable FuncAtom Variable RETURN TypeExpression Block
     | Variable LEFT_PAREN OperatorAtom RIGHT_PAREN Variable RETURN TypeExpression Block
-        {$$=_FunctionDeclaration($3,$7,[$1,$5],$8,"infix")}
+        {$$=_FunctionDeclaration([$3],$7,[$1,$5],$8,"infix")}
     ;
 
 PrefixFuncDeclaration
     : FuncAtom Variable RETURN TypeExpression Block 
-        {$$=_FunctionDeclaration($1,$4,[$2],$5,"prefix")}
-    | FuncAtom Variable Block {$$=_FunctionDeclaration($1,null,[$2],$3,"prefix")}
+        {$$=_FunctionDeclaration([$1],$4,[$2],$5,"prefix")}
+    | FuncAtom Variable Block {$$=_FunctionDeclaration([$1],null,[$2],$3,"prefix")}
     ;
 
 SuffixFuncDeclaration
@@ -217,8 +219,8 @@ SuffixFuncDeclaration
 
 NofixFuncDeclaration
     : FuncAtom RETURN TypeExpression Block
-        {$$=_FunctionDeclaration($1,$3,[],$4,"nofix")}
-    | FuncAtom Block {$$=_FunctionDeclaration($1,null,[],$2,"nofix")}
+        {$$=_FunctionDeclaration([$1],$3,[],$4,"nofix")}
+    | FuncAtom Block {$$=_FunctionDeclaration([$1],null,[],$2,"nofix")}
     ;
 
 MixfixFuncDeclaration
@@ -337,12 +339,16 @@ LinkOperator
     ;
 
 TypeExpression
+    : AtomicTypeExpr UNION_OP TypeExpression
+    | AtomicTypeExpr INTERSECT_OP TypeExpression
+    | AtomicTypeExpr
+    ;
+
+AtomicTypeExpr
     : TypenameAtom {$$=_TypeExpression($1,false,0)}
     | TypenameAtom '[' ']'
     | TypenameAtom '[' Expression ']'
     | TypenameAtom '[' TupleTypeExpression ']'
-    | TypeExpression UNION_OP TypenameAtom
-    | TypeExpression INTERSECT_OP TypenameAtom
     | '(' TypeExpression ')'
     ;
 
@@ -372,8 +378,8 @@ NofixFuncCall
     ;
 
 InfixFuncCall
-    : InfixFuncCall FuncId AtomicExpr {$$=_FunctionCall("infix",$2,[$1,$3])}
-    | AtomicExpr FuncId AtomicExpr {$$=_FunctionCall("infix",$2,[$1,$3])}
+    : InfixFuncCall FuncId AtomicExpr {$$=_FunctionCall("infix",[$2],[$1,$3])}
+    | AtomicExpr FuncId AtomicExpr {$$=_FunctionCall("infix",[$2],[$1,$3])}
     ;
 
 FuncId
@@ -382,7 +388,7 @@ FuncId
     ;
 
 PrefixFuncCall
-    : FuncAtom AtomicExpr {$$=_FunctionCall("prefix",$1,[$2])}
+    : FuncAtom AtomicExpr {$$=_FunctionCall("prefix",[$1],[$2])}
     ;
 
 SuffixFuncCall
@@ -452,8 +458,8 @@ KeyValue
     ;
 
 ArrayList 
-    : LIST_START Elements LIST_END {$$=_ListExpression($2)}
-    | LIST_START LIST_END 
+    : '[' Elements ']' {$$=_ListExpression($2)}
+    | '[' ']' 
     ;
 
 Elements
@@ -484,7 +490,7 @@ NumberAtom
     ;
 
 FuncAtom
-    : FUNCNAME 
+    : FUNCNAME {$$=_Token($1, this._$)}
     ;
 
 VariableAtom
@@ -496,11 +502,11 @@ MembernameAtom
     ;
 
 OperatorAtom    
-    : OPERATOR {$$=_getOperatorName($1)}
+    : OPERATOR {$$=_Token(_getOperatorName($1), this._$)}
     ;
 
 TypenameAtom
-    : TYPENAME
+    : TYPENAME {$$=_Token($1, this._$)}
     ;
 
 JavascriptCodeAtom

@@ -12,6 +12,7 @@ import {
     PonExpression,
     Statement,
     StringExpression,
+    Token,
     TypeExpression,
     Variable
 } from "./ast";
@@ -30,39 +31,29 @@ export function tpDeclaration(input: Declaration): string {
 }
 
 export function tpFunctionDeclaration(f: FunctionDeclaration): string {
+    const funcSignature = stringifyFuncSignature(f.signature);
     if (f.parameters.length === 0) {
         return "" +
         `
-function ${f.signature}(${tpParameters(f.parameters)}){
+function ${funcSignature}(${tpParameters(f.parameters)}){
 ${tpStatement(f.statements)};
 }
 `;
     }
-    const targetType = f.parameters[0].typeExpected.name;
+    const targetType = f.parameters[0].typeExpected.name.value;
     if (f.parameters.length === 1) {
-        return `${targetType}.prototype.${f.signature}=function(){
+        return `${targetType}.prototype.${funcSignature}=function(){
 let ${f.parameters[0].name.value} = this;
 ${tpStatement(f.statements)}}
 `;
     }
     if (f.parameters.length === 2) {
-        return `${targetType}.prototype.${f.signature}_${f.parameters[1].typeExpected.name}`
+        return `${targetType}.prototype.${funcSignature}_${f.parameters[1].typeExpected.name.value}`
         + `=function(${f.parameters.slice(1).map((x) => x.name.value).join(",")}){
 const ${f.parameters[0].name.value} = this;
 ${tpStatement(f.statements)}}
 `;
     }
-}
-
-function getParamsType(p: Variable[]): string {
-    if (p.length === 0) {
-        return "";
-    }
-    return p.map((x) => stringifyTypeExpression(x.type)).join("_");
-}
-
-function stringifyTypeExpression(t: TypeExpression): string {
-    return t.name.token.value + (t.isList ? "List" : "");
 }
 
 export function tpStatement(s: Statement): string {
@@ -75,20 +66,26 @@ export function tpStatement(s: Statement): string {
 }
 
 export function tpFunctionCall(f: FunctionCall): string {
+    const funcSignature = stringifyFuncSignature(f.signature);
     if (f.parameters.length === 0) {
-        return `${f.signature}();`;
+        return `${funcSignature}();`;
     }
     if (f.parameters.length === 1) {
-        return `${tpExpression(f.parameters[0])}.${f.signature}()`;
+        return `${tpExpression(f.parameters[0])}.${funcSignature}()`;
     }
     if (f.parameters.length === 2) {
         return `(${tpExpression(f.parameters[0])}` +
-        `.${f.signature}_${stringifyType(f.parameters[1].returnType)}(${tpExpression(f.parameters[1])}))`;
+        `.${funcSignature}_${stringifyType(f.parameters[1].returnType)}(${tpExpression(f.parameters[1])}))`;
     }
 }
 
+export function stringifyFuncSignature(signature: Token[]): string {
+    console.log(signature);
+    return signature.map((x) => x.value.slice(0, -1)).join("_");
+}
+
 export function stringifyType(t: TypeExpression): string {
-    return t.name;
+    return t.name.value;
 }
 
 export function tpLinkStatement(l: LinkStatement): string {

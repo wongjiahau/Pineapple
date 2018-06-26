@@ -8,7 +8,7 @@ export interface Declaration {
 export interface FunctionDeclaration {
     kind: "FunctionDeclaration";
     affix: FunctionAffix;
-    signature: string;
+    signature: Token[];
     returnType: TypeExpression;
     parameters: Variable[];
     statements: Statement;
@@ -29,7 +29,7 @@ export interface LinkStatement {
 
 export interface TypeExpression {
     kind: "TypeExpression";
-    name: string;
+    name: Token;
     isList: boolean;
     listSize: Expression | null;
     or: TypeExpression | null;
@@ -52,7 +52,7 @@ export type FunctionAffix = "nofix" | "prefix" | "suffix" | "infix" | "mixfix";
 export interface FunctionCall {
     kind: "FunctionCall";
     fix: FunctionAffix;
-    signature: string;
+    signature: Token[];
     parameters: Expression[];
     returnType: TypeExpression;
 }
@@ -83,6 +83,7 @@ export interface KeyValue {
 export interface ListExpression {
     kind: "List";
     elements: ListElement;
+    returnType: TypeExpression;
 }
 
 export interface ListElement {
