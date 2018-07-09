@@ -95,9 +95,17 @@ const _Token = (value, location) => ({value, location});
 
 function _getOperatorName(op) {
     const dic = {
-        "+" : "plus"
+        "+"  : "plus",           "&"	: "ampersand",      "'"	: "apostrophe",
+        "*"	 : "asterisk",       "@"	: "at",             "`"	: "backtick",
+        "\\" : "backslash",      ":"	: "colon",          ","	: "comma",
+        "$"	 : "dollar",         "="	: "equal",          "!"	: "bang",
+        ">"	 : "greaterThan",    "<"	: "lessThan",       "–"	: "minus",
+        "%"	 : "percent",        "|"	: "pipe",           "+"	: "plus",
+        "#"	 : "hash",           ";"	: "semi",           "/"	: "slash",
+        "~"	 : "tilde",          "_"	: "underscore",     "?"	: "Question",
+        "."	 : "Period",
     };
-    let result = "$" + op.split("").map(x => dic[x]).join("") + ":";
+    let result = "$" + op.split("").map(x => dic[x]).join("$") + ":";
     return result;
 }
 %}
@@ -106,6 +114,10 @@ function _getOperatorName(op) {
 /* lexical grammar */
 %lex
 %%
+/* Notes: 
+ * - If you want to use Regex, DONT use double quotes
+ * - If you want to match literally, use double quotes
+ */
 // Ignorable
 \s+         /* skip whitespace */
 
@@ -129,6 +141,9 @@ function _getOperatorName(op) {
 "@INDENT"        return 'INDENT'
 "@DEDENT"        return 'DEDENT'
 "@EOF"           return 'EOF'
+
+// Custom operator literals that might overlap with built-in symbols
+[=]{2,} return 'OPERATOR'
 
 // Built-in symbols
 "->"    return '->'
