@@ -4,7 +4,8 @@ import { smoothify } from "./smoothify";
 
 export function preprocess(input: string): string {
     let result = input.replace(/(\r\n|\r|\n)+/g, "\n");
-    result = labelNewlines(input);
+    result += "\n";
+    result = labelNewlines(result);
     result = smoothify(result);
     result = labelIndentation(result);
     result += "@EOF";
