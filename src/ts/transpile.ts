@@ -81,11 +81,16 @@ export function tpFunctionCall(f: FunctionCall): string {
 }
 
 export function stringifyFuncSignature(signature: Token[]): string {
-    return signature.map((x) => x.value.slice(0, -1)).join("_");
+    return signature.map((x) => x.value.slice(0, -1)).join("$");
 }
 
 export function stringifyType(t: TypeExpression): string {
-    return t.name.value;
+    switch (t.kind) {
+        case "SimpleType":
+            return t.name.value;
+        case "ListType":
+            return "List of " + stringifyType(t.listOf);
+    }
 }
 
 export function tpLinkStatement(l: LinkStatement): string {

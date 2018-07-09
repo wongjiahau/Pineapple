@@ -77,3 +77,33 @@ let x = split: "Hello world" by: " "
 
 
 ```
+
+
+## Object Initialization
+```
+--template
+Fruit
+    .name    as String
+    .sibling as Fruit?
+
+let x = Fruit
+    .name     = 'Pine'
+    .sibling  = nil
+
+let manyFruits = 
+	o Fruit
+		.name    = 'Pine'
+		.sibling = Fruit
+			.name    = 'Durian'
+			.sibling = nil
+	o Fruit
+		.name    = 'Pine'
+		.sibling = Fruit
+
+let html = 
+	View
+	.children = 
+		o View {.style = Style{.flex=1 .width=50 .height=50 .background='blue'}
+		o View {.style = Style{.flex=2 .width=50 .height=50 .background='blue'}
+		o View {.style = Style{.flex=3 .width=50 .height=50 .background='blue'}
+```

@@ -87,12 +87,9 @@ function _getOperatorName(op) {
 // Ignorable
 \s+         /* skip whitespace */
 
-// Annotations
-"--function"    return 'FUNCTION'
-
 // Keywords
 "let"   return 'LET'
-"as"    return 'TYPE_OP'
+"def"   return 'DEF'
 
 // Inivisible token
 "@NEWLINE"       %{
@@ -109,7 +106,7 @@ function _getOperatorName(op) {
 
 // Built-in symbols
 "->"    return 'RETURN'
-"="     return 'BIND_OP'
+"="     return 'ASSIGN_OP'
 "("     return 'LEFT_PAREN' 
 ")"     return 'RIGHT_PAREN'
 "["     return '['
@@ -139,7 +136,6 @@ function _getOperatorName(op) {
 ","                  return  COMMA
 [0-9]+               return 'TOKEN_ID'
 "DOT"                return 'DOT'
-"ASSIGN_OP"          return 'ASSIGN_OP'
 "UNION_OP"           return 'UNION_OP'
 "INTERSECT_OP"       return 'INTERSECT_OP'
 "IOFUNCTION"         return 'IOFUNCTION'
@@ -190,17 +186,11 @@ MembernameTypeList
     ;
 
 FunctionDeclaration
-    : FunctionAnnotation NofixFuncDeclaration  {$$=$2}
-    | FunctionAnnotation PrefixFuncDeclaration {$$=$2}
-    | FunctionAnnotation SuffixFuncDeclaration {console.log("suffix")}
-    | FunctionAnnotation InfixFuncDeclaration  {$$=$2}
-    | FunctionAnnotation MixfixFuncDeclaration {console.log("mixfix")}
-    ;
-
-FunctionAnnotation
-    : FUNCTION NEWLINE
-    | IOFUNCTION NEWLINE 
-    |
+    : DEF NofixFuncDeclaration  {$$=$2}
+    | DEF PrefixFuncDeclaration {$$=$2}
+    | DEF SuffixFuncDeclaration {console.log("suffix")}
+    | DEF InfixFuncDeclaration  {$$=$2}
+    | DEF MixfixFuncDeclaration {console.log("mixfix")}
     ;
 
 InfixFuncDeclaration
@@ -325,19 +315,14 @@ PartialBoolFuncCall
     ;
 
 LinkStatement
-    : LET Variable LinkOperator Expression {$$=_LinkStatement($2,$3,$4,true)}
-    | VariableAtom LinkOperator Expression {$$=_LinkStatement($1,$2,$3,false)}
+    : LET Variable ASSIGN_OP Expression {$$=_LinkStatement($2,$3,$4,true)}
+    | VariableAtom ASSIGN_OP Expression {$$=_LinkStatement($1,$2,$3,false)}
     ;
 
 Variable 
     : VariableAtom {$$=_Variable($1,null)}
-    | VariableAtom TYPE_OP TypeExpression {$$=_Variable($1,$3)}
-    | LEFT_PAREN VariableAtom TYPE_OP TypeExpression RIGHT_PAREN {$$=_Variable($2,$4)}
-    ;
-
-LinkOperator
-    : BIND_OP
-    | ASSIGN_OP
+    | VariableAtom TypeExpression {$$=_Variable($1,$2)}
+    | LEFT_PAREN VariableAtom TypeExpression RIGHT_PAREN {$$=_Variable($2,$3)}
     ;
 
 TypeExpression

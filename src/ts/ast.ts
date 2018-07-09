@@ -27,15 +27,21 @@ export interface LinkStatement {
     expression: Expression;
 }
 
-export interface TypeExpression {
-    kind: "TypeExpression";
+export type TypeExpression
+    = SimpleType
+    | ListType
+    ;
+
+export interface SimpleType {
+    kind: "SimpleType";
     name: Token;
-    isList: boolean;
     nullable: boolean;
-    listSize: Expression | null;
-    or: TypeExpression | null;
-    and: TypeExpression | null;
-    // tuple: TupleTypeExpression;
+}
+
+export interface ListType {
+    kind: "ListType";
+    nullable: boolean;
+    listOf: TypeExpression;
 }
 
 export type Expression
@@ -70,6 +76,7 @@ export interface Variable {
 export interface PonExpression {
     kind: "Pon";
     keyValueList: KeyValueList;
+    returnType: TypeExpression;
 }
 
 export interface KeyValueList {
@@ -117,7 +124,7 @@ export interface JavascriptCode {
 
 export interface Token {
     value: string;
-    location: TokenLocation;
+    location: TokenLocation | null;
 }
 
 export interface TokenLocation {

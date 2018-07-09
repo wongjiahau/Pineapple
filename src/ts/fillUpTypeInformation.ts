@@ -1,4 +1,13 @@
-import { Declaration, Expression, Statement, TokenLocation, TypeExpression, Variable } from "./ast";
+import {
+    Declaration,
+    Expression,
+    FunctionCall,
+    FunctionDeclaration,
+    Statement,
+    TokenLocation,
+    TypeExpression,
+    Variable
+} from "./ast";
 
 export function fillUpTypeInformation(ast: Declaration): Declaration {
     ast.body.statements = fillUp(ast.body.statements);
@@ -16,8 +25,7 @@ const VARIABLE_TABLE: VariableTable = {};
 
 function updateVariableTable(v: VariableTable, variable: Variable) {
     if (v[variable.name.value]) {
-        throw errorMessage(`Variable \`${variable.name.value}\` is already assigned`
-                , variable.name.location);
+        throw errorMessage(`Variable \`${variable.name.value}\` is already assigned`, variable.name.location);
     }
     v[variable.name.value] = variable;
 }
@@ -29,10 +37,17 @@ function errorMessage(message: string, location: TokenLocation): string {
 export function fillUp(s: Statement): Statement {
     switch (s.body.kind) {
         case "LinkStatement":
-            s.body.variable.returnType = getType(s.body.expression);
-            updateVariableTable(VARIABLE_TABLE, s.body.variable);
+            if (s.body.expression.kind === "FunctionCall") {
+                s.body.expression = fillUpFunctionCallTypeInfo(s.body.expression);
+            } else {
+                s.body.variable.returnType = getType(s.body.expression);
+                updateVariableTable(VARIABLE_TABLE, s.body.variable);
+            }
             break;
         case "FunctionCall":
+            for (let i = 0; i < s.body.parameters.length; i++) {
+                s.body.parameters[i].returnType = getType(s.body.parameters[i]);
+            }
             break;
     }
     if (s.next !== null) {
@@ -41,8 +56,15 @@ export function fillUp(s: Statement): Statement {
     return s;
 }
 
+export function fillUpFunctionCallTypeInfo(e: FunctionCall): FunctionCall {
+    for (let i = 0; i < e.parameters.length; i++) {
+        e.parameters[i].returnType = getType(e.parameters[i]);
+    }
+    return e;
+}
+
 export function getType(e: Expression): TypeExpression {
-    let typename: string;
+    let typename = "";
     switch (e.kind) {
         case "String":
             typename = "string";
@@ -53,17 +75,14 @@ export function getType(e: Expression): TypeExpression {
         case "Variable":
             return VARIABLE_TABLE[e.name.value].returnType;
         case "FunctionCall":
-            for (let i = 0; i < e.parameters.length; i++) {
-                e.parameters[i].returnType = getType(e.parameters[i]);
-            }
             return e.returnType;
     }
     return {
-        and: null,
-        or: null,
-        isList: false,
-        kind: "TypeExpression",
-        listSize: null,
-        name: typename
+        kind: "SimpleType",
+        name: {
+            location: null,
+            value: typename
+        },
+        nullable: false
     };
 }

@@ -10,8 +10,8 @@ export function pine2js(input: string): string {
     // const tokenized    = tokenize(input);
     // const preprocessed = removeConsequetingNewlines(tokenized);
     const result = preprocess(input);
-    let ast     = parser.parse(result);
-    ast     = fillUpTypeInformation(ast);
+    let ast      = parser.parse(result);
+    ast          = fillUpTypeInformation(ast);
 
     // console.log(JSON.stringify(ast, null, 2));
     const symbolized = retrieveSymbol(Token.TokenTable, ast);
