@@ -1,20 +1,37 @@
 import {
+    BooleanExpression,
     Declaration,
     Expression,
     FunctionCall,
     ListExpression,
+    NumberExpression,
     Statement,
+    StringExpression,
     TokenLocation,
     TypeExpression,
     Variable
 } from "./ast";
 
 export function fillUpTypeInformation(ast: Declaration): Declaration {
-    ast.body.statements = fillUp(ast.body.statements, {});
+    if (ast.body.kind === "FunctionDeclaration") {
+        const variableTable = getFunctionVariables(ast.body.parameters);
+        ast.body.statements = fillUp(ast.body.statements, variableTable);
+    } else {
+        ast.body.statements = fillUp(ast.body.statements, {});
+    }
     if (ast.next !== null) {
         ast.next = fillUpTypeInformation(ast.next);
     }
     return ast;
+}
+
+export function getFunctionVariables(variables: Variable[]): VariableTable {
+    const result: VariableTable = {};
+    for (let i = 0; i < variables.length; i++) {
+        variables[i].returnType = variables[i].typeExpected;
+        result[variables[i].name.value] = variables[i];
+    }
+    return result;
 }
 
 export interface VariableTable {
@@ -35,14 +52,17 @@ function errorMessage(message: string, location: TokenLocation): string {
 
 export function fillUp(s: Statement, variableTable: VariableTable): Statement {
     switch (s.body.kind) {
+        case "ReturnStatement":
+            s.body.expression = fillUpExpressionTypeInfo(s.body.expression, variableTable);
+            break;
         case "AssignmentStatement":
             s.body.expression = fillUpExpressionTypeInfo(s.body.expression, variableTable);
             s.body.variable.returnType = getType(s.body.expression, variableTable);
-            updateVariableTable(variableTable, s.body.variable);
+            variableTable = updateVariableTable(variableTable, s.body.variable);
             break;
         case "FunctionCall":
             for (let i = 0; i < s.body.parameters.length; i++) {
-                s.body.parameters[i].returnType = getType(s.body.parameters[i], variableTable);
+                s.body.parameters[i] = fillUpExpressionTypeInfo(s.body.parameters[i], variableTable);
             }
             break;
     }
@@ -55,18 +75,36 @@ export function fillUp(s: Statement, variableTable: VariableTable): Statement {
 export function fillUpExpressionTypeInfo(e: Expression, variableTable: VariableTable): Expression {
     switch (e.kind) {
         case "FunctionCall": return fillUpFunctionCallTypeInfo(e, variableTable);
-        case "List": return fillUpListTypeInfo(e, variableTable);
-        default: return e;
+        case "List":   return fillUpListTypeInfo(e, variableTable);
+        case "Number": return fillUpSimpleTypeInfo(e, "Number");
+        case "String": return fillUpSimpleTypeInfo(e, "String");
+        case "Boolean": return fillUpSimpleTypeInfo(e, "Boolean");
     }
+}
+
+export type SimpleExpression
+    = NumberExpression
+    | StringExpression
+    | BooleanExpression
+    ;
+
+export function fillUpSimpleTypeInfo(e: SimpleExpression, name: string): SimpleExpression {
+    return {
+        ...e,
+        returnType: {
+            kind: "SimpleType",
+            name: {
+                value: name,
+                location: null,
+            },
+            nullable: false
+        }
+    };
 }
 
 export function fillUpFunctionCallTypeInfo(e: FunctionCall, variableTable: VariableTable): FunctionCall {
     for (let i = 0; i < e.parameters.length; i++) {
-        e.parameters[i].returnType = getType(e.parameters[i], variableTable);
-        const expression = e.parameters[i];
-        if (expression.kind === "FunctionCall") {
-            e.parameters[i] = fillUpFunctionCallTypeInfo(expression, variableTable);
-        }
+        e.parameters[i] = fillUpExpressionTypeInfo(e.parameters[i], variableTable);
     }
     return e;
 }
@@ -89,7 +127,7 @@ export function getType(e: Expression, variableTable: VariableTable): TypeExpres
             typename = "String";
             break;
         case "Number":
-            typename = e.value.indexOf(".") > -1 ? "Float" : "Int";
+            typename = "Number";
             break;
         case "Variable":
             return variableTable[e.name.value].returnType;

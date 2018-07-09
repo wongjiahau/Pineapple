@@ -14,8 +14,8 @@ def main:
         const expectedOutput =
 `
 function main(){
-const $y = new Int(6);
-const $x = new Int(8);
+const $y = (6);
+const $x = (8);
 }
 `;
         // console.log(pine2js(input));

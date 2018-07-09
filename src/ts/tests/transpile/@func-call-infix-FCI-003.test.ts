@@ -11,7 +11,7 @@ def main:
         const expectedOutput =
 `
 function main(){
-const $y = (new Int(6).$plusplus_Int(new Int(6)));
+const $y = ((6).$plusplus_Number((6)));
 }
 
 `;

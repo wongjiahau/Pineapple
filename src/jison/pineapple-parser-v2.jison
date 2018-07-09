@@ -5,6 +5,8 @@ const _Declaration = (body,next) => ({body,next});
 
 const _Statement = (body,next) => ({body,next});
 
+const _ReturnStatement = (expression) => ({ kind: "ReturnStatement", expression});
+
 const _FunctionDeclaration = (signature,returnType,parameters,statements,affix) => ({
     kind: "FunctionDeclaration",
     signature,
@@ -96,8 +98,9 @@ function _getOperatorName(op) {
 \s+         /* skip whitespace */
 
 // Keywords
-"let"   return 'LET'
-"def"   return 'DEF'
+"let"    return 'LET'
+"def"    return 'DEF'
+"return" return 'RETURN'
 
 // Inivisible token
 "@NEWLINE"       %{
@@ -113,7 +116,7 @@ function _getOperatorName(op) {
 "@EOF"           return 'EOF'
 
 // Built-in symbols
-"->"    return 'RETURN'
+"->"    return '->'
 "="     return 'ASSIGN_OP'
 "("     return 'LEFT_PAREN' 
 ")"     return 'RIGHT_PAREN'
@@ -203,23 +206,24 @@ FunctionDeclaration
     ;
 
 InfixFuncDeclaration
-    : Variable FuncAtom Variable RETURN TypeExpression Block
-    | Variable LEFT_PAREN OperatorAtom RIGHT_PAREN Variable RETURN TypeExpression Block
+    : Variable FuncAtom Variable '->' TypeExpression Block 
+        {$$=_FunctionDeclaration([$2],$5,[$1,$3],$6,"infix")}
+    | Variable LEFT_PAREN OperatorAtom RIGHT_PAREN Variable '->' TypeExpression Block
         {$$=_FunctionDeclaration([$3],$7,[$1,$5],$8,"infix")}
     ;
 
 PrefixFuncDeclaration
-    : FuncAtom Variable RETURN TypeExpression Block 
+    : FuncAtom Variable '->' TypeExpression Block 
         {$$=_FunctionDeclaration([$1],$4,[$2],$5,"prefix")}
     | FuncAtom Variable Block {$$=_FunctionDeclaration([$1],null,[$2],$3,"prefix")}
     ;
 
 SuffixFuncDeclaration
-    : Variable FuncAtom RETURN TypeExpression Block
+    : Variable FuncAtom '->' TypeExpression Block
     ;
 
 NofixFuncDeclaration
-    : FuncAtom RETURN TypeExpression Block
+    : FuncAtom '->' TypeExpression Block
         {$$=_FunctionDeclaration([$1],$3,[],$4,"nofix")}
     | FuncAtom Block {$$=_FunctionDeclaration([$1],null,[],$2,"nofix")}
     ;
@@ -253,7 +257,7 @@ Statement
     ;
 
 ReturnStatement
-    : RETURN Expression
+    : RETURN Expression {$$=_ReturnStatement($2)}
     ;
 
 ForStatement

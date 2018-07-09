@@ -33,13 +33,9 @@ function loadLibraryFunctions(): string {
 
 function loadPrimitiveTypes(): string {
     return `
-class Int {
-    constructor(initValue) {
-        this.value = initValue;
-    }
-
-    valueOf() {
-        return this.value;
+class Int extends Number {
+    constructor(value) {
+        super(value);
     }
 }
 `;

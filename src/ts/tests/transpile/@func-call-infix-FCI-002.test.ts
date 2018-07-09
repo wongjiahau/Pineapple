@@ -11,7 +11,7 @@ def main:
         const expectedOutput =
 `
 function main(){
-const $y = ((new Int(6).$plus_Int(new Int(6))).$plus_Int(new Int(6)));
+const $y = (((6).$plus_Number((6))).$plus_Number((6)));
 }
 `;
         // console.log(pine2js(input));

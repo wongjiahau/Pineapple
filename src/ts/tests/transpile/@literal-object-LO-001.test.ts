@@ -20,16 +20,16 @@ def main:
         const expectedOutput =
 `
 function main(){
-const $y = new Int(6);
+const $y =(6);
 const $people = {
 name : "john",
-age : new Int(123),
+age : (123),
 wife : {
 name : "Natelie",
-age : new Int(99)
+age : (99)
 }
 };
-const $x = new Int(5);
+const $x = (5);
 }
 `;
         // console.log(pine2js(input));

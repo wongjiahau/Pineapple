@@ -15,8 +15,22 @@ export interface FunctionDeclaration {
 }
 
 export interface Statement {
-    body: AssignmentStatement | FunctionCall | JavascriptCode;
-    next: Statement | null;
+    body
+        : AssignmentStatement
+        | FunctionCall
+        | JavascriptCode
+        | ReturnStatement
+        ;
+
+    next
+        : Statement
+        | null
+        ;
+}
+
+export interface ReturnStatement {
+    kind: "ReturnStatement";
+    expression: Expression;
 }
 
 export interface AssignmentStatement {

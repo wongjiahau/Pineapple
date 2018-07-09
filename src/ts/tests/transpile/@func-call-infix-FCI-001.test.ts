@@ -6,16 +6,16 @@ describe("@func-call-infix-FCI-001", () => {
         const input =
 `
 def main:
-    let x Int = 4
-    let y Int = 6
+    let x Number = 4
+    let y Number = 6
     let result = x + y
 `;
         const expectedOutput =
 `
 function main(){
-const $x = new Int(4);
-const $y = new Int(6);
-const $result = ($x.$plus_Int($y));
+const $x = (4);
+const $y = (6);
+const $result = ($x.$plus_Number($y));
 }
 `.trim();
 

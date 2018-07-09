@@ -11,6 +11,7 @@ import {
     ListExpression,
     NumberExpression,
     PonExpression,
+    ReturnStatement,
     Statement,
     StringExpression,
     Token,
@@ -53,7 +54,8 @@ ${tpStatement(f.statements)}
 `;
     }
     if (f.parameters.length === 2) {
-        return `${targetType}.prototype.${funcSignature}_${f.parameters[1].typeExpected.name.value}`
+        return `${targetType}.prototype.`
+        + `${funcSignature}_${stringifyType(f.parameters[1].typeExpected)}`
         + `=function(${f.parameters.slice(1).map((x) => "$" + x.name.value).join(",")}){
 ${initStatement}
 ${tpStatement(f.statements)}}
@@ -64,10 +66,15 @@ ${tpStatement(f.statements)}}
 export function tpStatement(s: Statement): string {
     const next = s.next　? ";\n" + tpStatement(s.next) : "";
     switch (s.body.kind) {
-        case "FunctionCall": return tpFunctionCall(s.body) + next;
-        case "AssignmentStatement": return tpAssignmentStatement(s.body) + next;
-        case "JavascriptCode": return tpJavascriptCode(s.body) + next;
+        case "FunctionCall":        return tpFunctionCall(s.body)           + next;
+        case "AssignmentStatement": return tpAssignmentStatement(s.body)    + next;
+        case "JavascriptCode":      return tpJavascriptCode(s.body)         + next;
+        case "ReturnStatement":     return tpReturnStatement(s.body)        + next;
     }
+}
+
+export function tpReturnStatement(r: ReturnStatement): string {
+    return `return ${tpExpression(r.expression)}`;
 }
 
 export function tpFunctionCall(f: FunctionCall): string {
@@ -129,11 +136,7 @@ export function tpStringExpression(s: StringExpression): string {
 }
 
 export function tpNumberExpression(e: NumberExpression): string {
-    if (e.value.indexOf(".") > -1) {
-        return `(${e.value})`;
-    } else {
-        return `new Int(${e.value})`;
-    }
+    return `(${e.value})`;
 }
 
 export function tpBooleanExpression(e: BooleanExpression): string {
