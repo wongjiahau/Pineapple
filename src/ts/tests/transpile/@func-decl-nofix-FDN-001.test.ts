@@ -5,7 +5,7 @@ describe("@func-decl-nofix-FDN-001", () => {
     it("case1", () => {
         const input =
 `def main:
-    let myName String = '123'
+    let myName String = "123"
 `;
         const expectedOutput =
 `

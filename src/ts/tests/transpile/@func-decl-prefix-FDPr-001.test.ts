@@ -1,18 +1,22 @@
 import { expect } from "chai";
 import { pine2js } from "../../pine2js";
 
-describe("q003", () => {
-    it("@func-call-prefix-FCPr-001", () => {
+describe("@func-decl-prefix-FDPr-001", () => {
+    it("case 1", () => {
         const input =
 `
-def main:
-    print: "hello world"
+def show: (this Int[])
+    print: this
 `;
         const expectedOutput =
 `
-function main(){
-"hello world".print();
-}`;
+Int.prototype.$plus_Int=function($y){
+const $x = this;
+// <javascript>
+return $x + $y;
+// </javascript>
+}
+`;
         // console.log(pine2js(input));
         // console.log(expectedOutput);
         expect(pine2js(input).trim()).to.eq(expectedOutput.trim());

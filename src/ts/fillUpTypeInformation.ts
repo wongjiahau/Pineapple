@@ -36,7 +36,7 @@ function errorMessage(message: string, location: TokenLocation): string {
 
 export function fillUp(s: Statement): Statement {
     switch (s.body.kind) {
-        case "LinkStatement":
+        case "AssignmentStatement":
             if (s.body.expression.kind === "FunctionCall") {
                 s.body.expression = fillUpFunctionCallTypeInfo(s.body.expression);
             } else {

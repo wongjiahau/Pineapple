@@ -7,9 +7,9 @@ describe("@literal-list-LL-002", () => {
 `
 def main:
     let fruits =
-        o 'pineapple'
-        o 'apple'
-        o 'banana'
+        o "pineapple"
+        o "apple"
+        o "banana"
 `;
         const expectedOutput =
 `

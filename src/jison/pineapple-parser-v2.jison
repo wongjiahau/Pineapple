@@ -15,7 +15,7 @@ const _FunctionDeclaration = (signature,returnType,parameters,statements,affix) 
 });
 
 const _LinkStatement = (variable,linkType,expression,isDeclaration) => ({
-    kind: "LinkStatement",
+    kind: "AssignmentStatement",
     isDeclaration,
     variable,
     linkType,

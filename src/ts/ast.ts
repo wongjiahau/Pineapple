@@ -15,12 +15,12 @@ export interface FunctionDeclaration {
 }
 
 export interface Statement {
-    body: LinkStatement | FunctionCall | JavascriptCode;
+    body: AssignmentStatement | FunctionCall | JavascriptCode;
     next: Statement | null;
 }
 
-export interface LinkStatement {
-    kind: "LinkStatement";
+export interface AssignmentStatement {
+    kind: "AssignmentStatement";
     isDeclaration: boolean;
     variable: Variable;
     linkType: "bind" | "assign";

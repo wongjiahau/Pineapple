@@ -9,10 +9,10 @@ def main:
     let y = 6
 
     let people =
-        .name  = 'john'
+        .name  = "john"
         .age   = 123
         .wife  =
-            .name = 'Natelie'
+            .name = "Natelie"
             .age  = 99
 
     let x = 5

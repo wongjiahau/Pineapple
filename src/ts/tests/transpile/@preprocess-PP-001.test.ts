@@ -5,7 +5,7 @@ describe("@preprocess-PP-001", () => {
     it("should ignore consecutive newlines", () => {
         const input =
 `def main:
-    print: 'hello world'
+    print: "hello world"
 
 
 `;

@@ -1,4 +1,5 @@
 import {
+    AssignmentStatement,
     BooleanExpression,
     Declaration,
     Expression,
@@ -6,7 +7,6 @@ import {
     FunctionDeclaration,
     JavascriptCode,
     KeyValueList,
-    LinkStatement,
     ListElement,
     ListExpression,
     NumberExpression,
@@ -62,7 +62,7 @@ export function tpStatement(s: Statement): string {
     const next = s.next　? ";\n" + tpStatement(s.next) : "";
     switch (s.body.kind) {
         case "FunctionCall": return tpFunctionCall(s.body) + next;
-        case "LinkStatement": return tpLinkStatement(s.body) + next;
+        case "AssignmentStatement": return tpAssignmentStatement(s.body) + next;
         case "JavascriptCode": return tpJavascriptCode(s.body) + next;
     }
 }
@@ -94,7 +94,7 @@ export function stringifyType(t: TypeExpression): string {
     }
 }
 
-export function tpLinkStatement(l: LinkStatement): string {
+export function tpAssignmentStatement(l: AssignmentStatement): string {
     return `${l.isDeclaration ? "const" : ""} $${l.variable.name.value} = ${tpExpression(l.expression)}`;
 }
 
