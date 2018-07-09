@@ -12,7 +12,7 @@ def (x Int) (+) (y Int) -> Int
 `;
         const expectedOutput =
 `
-Int.prototype.$plus_Int=function($y){
+Int.prototype._$plus_Int=function($y){
 const $x = this;
 // <javascript>
 return $x + $y;

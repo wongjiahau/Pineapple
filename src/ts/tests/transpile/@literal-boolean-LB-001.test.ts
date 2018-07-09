@@ -10,7 +10,7 @@ def main:
 `;
         const expectedOutput =
 `
-function main(){
+function _main(){
 const $x = true;
 }
 `;
@@ -27,7 +27,7 @@ def main:
 `;
         const expectedOutput =
 `
-function main(){
+function _main(){
 const $y = false;
 }
 `;

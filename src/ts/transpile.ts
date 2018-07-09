@@ -92,7 +92,7 @@ export function tpFunctionCall(f: FunctionCall): string {
 }
 
 export function stringifyFuncSignature(signature: Token[]): string {
-    return signature.map((x) => x.value.slice(0, -1)).join("$");
+    return "_" + signature.map((x) => x.value.slice(0, -1)).join("$");
 }
 
 export function stringifyType(t: TypeExpression): string {

@@ -17,14 +17,14 @@ def say: (this String) -> Void
 
 `;
         const expectedOutput =
-`String.prototype.print=function(){
+`String.prototype._print=function(){
 const $this = this;
 // <javascript>
 console.log($this.valueOf());
 // </javascript>
 
 }
-String.prototype.say=function(){
+String.prototype._say=function(){
 const $this = this;
 // <javascript>
 console.log($this.valueOf());

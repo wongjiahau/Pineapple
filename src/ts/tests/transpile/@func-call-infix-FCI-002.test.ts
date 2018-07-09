@@ -10,8 +10,8 @@ def main:
 `;
         const expectedOutput =
 `
-function main(){
-const $y = (((6).$plus_Number((6))).$plus_Number((6)));
+function _main(){
+const $y = (((6)._$plus_Number((6)))._$plus_Number((6)));
 }
 `;
         // console.log(pine2js(input));

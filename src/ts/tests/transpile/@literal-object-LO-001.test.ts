@@ -19,8 +19,8 @@ def main:
 `;
         const expectedOutput =
 `
-function main(){
-const $y =(6);
+function _main(){
+const $y = (6);
 const $people = {
 name : "john",
 age : (123),

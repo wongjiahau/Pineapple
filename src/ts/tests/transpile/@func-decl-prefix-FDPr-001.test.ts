@@ -10,9 +10,9 @@ def show: (this Int[])
 `;
         const expectedOutput =
 `
-ArrayOfInt.prototype.show=function(){
+ArrayOfInt.prototype._show=function(){
 const $this = this;
-"Not implemented".print()
+"Not implemented"._print()
 }
 `;
         // console.log(pine2js(input));

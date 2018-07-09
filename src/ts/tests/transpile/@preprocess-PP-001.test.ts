@@ -11,8 +11,8 @@ describe("@preprocess-PP-001", () => {
 `;
         const expectedOutput =
 `
-function main(){
-"hello world".print();
+function _main(){
+"hello world"._print();
 }`;
         // console.log(pine2js(input));
         // console.log(expectedOutput);

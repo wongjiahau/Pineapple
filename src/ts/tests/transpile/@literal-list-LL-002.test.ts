@@ -13,7 +13,7 @@ def main:
 `;
         const expectedOutput =
 `
-function main(){
+function _main(){
 const $fruits = new ArrayOfString(["pineapple","apple","banana",]);
 }
 `;

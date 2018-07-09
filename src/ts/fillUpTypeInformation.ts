@@ -79,7 +79,14 @@ export function fillUpExpressionTypeInfo(e: Expression, variableTable: VariableT
         case "Number": return fillUpSimpleTypeInfo(e, "Number");
         case "String": return fillUpSimpleTypeInfo(e, "String");
         case "Boolean": return fillUpSimpleTypeInfo(e, "Boolean");
+        case "Variable": return fillUpVariableTypeInfo(e, variableTable);
+        default: return e;
     }
+}
+
+export function fillUpVariableTypeInfo(e: Variable, variableTable: VariableTable): Variable {
+    e.returnType = variableTable[e.name.value].returnType;
+    return e;
 }
 
 export type SimpleExpression

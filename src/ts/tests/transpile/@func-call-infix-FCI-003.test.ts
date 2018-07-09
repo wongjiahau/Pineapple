@@ -10,8 +10,8 @@ def main:
 `;
         const expectedOutput =
 `
-function main(){
-const $y = ((6).$plusplus_Number((6)));
+function _main(){
+const $y = ((6)._$plusplus_Number((6)));
 }
 
 `;

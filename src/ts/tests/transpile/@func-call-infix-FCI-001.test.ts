@@ -12,10 +12,10 @@ def main:
 `;
         const expectedOutput =
 `
-function main(){
+function _main(){
 const $x = (4);
 const $y = (6);
-const $result = ($x.$plus_Number($y));
+const $result = ($x._$plus_Number($y));
 }
 `.trim();
 

@@ -10,7 +10,7 @@ describe("@literal-javascript-LJ-001", () => {
     </javascript>
 `;
         const expectedOutput =
-`String.prototype.print=function(){
+`String.prototype._print=function(){
 const $this = this;
 // <javascript>
 console.log($this);

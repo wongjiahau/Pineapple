@@ -9,7 +9,7 @@ describe("@func-decl-nofix-FDN-001", () => {
 `;
         const expectedOutput =
 `
-function main(){
+function _main(){
 const $myName = "123";
 }
 `;

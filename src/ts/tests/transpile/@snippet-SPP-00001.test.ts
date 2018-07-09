@@ -17,7 +17,7 @@ def main:
 `;
         const expectedOutput =
 `
-function main(){
+function _main(){
 const $y = (6);
 const $x = (8);
 }
