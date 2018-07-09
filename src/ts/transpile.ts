@@ -4,6 +4,7 @@ import {
     BranchStatement,
     Declaration,
     Expression,
+    ForStatement,
     FunctionCall,
     FunctionDeclaration,
     JavascriptCode,
@@ -73,7 +74,19 @@ export function tpStatement(s: Statement): string {
         case "JavascriptCode":      return tpJavascriptCode(s.body)         + next;
         case "ReturnStatement":     return tpReturnStatement(s.body)        + next;
         case "BranchStatement":     return tpBranchStatement(s.body)        + next;
+        case "ForStatement":        return tpForStatement(s.body)           + next;
     }
+}
+
+export function tpForStatement(f: ForStatement): string {
+    const itemsName = `itemsOf${f.iterator.name.value}`;
+    return "" +
+`
+const ${itemsName} = ${tpExpression(f.expression)};
+for(let i = 0; i < ${itemsName}.length; i++){
+    const $${f.iterator.name.value} = ${itemsName}[i];
+    ${tpStatement(f.body)}
+}`;
 }
 
 export function tpBranchStatement(b: BranchStatement): string {
@@ -95,7 +108,7 @@ export function tpTestExpression(t: TestExpression): string {
     }
     return `${t.negated ? "!" : ""}`
         + `${tpFunctionCall(t.current)}`
-        + `${t.chainOperator ? t.chainOperator : ""}`
+        + `${t.chainOperator || ""}`
         + `${tpTestExpression(t.next)}`
         ;
 }

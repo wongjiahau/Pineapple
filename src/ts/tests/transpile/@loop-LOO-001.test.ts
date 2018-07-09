@@ -1,19 +1,24 @@
 import { expect } from "chai";
 import { pine2js } from "../../pine2js";
 
-describe("@func-call-infix-FCI-003", () => {
-    it("double symbols", () => {
+describe("@loop-LOO-001", () => {
+    it("for loop 1", () => {
         const input =
 `
 def main:
-    let y = 6 ++ 6
+    for i in 0 ..< 10
+        print: i
 `;
         const expectedOutput =
 `
 function _main(){
-const $y = ((6)._$plus$plus_Number((6)));
-}
 
+const itemsOfi = ((0)._$period$period$lessThan_Number((10)));
+for(let i = 0; i < itemsOfi.length; i++){
+    const $i = itemsOfi[i];
+    $i._print()
+};
+}
 `;
         // console.log(pine2js(input));
         // console.log(expectedOutput);

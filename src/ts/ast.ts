@@ -21,12 +21,20 @@ export interface Statement {
         | JavascriptCode
         | ReturnStatement
         | BranchStatement
+        | ForStatement
         ;
 
     next
         : Statement
         | null
         ;
+}
+
+export interface ForStatement {
+    kind: "ForStatement";
+    iterator: Variable;
+    expression: Expression;
+    body: Statement;
 }
 
 export interface BranchStatement {

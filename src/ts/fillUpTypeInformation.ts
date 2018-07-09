@@ -69,6 +69,9 @@ export function fillUp(s: Statement, variableTable: VariableTable): Statement {
         case "BranchStatement":
             s.body = fillUpBranchTypeInfo(s.body, variableTable);
             break;
+        case "ForStatement":
+            s.body.expression = fillUpExpressionTypeInfo(s.body.expression, variableTable);
+            break;
     }
     if (s.next !== null) {
         s.next = fillUp(s.next, variableTable);

@@ -1,9 +1,9 @@
 
 /* description: Parses and executes mathematical expressions. */
 %{
-const _Declaration = (body,next) => ({body,next});
+const _Declaration     = (body,next)  => ({body,next});
 
-const _Statement = (body,next) => ({body,next});
+const _Statement       = (body,next)  => ({body,next});
 
 const _ReturnStatement = (expression) => ({ kind: "ReturnStatement", expression});
 
@@ -14,6 +14,13 @@ const _FunctionDeclaration = (signature,returnType,parameters,statements,affix) 
     parameters, 
     statements, 
     affix,
+});
+
+const _ForStatement = (iterator,expression,body) => ({
+    kind: "ForStatement",
+    iterator,
+    expression,
+    body,
 });
 
 const _BranchStatement = (test,body,elseBranch) => ({
@@ -102,8 +109,8 @@ function _getOperatorName(op) {
         ">"	 : "greaterThan",    "<"	: "lessThan",       "–"	: "minus",
         "%"	 : "percent",        "|"	: "pipe",           "+"	: "plus",
         "#"	 : "hash",           ";"	: "semi",           "/"	: "slash",
-        "~"	 : "tilde",          "_"	: "underscore",     "?"	: "Question",
-        "."	 : "Period",
+        "~"	 : "tilde",          "_"	: "underscore",     "?"	: "questionMark",
+        "."	 : "period",
     };
     let result = "$" + op.split("").map(x => dic[x]).join("$") + ":";
     return result;
@@ -122,12 +129,14 @@ function _getOperatorName(op) {
 \s+         /* skip whitespace */
 
 // Keywords
-"let"    return 'LET'
-"def"    return 'DEF'
-"return" return 'RETURN'
-"if"     return 'IF'
-"elif"   return 'ELIF'
-"else"   return 'ELSE'
+"let"       return 'LET'
+"def"       return 'DEF'
+"return"    return 'RETURN'
+"if"        return 'IF'
+"elif"      return 'ELIF'
+"else"      return 'ELSE'
+"for"       return 'FOR' 
+"in"        return 'IN'
 
 // Inivisible token
 "@NEWLINE"       %{
@@ -143,7 +152,7 @@ function _getOperatorName(op) {
 "@EOF"           return 'EOF'
 
 // Custom operator literals that might overlap with built-in symbols
-[=]{2,} return 'OPERATOR'
+[=.<>]{2,} return 'OPERATOR'
 
 // Built-in symbols
 "->"    return '->'
@@ -288,7 +297,7 @@ ReturnStatement
     ;
 
 ForStatement
-    : FOR VariableAtom IN Expression Block
+    : FOR Variable IN Expression Block {$$=_ForStatement($2,$4,$5)}
     ;
 
 WhileStatement
@@ -319,9 +328,12 @@ Test
     ;
 
 LinkStatement
-    : LET Variable ASSIGN_OP Expression {$$=_AssignmentStatement($2,$3,$4,true)}
-    | LET Variable MUTABLE ASSIGN_OP Expression // To be continued
-    | VariableAtom ASSIGN_OP Expression {$$=_AssignmentStatement($1,$2,$3,false)}
+    : LET Variable ASSIGN_OP Expression 
+        {$$=_AssignmentStatement($2,$3,$4,true)}
+    | LET Variable MUTABLE ASSIGN_OP Expression 
+        // To be continued
+    | VariableAtom ASSIGN_OP Expression 
+        {$$=_AssignmentStatement(_Variable($1,null),$2,$3,false)}
     ;
 
 Variable 

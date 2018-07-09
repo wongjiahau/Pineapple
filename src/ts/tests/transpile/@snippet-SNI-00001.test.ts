@@ -9,7 +9,8 @@ def (this Int) add: (that Int) -> Int
     return this + that
 
 def (this Int[]) add: (that Int[]) -> Int[]
-    print: "Not implemented yet"
+    for i in 0 ..< 10
+        print: "Not implemented yet"
 
 def main:
     let y = 8 add: 9
