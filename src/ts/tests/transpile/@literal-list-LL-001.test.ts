@@ -11,7 +11,7 @@ def main:
         const expectedOutput =
 `
 function main(){
-const $x = [(1.1),(2.2),(3.3),(4.4),];
+const $x = new ArrayOfFloat([(1.1),(2.2),(3.3),(4.4),]);
 }
 `;
         // console.log(pine2js(input));
@@ -20,3 +20,15 @@ const $x = [(1.1),(2.2),(3.3),(4.4),];
     });
 
 });
+/*
+
+// Some idea
+class ArrayOfString extends Array {
+    constructor(xs) {
+        super(...xs);
+    }
+}
+
+let xs = new ArrayOfString([1,2,3])
+
+*/

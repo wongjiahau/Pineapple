@@ -141,7 +141,8 @@ export function tpBooleanExpression(e: BooleanExpression): string {
 }
 
 export function tpListExpression(e: ListExpression): string {
-    return `[${tpListElements(e.elements)}]`;
+    const typename = stringifyType(e.returnType);
+    return `new ${typename}([${tpListElements(e.elements)}])`;
 }
 
 export function tpListElements(e: ListElement): string {

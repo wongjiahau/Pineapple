@@ -2,7 +2,7 @@ import {
     Declaration,
     Expression,
     FunctionCall,
-    FunctionDeclaration,
+    ListExpression,
     Statement,
     TokenLocation,
     TypeExpression,
@@ -37,12 +37,9 @@ function errorMessage(message: string, location: TokenLocation): string {
 export function fillUp(s: Statement): Statement {
     switch (s.body.kind) {
         case "AssignmentStatement":
-            if (s.body.expression.kind === "FunctionCall") {
-                s.body.expression = fillUpFunctionCallTypeInfo(s.body.expression);
-            } else {
-                s.body.variable.returnType = getType(s.body.expression);
-                updateVariableTable(VARIABLE_TABLE, s.body.variable);
-            }
+            s.body.expression = fillUpExpressionTypeInfo(s.body.expression);
+            s.body.variable.returnType = getType(s.body.expression);
+            updateVariableTable(VARIABLE_TABLE, s.body.variable);
             break;
         case "FunctionCall":
             for (let i = 0; i < s.body.parameters.length; i++) {
@@ -56,6 +53,13 @@ export function fillUp(s: Statement): Statement {
     return s;
 }
 
+export function fillUpExpressionTypeInfo(e: Expression): Expression {
+    switch (e.kind) {
+        case "FunctionCall": return fillUpFunctionCallTypeInfo(e);
+        case "List": return fillUpListTypeInfo(e);
+    }
+}
+
 export function fillUpFunctionCallTypeInfo(e: FunctionCall): FunctionCall {
     for (let i = 0; i < e.parameters.length; i++) {
         e.parameters[i].returnType = getType(e.parameters[i]);
@@ -67,6 +71,17 @@ export function fillUpFunctionCallTypeInfo(e: FunctionCall): FunctionCall {
     return e;
 }
 
+export function fillUpListTypeInfo(e: ListExpression): ListExpression {
+    return {
+        ...e,
+        returnType: {
+            kind: "ListType",
+            listOf: getType(e.elements.value),
+            nullable: false,
+        }
+    };
+}
+
 export function getType(e: Expression): TypeExpression {
     let typename = "";
     switch (e.kind) {
@@ -74,7 +89,7 @@ export function getType(e: Expression): TypeExpression {
             typename = "string";
             break;
         case "Number":
-            typename = e.value.indexOf(".") > -1 ? "Double" : "Int";
+            typename = e.value.indexOf(".") > -1 ? "Float" : "Int";
             break;
         case "Variable":
             return VARIABLE_TABLE[e.name.value].returnType;
