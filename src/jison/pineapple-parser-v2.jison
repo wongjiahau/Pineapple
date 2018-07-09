@@ -49,22 +49,12 @@ const _Variable = (name,typeExpected) => ({
     typeExpected
 });
 
-const _TypeExpression = (name, isList, listSize) => ({
-    kind: "TypeExpression",
-    name,
-    isList,
-    listSize,
-    // tuple: TupleTypeExpression;
-    // operator: "union" | "intersect";
-    // next: TypeExpression;
-});
-
 const _SimpleType = (name, nullable) => ({ kind: "SimpleType", name, nullable});
 
-const _ListType = (typeExpr, nullable) => ({
-    kind: "ListType",
+const _ArrayType = (typeExpr, nullable) => ({
+    kind: "ArrayType",
     nullable,
-    listOf: typeExpr,
+    arrayOf: typeExpr,
 });
 
 const _FunctionCall = (fix,signature,parameters) => ({
@@ -86,9 +76,9 @@ const _KeyValue = (memberName, expression) => ({
     expression,
 });
 
-const _ListExpression = (elements) => ({ kind: "List", elements });
+const _ArrayExpression = (elements) => ({ kind: "Array", elements });
 
-const _ListElement = (value,next) => ({ kind: "ListElement", value, next});
+const _ArrayElement = (value,next) => ({ kind: "ArrayElement", value, next});
 
 const _StringExpression = (value, location) => ({kind:"String", value, location});
 
@@ -351,7 +341,7 @@ TypeExpression
 AtomicTypeExpr
     : TypenameAtom {$$=_SimpleType($1,false)}
     | TypenameAtom '?' {$$=_SimpleType($1,true)}
-    | AtomicTypeExpr '[' ']' {$$=_ListType($1,false)}
+    | AtomicTypeExpr '[' ']' {$$=_ArrayType($1,false)}
     | AtomicTypeExpr '[' Expression ']'
     | AtomicTypeExpr '[' TupleTypeExpression ']'
     | '(' TypeExpression ')'
@@ -418,7 +408,7 @@ AtomicExpr
     ;
 
 ArrayAccess
-    : AtomicExpr '.{' Expression '}'
+    : AtomicExpr '.' '[' Expression ']'
     ;
 
 ArraySlicing
@@ -463,22 +453,22 @@ KeyValue
     ;
 
 ArrayList 
-    : '[' Elements ']' {$$=_ListExpression($2)}
+    : '[' Elements ']' {$$=_ArrayExpression($2)}
     | '[' ']' 
     ;
 
 Elements
-    : AtomicExpr {$$=_ListElement($1,null)}
-    | AtomicExpr Elements  {$$=_ListElement($1,$2)}
+    : AtomicExpr {$$=_ArrayElement($1,null)}
+    | AtomicExpr Elements  {$$=_ArrayElement($1,$2)}
     ;
 
 MultilineList
-    : NEWLINE INDENT MultilineElements DEDENT {$$=_ListExpression($3)}
+    : NEWLINE INDENT MultilineElements DEDENT {$$=_ArrayExpression($3)}
     ;
 
 MultilineElements
-    : LIST_BULLET Expression NEWLINE MultilineElements {$$=_ListElement($2,$4)}
-    | LIST_BULLET Expression NEWLINE {$$=_ListElement($2,null)}
+    : LIST_BULLET Expression NEWLINE MultilineElements {$$=_ArrayElement($2,$4)}
+    | LIST_BULLET Expression NEWLINE {$$=_ArrayElement($2,null)}
     ;
 
 BooleanAtom

@@ -1,10 +1,10 @@
 import {
+    ArrayExpression,
     BooleanExpression,
     BranchStatement,
     Declaration,
     Expression,
     FunctionCall,
-    ListExpression,
     NumberExpression,
     Statement,
     StringExpression,
@@ -92,7 +92,7 @@ export function fillUpBranchTypeInfo(b: BranchStatement, variableTable: Variable
 export function fillUpExpressionTypeInfo(e: Expression, variableTable: VariableTable): Expression {
     switch (e.kind) {
         case "FunctionCall": return fillUpFunctionCallTypeInfo(e, variableTable);
-        case "List":   return fillUpListTypeInfo(e, variableTable);
+        case "Array":   return fillUpListTypeInfo(e, variableTable);
         case "Number": return fillUpSimpleTypeInfo(e, "Number");
         case "String": return fillUpSimpleTypeInfo(e, "String");
         case "Boolean": return fillUpSimpleTypeInfo(e, "Boolean");
@@ -133,12 +133,12 @@ export function fillUpFunctionCallTypeInfo(e: FunctionCall, variableTable: Varia
     return e;
 }
 
-export function fillUpListTypeInfo(e: ListExpression, variableTable: VariableTable): ListExpression {
+export function fillUpListTypeInfo(e: ArrayExpression, variableTable: VariableTable): ArrayExpression {
     return {
         ...e,
         returnType: {
-            kind: "ListType",
-            listOf: getType(e.elements.value, variableTable),
+            kind: "ArrayType",
+            arrayOf: getType(e.elements.value, variableTable),
             nullable: false,
         }
     };

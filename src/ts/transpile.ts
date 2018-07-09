@@ -1,4 +1,6 @@
 import {
+    ArrayElement,
+    ArrayExpression,
     AssignmentStatement,
     BooleanExpression,
     BranchStatement,
@@ -9,8 +11,6 @@ import {
     FunctionDeclaration,
     JavascriptCode,
     KeyValueList,
-    ListElement,
-    ListExpression,
     NumberExpression,
     PonExpression,
     ReturnStatement,
@@ -139,8 +139,8 @@ export function stringifyType(t: TypeExpression): string {
     switch (t.kind) {
         case "SimpleType":
             return t.name.value;
-        case "ListType":
-            return "ArrayOf" + stringifyType(t.listOf);
+        case "ArrayType":
+            return "ArrayOf" + stringifyType(t.arrayOf);
     }
 }
 
@@ -159,7 +159,7 @@ export function tpExpression(e: Expression): string {
         case "Number": return tpNumberExpression(e);
         case "Variable": return "$" + e.name.value;
         case "Pon": return tpPonExpression(e);
-        case "List": return tpListExpression(e);
+        case "Array": return tpArrayExpression(e);
         case "Boolean": return tpBooleanExpression(e);
     }
 }
@@ -183,12 +183,12 @@ export function tpBooleanExpression(e: BooleanExpression): string {
     return e.value;
 }
 
-export function tpListExpression(e: ListExpression): string {
+export function tpArrayExpression(e: ArrayExpression): string {
     const typename = stringifyType(e.returnType);
     return `new ${typename}([${tpListElements(e.elements)}])`;
 }
 
-export function tpListElements(e: ListElement): string {
+export function tpListElements(e: ArrayElement): string {
     return `${tpExpression(e.value)},${e.next ? tpListElements(e.next) : ""}`;
 }
 

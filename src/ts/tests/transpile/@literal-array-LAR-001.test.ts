@@ -1,21 +1,17 @@
 import { expect } from "chai";
 import { pine2js } from "../../pine2js";
 
-describe("@literal-list-LL-002", () => {
-    it("multiline lists", () => {
+describe("@literal-array-LAR-001", () => {
+    it("list with some elements", () => {
         const input =
 `
 def main:
-    let fruits =
-        o "pineapple"
-        o "apple"
-        o "banana"
-`
-;
+    let x = [1.1 2.2 3.3 4.4]
+`;
         const expectedOutput =
 `
 function _main(){
-const $fruits = new ArrayOfString(["pineapple","apple","banana",]);
+const $x = new ArrayOfNumber([(1.1),(2.2),(3.3),(4.4),]);
 }
 `;
         // console.log(pine2js(input));
@@ -24,3 +20,15 @@ const $fruits = new ArrayOfString(["pineapple","apple","banana",]);
     });
 
 });
+/*
+
+// Some idea
+class ArrayOfString extends Array {
+    constructor(xs) {
+        super(...xs);
+    }
+}
+
+let xs = new ArrayOfString([1,2,3])
+
+*/

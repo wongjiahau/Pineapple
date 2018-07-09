@@ -9,8 +9,10 @@ def (this Int) add: (that Int) -> Int
     return this + that
 
 def (this Int[]) add: (that Int[]) -> Int[]
-    for i in 0 ..< 10
-        print: "Not implemented yet"
+    let result Int[] mutable = []
+    for i in 0..<that.length
+        result = result append: (this[i] + that[i])
+    return result
 
 def main:
     let y = 8 add: 9
