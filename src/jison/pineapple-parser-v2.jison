@@ -16,7 +16,19 @@ const _FunctionDeclaration = (signature,returnType,parameters,statements,affix) 
     affix,
 });
 
-const _AssignmentStatement = (variable,linkType,expression,isDeclaration) => ({
+const _BranchStatement = (test,body,elseBranch) => ({
+    kind:"BranchStatement",test,body,elseBranch
+});
+
+const _TestExpression = (current, negated, chainOperator, next) => ({
+    kind: "TestExpression",
+    current,
+    negated,
+    chainOperator,
+    next
+});
+
+const _AssignmentStatement = (variable, linkType, expression, isDeclaration) => ({
     kind: "AssignmentStatement",
     isDeclaration,
     variable,
@@ -101,6 +113,9 @@ function _getOperatorName(op) {
 "let"    return 'LET'
 "def"    return 'DEF'
 "return" return 'RETURN'
+"if"     return 'IF'
+"elif"   return 'ELIF'
+"else"   return 'ELSE'
 
 // Inivisible token
 "@NEWLINE"       %{
@@ -151,9 +166,6 @@ function _getOperatorName(op) {
 "UNION_OP"           return 'UNION_OP'
 "INTERSECT_OP"       return 'INTERSECT_OP'
 "IOFUNCTION"         return 'IOFUNCTION'
-"IF"                 return 'IF'
-"ELIF"               return 'ELIF'
-"ELSE"               return 'ELSE'
 "ISNT"               return 'ISNT'
 "IS"                 return 'IS'
 "AND"                return 'AND'
@@ -179,8 +191,8 @@ EntryPoint
     ;
 
 DeclarationList
-    : Declaration NEWLINE DeclarationList {$$=_Declaration($1,$3)}
-    | Declaration NEWLINE {$$=_Declaration($1,null)} 
+    : Declaration DeclarationList {$$=_Declaration($1,$2)}
+    | Declaration {$$=_Declaration($1,null)} 
     ;
 
 
@@ -269,62 +281,26 @@ WhileStatement
     ;
 
 IfStatement
-    : IF Test Block
-    | IF Test Block ElifChain
-    | IF Test Block ElseStatement
+    : IF Test Block               {$$=_BranchStatement($2,$3,null)}
+    | IF Test Block ElifChain     {$$=_BranchStatement($2,$3,$4)}
+    | IF Test Block ElseStatement {$$=_BranchStatement($2,$3,$4)}
     ;
 
 ElifChain
-    : ElifChain ElifStatement
-    | ElifStatement ElseStatement
-    | ElifStatement
-    ;
-
-ElifStatement
-    : ELIF Test Block
+    : ELIF Test Block ElifChain     {$$=_BranchStatement($2,$3,$4)}
+    | ELIF Test Block ElseStatement {$$=_BranchStatement($2,$3,$4)}
+    | ELIF Test Block               {$$=_BranchStatement($2,$3,null)}
     ;
 
 ElseStatement
-    : ELSE Block
+    : ELSE Block {$$=_BranchStatement(null,$2,null)}
     ;
     
 Test
-    : BoolFuncCall
-    | BoolFuncCall TestChain 
-    | BoolFuncCall PartialBoolFuncCallChain
-    | ExpressionChain PartialBoolFuncCall
-    ;
-
-TestChain
-    : TestChain LogicOperatorAtom BoolFuncCall 
-    | LogicOperatorAtom BoolFuncCall
-    ;
-
-BoolFuncCall
-    : AtomicExpr PartialBoolFuncCall
-    ;
-
-PartialBoolFuncCallChain
-    : PartialBoolFuncCallChain LogicOperatorAtom PartialBoolFuncCall 
-    | LogicOperatorAtom PartialBoolFuncCall
-    ;
-
-ExpressionChain
-    : ExpressionChain LogicOperatorAtom AtomicExpr
-    | AtomicExpr LogicOperatorAtom AtomicExpr
-    ;
-
-LogicOperatorAtom
-    : AND
-    | OR
-    ;
-
-PartialBoolFuncCall
-    : FuncAtom 
-    | FuncAtom AtomicExpr 
-    | FuncAtom AtomicExpr FuncAtom
-    | FuncAtom AtomicExpr FuncAtom AtomicExpr
-    | OperatorAtom AtomicExpr
+    : FuncCall                                  {$$=_TestExpression($1,false,null,null)}
+    | FuncCall LogicOperatorAtom Test           {$$=_TestExpression($1,false,$2,$3)}
+    | NotAtom FuncCall                          {$$=_TestExpression($1,true,null,null)}
+    | NotAtom FuncCall LogicOperatorAtom Test   {$$=_TestExpression($1,true,$2,$3)}
     ;
 
 LinkStatement
@@ -513,4 +489,9 @@ TypenameAtom
 
 JavascriptCodeAtom
     : JAVASCRIPT {$$=_JavascriptCode($1)}
+    ;
+
+LogicOperatorAtom
+    : AND {$$=_Token($1, this._$)}
+    | OR  {$$=_Token($1, this._$)}
     ;

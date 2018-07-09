@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { pine2js } from "../../pine2js";
 
-describe("@literal-object-LO-001", () => {
+describe.skip("@literal-object-LOB-001", () => {
     it("object literals", () => {
         const input =
 `

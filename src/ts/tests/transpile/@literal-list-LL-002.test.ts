@@ -10,7 +10,8 @@ def main:
         o "pineapple"
         o "apple"
         o "banana"
-`;
+`
+;
         const expectedOutput =
 `
 function _main(){

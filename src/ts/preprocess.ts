@@ -8,6 +8,7 @@ export function preprocess(input: string): string {
     result = labelNewlines(result);
     result = smoothify(result);
     result = labelIndentation(result);
+    result = result.replace(/@DEDENT@DEDENT/g, "@DEDENT@NEWLINE@DEDENT");
     result += "@EOF";
     // console.log(labelLineNumbers(result));
     return result;

@@ -1,5 +1,6 @@
 import {
     BooleanExpression,
+    BranchStatement,
     Declaration,
     Expression,
     FunctionCall,
@@ -65,11 +66,24 @@ export function fillUp(s: Statement, variableTable: VariableTable): Statement {
                 s.body.parameters[i] = fillUpExpressionTypeInfo(s.body.parameters[i], variableTable);
             }
             break;
+        case "BranchStatement":
+            s.body = fillUpBranchTypeInfo(s.body, variableTable);
+            break;
     }
     if (s.next !== null) {
         s.next = fillUp(s.next, variableTable);
     }
     return s;
+}
+
+export function fillUpBranchTypeInfo(b: BranchStatement, variableTable: VariableTable): BranchStatement {
+    if (b.test !== null) {
+        b.test.current = fillUpFunctionCallTypeInfo(b.test.current, variableTable);
+    }
+    if (b.elseBranch !== null) {
+        b.elseBranch = fillUpBranchTypeInfo(b.elseBranch, variableTable);
+    }
+    return b;
 }
 
 export function fillUpExpressionTypeInfo(e: Expression, variableTable: VariableTable): Expression {

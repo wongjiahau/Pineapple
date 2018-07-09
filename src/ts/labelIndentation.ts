@@ -7,7 +7,7 @@ export function labelIndentation(input: string): string {
             lines[i] += "@INDENT";
         } else if (currentIndentationLevel > nextIndentationLevel) {
             for (let j = 0; j < currentIndentationLevel - nextIndentationLevel; j++) {
-                lines[i] += "@DEDENT@NEWLINE";
+                lines[i] += "@DEDENT";
             }
         }
     }

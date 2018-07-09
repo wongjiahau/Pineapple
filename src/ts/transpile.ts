@@ -1,6 +1,7 @@
 import {
     AssignmentStatement,
     BooleanExpression,
+    BranchStatement,
     Declaration,
     Expression,
     FunctionCall,
@@ -14,6 +15,7 @@ import {
     ReturnStatement,
     Statement,
     StringExpression,
+    TestExpression,
     Token,
     TypeExpression,
     Variable
@@ -70,7 +72,32 @@ export function tpStatement(s: Statement): string {
         case "AssignmentStatement": return tpAssignmentStatement(s.body)    + next;
         case "JavascriptCode":      return tpJavascriptCode(s.body)         + next;
         case "ReturnStatement":     return tpReturnStatement(s.body)        + next;
+        case "BranchStatement":     return tpBranchStatement(s.body)        + next;
     }
+}
+
+export function tpBranchStatement(b: BranchStatement): string {
+    if (b.test === null) {
+        return `{
+    ${tpStatement(b.body)}
+}`;
+    } else {
+        return `if(${tpTestExpression(b.test)}){
+    ${tpStatement(b.body)}
+} ${b.elseBranch ? `else ${tpBranchStatement(b.elseBranch)}` : "" }
+`;
+    }
+}
+
+export function tpTestExpression(t: TestExpression): string {
+    if (t === null) {
+        return "";
+    }
+    return `${t.negated ? "!" : ""}`
+        + `${tpFunctionCall(t.current)}`
+        + `${t.chainOperator ? t.chainOperator : ""}`
+        + `${tpTestExpression(t.next)}`
+        ;
 }
 
 export function tpReturnStatement(r: ReturnStatement): string {

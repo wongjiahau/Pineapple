@@ -20,12 +20,28 @@ export interface Statement {
         | FunctionCall
         | JavascriptCode
         | ReturnStatement
+        | BranchStatement
         ;
 
     next
         : Statement
         | null
         ;
+}
+
+export interface BranchStatement {
+    kind: "BranchStatement";
+    test: TestExpression;
+    body: Statement;
+    elseBranch: BranchStatement;
+}
+
+export interface TestExpression {
+    kind: "TestExpression";
+    current: FunctionCall;
+    negated: boolean;
+    chainOperator: Token;
+    next: TestExpression;
 }
 
 export interface ReturnStatement {
