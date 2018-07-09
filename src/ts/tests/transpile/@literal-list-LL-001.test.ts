@@ -5,14 +5,13 @@ describe("@literal-list-LL-001", () => {
     it("list with some elements", () => {
         const input =
 `
---function
-main:
+def main:
     let x = [1.1 2.2 3.3 4.4]
 `;
         const expectedOutput =
 `
 function main(){
-const x = [(1.1),(2.2),(3.3),(4.4),];
+const $x = [(1.1),(2.2),(3.3),(4.4),];
 }
 `;
         // console.log(pine2js(input));

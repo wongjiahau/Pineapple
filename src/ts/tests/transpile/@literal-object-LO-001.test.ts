@@ -5,8 +5,7 @@ describe("@literal-object-LO-001", () => {
     it("object literals", () => {
         const input =
 `
---function
-main:
+def main:
     let y = 6
 
     let people =
@@ -21,8 +20,8 @@ main:
         const expectedOutput =
 `
 function main(){
-const y = new Int(6);
-const people = {
+const $y = new Int(6);
+const $people = {
 name : "john",
 age : new Int(123),
 wife : {
@@ -30,7 +29,7 @@ name : "Natelie",
 age : new Int(99)
 }
 };
-const x = new Int(5);
+const $x = new Int(5);
 }
 `;
         // console.log(pine2js(input));

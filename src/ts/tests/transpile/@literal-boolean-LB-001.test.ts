@@ -5,13 +5,13 @@ describe("@literal-boolean-LB-001", () => {
     it("case1", () => {
         const input =
 `
-main:
+def main:
     let x = true
 `;
         const expectedOutput =
 `
 function main(){
-const x = true;
+const $x = true;
 }
 `;
         // console.log(pine2js(input));
@@ -22,13 +22,13 @@ const x = true;
     it("case2", () => {
         const input =
 `
-main:
+def main:
     let y = false
 `;
         const expectedOutput =
 `
 function main(){
-const y = false;
+const $y = false;
 }
 `;
         // console.log(pine2js(input));

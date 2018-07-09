@@ -5,8 +5,7 @@ describe("@literal-list-LL-002", () => {
     it("multiline lists", () => {
         const input =
 `
---function
-main:
+def main:
     let fruits =
         o 'pineapple'
         o 'apple'
@@ -15,7 +14,7 @@ main:
         const expectedOutput =
 `
 function main(){
-const fruits = ["pineapple","apple","banana",];
+const $fruits = ["pineapple","apple","banana",];
 }
 `;
         // console.log(pine2js(input));

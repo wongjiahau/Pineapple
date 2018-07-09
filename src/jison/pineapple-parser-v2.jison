@@ -152,7 +152,7 @@ function _getOperatorName(op) {
 /* the last statement has the highest precedence */
 /* the first statement has the lower precedence */
 
-%right ASSIGN_OP BIND_OP TYPE_OP
+%right ASSIGN_OP 
 %left ',' DOT
 %left BINOP2 '+' '-'
 %left UMINUS
@@ -182,7 +182,7 @@ TypeDeclaration
     ;
 
 MembernameTypeList
-    : MembernameTypeList MembernameAtom TYPE_OP TypeExpression
+    : MembernameTypeList MembernameAtom TypeExpression
     ;
 
 FunctionDeclaration
@@ -441,7 +441,7 @@ KeyValueList
     ;
 
 KeyValue
-    : MembernameAtom LinkOperator Expression {$$=_KeyValue($1,$3)}
+    : MembernameAtom ASSIGN_OP Expression {$$=_KeyValue($1,$3)}
     ;
 
 ArrayList 

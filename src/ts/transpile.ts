@@ -44,7 +44,7 @@ ${tpStatement(f.statements)};
     const targetType = f.parameters[0].typeExpected.name.value;
     if (f.parameters.length === 1) {
         return `${targetType}.prototype.${funcSignature}=function(){
-let ${f.parameters[0].name.value} = this;
+let $${f.parameters[0].name.value} = this;
 ${tpStatement(f.statements)}}
 `;
     }
@@ -94,7 +94,7 @@ export function stringifyType(t: TypeExpression): string {
 }
 
 export function tpLinkStatement(l: LinkStatement): string {
-    return `${l.isDeclaration ? "const" : ""} ${l.variable.name.value} = ${tpExpression(l.expression)}`;
+    return `${l.isDeclaration ? "const" : ""} $${l.variable.name.value} = ${tpExpression(l.expression)}`;
 }
 
 export function tpParameters(v: Variable[]): string {
