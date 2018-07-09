@@ -1,11 +1,4 @@
---function
-print: input as String -> Void
+def print: (this String) -> Void
     <javascript>
-    console.log(input.valueOf());
-    </javascript>
-
---function
-say: input as String -> Void
-    <javascript>
-    console.log(input.valueOf());
+    console.log($this.valueOf());
     </javascript>

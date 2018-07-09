@@ -1,5 +1,4 @@
---function
-x as List concat: y as List -> List
+def (x Array) (++) (y Array) -> Array
     <javascript>
-    return x.concat(y);
+    return $x.concat($y);
     </javascript>

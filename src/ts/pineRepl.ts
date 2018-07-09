@@ -15,7 +15,7 @@ program.args.forEach((arg: string) => {
     let output = loadPrimitiveTypes();
     output += loadLibraryFunctions();
     output += transpileSourceFile(arg);
-    output += "\nmain();"; // Call the main function
+    output += "\n_main();"; // Call the main function
     console.log(output);
 });
 
@@ -33,10 +33,5 @@ function loadLibraryFunctions(): string {
 
 function loadPrimitiveTypes(): string {
     return `
-class Int extends Number {
-    constructor(value) {
-        super(value);
-    }
-}
 `;
 }

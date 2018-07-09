@@ -407,7 +407,7 @@ MixfixFuncCall
     ;
 
 AtomicExpr
-    : LEFT_PAREN Expression RIGHT_PAREN
+    : LEFT_PAREN Expression RIGHT_PAREN {$$=$2}
     | Value
     | ArrayAccess
     | ArraySlicing
