@@ -5,8 +5,7 @@ describe("@preprocess-PP-003.test.ts", () => {
     it("should ignore dangling newlines", () => {
         const input =
 `
---function
-main:
+def main:
     let y = 6
 
 
@@ -15,8 +14,8 @@ main:
         const expectedOutput =
 `
 function main(){
-const y = new Int(6);
-const x = new Int(8);
+const $y = new Int(6);
+const $x = new Int(8);
 }
 `;
         // console.log(pine2js(input));

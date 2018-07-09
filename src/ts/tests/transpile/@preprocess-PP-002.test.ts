@@ -5,30 +5,28 @@ describe("@preprocess-PP-002", () => {
     it("should ignore consequtive newlines", () => {
         const input =
 `
---function
-print: input as String -> Void
+def print: (this String) -> Void
     <javascript>
-    console.log(input.valueOf());
+    console.log($this.valueOf());
     </javascript>
 
---function
-say: input as String -> Void
+def say: (this String) -> Void
     <javascript>
-    console.log(input.valueOf());
+    console.log($this.valueOf());
     </javascript>
 
 `;
         const expectedOutput =
 `String.prototype.print=function(){
-let input = this;
+let $this = this;
 // <javascript>
-console.log(input.valueOf());
+console.log($this.valueOf());
 // </javascript>
 }
 String.prototype.say=function(){
-let input = this;
+let $this = this;
 // <javascript>
-console.log(input.valueOf());
+console.log($this.valueOf());
 // </javascript>
 }
 `;

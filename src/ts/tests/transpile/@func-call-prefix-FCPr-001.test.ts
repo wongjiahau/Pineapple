@@ -5,7 +5,7 @@ describe("q003", () => {
     it("@func-call-prefix-FCPr-001", () => {
         const input =
 `
-main:
+def main:
     print: 'hello world'
 `;
         const expectedOutput =

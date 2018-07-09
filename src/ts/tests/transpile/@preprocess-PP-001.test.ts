@@ -4,8 +4,7 @@ import { pine2js } from "../../pine2js";
 describe("@preprocess-PP-001", () => {
     it("should ignore consecutive newlines", () => {
         const input =
-`--function
-main:
+`def main:
     print: 'hello world'
 
 
