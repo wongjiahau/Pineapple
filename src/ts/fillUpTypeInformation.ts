@@ -57,6 +57,7 @@ export function fillUpExpressionTypeInfo(e: Expression): Expression {
     switch (e.kind) {
         case "FunctionCall": return fillUpFunctionCallTypeInfo(e);
         case "List": return fillUpListTypeInfo(e);
+        default: return e;
     }
 }
 
@@ -86,7 +87,7 @@ export function getType(e: Expression): TypeExpression {
     let typename = "";
     switch (e.kind) {
         case "String":
-            typename = "string";
+            typename = "String";
             break;
         case "Number":
             typename = e.value.indexOf(".") > -1 ? "Float" : "Int";

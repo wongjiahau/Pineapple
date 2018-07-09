@@ -14,7 +14,7 @@ def main:
         const expectedOutput =
 `
 function main(){
-const $fruits = ["pineapple","apple","banana",];
+const $fruits = new ArrayOfString(["pineapple","apple","banana",]);
 }
 `;
         // console.log(pine2js(input));
