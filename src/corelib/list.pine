@@ -1,0 +1,5 @@
+--function
+x as List concat: y as List -> List
+    <javascript>
+    return x.concat(y);
+    </javascript>

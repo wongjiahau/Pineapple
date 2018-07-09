@@ -1,0 +1,27 @@
+@blueprint 
+BinaryTree{T}
+    .value  as T 
+    .left   as BinaryTree or nil 
+    .right  as BinaryTree or nil
+    where T as Comparable
+
+let $x as Integer = 2
+
+@function 
+insert ($value as T) into ($tree as BinaryTree{T}) >> BinaryTree{T}
+insert $value:T into $tree:BinaryTree{T} >> BinaryTree{T}
+
+    if $tree.value is == nil 
+        return  
+            .value = $value
+    elif $value is == $tree.value
+        >> $tree
+    elif $value is < $tree.value
+        >> insert $value into $tree.left
+    elif $value is > $tree.value
+        >> insert $value into $tree.right
+
+            
+
+
+        

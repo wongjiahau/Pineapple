@@ -1,0 +1,5 @@
+--function
+x as Int (+) y as Int -> Int
+    <javascript>
+    return new Int(x.valueOf() + y.valueOf())
+    </javascript>
