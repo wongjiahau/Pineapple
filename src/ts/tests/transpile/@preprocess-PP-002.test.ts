@@ -22,12 +22,14 @@ const $this = this;
 // <javascript>
 console.log($this.valueOf());
 // </javascript>
+
 }
 String.prototype.say=function(){
 const $this = this;
 // <javascript>
 console.log($this.valueOf());
 // </javascript>
+
 }
 `;
         // console.log(pine2js(input));

@@ -42,11 +42,14 @@ ${tpStatement(f.statements)};
 `;
     }
     const initStatement = `const $${f.parameters[0].name.value} = this;`;
-    const targetType = f.parameters[0].typeExpected.name.value;
+
+    const targetType = stringifyType(f.parameters[0].typeExpected);
+
     if (f.parameters.length === 1) {
         return `${targetType}.prototype.${funcSignature}=function(){
 ${initStatement}
-${tpStatement(f.statements)}}
+${tpStatement(f.statements)}
+}
 `;
     }
     if (f.parameters.length === 2) {
@@ -90,7 +93,7 @@ export function stringifyType(t: TypeExpression): string {
         case "SimpleType":
             return t.name.value;
         case "ListType":
-            return "List of " + stringifyType(t.listOf);
+            return "ArrayOf" + stringifyType(t.listOf);
     }
 }
 

@@ -14,7 +14,7 @@ const _FunctionDeclaration = (signature,returnType,parameters,statements,affix) 
     affix,
 });
 
-const _LinkStatement = (variable,linkType,expression,isDeclaration) => ({
+const _AssignmentStatement = (variable,linkType,expression,isDeclaration) => ({
     kind: "AssignmentStatement",
     isDeclaration,
     variable,
@@ -36,6 +36,14 @@ const _TypeExpression = (name, isList, listSize) => ({
     // tuple: TupleTypeExpression;
     // operator: "union" | "intersect";
     // next: TypeExpression;
+});
+
+const _SimpleType = (name, nullable) => ({ kind: "SimpleType", name, nullable});
+
+const _ListType = (typeExpr, nullable) => ({
+    kind: "ListType",
+    nullable,
+    listOf: typeExpr,
 });
 
 const _FunctionCall = (fix,signature,parameters) => ({
@@ -112,6 +120,7 @@ function _getOperatorName(op) {
 "["     return '['
 "]"     return ']'
 "o"     return 'LIST_BULLET'
+"?"     return '?'
 
 // Literals
 ["].*?["]                                   return 'STRING'
@@ -315,8 +324,9 @@ PartialBoolFuncCall
     ;
 
 LinkStatement
-    : LET Variable ASSIGN_OP Expression {$$=_LinkStatement($2,$3,$4,true)}
-    | VariableAtom ASSIGN_OP Expression {$$=_LinkStatement($1,$2,$3,false)}
+    : LET Variable ASSIGN_OP Expression {$$=_AssignmentStatement($2,$3,$4,true)}
+    | LET Variable MUTABLE ASSIGN_OP Expression // To be continued
+    | VariableAtom ASSIGN_OP Expression {$$=_AssignmentStatement($1,$2,$3,false)}
     ;
 
 Variable 
@@ -332,10 +342,11 @@ TypeExpression
     ;
 
 AtomicTypeExpr
-    : TypenameAtom {$$=_TypeExpression($1,false,0)}
-    | TypenameAtom '[' ']'
-    | TypenameAtom '[' Expression ']'
-    | TypenameAtom '[' TupleTypeExpression ']'
+    : TypenameAtom {$$=_SimpleType($1,false)}
+    | TypenameAtom '?' {$$=_SimpleType($1,true)}
+    | AtomicTypeExpr '[' ']' {$$=_ListType($1,false)}
+    | AtomicTypeExpr '[' Expression ']'
+    | AtomicTypeExpr '[' TupleTypeExpression ']'
     | '(' TypeExpression ')'
     ;
 

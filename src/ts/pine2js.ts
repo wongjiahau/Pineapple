@@ -11,8 +11,8 @@ export function pine2js(input: string): string {
     // const preprocessed = removeConsequetingNewlines(tokenized);
     const result = preprocess(input);
     let ast      = parser.parse(result);
-    console.log(JSON.stringify(ast, null, 2));
     ast          = fillUpTypeInformation(ast);
+    // console.log(JSON.stringify(ast, null, 2));
 
     const symbolized = retrieveSymbol(Token.TokenTable, ast);
     // console.log(Token.TokenTable);

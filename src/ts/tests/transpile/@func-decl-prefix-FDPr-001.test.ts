@@ -6,15 +6,13 @@ describe("@func-decl-prefix-FDPr-001", () => {
         const input =
 `
 def show: (this Int[])
-    print: this
+    print: "Not implemented"
 `;
         const expectedOutput =
 `
-Int.prototype.$plus_Int=function($y){
-const $x = this;
-// <javascript>
-return $x + $y;
-// </javascript>
+ArrayOfInt.prototype.show=function(){
+const $this = this;
+"Not implemented".print()
 }
 `;
         // console.log(pine2js(input));

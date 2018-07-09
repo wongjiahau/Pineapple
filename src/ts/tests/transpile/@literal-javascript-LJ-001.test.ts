@@ -15,6 +15,7 @@ const $this = this;
 // <javascript>
 console.log($this);
 // </javascript>
+
 }
 `;
         // console.log(pine2js(input));
