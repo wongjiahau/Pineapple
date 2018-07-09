@@ -11,7 +11,7 @@ describe("@literal-javascript-LJ-001", () => {
 `;
         const expectedOutput =
 `String.prototype.print=function(){
-let $this = this;
+const $this = this;
 // <javascript>
 console.log($this);
 // </javascript>

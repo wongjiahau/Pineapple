@@ -5,18 +5,17 @@ describe("@func-decl-infix-FDI-001", () => {
     it("infix function declaration", () => {
         const input =
 `
---function
-x as Int (+) y as Int -> Int
+def (x Int) (+) (y Int) -> Int
     <javascript>
-    return x + y;
+    return $x + $y;
     </javascript>
 `;
         const expectedOutput =
 `
-Int.prototype.$plus_Int=function(y){
-const x = this;
+Int.prototype.$plus_Int=function($y){
+const $x = this;
 // <javascript>
-return x + y;
+return $x + $y;
 // </javascript>
 }
 `;

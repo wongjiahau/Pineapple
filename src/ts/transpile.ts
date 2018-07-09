@@ -41,17 +41,18 @@ ${tpStatement(f.statements)};
 }
 `;
     }
+    const initStatement = `const $${f.parameters[0].name.value} = this;`;
     const targetType = f.parameters[0].typeExpected.name.value;
     if (f.parameters.length === 1) {
         return `${targetType}.prototype.${funcSignature}=function(){
-let $${f.parameters[0].name.value} = this;
+${initStatement}
 ${tpStatement(f.statements)}}
 `;
     }
     if (f.parameters.length === 2) {
         return `${targetType}.prototype.${funcSignature}_${f.parameters[1].typeExpected.name.value}`
-        + `=function(${f.parameters.slice(1).map((x) => x.name.value).join(",")}){
-const ${f.parameters[0].name.value} = this;
+        + `=function(${f.parameters.slice(1).map((x) => "$" + x.name.value).join(",")}){
+${initStatement}
 ${tpStatement(f.statements)}}
 `;
     }

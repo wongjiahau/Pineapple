@@ -114,7 +114,7 @@ function _getOperatorName(op) {
 "o"     return 'LIST_BULLET'
 
 // Literals
-['].*?[']                                   return 'STRING'
+["].*?["]                                   return 'STRING'
 \<javascript\>(.|[\s\S])*?\<\/javascript\>  return 'JAVASCRIPT'
 \d+([.]\d+)?((e|E)[+-]?\d+)?                return 'NUMBER' 
 "true"                                      return 'TRUE'
