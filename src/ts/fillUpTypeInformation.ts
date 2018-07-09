@@ -59,6 +59,10 @@ export function fillUp(s: Statement): Statement {
 export function fillUpFunctionCallTypeInfo(e: FunctionCall): FunctionCall {
     for (let i = 0; i < e.parameters.length; i++) {
         e.parameters[i].returnType = getType(e.parameters[i]);
+        const expression = e.parameters[i];
+        if (expression.kind === "FunctionCall") {
+            e.parameters[i] = fillUpFunctionCallTypeInfo(expression);
+        }
     }
     return e;
 }

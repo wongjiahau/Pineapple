@@ -13,12 +13,16 @@ def main:
         const expectedOutput =
 `
 function main(){
-const x = new Int(4);
-const y = new Int(6);
-const result = (x.$plus_Int(y));
+const $x = new Int(4);
+const $y = new Int(6);
+const $result = ($x.$plus_Int($y));
 }
-`;
-        expect(pine2js(input).trim()).to.eq(expectedOutput.trim());
+`.trim();
+
+        const result = pine2js(input).trim();
+        // console.log(expectedOutput);
+        // console.log(result);
+        expect(result).to.eq(expectedOutput);
     });
 
 });

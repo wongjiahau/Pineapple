@@ -5,14 +5,13 @@ describe("@func-call-infix-FCI-003", () => {
     it("double symbols", () => {
         const input =
 `
---function
-main:
+def main:
     let y = 6 ++ 6
 `;
         const expectedOutput =
 `
 function main(){
-const y = (new Int(6).$plusplus_Int(new Int(6)));
+const $y = (new Int(6).$plusplus_Int(new Int(6)));
 }
 
 `;

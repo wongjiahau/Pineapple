@@ -5,14 +5,13 @@ describe("@func-call-infix-FCI-002", () => {
     it("nested infix function call", () => {
         const input =
 `
---function
-main:
+def main:
     let y = 6 + 6 + 6
 `;
         const expectedOutput =
 `
 function main(){
-const y = ((new Int(6).$plus_Int(new Int(6))).$plus_Int(new Int(6)));
+const $y = ((new Int(6).$plus_Int(new Int(6))).$plus_Int(new Int(6)));
 }
 `;
         // console.log(pine2js(input));

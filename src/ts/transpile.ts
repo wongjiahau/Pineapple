@@ -106,7 +106,7 @@ export function tpExpression(e: Expression): string {
         case "FunctionCall": return tpFunctionCall(e);
         case "String": return tpStringExpression(e);
         case "Number": return tpNumberExpression(e);
-        case "Variable": return e.name.value;
+        case "Variable": return "$" + e.name.value;
         case "Pon": return tpPonExpression(e);
         case "List": return tpListExpression(e);
         case "Boolean": return tpBooleanExpression(e);
