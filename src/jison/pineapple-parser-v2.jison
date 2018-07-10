@@ -84,15 +84,15 @@ const _KeyValue = (memberName, expression) => ({
     expression,
 });
 
-const _ArrayExpression = (elements) => ({ kind: "Array", elements });
+const _ArrayExpression = (elements,location) => ({ kind: "Array", elements, location});
 
-const _ArrayElement = (repr,next) => ({ kind: "ArrayElement", repr, next});
+const _ArrayElement = (value,next) => ({ kind: "ArrayElement", value, next});
 
-const _StringExpression = (repr, location) => ({kind:"String", repr, location});
+const _StringExpression = (repr,location) => ({kind:"String", repr, location});
 
-const _NumberExpression = (repr, location) => ({kind:"Number", repr, location});
+const _NumberExpression = (repr,location) => ({kind:"Number", repr, location});
 
-const _BooleanExpression = (repr, location) => ({kind:"Boolean", repr, location});
+const _BooleanExpression = (repr,location) => ({kind:"Boolean", repr, location});
 
 const _JavascriptCode = (repr,location) => ({kind:"JavascriptCode",repr, location});
 
@@ -461,7 +461,7 @@ KeyValue
     ;
 
 Array
-    : '[' Elements ']' {$$=_ArrayExpression($2)}
+    : '[' Elements ']' {$$=_ArrayExpression($2,this._$)}
     | '[' ']' 
     ;
 
@@ -471,7 +471,7 @@ Elements
     ;
 
 MultilineList
-    : NEWLINE INDENT MultilineElements DEDENT {$$=_ArrayExpression($3)}
+    : NEWLINE INDENT MultilineElements DEDENT {$$=_ArrayExpression($3,this._$)}
     ;
 
 MultilineElements

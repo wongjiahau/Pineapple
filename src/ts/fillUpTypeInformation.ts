@@ -1,5 +1,6 @@
 import {
     ArrayAccess,
+    ArrayElement,
     ArrayExpression,
     BooleanExpression,
     BranchStatement,
@@ -7,6 +8,7 @@ import {
     Expression,
     FunctionCall,
     NumberExpression,
+    SimpleType,
     Statement,
     StringExpression,
     TokenLocation,
@@ -159,11 +161,7 @@ export function fillUpFunctionCallTypeInfo(e: FunctionCall, variableTable: Varia
 export function fillUpArrayTypeInfo(e: ArrayExpression, variableTable: VariableTable): ArrayExpression {
     return {
         ...e,
-        returnType: {
-            kind: "ArrayType",
-            arrayOf: getType(e.elements.value, variableTable),
-            nullable: false,
-        }
+        returnType: getType(e, variableTable)
     };
 }
 
@@ -180,6 +178,12 @@ export function getType(e: Expression, variableTable: VariableTable): TypeExpres
             return variableTable[e.repr].returnType;
         case "FunctionCall":
             return e.returnType;
+        case "Array":
+            return {
+                kind: "ArrayType",
+                arrayOf: getElementsType(e.elements, variableTable),
+                nullable: false,
+            };
     }
     return {
         kind: "SimpleType",
@@ -189,4 +193,22 @@ export function getType(e: Expression, variableTable: VariableTable): TypeExpres
         },
         nullable: false
     };
+}
+
+export function getElementsType(a: ArrayElement, variableTable: VariableTable): TypeExpression {
+    const result: TypeExpression[] = [];
+    let current: ArrayElement | null = a;
+    while (current !== null) {
+        result.push(getType(current.value, variableTable));
+        current = current.next;
+    }
+    checkIfAllElementTypeAreHomogeneous(result);
+    return result[0];
+}
+
+export function checkIfAllElementTypeAreHomogeneous(ts: TypeExpression[]): void {
+    if (ts.some((x) => x.kind !== ts[0].kind)) {
+        throw new Error("Every element in an array should have the same type");
+    }
+    // TODO: Check if every element is of the same type
 }

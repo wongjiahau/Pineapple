@@ -141,8 +141,8 @@ export interface KeyValue {
 export interface ArrayExpression {
     kind: "Array";
     elements: ArrayElement;
-    returnType: TypeExpression;
     location: TokenLocation;
+    returnType: TypeExpression;
 }
 
 export interface ArrayElement {
