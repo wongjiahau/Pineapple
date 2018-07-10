@@ -104,10 +104,11 @@ function _getOperatorName(op) {
         "*"	 : "asterisk",       "@"	: "at",             "`"	: "backtick",
         "\\" : "backslash",      ":"	: "colon",          ","	: "comma",
         "$"	 : "dollar",         "="	: "equal",          "!"	: "bang",
-        ">"	 : "greaterThan",    "<"	: "lessThan",       "–"	: "minus",
+        ">"	 : "greaterThan",    "<"	: "lessThan",       "-"	: "minus",
         "%"	 : "percent",        "|"	: "pipe",           "+"	: "plus",
         "#"	 : "hash",           ";"	: "semi",           "/"	: "slash",
         "~"	 : "tilde",          "_"	: "underscore",     "?"	: "questionMark",
+        "^"  : "caret"
     };
     let result = "$" + op.split("").map(x => dic[x]).join("$") + ":";
     return result;

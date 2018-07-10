@@ -13,21 +13,21 @@ if (program.log) {
 const fs = require("fs");
 program.args.forEach((arg: string) => {
     let output = loadPrimitiveTypes();
-    output += loadLibraryFunctions();
-    output += transpileSourceFile(arg);
+    const source = loadLibraryFunctions();
+    output += pine2js(source + readFile(arg));
     output += "\n_main();"; // Call the main function
     console.log(output);
 });
 
-function transpileSourceFile(filename: string): string {
-    const content = fs.readFileSync(filename).toString();
-    return pine2js(content);
+function readFile(filename: string): string {
+    return fs.readFileSync(filename).toString();
 }
 
 function loadLibraryFunctions(): string {
     const CORE_LIBRARY_DIRECTORY = "../corelib/";
     return fs.readdirSync(CORE_LIBRARY_DIRECTORY).map((x: string) => {
-        return transpileSourceFile(CORE_LIBRARY_DIRECTORY + x);
+        const content = readFile(CORE_LIBRARY_DIRECTORY + x);
+        return content;
     }).join("\n");
 }
 
