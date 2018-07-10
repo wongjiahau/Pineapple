@@ -53,18 +53,20 @@ export interface FunctionTable {
 
 function updateVariableTable(v: VariableTable, variable: Variable): VariableTable {
     if (v[variable.repr]) {
-        throw errorMessage(`Variable \`${variable.repr}\` is already assigned`, variable.location);
+        errorMessage(`Variable \`${variable.repr}\` is already assigned`, variable.location);
     }
     v[variable.repr] = variable;
     return v;
 }
 
-function errorMessage(message: string, location: TokenLocation | null): string {
+function errorMessage(message: string, location: TokenLocation | null) {
+    let error: string = "";
     if (location) {
-        return `${message} (at line ${location.first_line} column ${location.first_column})`;
+        error = `${message} (at line ${location.first_line} column ${location.first_column})`;
     } else {
-        return `${message}`;
+        error = `${message}`;
     }
+    console.error(error);
 }
 
 export function fillUp(s: Statement, vtab: VariableTable, ftab: FunctionTable): Statement {
@@ -125,7 +127,8 @@ export function fillUpExpressionTypeInfo(e: Expression, vtab: VariableTable, fta
 export function fillUpArrayAccessTypeInfo(a: ArrayAccess): ArrayAccess {
     switch (a.subject.returnType.kind) {
         case "SimpleType":
-            throw errorMessage(`Variable \`${a.subject}\` is not array type.`, a.subject.location);
+            errorMessage(`Variable \`${a.subject}\` is not array type.`, a.subject.location);
+            break;
         case "ArrayType":
             return {
                 ...a,
@@ -172,7 +175,7 @@ export function getFuncSignature(e: FunctionCall, ftab: FunctionTable): TypeExpr
     if (key in ftab) {
         return ftab[key].returnType;
     } else {
-        throw new Error(`The function "${key}" does not exist`);
+        console.error(`The function "${key}" does not exist`);
     }
 }
 
