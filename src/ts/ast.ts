@@ -67,7 +67,7 @@ export interface AssignmentStatement {
 
 export type TypeExpression
     = SimpleType
-    | ListType
+    | ArrayType
     ;
 
 export interface SimpleType {
@@ -76,10 +76,10 @@ export interface SimpleType {
     nullable: boolean;
 }
 
-export interface ListType {
-    kind: "ListType";
+export interface ArrayType {
+    kind: "ArrayType";
     nullable: boolean;
-    listOf: TypeExpression;
+    arrayOf: TypeExpression;
 }
 
 export type Expression
@@ -108,6 +108,7 @@ export interface ArrayAccess {
     kind: "ArrayAccess";
     subject: Expression;
     index: Expression;
+    returnType: TypeExpression;
 }
 
 export interface Variable {

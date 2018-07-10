@@ -12,7 +12,7 @@ export function pine2js(input: string): string {
     const result = preprocess(input);
     let ast      = parser.parse(result);
     ast          = fillUpTypeInformation(ast);
-    // console.log(JSON.stringify(ast, null, 2));
+    // prettyPrint(ast);
 
     const symbolized = retrieveSymbol(Token.TokenTable, ast);
     // console.log(Token.TokenTable);
@@ -78,4 +78,20 @@ function removeConsequetingNewlines(input: string): string {
         .replace(/NEWLINE\s(NEWLINE\s)+/g, "NEWLINE\n")
         .replace(/NEWLINE\sEOF/g, "EOF");
 
+}
+
+function prettyPrint(ast: Declaration): void {
+    ast = removeTokenLocation(ast);
+    console.log(JSON.stringify(ast, null, 2));
+}
+
+function removeTokenLocation(ast: any): any {
+    for (const key in ast) {
+        if (key === "location") {
+            delete ast[key];
+        } else if (typeof(ast[key]) === "object") {
+            ast[key] = removeTokenLocation(ast[key]);
+        }
+    }
+    return ast;
 }

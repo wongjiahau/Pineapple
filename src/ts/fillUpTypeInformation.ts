@@ -1,4 +1,5 @@
 import {
+    ArrayAccess,
     ArrayExpression,
     BooleanExpression,
     BranchStatement,
@@ -91,13 +92,28 @@ export function fillUpBranchTypeInfo(b: BranchStatement, variableTable: Variable
 
 export function fillUpExpressionTypeInfo(e: Expression, variableTable: VariableTable): Expression {
     switch (e.kind) {
-        case "FunctionCall": return fillUpFunctionCallTypeInfo(e, variableTable);
-        case "Array":   return fillUpListTypeInfo(e, variableTable);
-        case "Number": return fillUpSimpleTypeInfo(e, "Number");
-        case "String": return fillUpSimpleTypeInfo(e, "String");
-        case "Boolean": return fillUpSimpleTypeInfo(e, "Boolean");
-        case "Variable": return fillUpVariableTypeInfo(e, variableTable);
+        case "FunctionCall":    return fillUpFunctionCallTypeInfo(e, variableTable);
+        case "Array":           return fillUpArrayTypeInfo       (e, variableTable);
+        case "Number":          return fillUpSimpleTypeInfo      (e, "Number");
+        case "String":          return fillUpSimpleTypeInfo      (e, "String");
+        case "Boolean":         return fillUpSimpleTypeInfo      (e, "Boolean");
+        case "Variable":        return fillUpVariableTypeInfo    (e, variableTable);
+        case "ArrayAccess":
+            e.subject = fillUpExpressionTypeInfo(e.subject, variableTable);
+            return fillUpArrayAccessTypeInfo(e, variableTable);
         default: return e;
+    }
+}
+
+export function fillUpArrayAccessTypeInfo(a: ArrayAccess, variableTable: VariableTable): ArrayAccess {
+    switch (a.subject.returnType.kind) {
+        case "SimpleType":
+            throw errorMessage(`Variable \`${a.subject}\` is not array type.`, null/*TODO: Get array token location*/);
+        case "ArrayType":
+            return {
+                ...a,
+                returnType: a.subject.returnType.arrayOf
+            };
     }
 }
 
@@ -133,7 +149,7 @@ export function fillUpFunctionCallTypeInfo(e: FunctionCall, variableTable: Varia
     return e;
 }
 
-export function fillUpListTypeInfo(e: ArrayExpression, variableTable: VariableTable): ArrayExpression {
+export function fillUpArrayTypeInfo(e: ArrayExpression, variableTable: VariableTable): ArrayExpression {
     return {
         ...e,
         returnType: {

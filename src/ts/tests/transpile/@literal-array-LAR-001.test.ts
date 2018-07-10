@@ -11,7 +11,7 @@ def main:
         const expectedOutput =
 `
 function _main(){
-const $x = new ArrayOfNumber([(1.1),(2.2),(3.3),(4.4),]);
+const $x = (new ArrayOfNumber([(1.1),(2.2),(3.3),(4.4),]));
 }
 `;
         // console.log(pine2js(input));

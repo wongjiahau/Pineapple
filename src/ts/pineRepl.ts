@@ -33,5 +33,8 @@ function loadLibraryFunctions(): string {
 
 function loadPrimitiveTypes(): string {
     return `
+    class ArrayOfNumber extends Array {
+        constructor(xs) {super(...xs)}
+    }
 `;
 }
