@@ -3,6 +3,7 @@ import {
     ArrayElement,
     ArrayExpression,
     AssignmentStatement,
+    AtomicToken,
     BooleanExpression,
     BranchStatement,
     Declaration,
@@ -18,9 +19,8 @@ import {
     Statement,
     StringExpression,
     TestExpression,
-    Token,
     TypeExpression,
-    Variable
+    VariableDeclaration
 } from "./ast";
 
 // Note: tp means transpile
@@ -46,7 +46,7 @@ ${tpStatement(f.statements)};
 }
 `;
     }
-    const initStatement = `const $${f.parameters[0].name.value} = this;`;
+    const initStatement = `const $${f.parameters[0].variable.repr} = this;`;
 
     const targetType = stringifyType(f.parameters[0].typeExpected);
 
@@ -60,7 +60,7 @@ ${tpStatement(f.statements)}
     if (f.parameters.length === 2) {
         return `${targetType}.prototype.`
         + `${funcSignature}_${stringifyType(f.parameters[1].typeExpected)}`
-        + `=function(${f.parameters.slice(1).map((x) => "$" + x.name.value).join(",")}){
+        + `=function(${f.parameters.slice(1).map((x) => "$" + x.variable.repr).join(",")}){
 ${initStatement}
 ${tpStatement(f.statements)}}
 `;
@@ -80,12 +80,12 @@ export function tpStatement(s: Statement): string {
 }
 
 export function tpForStatement(f: ForStatement): string {
-    const itemsName = `itemsOf${f.iterator.name.value}`;
+    const itemsName = `itemsOf${f.iterator.repr}`;
     return "" +
 `
 const ${itemsName} = ${tpExpression(f.expression)};
 for(let i = 0; i < ${itemsName}.length; i++){
-    const $${f.iterator.name.value} = ${itemsName}[i];
+    const $${f.iterator.repr} = ${itemsName}[i];
     ${tpStatement(f.body)}
 }`;
 }
@@ -132,25 +132,34 @@ export function tpFunctionCall(f: FunctionCall): string {
     }
 }
 
-export function stringifyFuncSignature(signature: Token[]): string {
-    return "_" + signature.map((x) => x.value.slice(0, -1)).join("$");
+export function stringifyFuncSignature(signature: AtomicToken[]): string {
+    return "_" + signature.map((x) => x.repr.slice(0, -1)).join("$");
 }
 
 export function stringifyType(t: TypeExpression): string {
     switch (t.kind) {
         case "SimpleType":
-            return t.name.value;
+            return t.name.repr;
         case "ArrayType":
             return "ArrayOf" + stringifyType(t.arrayOf);
     }
 }
 
-export function tpAssignmentStatement(l: AssignmentStatement): string {
-    return `${l.isDeclaration ? "const" : ""} $${l.variable.name.value} = ${tpExpression(l.expression)}`;
+export function tpAssignmentStatement(a: AssignmentStatement): string {
+    switch (a.variable.kind) {
+        case "VariableDeclaration":
+            if (a.isDeclaration) {
+                return `const $${a.variable.variable.repr} = ${tpExpression(a.expression)}`;
+            } else {
+                throw new Error("a.isDeclaration should be true");
+            }
+        case "Variable":
+            return `${a.variable.repr} = ${tpExpression(a.expression)}`;
+    }
 }
 
-export function tpParameters(v: Variable[]): string {
-    return removeLastComma(v.map((x) => x.name.value).join(","));
+export function tpParameters(v: VariableDeclaration[]): string {
+    return removeLastComma(v.map((x) => x.variable.repr).join(","));
 }
 
 export function tpExpression(e: Expression): string {
@@ -158,7 +167,7 @@ export function tpExpression(e: Expression): string {
         case "FunctionCall":    return tpFunctionCall(e);
         case "String":          return tpStringExpression(e);
         case "Number":          return tpNumberExpression(e);
-        case "Variable":        return "$" + e.name.value;
+        case "Variable":        return "$" + e.repr;
         case "Pon":             return tpPonExpression(e);
         case "Array":           return tpArrayExpression(e);
         case "Boolean":         return tpBooleanExpression(e);
@@ -173,20 +182,20 @@ export function tpArrayAccess(a: ArrayAccess): string {
 export function tpJavascriptCode(s: JavascriptCode): string {
     return "" +
 `// <javascript>
-${s.value.replace(/(<javascript>|<\/javascript>|@.+)/g, "").trim()}
+${s.repr.replace(/(<javascript>|<\/javascript>|@.+)/g, "").trim()}
 // </javascript>
 `;
 }
 export function tpStringExpression(s: StringExpression): string {
-    return `"${s.value.slice(1, -1)}"`;
+    return `"${s.repr.slice(1, -1)}"`;
 }
 
 export function tpNumberExpression(e: NumberExpression): string {
-    return `(${e.value})`;
+    return `(${e.repr})`;
 }
 
 export function tpBooleanExpression(e: BooleanExpression): string {
-    return e.value;
+    return e.repr;
 }
 
 export function tpArrayExpression(e: ArrayExpression): string {
@@ -205,7 +214,7 @@ ${tpKeyValueList(e.keyValueList)}
 }
 
 export function tpKeyValueList(e: KeyValueList): string {
-    return e.keyValue.memberName.value.slice(1)
+    return e.keyValue.memberName.repr.slice(1)
         + " : "
         + tpExpression(e.keyValue.expression)
         + (e.next ? ",\n" + tpKeyValueList(e.next) : "")

@@ -11,7 +11,8 @@ import {
     StringExpression,
     TokenLocation,
     TypeExpression,
-    Variable
+    Variable,
+    VariableDeclaration
 } from "./ast";
 
 export function fillUpTypeInformation(ast: Declaration): Declaration {
@@ -27,11 +28,11 @@ export function fillUpTypeInformation(ast: Declaration): Declaration {
     return ast;
 }
 
-export function getFunctionVariables(variables: Variable[]): VariableTable {
+export function getFunctionVariables(variables: VariableDeclaration[]): VariableTable {
     const result: VariableTable = {};
     for (let i = 0; i < variables.length; i++) {
-        variables[i].returnType = variables[i].typeExpected;
-        result[variables[i].name.value] = variables[i];
+        variables[i].variable.returnType = variables[i].typeExpected;
+        result[variables[i].variable.repr] = variables[i].variable;
     }
     return result;
 }
@@ -41,15 +42,19 @@ export interface VariableTable {
 }
 
 function updateVariableTable(v: VariableTable, variable: Variable): VariableTable {
-    if (v[variable.name.value]) {
-        throw errorMessage(`Variable \`${variable.name.value}\` is already assigned`, variable.name.location);
+    if (v[variable.repr]) {
+        throw errorMessage(`Variable \`${variable.repr}\` is already assigned`, variable.location);
     }
-    v[variable.name.value] = variable;
+    v[variable.repr] = variable;
     return v;
 }
 
-function errorMessage(message: string, location: TokenLocation): string {
-    return `${message} (at line ${location.first_line} column ${location.first_column})`;
+function errorMessage(message: string, location: TokenLocation | null): string {
+    if (location) {
+        return `${message} (at line ${location.first_line} column ${location.first_column})`;
+    } else {
+        return `${message}`;
+    }
 }
 
 export function fillUp(s: Statement, variableTable: VariableTable): Statement {
@@ -59,8 +64,10 @@ export function fillUp(s: Statement, variableTable: VariableTable): Statement {
             break;
         case "AssignmentStatement":
             s.body.expression = fillUpExpressionTypeInfo(s.body.expression, variableTable);
-            s.body.variable.returnType = getType(s.body.expression, variableTable);
-            variableTable = updateVariableTable(variableTable, s.body.variable);
+            if (s.body.variable.kind === "VariableDeclaration") {
+                s.body.variable.variable.returnType = getType(s.body.expression, variableTable);
+                variableTable = updateVariableTable(variableTable, s.body.variable.variable);
+            }
             break;
         case "FunctionCall":
             for (let i = 0; i < s.body.parameters.length; i++) {
@@ -100,15 +107,15 @@ export function fillUpExpressionTypeInfo(e: Expression, variableTable: VariableT
         case "Variable":        return fillUpVariableTypeInfo    (e, variableTable);
         case "ArrayAccess":
             e.subject = fillUpExpressionTypeInfo(e.subject, variableTable);
-            return fillUpArrayAccessTypeInfo(e, variableTable);
+            return fillUpArrayAccessTypeInfo(e);
         default: return e;
     }
 }
 
-export function fillUpArrayAccessTypeInfo(a: ArrayAccess, variableTable: VariableTable): ArrayAccess {
+export function fillUpArrayAccessTypeInfo(a: ArrayAccess): ArrayAccess {
     switch (a.subject.returnType.kind) {
         case "SimpleType":
-            throw errorMessage(`Variable \`${a.subject}\` is not array type.`, null/*TODO: Get array token location*/);
+            throw errorMessage(`Variable \`${a.subject}\` is not array type.`, a.subject.location);
         case "ArrayType":
             return {
                 ...a,
@@ -118,7 +125,7 @@ export function fillUpArrayAccessTypeInfo(a: ArrayAccess, variableTable: Variabl
 }
 
 export function fillUpVariableTypeInfo(e: Variable, variableTable: VariableTable): Variable {
-    e.returnType = variableTable[e.name.value].returnType;
+    e.returnType = variableTable[e.repr].returnType;
     return e;
 }
 
@@ -134,7 +141,7 @@ export function fillUpSimpleTypeInfo(e: SimpleExpression, name: string): SimpleE
         returnType: {
             kind: "SimpleType",
             name: {
-                value: name,
+                repr: name,
                 location: null,
             },
             nullable: false
@@ -170,7 +177,7 @@ export function getType(e: Expression, variableTable: VariableTable): TypeExpres
             typename = "Number";
             break;
         case "Variable":
-            return variableTable[e.name.value].returnType;
+            return variableTable[e.repr].returnType;
         case "FunctionCall":
             return e.returnType;
     }
@@ -178,7 +185,7 @@ export function getType(e: Expression, variableTable: VariableTable): TypeExpres
         kind: "SimpleType",
         name: {
             location: null,
-            value: typename
+            repr: typename
         },
         nullable: false
     };

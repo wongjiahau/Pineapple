@@ -43,10 +43,16 @@ const _AssignmentStatement = (variable, linkType, expression, isDeclaration) => 
     expression
 });
 
-const _Variable = (name,typeExpected) => ({
+const _VariableDeclaration = (variable, typeExpected) => ({
+    kind: "VariableDeclaration",
+    variable,
+    typeExpected,
+});
+
+const _Variable = (repr,location) => ({
     kind: "Variable",
-    name,
-    typeExpected
+    repr,
+    location
 });
 
 const _ArrayAccess = (subject, index) => ({ kind: "ArrayAccess", subject, index });
@@ -80,17 +86,17 @@ const _KeyValue = (memberName, expression) => ({
 
 const _ArrayExpression = (elements) => ({ kind: "Array", elements });
 
-const _ArrayElement = (value,next) => ({ kind: "ArrayElement", value, next});
+const _ArrayElement = (repr,next) => ({ kind: "ArrayElement", repr, next});
 
-const _StringExpression = (value, location) => ({kind:"String", value, location});
+const _StringExpression = (repr, location) => ({kind:"String", repr, location});
 
-const _NumberExpression = (value, location) => ({kind:"Number", value, location});
+const _NumberExpression = (repr, location) => ({kind:"Number", repr, location});
 
-const _BooleanExpression = (value, location) => ({kind:"Boolean", value, location});
+const _BooleanExpression = (repr, location) => ({kind:"Boolean", repr, location});
 
-const _JavascriptCode = (token) => ({kind:"JavascriptCode",value:token});
+const _JavascriptCode = (repr,location) => ({kind:"JavascriptCode",repr, location});
 
-const _Token = (value, location) => ({value, location});
+const _Token = (repr, location) => ({repr, location});
 
 function _getOperatorName(op) {
     const dic = {
@@ -150,8 +156,8 @@ function _getOperatorName(op) {
 ","     return ','
 "->"    return '->'
 "="     return 'ASSIGN_OP'
-"("     return 'LEFT_PAREN' 
-")"     return 'RIGHT_PAREN'
+"("     return '(' 
+")"     return ')'
 "["     return '['
 "]"     return ']'
 "o"     return 'LIST_BULLET'
@@ -190,6 +196,8 @@ function _getOperatorName(op) {
 /* operator associations and precedence */
 /* the last statement has the highest precedence */
 /* the first statement has the lower precedence */
+// Note: 
+// _$ means yyloc
 
 %right ASSIGN_OP 
 %left ',' DOT
@@ -233,20 +241,20 @@ FunctionDeclaration
     ;
 
 InfixFuncDeclaration
-    : Variable FuncAtom Variable '->' TypeExpression Block 
+    : VarDecl FuncAtom VarDecl '->' TypeExpression Block 
         {$$=_FunctionDeclaration([$2],$5,[$1,$3],$6,"infix")}
-    | Variable LEFT_PAREN OperatorAtom RIGHT_PAREN Variable '->' TypeExpression Block
+    | VarDecl '(' OperatorAtom ')' VarDecl '->' TypeExpression Block
         {$$=_FunctionDeclaration([$3],$7,[$1,$5],$8,"infix")}
     ;
 
 PrefixFuncDeclaration
-    : FuncAtom Variable '->' TypeExpression Block 
+    : FuncAtom VarDecl '->' TypeExpression Block 
         {$$=_FunctionDeclaration([$1],$4,[$2],$5,"prefix")}
-    | FuncAtom Variable Block {$$=_FunctionDeclaration([$1],null,[$2],$3,"prefix")}
+    | FuncAtom VarDecl Block {$$=_FunctionDeclaration([$1],null,[$2],$3,"prefix")}
     ;
 
 SuffixFuncDeclaration
-    : Variable FuncAtom '->' TypeExpression Block
+    : VarDecl FuncAtom '->' TypeExpression Block
     ;
 
 NofixFuncDeclaration
@@ -256,12 +264,12 @@ NofixFuncDeclaration
     ;
 
 MixfixFuncDeclaration
-    : FuncAtom Variable FuncAtom RETURN TypeExpression Block
-    | FuncAtom Variable FuncAtom Variable RETURN TypeExpression Block
-    | FuncAtom Variable FuncAtom Variable FuncAtom RETURN TypeExpression Block
-    | FuncAtom Variable FuncAtom Variable FuncAtom Variable RETURN TypeExpression Block
-    | FuncAtom Variable FuncAtom Variable FuncAtom Variable FuncAtom RETURN TypeExpression Block
-    | FuncAtom Variable FuncAtom Variable FuncAtom Variable FuncAtom Variable RETURN TypeExpression Block
+    : FuncAtom VarDecl FuncAtom RETURN TypeExpression Block
+    | FuncAtom VarDecl FuncAtom VarDecl RETURN TypeExpression Block
+    | FuncAtom VarDecl FuncAtom VarDecl FuncAtom RETURN TypeExpression Block
+    | FuncAtom VarDecl FuncAtom VarDecl FuncAtom VarDecl RETURN TypeExpression Block
+    | FuncAtom VarDecl FuncAtom VarDecl FuncAtom VarDecl FuncAtom RETURN TypeExpression Block
+    | FuncAtom VarDecl FuncAtom VarDecl FuncAtom VarDecl FuncAtom VarDecl RETURN TypeExpression Block
     ;
 
 Block
@@ -288,7 +296,7 @@ ReturnStatement
     ;
 
 ForStatement
-    : FOR Variable IN Expression Block {$$=_ForStatement($2,$4,$5)}
+    : FOR VariableAtom IN Expression Block {$$=_ForStatement($2,$4,$5)}
     ;
 
 WhileStatement
@@ -319,18 +327,19 @@ Test
     ;
 
 LinkStatement
-    : LET Variable ASSIGN_OP Expression 
-        {$$=_AssignmentStatement($2,$3,$4,true)}
-    | LET Variable MUTABLE ASSIGN_OP Expression 
-        // To be continued
-    | VariableAtom ASSIGN_OP Expression 
-        {$$=_AssignmentStatement(_Variable($1,null),$2,$3,false)}
+    : LET VarDecl ASSIGN_OP Expression {$$=_AssignmentStatement($2,$3,$4,true)}
+    | LET VarDecl MUTABLE ASSIGN_OP Expression // To be continued
+    | VariableAtom ASSIGN_OP Expression {$$=_AssignmentStatement($1,$2,$3,false)}
     ;
 
-Variable 
-    : VariableAtom {$$=_Variable($1,null)}
-    | VariableAtom TypeExpression {$$=_Variable($1,$2)}
-    | LEFT_PAREN VariableAtom TypeExpression RIGHT_PAREN {$$=_Variable($2,$3)}
+VarDecl /* Variable declaration */
+    : VariableAtom                          {$$=_VariableDeclaration($1,null)}
+    | VariableAtom TypeExpression           {$$=_VariableDeclaration($1,$2)}
+    | '(' VariableAtom TypeExpression ')'   {$$=_VariableDeclaration($2,$3)}
+    ;
+
+VariableAtom
+    : VARNAME {$$=_Variable($1,this._$)}
     ;
 
 TypeExpression
@@ -344,7 +353,6 @@ AtomicTypeExpr
     | TypenameAtom '?' {$$=_SimpleType($1,true)}
     | AtomicTypeExpr '[' ']' {$$=_ArrayType($1,false)}
     | AtomicTypeExpr '[' TupleTypeExpression ']'
-    | '(' TypeExpression ')'
     ;
 
 TupleTypeExpression
@@ -400,7 +408,7 @@ MixfixFuncCall
     ;
 
 AtomicExpr
-    : LEFT_PAREN Expression RIGHT_PAREN {$$=$2}
+    : '(' Expression ')' {$$=$2}
     | Value
     | ArrayAccess
     | ArraySlicing
@@ -434,7 +442,7 @@ Value
     | BooleanAtom
     | StringAtom
     | NumberAtom
-    | VariableAtom {$$=_Variable($1,null)}
+    | VariableAtom
     ;
 
 Object
@@ -488,10 +496,6 @@ FuncAtom
     : FUNCNAME {$$=_Token($1, this._$)}
     ;
 
-VariableAtom
-    : VARNAME {$$=_Token($1, this._$)} // Note: _$ means yyloc
-    ;
-
 MembernameAtom
     : MEMBERNAME {$$=_Token($1, this._$)}
     ;
@@ -505,7 +509,7 @@ TypenameAtom
     ;
 
 JavascriptCodeAtom
-    : JAVASCRIPT {$$=_JavascriptCode($1)}
+    : JAVASCRIPT {$$=_JavascriptCode($1, this._$)}
     ;
 
 LogicOperatorAtom

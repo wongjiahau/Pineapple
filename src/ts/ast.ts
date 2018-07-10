@@ -8,9 +8,9 @@ export interface Declaration {
 export interface FunctionDeclaration {
     kind: "FunctionDeclaration";
     affix: FunctionAffix;
-    signature: Token[];
+    signature: AtomicToken[];
     returnType: TypeExpression;
-    parameters: Variable[];
+    parameters: VariableDeclaration[];
     statements: Statement;
 }
 
@@ -48,7 +48,7 @@ export interface TestExpression {
     kind: "TestExpression";
     current: FunctionCall;
     negated: boolean;
-    chainOperator: Token;
+    chainOperator: AtomicToken;
     next: TestExpression;
 }
 
@@ -60,7 +60,7 @@ export interface ReturnStatement {
 export interface AssignmentStatement {
     kind: "AssignmentStatement";
     isDeclaration: boolean;
-    variable: Variable;
+    variable: Variable | VariableDeclaration;
     linkType: "bind" | "assign";
     expression: Expression;
 }
@@ -72,7 +72,7 @@ export type TypeExpression
 
 export interface SimpleType {
     kind: "SimpleType";
-    name: Token;
+    name: AtomicToken;
     nullable: boolean;
 }
 
@@ -99,7 +99,7 @@ export type FunctionAffix = "nofix" | "prefix" | "suffix" | "infix" | "mixfix";
 export interface FunctionCall {
     kind: "FunctionCall";
     fix: FunctionAffix;
-    signature: Token[];
+    signature: AtomicToken[];
     parameters: Expression[];
     returnType: TypeExpression;
 }
@@ -111,12 +111,15 @@ export interface ArrayAccess {
     returnType: TypeExpression;
 }
 
-export interface Variable {
-    kind: "Variable";
-    name: Token;
+export interface VariableDeclaration {
+    kind: "VariableDeclaration";
+    variable: Variable;
     typeExpected: TypeExpression; // This info is captured by parser
+}
+
+export interface Variable extends AtomicToken {
+    kind: "Variable";
     returnType: TypeExpression; // This info should be fill in by type checker
-    value: Expression;
 }
 
 export interface PonExpression {
@@ -131,7 +134,7 @@ export interface KeyValueList {
 }
 
 export interface KeyValue {
-    memberName: Token;
+    memberName: AtomicToken;
     expression: Expression;
 }
 
@@ -139,6 +142,7 @@ export interface ArrayExpression {
     kind: "Array";
     elements: ArrayElement;
     returnType: TypeExpression;
+    location: TokenLocation;
 }
 
 export interface ArrayElement {
@@ -147,29 +151,28 @@ export interface ArrayElement {
     next: ArrayElement | null;
 }
 
-export interface StringExpression extends Token {
+export interface StringExpression extends AtomicToken {
     kind: "String";
-    value: string;
+    repr: string;
     returnType: TypeExpression;
 }
 
-export interface NumberExpression extends Token {
+export interface NumberExpression extends AtomicToken {
     kind: "Number";
     returnType: TypeExpression;
 }
 
-export interface BooleanExpression extends Token {
+export interface BooleanExpression extends AtomicToken {
     kind: "Boolean";
     returnType: TypeExpression;
 }
 
-export interface JavascriptCode {
+export interface JavascriptCode extends AtomicToken {
     kind: "JavascriptCode";
-    value: string;
 }
 
-export interface Token {
-    value: string;
+export interface AtomicToken {
+    repr: string; // shorthand for representation
     location: TokenLocation | null;
 }
 
