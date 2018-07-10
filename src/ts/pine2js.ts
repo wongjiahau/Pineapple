@@ -2,7 +2,6 @@
 import { Declaration } from "./ast";
 import { fillUpTypeInformation } from "./fillUpTypeInformation";
 import { preprocess } from "./preprocess";
-import { Token, tokenize } from "./tokenize";
 import { tpDeclaration } from "./transpile";
 const parser     = require("../jison/pineapple-parser-v2");
 
@@ -14,7 +13,6 @@ export function pine2js(input: string): string {
     ast          = fillUpTypeInformation(ast);
     // prettyPrint(ast);
 
-    const symbolized = retrieveSymbol(Token.TokenTable, ast);
     // console.log(Token.TokenTable);
     // console.log(JSON.stringify(symbolized, null, 2));
     // const functionTables = getFunctionTable(symbolized);

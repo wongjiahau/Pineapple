@@ -100,7 +100,7 @@ const _Token = (repr, location) => ({repr, location});
 
 function _getOperatorName(op) {
     const dic = {
-        "+"  : "plus",           "&"	: "ampersand",      "'"	: "apostrophe",
+        "&"	 : "ampersand",      "'"	: "apostrophe",     "." : "period",
         "*"	 : "asterisk",       "@"	: "at",             "`"	: "backtick",
         "\\" : "backslash",      ":"	: "colon",          ","	: "comma",
         "$"	 : "dollar",         "="	: "equal",          "!"	: "bang",
@@ -108,7 +108,6 @@ function _getOperatorName(op) {
         "%"	 : "percent",        "|"	: "pipe",           "+"	: "plus",
         "#"	 : "hash",           ";"	: "semi",           "/"	: "slash",
         "~"	 : "tilde",          "_"	: "underscore",     "?"	: "questionMark",
-        "."	 : "period",
     };
     let result = "$" + op.split("").map(x => dic[x]).join("$") + ":";
     return result;
@@ -179,9 +178,8 @@ function _getOperatorName(op) {
 [-!$%^&*_+|~=`\[\]:";'<>?,.\/]+ return 'OPERATOR'
 
 
-
+// Misc
 "::"                 return '::'
-","                  return  COMMA
 [0-9]+               return 'TOKEN_ID'
 "DOT"                return 'DOT'
 "UNION_OP"           return 'UNION_OP'
