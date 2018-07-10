@@ -1,3 +1,6 @@
+/**
+ * This file is to transpile Pineapple code to Javascript code
+ */
 import {
     ArrayAccess,
     ArrayElement,
