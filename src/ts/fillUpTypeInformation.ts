@@ -6,6 +6,7 @@ import {
     BranchStatement,
     Declaration,
     Expression,
+    ForStatement,
     FunctionCall,
     FunctionDeclaration,
     NumberExpression,
@@ -91,8 +92,7 @@ export function fillUp(s: Statement, vtab: VariableTable, ftab: FunctionTable): 
             s.body = fillUpBranchTypeInfo(s.body, vtab, ftab);
             break;
         case "ForStatement":
-            s.body.expression = fillUpExpressionTypeInfo(s.body.expression, vtab, ftab);
-            s.body.body = fillUp(s.body.body, vtab, ftab);
+            s.body = fillUpForStmtTypeInfo(s.body, vtab, ftab);
             break;
         case "WhileStatement":
             s.body.test = fillUpTestExprTypeInfo(s.body.test, vtab, ftab);
@@ -103,6 +103,18 @@ export function fillUp(s: Statement, vtab: VariableTable, ftab: FunctionTable): 
         s.next = fillUp(s.next, vtab, ftab);
     }
     return s;
+}
+
+export function fillUpForStmtTypeInfo(f: ForStatement, vtab: VariableTable, ftab: FunctionTable): ForStatement {
+    f.expression = fillUpExpressionTypeInfo(f.expression, vtab, ftab);
+    if (f.expression.returnType.kind === "ArrayType") {
+        f.iterator.returnType = f.expression.returnType.arrayOf;
+        vtab = updateVariableTable(vtab, f.iterator);
+    } else {
+        console.error("The expresison type in for statement should be array.");
+    }
+    f.body = fillUp(f.body, vtab, ftab);
+    return f;
 }
 
 export function fillUpTestExprTypeInfo(t: TestExpression, vtab: VariableTable, ftab: FunctionTable): TestExpression {

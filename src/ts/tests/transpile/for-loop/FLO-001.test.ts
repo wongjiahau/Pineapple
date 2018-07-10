@@ -6,14 +6,14 @@ describe("FLO-001", () => {
         const input =
 `
 def main:
-    for i in 0 ..< 10
+    for i in [1,2,3]
         print: i
 `;
         const expectedOutput =
 `
 function _main(){
 
-const itemsOfi = ((0)._$period$period$lessThan_Number((10)));
+const itemsOfi = (new ArrayOfNumber([(1),(2),(3),]));
 for(let i = 0; i < itemsOfi.length; i++){
     const $i = itemsOfi[i];
     $i._print()
