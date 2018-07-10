@@ -1,4 +1,5 @@
 import {
+    ArrayAccess,
     ArrayElement,
     ArrayExpression,
     AssignmentStatement,
@@ -154,14 +155,19 @@ export function tpParameters(v: Variable[]): string {
 
 export function tpExpression(e: Expression): string {
     switch (e.kind) {
-        case "FunctionCall": return tpFunctionCall(e);
-        case "String": return tpStringExpression(e);
-        case "Number": return tpNumberExpression(e);
-        case "Variable": return "$" + e.name.value;
-        case "Pon": return tpPonExpression(e);
-        case "Array": return tpArrayExpression(e);
-        case "Boolean": return tpBooleanExpression(e);
+        case "FunctionCall":    return tpFunctionCall(e);
+        case "String":          return tpStringExpression(e);
+        case "Number":          return tpNumberExpression(e);
+        case "Variable":        return "$" + e.name.value;
+        case "Pon":             return tpPonExpression(e);
+        case "Array":           return tpArrayExpression(e);
+        case "Boolean":         return tpBooleanExpression(e);
+        case "ArrayAccess":     return tpArrayAccess(e);
     }
+}
+
+export function tpArrayAccess(a: ArrayAccess): string {
+    return `${tpExpression(a.subject)}[${tpExpression(a.index)}]`;
 }
 
 export function tpJavascriptCode(s: JavascriptCode): string {

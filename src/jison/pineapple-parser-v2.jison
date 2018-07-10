@@ -49,6 +49,8 @@ const _Variable = (name,typeExpected) => ({
     typeExpected
 });
 
+const _ArrayAccess = (subject, index) => ({ kind: "ArrayAccess", subject, index });
+
 const _SimpleType = (name, nullable) => ({ kind: "SimpleType", name, nullable});
 
 const _ArrayType = (typeExpr, nullable) => ({
@@ -145,6 +147,7 @@ function _getOperatorName(op) {
 [=.<>]{2,} return 'OPERATOR'
 
 // Built-in symbols
+","     return ','
 "->"    return '->'
 "="     return 'ASSIGN_OP'
 "("     return 'LEFT_PAREN' 
@@ -172,8 +175,6 @@ function _getOperatorName(op) {
 
 
 "::"                 return '::'
-"["                  return '['
-"]"                  return ']'
 ","                  return  COMMA
 [0-9]+               return 'TOKEN_ID'
 "DOT"                return 'DOT'
@@ -342,7 +343,6 @@ AtomicTypeExpr
     : TypenameAtom {$$=_SimpleType($1,false)}
     | TypenameAtom '?' {$$=_SimpleType($1,true)}
     | AtomicTypeExpr '[' ']' {$$=_ArrayType($1,false)}
-    | AtomicTypeExpr '[' Expression ']'
     | AtomicTypeExpr '[' TupleTypeExpression ']'
     | '(' TypeExpression ')'
     ;
@@ -408,7 +408,7 @@ AtomicExpr
     ;
 
 ArrayAccess
-    : AtomicExpr '.' '[' Expression ']'
+    : AtomicExpr '[' Expression ']' {$$=_ArrayAccess($1,$3)}
     ;
 
 ArraySlicing
@@ -430,7 +430,7 @@ ObjectAccess
 
 Value
     : NIL
-    | ArrayList
+    | Array
     | BooleanAtom
     | StringAtom
     | NumberAtom
@@ -452,14 +452,14 @@ KeyValue
     : MembernameAtom ASSIGN_OP Expression {$$=_KeyValue($1,$3)}
     ;
 
-ArrayList 
+Array
     : '[' Elements ']' {$$=_ArrayExpression($2)}
     | '[' ']' 
     ;
 
 Elements
     : AtomicExpr {$$=_ArrayElement($1,null)}
-    | AtomicExpr Elements  {$$=_ArrayElement($1,$2)}
+    | AtomicExpr ',' Elements  {$$=_ArrayElement($1,$3)}
     ;
 
 MultilineList

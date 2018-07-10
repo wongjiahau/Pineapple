@@ -6,7 +6,7 @@ describe("@literal-array-LAR-001", () => {
         const input =
 `
 def main:
-    let x = [1.1 2.2 3.3 4.4]
+    let x = [1.1, 2.2, 3.3, 4.4]
 `;
         const expectedOutput =
 `

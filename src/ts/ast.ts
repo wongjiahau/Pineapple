@@ -104,6 +104,12 @@ export interface FunctionCall {
     returnType: TypeExpression;
 }
 
+export interface ArrayAccess {
+    kind: "ArrayAccess";
+    subject: Expression;
+    index: Expression;
+}
+
 export interface Variable {
     kind: "Variable";
     name: Token;

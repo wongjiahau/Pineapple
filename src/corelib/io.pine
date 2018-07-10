@@ -1,4 +1,4 @@
-def print: (this String) -> Void
+def print: (this Object) -> Void
     <javascript>
     console.log($this.valueOf());
     </javascript>
