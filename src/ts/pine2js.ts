@@ -10,7 +10,7 @@ export function pine2js(input: string): string {
     // const preprocessed = removeConsequetingNewlines(tokenized);
     const result = preprocess(input);
     let ast      = parser.parse(result);
-    ast          = fillUpTypeInformation(ast);
+    ast          = fillUpTypeInformation(ast, {});
     // prettyPrint(ast);
 
     // console.log(Token.TokenTable);

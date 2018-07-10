@@ -7,8 +7,8 @@ import {
     Declaration,
     Expression,
     FunctionCall,
+    FunctionDeclaration,
     NumberExpression,
-    SimpleType,
     Statement,
     StringExpression,
     TokenLocation,
@@ -16,21 +16,25 @@ import {
     Variable,
     VariableDeclaration
 } from "./ast";
+import { stringifyFuncSignature } from "./transpile";
 
-export function fillUpTypeInformation(ast: Declaration): Declaration {
-    if (ast.body.kind === "FunctionDeclaration") {
-        const variableTable = getFunctionVariables(ast.body.parameters);
-        ast.body.statements = fillUp(ast.body.statements, variableTable);
-    } else {
-        ast.body.statements = fillUp(ast.body.statements, {});
-    }
+export function fillUpTypeInformation(ast: Declaration, prevFuntab: FunctionTable): Declaration {
+    const vtab = getVariableTable(ast.body.parameters);
+    const ftab = newFunctionTable(ast.body, prevFuntab);
+    ast.body.statements = fillUp(ast.body.statements, vtab, ftab);
     if (ast.next !== null) {
-        ast.next = fillUpTypeInformation(ast.next);
+        ast.next = fillUpTypeInformation(ast.next, ftab);
     }
     return ast;
 }
 
-export function getFunctionVariables(variables: VariableDeclaration[]): VariableTable {
+export function newFunctionTable(f: FunctionDeclaration, funtab: FunctionTable): FunctionTable {
+    const result: FunctionTable = {};
+    result[stringifyFuncSignature(f.signature)] = f;
+    return {...result, ...funtab};
+}
+
+export function getVariableTable(variables: VariableDeclaration[]): VariableTable {
     const result: VariableTable = {};
     for (let i = 0; i < variables.length; i++) {
         variables[i].variable.returnType = variables[i].typeExpected;
@@ -41,6 +45,10 @@ export function getFunctionVariables(variables: VariableDeclaration[]): Variable
 
 export interface VariableTable {
     [key: string]: Variable;
+}
+
+export interface FunctionTable {
+    [key: string]: FunctionDeclaration;
 }
 
 function updateVariableTable(v: VariableTable, variable: Variable): VariableTable {
@@ -59,56 +67,56 @@ function errorMessage(message: string, location: TokenLocation | null): string {
     }
 }
 
-export function fillUp(s: Statement, variableTable: VariableTable): Statement {
+export function fillUp(s: Statement, vtab: VariableTable, ftab: FunctionTable): Statement {
     switch (s.body.kind) {
         case "ReturnStatement":
-            s.body.expression = fillUpExpressionTypeInfo(s.body.expression, variableTable);
+            s.body.expression = fillUpExpressionTypeInfo(s.body.expression, vtab, ftab);
             break;
         case "AssignmentStatement":
-            s.body.expression = fillUpExpressionTypeInfo(s.body.expression, variableTable);
+            s.body.expression = fillUpExpressionTypeInfo(s.body.expression, vtab, ftab);
             if (s.body.variable.kind === "VariableDeclaration") {
-                s.body.variable.variable.returnType = getType(s.body.expression, variableTable);
-                variableTable = updateVariableTable(variableTable, s.body.variable.variable);
+                s.body.variable.variable.returnType = getType(s.body.expression, vtab);
+                vtab = updateVariableTable(vtab, s.body.variable.variable);
             }
             break;
         case "FunctionCall":
             for (let i = 0; i < s.body.parameters.length; i++) {
-                s.body.parameters[i] = fillUpExpressionTypeInfo(s.body.parameters[i], variableTable);
+                s.body.parameters[i] = fillUpExpressionTypeInfo(s.body.parameters[i], vtab, ftab);
             }
             break;
         case "BranchStatement":
-            s.body = fillUpBranchTypeInfo(s.body, variableTable);
+            s.body = fillUpBranchTypeInfo(s.body, vtab, ftab);
             break;
         case "ForStatement":
-            s.body.expression = fillUpExpressionTypeInfo(s.body.expression, variableTable);
+            s.body.expression = fillUpExpressionTypeInfo(s.body.expression, vtab, ftab);
             break;
     }
     if (s.next !== null) {
-        s.next = fillUp(s.next, variableTable);
+        s.next = fillUp(s.next, vtab, ftab);
     }
     return s;
 }
 
-export function fillUpBranchTypeInfo(b: BranchStatement, variableTable: VariableTable): BranchStatement {
+export function fillUpBranchTypeInfo(b: BranchStatement, vtab: VariableTable, ftab: FunctionTable): BranchStatement {
     if (b.test !== null) {
-        b.test.current = fillUpFunctionCallTypeInfo(b.test.current, variableTable);
+        b.test.current = fillUpFunctionCallTypeInfo(b.test.current, vtab, ftab);
     }
     if (b.elseBranch !== null) {
-        b.elseBranch = fillUpBranchTypeInfo(b.elseBranch, variableTable);
+        b.elseBranch = fillUpBranchTypeInfo(b.elseBranch, vtab, ftab);
     }
     return b;
 }
 
-export function fillUpExpressionTypeInfo(e: Expression, variableTable: VariableTable): Expression {
+export function fillUpExpressionTypeInfo(e: Expression, vtab: VariableTable, ftab: FunctionTable): Expression {
     switch (e.kind) {
-        case "FunctionCall":    return fillUpFunctionCallTypeInfo(e, variableTable);
-        case "Array":           return fillUpArrayTypeInfo       (e, variableTable);
+        case "FunctionCall":    return fillUpFunctionCallTypeInfo(e, vtab, ftab);
+        case "Array":           return fillUpArrayTypeInfo       (e, vtab);
         case "Number":          return fillUpSimpleTypeInfo      (e, "Number");
         case "String":          return fillUpSimpleTypeInfo      (e, "String");
         case "Boolean":         return fillUpSimpleTypeInfo      (e, "Boolean");
-        case "Variable":        return fillUpVariableTypeInfo    (e, variableTable);
+        case "Variable":        return fillUpVariableTypeInfo    (e, vtab);
         case "ArrayAccess":
-            e.subject = fillUpExpressionTypeInfo(e.subject, variableTable);
+            e.subject = fillUpExpressionTypeInfo(e.subject, vtab, ftab);
             return fillUpArrayAccessTypeInfo(e);
         default: return e;
     }
@@ -126,8 +134,8 @@ export function fillUpArrayAccessTypeInfo(a: ArrayAccess): ArrayAccess {
     }
 }
 
-export function fillUpVariableTypeInfo(e: Variable, variableTable: VariableTable): Variable {
-    e.returnType = variableTable[e.repr].returnType;
+export function fillUpVariableTypeInfo(e: Variable, vtab: VariableTable): Variable {
+    e.returnType = vtab[e.repr].returnType;
     return e;
 }
 
@@ -151,21 +159,31 @@ export function fillUpSimpleTypeInfo(e: SimpleExpression, name: string): SimpleE
     };
 }
 
-export function fillUpFunctionCallTypeInfo(e: FunctionCall, variableTable: VariableTable): FunctionCall {
+export function fillUpFunctionCallTypeInfo(e: FunctionCall, vtab: VariableTable, ftab: FunctionTable): FunctionCall {
     for (let i = 0; i < e.parameters.length; i++) {
-        e.parameters[i] = fillUpExpressionTypeInfo(e.parameters[i], variableTable);
+        e.parameters[i] = fillUpExpressionTypeInfo(e.parameters[i], vtab, ftab);
     }
+    e.returnType = getFuncSignature(e, ftab);
     return e;
 }
 
-export function fillUpArrayTypeInfo(e: ArrayExpression, variableTable: VariableTable): ArrayExpression {
+export function getFuncSignature(e: FunctionCall, ftab: FunctionTable): TypeExpression {
+    const key = stringifyFuncSignature(e.signature);
+    if (key in ftab) {
+        return ftab[key].returnType;
+    } else {
+        throw new Error(`The function "${key}" does not exist`);
+    }
+}
+
+export function fillUpArrayTypeInfo(e: ArrayExpression, vtab: VariableTable): ArrayExpression {
     return {
         ...e,
-        returnType: getType(e, variableTable)
+        returnType: getType(e, vtab)
     };
 }
 
-export function getType(e: Expression, variableTable: VariableTable): TypeExpression {
+export function getType(e: Expression, vtab: VariableTable): TypeExpression {
     let typename = "";
     switch (e.kind) {
         case "String":
@@ -175,13 +193,13 @@ export function getType(e: Expression, variableTable: VariableTable): TypeExpres
             typename = "Number";
             break;
         case "Variable":
-            return variableTable[e.repr].returnType;
+            return vtab[e.repr].returnType;
         case "FunctionCall":
             return e.returnType;
         case "Array":
             return {
                 kind: "ArrayType",
-                arrayOf: getElementsType(e.elements, variableTable),
+                arrayOf: getElementsType(e.elements, vtab),
                 nullable: false,
             };
     }
@@ -195,11 +213,11 @@ export function getType(e: Expression, variableTable: VariableTable): TypeExpres
     };
 }
 
-export function getElementsType(a: ArrayElement, variableTable: VariableTable): TypeExpression {
+export function getElementsType(a: ArrayElement, vtab: VariableTable): TypeExpression {
     const result: TypeExpression[] = [];
     let current: ArrayElement | null = a;
     while (current !== null) {
-        result.push(getType(current.value, variableTable));
+        result.push(getType(current.value, vtab));
         current = current.next;
     }
     checkIfAllElementTypeAreHomogeneous(result);

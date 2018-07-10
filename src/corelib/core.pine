@@ -1,0 +1,4 @@
+def (this Object) (==) (that Object) -> Boolean
+    <javascript>
+    return $this === $that;
+    </javascript>
