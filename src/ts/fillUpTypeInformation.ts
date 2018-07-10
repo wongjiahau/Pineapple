@@ -11,6 +11,7 @@ import {
     NumberExpression,
     Statement,
     StringExpression,
+    TestExpression,
     TokenLocation,
     TypeExpression,
     Variable,
@@ -91,6 +92,11 @@ export function fillUp(s: Statement, vtab: VariableTable, ftab: FunctionTable): 
             break;
         case "ForStatement":
             s.body.expression = fillUpExpressionTypeInfo(s.body.expression, vtab, ftab);
+            s.body.body = fillUp(s.body.body, vtab, ftab);
+            break;
+        case "WhileStatement":
+            s.body.test = fillUpTestExprTypeInfo(s.body.test, vtab, ftab);
+            s.body.body = fillUp(s.body.body, vtab, ftab);
             break;
     }
     if (s.next !== null) {
@@ -99,9 +105,20 @@ export function fillUp(s: Statement, vtab: VariableTable, ftab: FunctionTable): 
     return s;
 }
 
+export function fillUpTestExprTypeInfo(t: TestExpression, vtab: VariableTable, ftab: FunctionTable): TestExpression {
+    t.current = fillUpFunctionCallTypeInfo(t.current, vtab, ftab);
+    let next = t.next;
+    while (next !== null) {
+        next.current = fillUpFunctionCallTypeInfo(next.current, vtab, ftab);
+        next = next.next;
+    }
+    return t;
+}
+
 export function fillUpBranchTypeInfo(b: BranchStatement, vtab: VariableTable, ftab: FunctionTable): BranchStatement {
+    b.body = fillUp(b.body, vtab, ftab);
     if (b.test !== null) {
-        b.test.current = fillUpFunctionCallTypeInfo(b.test.current, vtab, ftab);
+        b.test = fillUpTestExprTypeInfo(b.test, vtab, ftab);
     }
     if (b.elseBranch !== null) {
         b.elseBranch = fillUpBranchTypeInfo(b.elseBranch, vtab, ftab);

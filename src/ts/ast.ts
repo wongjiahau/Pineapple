@@ -22,12 +22,19 @@ export interface Statement {
         | ReturnStatement
         | BranchStatement
         | ForStatement
+        | WhileStatement
         ;
 
     next
         : Statement
         | null
         ;
+}
+
+export interface WhileStatement {
+    kind: "WhileStatement";
+    test: TestExpression;
+    body: Statement;
 }
 
 export interface ForStatement {
@@ -59,9 +66,9 @@ export interface ReturnStatement {
 
 export interface AssignmentStatement {
     kind: "AssignmentStatement";
-    isDeclaration: boolean;
     variable: Variable | VariableDeclaration;
-    linkType: "bind" | "assign";
+    isDeclaration: boolean;
+    isMutable: boolean;
     expression: Expression;
 }
 

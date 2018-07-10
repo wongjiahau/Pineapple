@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { pine2js } from "../../../pine2js";
 
-describe("@loop-LOO-001", () => {
+describe("FLO-001", () => {
     it("for loop 1", () => {
         const input =
 `

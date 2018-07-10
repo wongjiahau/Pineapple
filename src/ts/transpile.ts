@@ -23,7 +23,8 @@ import {
     StringExpression,
     TestExpression,
     TypeExpression,
-    VariableDeclaration
+    VariableDeclaration,
+    WhileStatement
 } from "./ast";
 
 // Note: tp means transpile
@@ -79,7 +80,16 @@ export function tpStatement(s: Statement): string {
         case "ReturnStatement":     return tpReturnStatement(s.body)        + next;
         case "BranchStatement":     return tpBranchStatement(s.body)        + next;
         case "ForStatement":        return tpForStatement(s.body)           + next;
+        case "WhileStatement":      return tpWhileStatement(s.body)         + next;
     }
+}
+
+export function tpWhileStatement(w: WhileStatement): string {
+    return "" +
+`while(${tpTestExpression(w.test)}){
+    ${tpStatement(w.body)}
+}
+`;
 }
 
 export function tpForStatement(f: ForStatement): string {

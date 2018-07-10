@@ -16,6 +16,8 @@ const _FunctionDeclaration = (signature,returnType,parameters,statements,affix) 
     affix,
 });
 
+const _WhileStatement = (test,body) => ({ kind: "WhileStatement", test, body });
+
 const _ForStatement = (iterator,expression,body) => ({
     kind: "ForStatement",
     iterator,
@@ -35,11 +37,11 @@ const _TestExpression = (current, negated, chainOperator, next) => ({
     next
 });
 
-const _AssignmentStatement = (variable, linkType, expression, isDeclaration) => ({
+const _AssignmentStatement = (variable, isDeclaration, isMutable, expression) => ({
     kind: "AssignmentStatement",
-    isDeclaration,
     variable,
-    linkType,
+    isDeclaration,
+    isMutable,
     expression
 });
 
@@ -135,6 +137,8 @@ function _getOperatorName(op) {
 "else"      return 'ELSE'
 "for"       return 'FOR' 
 "in"        return 'IN'
+"while"     return 'WHILE'
+"mutable"   return 'MUTABLE'
 
 // Inivisible token
 "@NEWLINE"       %{
@@ -299,7 +303,7 @@ ForStatement
     ;
 
 WhileStatement
-    : WHILE Test Block
+    : WHILE Test Block {$$=_WhileStatement($2,$3)}
     ;
 
 IfStatement
@@ -326,9 +330,9 @@ Test
     ;
 
 LinkStatement
-    : LET VarDecl ASSIGN_OP Expression {$$=_AssignmentStatement($2,$3,$4,true)}
-    | LET VarDecl MUTABLE ASSIGN_OP Expression // To be continued
-    | VariableAtom ASSIGN_OP Expression {$$=_AssignmentStatement($1,$2,$3,false)}
+    : LET VarDecl ASSIGN_OP Expression {$$=_AssignmentStatement($2,true,false,$4)}
+    | LET VarDecl MUTABLE ASSIGN_OP Expression {$$=_AssignmentStatement($2,true,true,$5)}
+    | VariableAtom ASSIGN_OP Expression {$$=_AssignmentStatement($1,false,null,$3)}
     ;
 
 VarDecl /* Variable declaration */
