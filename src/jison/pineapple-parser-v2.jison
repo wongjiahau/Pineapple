@@ -281,17 +281,17 @@ Block
     ;
 
 StatementList
-    : Statement NEWLINE StatementList {$$=_Statement($1,$3)}
-    | Statement NEWLINE {$$=_Statement($1,null)}
+    : Statement StatementList {$$=_Statement($1,$2)}
+    | Statement {$$=_Statement($1,null)}
     ;
 
 Statement
-    : LinkStatement
-    | ReturnStatement
+    : LinkStatement     NEWLINE     {$$=$1}
+    | ReturnStatement   NEWLINE     {$$=$1}
+    | FuncCall          NEWLINE     {$$=$1}
     | ForStatement
     | WhileStatement
     | IfStatement
-    | FuncCall
     ;
 
 ReturnStatement

@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { pine2js } from "../../../pine2js";
 
-describe("x001", () => {
+describe.skip("x001", () => {
     it("duplicated variables", () => {
         const input =
 `--function

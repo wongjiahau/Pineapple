@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { pine2js } from "../../../../pine2js";
 
-describe("@literal-array-LAR-002", () => {
+describe.skip("@literal-array-LAR-002", () => {
     it("multiline lists", () => {
         const input =
 `
