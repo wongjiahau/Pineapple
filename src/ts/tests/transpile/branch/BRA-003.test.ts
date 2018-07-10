@@ -1,35 +1,27 @@
 import { expect } from "chai";
 import { pine2js } from "../../../pine2js";
 
-describe("BRA-002", () => {
-    it("if elif else", () => {
+describe("BRA-003", () => {
+    it("if else without elif", () => {
         const input =
 `
 def main:
-    let x Number = 4
-    let y Number = 6
-    if x moreThan: y
-        print: "yes"
-    elif x lessThan: y
-        print: "no"
+    if 5 > 6
+        return "ok"
     else
-        print: "oops"
+        return "no"
 `;
         const expectedOutput =
 `
 function _main(){
-const $x = (4);
-const $y = (6);
-if(($x._moreThan_Number($y))){
-    "yes"._print()
-} else if(($x._lessThan_Number($y))){
-    "no"._print()
+if(((5)._$greaterThan_Number((6)))){
+    return "ok"
 } else {
-    "oops"._print()
+    return "no"
 }
-
 ;
 }
+
 `.trim();
 
         const result = pine2js(input).trim();
