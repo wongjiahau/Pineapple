@@ -80,7 +80,7 @@ export function tpStatement(s: Statement): string {
         case "BranchStatement":     return tpBranchStatement(s.body)        + next;
         case "ForStatement":        return tpForStatement(s.body)           + next;
         case "WhileStatement":      return tpWhileStatement(s.body)         + next;
-        case "PassStatement":       return "";
+        case "PassStatement":       return "throw new Error('Not implemented yet!')\n";
     }
 }
 
@@ -146,7 +146,31 @@ export function tpFunctionCall(f: FunctionCall): string {
 }
 
 export function stringifyFuncSignature(signature: AtomicToken[]): string {
-    return "_" + signature.map((x) => x.repr.slice(0, -1)).join("$");
+    return "_" + signature.map((x) => getName(x.repr).slice(0, -1)).join("$");
+}
+
+export function getName(funcSignature: string): string {
+    if (/[a-z][a-zA-Z]*[:]/.test(funcSignature)) {
+        return funcSignature;
+    } else {
+        return getOperatorName(funcSignature);
+    }
+}
+
+export function getOperatorName(op: string): string {
+    const dic: {[key: string]: string} = {
+        "&"	 : "ampersand",      "'"	: "apostrophe",     "." : "period",
+        "*"	 : "asterisk",       "@"	: "at",             "`"	: "backtick",
+        "\\" : "backslash",      ":"	: "colon",          ","	: "comma",
+        "$"	 : "dollar",         "="	: "equal",          "!"	: "bang",
+        ">"	 : "greaterThan",    "<"	: "lessThan",       "-"	: "minus",
+        "%"	 : "percent",        "|"	: "pipe",           "+"	: "plus",
+        "#"	 : "hash",           ";"	: "semi",           "/"	: "slash",
+        "~"	 : "tilde",          "_"	: "underscore",     "?"	: "questionMark",
+        "^"  : "caret"
+    };
+    const result = "$" + op.split("").map((x) => dic[x]).join("$") + ":";
+    return result;
 }
 
 export function stringifyType(t: TypeExpression): string {

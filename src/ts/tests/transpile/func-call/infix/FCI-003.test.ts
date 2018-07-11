@@ -5,15 +5,22 @@ describe("@func-call-infix-FCI-003", () => {
     it("double symbols", () => {
         const input =
 `
+def (this String) (++) (that String) -> String
+    pass
+
 def main:
-    let y = 6 ++ 6
+    let y = "pine" ++ "apple"
 `;
         const expectedOutput =
 `
-function _main(){
-const $y = ((6)._$plus$plus_Number((6)));
+String.prototype._$plus$plus_String=function($that){
+const $this = this;
+throw new Error('Not implemented yet!')
 }
 
+function _main(){
+const $y = ("pine"._$plus$plus_String("apple"));
+}
 `;
         // console.log(pine2js(input));
         // console.log(expectedOutput);

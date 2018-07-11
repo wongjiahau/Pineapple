@@ -25,7 +25,7 @@ export function getMessage(error: ErrorObject): [string, TokenLocation] {
 
         case "ErrorUsingUnknownFunction":
             message = "" +
-`You cannot use the function '${getFuncSignature(error.func.signature)}', because it does not exist.`;
+`You cannot call the function '${getFuncSignature(error.func.signature)}' as it does not exist.`;
             tokenLocation = error.func.location;
     }
     if (tokenLocation === null)  {

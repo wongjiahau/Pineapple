@@ -9,7 +9,7 @@ describe("x0002", () => {
 `;
         const expected =
 `
-ERROR >>> You cannot use the function 'plus:', because it does not exist.
+ERROR >>> You cannot call the function 'plus:' as it does not exist.
 
           | 1 | def main:
 ERROR >>> | 2 |     let x = 1 plus: 2

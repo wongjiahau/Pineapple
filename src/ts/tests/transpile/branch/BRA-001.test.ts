@@ -5,24 +5,32 @@ describe("@branch-BRA-001", () => {
     it("if", () => {
         const input =
 `
+def (this Number) (>) (that Number) -> Boolean
+    pass
+
 def main:
     let x Number = 4
     let y Number = 6
-    if x moreThan: y
+    if x > y
         print: "yes"
-    elif x lessThan: y
+    elif y > x
         print: "no"
     else
         print: "oops"
 `;
         const expectedOutput =
 `
+Number.prototype._$greaterThan_Number=function($that){
+const $this = this;
+throw new Error('Not implemented yet!')
+}
+
 function _main(){
 const $x = (4);
 const $y = (6);
-if(($x._moreThan_Number($y))){
+if(($x._$greaterThan_Number($y))){
     "yes"._print()
-} else if(($x._lessThan_Number($y))){
+} else if(($y._$greaterThan_Number($x))){
     "no"._print()
 } else {
     "oops"._print()
@@ -30,6 +38,7 @@ if(($x._moreThan_Number($y))){
 
 ;
 }
+
 `.trim();
 
         const result = pine2js(input).trim();

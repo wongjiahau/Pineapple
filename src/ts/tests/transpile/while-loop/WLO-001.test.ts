@@ -20,9 +20,11 @@ def main:
 `
 Number.prototype._$lessThan_Number=function($that){
 const $this = this;
+throw new Error('Not implemented yet!')
 }
 Number.prototype._$plus_Number=function($that){
 const $this = this;
+throw new Error('Not implemented yet!')
 }
 
 function _main(){

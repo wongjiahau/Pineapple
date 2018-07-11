@@ -107,21 +107,6 @@ const _JavascriptCode = (repr,location) => ({kind:"JavascriptCode",repr, locatio
 
 const _Token = (repr, location) => ({repr, location});
 
-function _getOperatorName(op) {
-    const dic = {
-        "&"	 : "ampersand",      "'"	: "apostrophe",     "." : "period",
-        "*"	 : "asterisk",       "@"	: "at",             "`"	: "backtick",
-        "\\" : "backslash",      ":"	: "colon",          ","	: "comma",
-        "$"	 : "dollar",         "="	: "equal",          "!"	: "bang",
-        ">"	 : "greaterThan",    "<"	: "lessThan",       "-"	: "minus",
-        "%"	 : "percent",        "|"	: "pipe",           "+"	: "plus",
-        "#"	 : "hash",           ";"	: "semi",           "/"	: "slash",
-        "~"	 : "tilde",          "_"	: "underscore",     "?"	: "questionMark",
-        "^"  : "caret"
-    };
-    let result = "$" + op.split("").map(x => dic[x]).join("$") + ":";
-    return result;
-}
 %}
 
 
@@ -513,7 +498,7 @@ MembernameAtom
     ;
 
 OperatorAtom    
-    : OPERATOR {$$=_Token(_getOperatorName($1), this._$)}
+    : OPERATOR {$$=_Token($1, this._$)}
     ;
 
 TypenameAtom
