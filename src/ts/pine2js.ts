@@ -7,17 +7,17 @@ import { renderErrorMessage } from "./renderErrorMessage";
 import { tpDeclaration } from "./transpile";
 const parser     = require("../jison/pineapple-parser-v2");
 
-export function pine2js(input: string): string {
+export function pine2js(input: string, filename: string= ""): string {
     // const tokenized    = tokenize(input);
     // const preprocessed = removeConsequetingNewlines(tokenized);
     const result = preprocess(input);
     let ast      = parser.parse(result);
     // prettyPrint(ast, false);
     try {
-        ast          = fillUpTypeInformation(ast, {});
+        ast = fillUpTypeInformation(ast, {});
     } catch (err) {
         const error = JSON.parse(err.message) as ErrorObject;
-        return renderErrorMessage(input, error);
+        return renderErrorMessage(input, error, filename);
     }
 
     // console.log(Token.TokenTable);

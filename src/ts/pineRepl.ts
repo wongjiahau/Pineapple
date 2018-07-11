@@ -13,20 +13,29 @@ if (program.log) {
 const fs = require("fs");
 const {exec} = require("child_process");
 program.args.forEach((arg: string) => {
-    let output = loadPrimitiveTypes();
-    const source = loadLibraryFunctions();
-    output += pine2js(source + readFile(arg));
-    output += "\n_main();"; // Call the main function
-    fs.writeFileSync("__temp__.pine.js", output);
-    exec("node __temp__.pine.js", (err, stdout, stderr) => {
-        if (err) {
-            console.log("Error: " + err);
-        } else {
-            console.log(stdout);
-            console.log(stderr);
-        }
-    });
+    interpret(arg);
 });
+
+function interpret(filename: string): void {
+    const js = pine2js(readFile(filename), filename);
+    if (js.indexOf("ERROR >>>") > -1) {
+        console.log(js + "\n");
+    } else {
+        let output = loadPrimitiveTypes();
+        const source = loadLibraryFunctions();
+        output += pine2js(source) + js;
+        output += "\n_main();"; // Call the main function
+        fs.writeFileSync("__temp__.pine.js", output);
+        exec("node __temp__.pine.js", (err, stdout, stderr) => {
+            if (err) {
+                console.log("Error: " + err);
+            } else {
+                console.log(stdout);
+                console.log(stderr);
+            }
+        });
+    }
+}
 
 function readFile(filename: string): string {
     return fs.readFileSync(filename).toString();

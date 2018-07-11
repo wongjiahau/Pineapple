@@ -2,12 +2,12 @@ import { AtomicToken, TokenLocation } from "./ast";
 import { ErrorObject } from "./errorType";
 import { labelLineNumbers } from "./labelLineNumbers";
 
-export function renderErrorMessage(sourceCode: string, error: ErrorObject): string {
+export function renderErrorMessage(sourceCode: string, error: ErrorObject, filename: string): string {
     // tslint:disable-next-line:one-variable-per-declaration
     const [message, location] = getMessage(error);
     let result = "\nERROR >>> " + message;
     result += "\n\n" + (labelLineNumbers(sourceCode, location.first_line));
-    result += `\nThe error is located at ${getLocation(location)}.`;
+    result += `\nThe error is located at ${getLocation(location)}${filename ? ` of ${filename}.` : "." }`;
     result += "\n\n" + getErrorCode(error);
     return result;
 }
