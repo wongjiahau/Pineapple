@@ -18,7 +18,7 @@ import {
     Variable,
     VariableDeclaration
 } from "./ast";
-import { stringifyFuncSignature } from "./transpile";
+import { stringifyFuncSignature, stringifyType } from "./transpile";
 
 export function fillUpTypeInformation(ast: Declaration, prevFuntab: FunctionTable): Declaration {
     const vtab = getVariableTable(ast.body.parameters);
@@ -73,38 +73,51 @@ function errorMessage(message: string, location: TokenLocation | null) {
 
 export function fillUp(s: Statement, vtab: VariableTable, ftab: FunctionTable): Statement {
     switch (s.body.kind) {
-        case "ReturnStatement":
+    case "ReturnStatement":
+        s.body.expression = fillUpExpressionTypeInfo(s.body.expression, vtab, ftab);
+        break;
+    case "AssignmentStatement":
+        switch (s.body.variable.kind) {
+        case "VariableDeclaration":
+            if (s.body.variable.typeExpected === null) {
+                // Inference-typed
+                s.body.expression = fillUpExpressionTypeInfo(s.body.expression, vtab, ftab);
+                s.body.variable.variable.returnType = getType(s.body.expression, vtab);
+            } else {
+                // Statically-typed
+                s.body.expression.returnType = s.body.variable.typeExpected;
+                s.body.variable.variable.returnType = s.body.variable.typeExpected;
+            }
+            vtab = updateVariableTable(vtab, s.body.variable.variable);
+            break;
+        case "Variable":
+            const matching = vtab[s.body.variable.repr];
             s.body.expression = fillUpExpressionTypeInfo(s.body.expression, vtab, ftab);
-            break;
-        case "AssignmentStatement":
-            if (s.body.variable.kind === "VariableDeclaration") {
-                if (s.body.variable.typeExpected === null) {
-                    // Inference-typed
-                    s.body.expression = fillUpExpressionTypeInfo(s.body.expression, vtab, ftab);
-                    s.body.variable.variable.returnType = getType(s.body.expression, vtab);
-                } else {
-                    // Statically-typed
-                    s.body.expression.returnType = s.body.variable.typeExpected;
-                    s.body.variable.variable.returnType = s.body.variable.typeExpected;
-                }
-                vtab = updateVariableTable(vtab, s.body.variable.variable);
+            if (!typeEquals(matching.returnType, s.body.expression.returnType)) {
+                errorMessage(
+`The data type of ${matching.repr} should be ${stringifyType(matching.returnType)}, ` +
+`but you assigned it with ${stringifyType(s.body.expression.returnType)}`, matching.location);
+            } else {
+                s.body.variable.returnType = matching.returnType;
             }
             break;
-        case "FunctionCall":
-            for (let i = 0; i < s.body.parameters.length; i++) {
-                s.body.parameters[i] = fillUpExpressionTypeInfo(s.body.parameters[i], vtab, ftab);
-            }
-            break;
-        case "BranchStatement":
-            s.body = fillUpBranchTypeInfo(s.body, vtab, ftab);
-            break;
-        case "ForStatement":
-            s.body = fillUpForStmtTypeInfo(s.body, vtab, ftab);
-            break;
-        case "WhileStatement":
-            s.body.test = fillUpTestExprTypeInfo(s.body.test, vtab, ftab);
-            s.body.body = fillUp(s.body.body, vtab, ftab);
-            break;
+        }
+        break;
+    case "FunctionCall":
+        for (let i = 0; i < s.body.parameters.length; i++) {
+            s.body.parameters[i] = fillUpExpressionTypeInfo(s.body.parameters[i], vtab, ftab);
+        }
+        break;
+    case "BranchStatement":
+        s.body = fillUpBranchTypeInfo(s.body, vtab, ftab);
+        break;
+    case "ForStatement":
+        s.body = fillUpForStmtTypeInfo(s.body, vtab, ftab);
+        break;
+    case "WhileStatement":
+        s.body.test = fillUpTestExprTypeInfo(s.body.test, vtab, ftab);
+        s.body.body = fillUp(s.body.body, vtab, ftab);
+        break;
     }
     if (s.next !== null) {
         s.next = fillUp(s.next, vtab, ftab);
@@ -268,4 +281,8 @@ export function checkIfAllElementTypeAreHomogeneous(ts: TypeExpression[]): void 
         throw new Error("Every element in an array should have the same type");
     }
     // TODO: Check if every element is of the same type
+}
+
+export function typeEquals(x: TypeExpression, y: TypeExpression): boolean {
+    return stringifyType(x) === stringifyType(y);
 }

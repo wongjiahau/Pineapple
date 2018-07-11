@@ -42,22 +42,21 @@ export function tpDeclaration(input: Declaration): string {
 
 export function tpFunctionDeclaration(f: FunctionDeclaration): string {
     const funcSignature = stringifyFuncSignature(f.signature);
+    const statements = tpStatement(f.statements);
     if (f.parameters.length === 0) {
         return "" +
         `
 function ${funcSignature}(${tpParameters(f.parameters)}){
-${tpStatement(f.statements)};
+${statements};
 }
 `;
     }
     const initStatement = `const $${f.parameters[0].variable.repr} = this;`;
-
     const targetType = stringifyType(f.parameters[0].typeExpected);
-
     if (f.parameters.length === 1) {
         return `${targetType}.prototype.${funcSignature}=function(){
 ${initStatement}
-${tpStatement(f.statements)}
+${statements}
 }
 `;
     }
@@ -66,7 +65,7 @@ ${tpStatement(f.statements)}
         + `${funcSignature}_${stringifyType(f.parameters[1].typeExpected)}`
         + `=function(${f.parameters.slice(1).map((x) => "$" + x.variable.repr).join(",")}){
 ${initStatement}
-${tpStatement(f.statements)}}
+${statements}}
 `;
     }
 }
@@ -81,6 +80,7 @@ export function tpStatement(s: Statement): string {
         case "BranchStatement":     return tpBranchStatement(s.body)        + next;
         case "ForStatement":        return tpForStatement(s.body)           + next;
         case "WhileStatement":      return tpWhileStatement(s.body)         + next;
+        case "PassStatement":       return "";
     }
 }
 

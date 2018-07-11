@@ -1,7 +1,7 @@
 // Abstract Syntax Tree Node Interfaces
 export interface Declaration {
     kind: "Declaration";
-    body: FunctionDeclaration;
+    body: FunctionDeclaration ;
     next: Declaration | null;
 }
 
@@ -23,12 +23,17 @@ export interface Statement {
         | BranchStatement
         | ForStatement
         | WhileStatement
+        | PassStatement
         ;
 
     next
         : Statement
         | null
         ;
+}
+
+export interface PassStatement {
+    kind: "PassStatement";
 }
 
 export interface WhileStatement {
@@ -147,7 +152,7 @@ export interface KeyValue {
 
 export interface ArrayExpression {
     kind: "Array";
-    elements: ArrayElement;
+    elements: ArrayElement | null;
     location: TokenLocation;
     returnType: TypeExpression;
 }

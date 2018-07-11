@@ -5,6 +5,8 @@ const _Declaration     = (body,next)  => ({body,next});
 
 const _Statement       = (body,next)  => ({body,next});
 
+const _PassStatement = () => ({ kind: "PassStatement" });
+
 const _ReturnStatement = (expression) => ({ kind: "ReturnStatement", expression});
 
 const _FunctionDeclaration = (signature,returnType,parameters,statements,affix) => ({
@@ -143,6 +145,7 @@ function _getOperatorName(op) {
 "in"        return 'IN'
 "while"     return 'WHILE'
 "mutable"   return 'MUTABLE'
+"pass"      return 'PASS'
 
 // Inivisible token
 "@NEWLINE"       %{
@@ -282,6 +285,7 @@ MixfixFuncDeclaration
 Block
     : NEWLINE INDENT StatementList DEDENT {$$=$3}
     | NEWLINE INDENT JavascriptCodeAtom NEWLINE DEDENT {$$=_Statement($3,null)}
+    | NEWLINE INDENT PASS NEWLINE DEDENT {$$=_Statement(_PassStatement(),null)}
     ;
 
 StatementList
