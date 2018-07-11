@@ -12,13 +12,13 @@ export function pine2js(input: string): string {
     // const preprocessed = removeConsequetingNewlines(tokenized);
     const result = preprocess(input);
     let ast      = parser.parse(result);
+    // prettyPrint(ast, false);
     try {
         ast          = fillUpTypeInformation(ast, {});
     } catch (err) {
         const error = JSON.parse(err.message) as ErrorObject;
         return renderErrorMessage(input, error);
     }
-    // prettyPrint(ast);
 
     // console.log(Token.TokenTable);
     // console.log(JSON.stringify(symbolized, null, 2));
@@ -78,15 +78,10 @@ export function retrieveSymbol(tokenTable: {[key: number]: Token}, ast: any): an
     return ast;
 }
 
-function removeConsequetingNewlines(input: string): string {
-    return input
-        .replace(/NEWLINE\s(NEWLINE\s)+/g, "NEWLINE\n")
-        .replace(/NEWLINE\sEOF/g, "EOF");
-
-}
-
-function prettyPrint(ast: Declaration): void {
-    ast = removeTokenLocation(ast);
+function prettyPrint(ast: Declaration, removeLocation: boolean): void {
+    if (removeLocation) {
+        ast = removeTokenLocation(ast);
+    }
     console.log(JSON.stringify(ast, null, 2));
 }
 

@@ -69,11 +69,12 @@ const _ArrayType = (typeExpr, nullable) => ({
     arrayOf: typeExpr,
 });
 
-const _FunctionCall = (fix,signature,parameters) => ({
+const _FunctionCall = (fix,signature,parameters,location) => ({
     kind: "FunctionCall",
     fix,
     signature,
     parameters,
+    location
 });
 
 const _Pon = (keyValue) => ({
@@ -392,8 +393,8 @@ NofixFuncCall
     ;
 
 InfixFuncCall
-    : InfixFuncCall FuncId AtomicExpr {$$=_FunctionCall("infix",[$2],[$1,$3])}
-    | AtomicExpr FuncId AtomicExpr {$$=_FunctionCall("infix",[$2],[$1,$3])}
+    : InfixFuncCall FuncId AtomicExpr {$$=_FunctionCall("infix",[$2],[$1,$3],this._$)}
+    | AtomicExpr FuncId AtomicExpr {$$=_FunctionCall("infix",[$2],[$1,$3],this._$)}
     ;
 
 FuncId

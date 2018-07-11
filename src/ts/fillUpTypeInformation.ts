@@ -18,7 +18,7 @@ import {
     Variable,
     VariableDeclaration
 } from "./ast";
-import { ErrorObject, ErrorVariableRedeclare } from "./errorType";
+import { ErrorObject, ErrorUsingUnknownFunction, ErrorVariableRedeclare } from "./errorType";
 import { stringifyFuncSignature, stringifyType } from "./transpile";
 
 export function fillUpTypeInformation(ast: Declaration, prevFuntab: FunctionTable): Declaration {
@@ -220,12 +220,16 @@ export function fillUpFunctionCallTypeInfo(e: FunctionCall, vtab: VariableTable,
     return e;
 }
 
-export function getFuncSignature(e: FunctionCall, ftab: FunctionTable): TypeExpression {
-    const key = stringifyFuncSignature(e.signature);
+export function getFuncSignature(f: FunctionCall, ftab: FunctionTable): TypeExpression {
+    const key = stringifyFuncSignature(f.signature);
     if (key in ftab) {
         return ftab[key].returnType;
     } else {
-        errorMessage(`The function ${key} does not exist`, e.location);
+        const error: ErrorUsingUnknownFunction = {
+            kind: "ErrorUsingUnknownFunction",
+            func: f
+        };
+        raise(error);
     }
 }
 

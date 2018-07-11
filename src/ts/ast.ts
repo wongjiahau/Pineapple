@@ -114,6 +114,7 @@ export interface FunctionCall {
     signature: AtomicToken[];
     parameters: Expression[];
     returnType: TypeExpression;
+    location: TokenLocation;
 }
 
 export interface ArrayAccess {

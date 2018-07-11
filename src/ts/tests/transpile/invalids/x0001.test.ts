@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { pine2js } from "../../../pine2js";
 
-describe("x001", () => {
+describe("x0001", () => {
     it("variable redeclaration", () => {
         const input =
 `def main:
@@ -10,7 +10,7 @@ describe("x001", () => {
 `;
         const expected =
 `
-ERROR >>> You cannot declare variable 'myName' again,because it is already declared at line 2.
+ERROR >>> You cannot declare variable 'myName' again, because it is already declared at line 2.
 
           | 1 | def main:
           | 2 |     let myName String = "123"
