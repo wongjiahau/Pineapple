@@ -11,12 +11,21 @@ if (program.log) {
 }
 
 const fs = require("fs");
+const {exec} = require("child_process");
 program.args.forEach((arg: string) => {
     let output = loadPrimitiveTypes();
     const source = loadLibraryFunctions();
     output += pine2js(source + readFile(arg));
     output += "\n_main();"; // Call the main function
-    console.log(output);
+    fs.writeFileSync("__temp__.pine.js", output);
+    exec("node __temp__.pine.js", (err, stdout, stderr) => {
+        if (err) {
+            console.log("Error: " + err);
+        } else {
+            console.log(stdout);
+            console.log(stderr);
+        }
+    });
 });
 
 function readFile(filename: string): string {
