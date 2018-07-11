@@ -86,7 +86,11 @@ const _KeyValue = (memberName, expression) => ({
     expression,
 });
 
-const _ArrayExpression = (elements,location) => ({ kind: "Array", elements, location});
+const _ArrayExpression = (elements,location) => ({ 
+    kind: "Array", 
+    elements, 
+    location
+});
 
 const _ArrayElement = (value,next) => ({ kind: "ArrayElement", value, next});
 
@@ -464,8 +468,8 @@ KeyValue
     ;
 
 Array
-    : '[' Elements ']' {$$=_ArrayExpression($2,this._$)}
-    | '[' ']' 
+    : '[' Elements ']'   {$$=_ArrayExpression($2,this._$)}
+    | '[' ']'            {$$=_ArrayExpression(null,this._$)}
     ;
 
 Elements

@@ -77,9 +77,16 @@ export function fillUp(s: Statement, vtab: VariableTable, ftab: FunctionTable): 
             s.body.expression = fillUpExpressionTypeInfo(s.body.expression, vtab, ftab);
             break;
         case "AssignmentStatement":
-            s.body.expression = fillUpExpressionTypeInfo(s.body.expression, vtab, ftab);
             if (s.body.variable.kind === "VariableDeclaration") {
-                s.body.variable.variable.returnType = getType(s.body.expression, vtab);
+                if (s.body.variable.typeExpected === null) {
+                    // Inference-typed
+                    s.body.expression = fillUpExpressionTypeInfo(s.body.expression, vtab, ftab);
+                    s.body.variable.variable.returnType = getType(s.body.expression, vtab);
+                } else {
+                    // Statically-typed
+                    s.body.expression.returnType = s.body.variable.typeExpected;
+                    s.body.variable.variable.returnType = s.body.variable.typeExpected;
+                }
                 vtab = updateVariableTable(vtab, s.body.variable.variable);
             }
             break;
@@ -111,7 +118,7 @@ export function fillUpForStmtTypeInfo(f: ForStatement, vtab: VariableTable, ftab
         f.iterator.returnType = f.expression.returnType.arrayOf;
         vtab = updateVariableTable(vtab, f.iterator);
     } else {
-        console.error("The expresison type in for statement should be array.");
+        errorMessage("The expresison type in for statement should be array.", null);
     }
     f.body = fillUp(f.body, vtab, ftab);
     return f;

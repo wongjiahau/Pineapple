@@ -2,3 +2,9 @@ def (x Number) (+) (y Number) -> Int
     <javascript>
     return $x + $y;
     </javascript>
+
+def (x Number) (<) (y Number) -> Boolean
+    <javascript>
+    return $x < $y;
+    </javascript>
+

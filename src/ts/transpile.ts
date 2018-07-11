@@ -213,7 +213,11 @@ export function tpBooleanExpression(e: BooleanExpression): string {
 
 export function tpArrayExpression(e: ArrayExpression): string {
     const typename = stringifyType(e.returnType);
-    return `(new ${typename}([${tpListElements(e.elements)}]))`;
+    if (e.elements !== null) {
+        return `(new ${typename}([${tpListElements(e.elements)}]))`;
+    } else {
+        return `(new ${typename}([]))`;
+    }
 }
 
 export function tpListElements(e: ArrayElement): string {

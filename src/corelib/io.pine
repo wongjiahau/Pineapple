@@ -1,4 +1,14 @@
-def print: (this Object) -> Void
+def print: (this Object)
+    <javascript>
+    console.log($this.valueOf())
+    </javascript>
+
+def print: (this String)
     <javascript>
     console.log($this.valueOf());
+    </javascript>
+
+def print: (this Number)
+    <javascript>
+    console.log("The Number is " + $this.valueOf());
     </javascript>
