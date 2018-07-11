@@ -18,6 +18,7 @@ import {
     Variable,
     VariableDeclaration
 } from "./ast";
+import { ErrorObject, ErrorVariableRedeclare } from "./errorType";
 import { stringifyFuncSignature, stringifyType } from "./transpile";
 
 export function fillUpTypeInformation(ast: Declaration, prevFuntab: FunctionTable): Declaration {
@@ -53,22 +54,22 @@ export interface FunctionTable {
     [key: string]: FunctionDeclaration;
 }
 
-function updateVariableTable(v: VariableTable, variable: Variable): VariableTable {
-    if (v[variable.repr]) {
-        errorMessage(`Variable \`${variable.repr}\` is already assigned`, variable.location);
+function updateVariableTable(vtab: VariableTable, variable: Variable): VariableTable {
+    const initialDecl = vtab[variable.repr];
+    if (initialDecl) {
+        const error: ErrorVariableRedeclare = {
+            kind: "ErrorVariableRedeclare",
+            initialVariable: initialDecl,
+            newVariable: variable,
+        };
+        raise(error);
     }
-    v[variable.repr] = variable;
-    return v;
+    vtab[variable.repr] = variable;
+    return vtab;
 }
 
-function errorMessage(message: string, location: TokenLocation | null) {
-    let error: string = "";
-    if (location) {
-        error = `${message} (at line ${location.first_line} column ${location.first_column})`;
-    } else {
-        error = `${message}`;
-    }
-    console.error(error);
+function raise(error: ErrorObject) {
+    throw new Error(JSON.stringify(error));
 }
 
 export function fillUp(s: Statement, vtab: VariableTable, ftab: FunctionTable): Statement {
@@ -224,7 +225,7 @@ export function getFuncSignature(e: FunctionCall, ftab: FunctionTable): TypeExpr
     if (key in ftab) {
         return ftab[key].returnType;
     } else {
-        console.error(`The function "${key}" does not exist`);
+        errorMessage(`The function ${key} does not exist`, e.location);
     }
 }
 

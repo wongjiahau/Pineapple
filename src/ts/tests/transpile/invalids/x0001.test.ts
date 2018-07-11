@@ -1,15 +1,30 @@
 import { expect } from "chai";
 import { pine2js } from "../../../pine2js";
 
-describe.skip("x001", () => {
-    it("duplicated variables", () => {
+describe("x001", () => {
+    it("variable redeclaration", () => {
         const input =
-`--function
-main: -> Void
-    let myName as String = '123'
-    let myName as String = '123'
+`def main:
+    let myName String = "123"
+    let myName String = "123"
 `;
-        // console.log(pine2js(input));
-        expect(() => pine2js(input)).to.throws("Variable `myName` is already assigned (at line 4 column 8)");
+        const expected =
+`
+ERROR >>> You cannot declare variable 'myName' again,because it is already declared at line 2.
+
+          | 1 | def main:
+          | 2 |     let myName String = "123"
+ERROR >>> | 3 |     let myName String = "123"
+          | 4 |
+
+The error is located at line 3, column 8.
+
+For more information, Google search PINER_VARE.
+
+`;
+        const result = pine2js(input);
+        // console.log(result.trim());
+        // console.log(expected.trim());
+        expect(result.trim()).to.eq(expected.trim());
     });
 });

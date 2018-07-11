@@ -2,7 +2,8 @@ export function labelLineNumbers(input: string, pointingWhichLine: number): stri
     let result = "";
     const lines = input.split("\n");
     for (let i = 0; i < lines.length; i++) {
-        let line = `| ${justifyLeft((i + 1).toString(), (lines.length + 1).toString().length)} | ${lines[i]}` + "\n";
+        let line = `| ${justifyLeft((i + 1).toString(), (lines.length + 1).toString().length)} | ${lines[i]}`;
+        line = line.trimRight() + "\n";
         if (pointingWhichLine - 1 === i) {
             line = "ERROR >>> " + line;
         } else {

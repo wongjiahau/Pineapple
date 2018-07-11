@@ -1,7 +1,9 @@
 // import { getFunctionTable } from "./getFunctionTable";
-import { Declaration } from "./ast";
+import { Declaration, TokenLocation } from "./ast";
+import { ErrorObject } from "./errorType";
 import { fillUpTypeInformation } from "./fillUpTypeInformation";
 import { preprocess } from "./preprocess";
+import { renderErrorMessage } from "./renderErrorMessage";
 import { tpDeclaration } from "./transpile";
 const parser     = require("../jison/pineapple-parser-v2");
 
@@ -10,7 +12,12 @@ export function pine2js(input: string): string {
     // const preprocessed = removeConsequetingNewlines(tokenized);
     const result = preprocess(input);
     let ast      = parser.parse(result);
-    ast          = fillUpTypeInformation(ast, {});
+    try {
+        ast          = fillUpTypeInformation(ast, {});
+    } catch (err) {
+        const error = JSON.parse(err.message) as ErrorObject;
+        return renderErrorMessage(input, error);
+    }
     // prettyPrint(ast);
 
     // console.log(Token.TokenTable);
