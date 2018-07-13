@@ -24,6 +24,20 @@ export function insertChild(child: TypeExpression, parent: TypeExpression, tree:
     return tree;
 }
 
+export function findParentOf(child: TypeExpression, /*in*/ tree: TypeTree): TypeExpression | null {
+    if (tree.children.some((x) => typeEquals(x.current, child))) {
+        return tree.current;
+    } else {
+        for (let i = 0; i < tree.children.length; i++) {
+            const parent = findParentOf(child, tree.children[i]);
+            if (parent !== null) {
+                return parent;
+            }
+        }
+        return null;
+    }
+}
+
 export function initTypeTree(): TypeTree {
     const objectType = newSimpleType("Object");
     const arrayType = newArrayType(objectType);

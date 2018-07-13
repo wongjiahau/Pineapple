@@ -1,17 +1,12 @@
 import {expect} from "chai";
-import {prettyPrint} from "../../pine2js";
-import {initTypeTree, insertChild, newArrayType, newSimpleType, newTypeTree} from "../../typeTree";
+import {insertChild, newArrayType, newSimpleType, newTypeTree} from "../../typeTree";
 
 describe("insertChild", () => {
     it("case 1", () => {
         const objectType = newSimpleType("Object");
         const arrayType = newArrayType(objectType);
         const initTree = newTypeTree(objectType);
-        const newTree = insertChild(arrayType,
-        /*as child of*/
-        objectType,
-        /*in*/
-        initTree);
+        const newTree = insertChild(arrayType, /*as child of*/ objectType, /*in*/ initTree);
         const expected = {
             current: {
                 kind: "SimpleType",

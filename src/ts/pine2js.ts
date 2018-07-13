@@ -78,7 +78,7 @@ export function retrieveSymbol(tokenTable: {[key: number]: Token}, ast: any): an
     return ast;
 }
 
-function prettyPrint(ast: Declaration, removeLocation: boolean): void {
+export function prettyPrint(ast: Declaration, removeLocation: boolean): void {
     if (removeLocation) {
         ast = removeTokenLocation(ast);
     }
