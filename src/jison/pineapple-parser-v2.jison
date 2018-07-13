@@ -388,7 +388,7 @@ FuncId
     ;
 
 PrefixFuncCall
-    : FuncAtom AtomicExpr {$$=_FunctionCall("prefix",[$1],[$2])}
+    : FuncAtom AtomicExpr {$$=_FunctionCall("prefix",[$1],[$2],this._$)}
     ;
 
 SuffixFuncCall

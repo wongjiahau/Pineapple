@@ -1,22 +1,20 @@
-import { expect } from "chai";
 import { pine2js } from "../../../pine2js";
+import { assertEquals } from "../../testUtil";
 
 describe("@preprocess-PP-001", () => {
     it("should ignore consecutive newlines", () => {
         const input =
 `def main:
-    print: "hello world"
+    let x = "hello world"
 
 
 `;
         const expectedOutput =
 `
 function _main(){
-"hello world"._print();
+const $x = "hello world";
 }`;
-        // console.log(pine2js(input));
-        // console.log(expectedOutput);
-        expect(pine2js(input).trim()).to.eq(expectedOutput.trim());
+        assertEquals(pine2js(input).trim(), expectedOutput.trim());
     });
 
 });

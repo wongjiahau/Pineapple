@@ -1,9 +1,9 @@
 // import { getFunctionTable } from "./getFunctionTable";
 import { Declaration, TokenLocation } from "./ast";
-import { ErrorObject } from "./errorType";
+import { PineError, RawError } from "./errorType";
 import { fillUpTypeInformation } from "./fillUpTypeInformation";
+import { generateErrorMessage } from "./generateErrorMessage";
 import { preprocess } from "./preprocess";
-import { renderErrorMessage } from "./renderErrorMessage";
 import { tpDeclaration } from "./transpile";
 const parser     = require("../jison/pineapple-parser-v2");
 
@@ -11,14 +11,15 @@ export function pine2js(input: string, filename: string= ""): string {
     // const tokenized    = tokenize(input);
     // const preprocessed = removeConsequetingNewlines(tokenized);
     const result = preprocess(input);
-    let ast      = parser.parse(result);
-    // prettyPrint(ast, false);
     try {
+        let ast      = parser.parse(result);
         ast = fillUpTypeInformation(ast, {});
-    } catch (err) {
-        const error = JSON.parse(err.message) as ErrorObject;
-        return renderErrorMessage(input, error, filename);
+    } catch (error) {
+        const x = (error as PineError);
+        x.errorMessage = generateErrorMessage(input, x.rawError, filename);
+        throw error;
     }
+    // prettyPrint(ast, false);
 
     // console.log(Token.TokenTable);
     // console.log(JSON.stringify(symbolized, null, 2));

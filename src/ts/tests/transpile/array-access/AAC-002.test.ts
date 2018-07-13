@@ -1,24 +1,23 @@
 import { expect } from "chai";
 import { pine2js } from "../../../pine2js";
+import { assertEquals } from "../../testUtil";
 
 describe("@array-access-AAC-002", () => {
     it("case 1", () => {
         const input =
 `
 def main:
-    print: [1,2][0]
+    let x = [1,2][0]
 `;
         const expectedOutput =
 `
 function _main(){
-(new ArrayOfNumber([(1),(2),]))[(0)]._print();
+const $x = (new ArrayOfNumber([(1),(2),]))[(0)];
 }
 `.trim();
 
         const result = pine2js(input).trim();
-        // console.log(expectedOutput);
-        // console.log(result);
-        expect(result).to.eq(expectedOutput);
+        assertEquals(result, expectedOutput);
     });
 
 });

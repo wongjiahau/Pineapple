@@ -1,5 +1,5 @@
-import { expect } from "chai";
 import { pine2js } from "../../../../pine2js";
+import { assertEquals } from "../../../testUtil";
 
 describe("FCI-004", () => {
     it("function call type inference", () => {
@@ -22,9 +22,7 @@ const $y = ((6)._$plus_Number(((6)._$plus_Number((6)))));
 }
 
 `;
-        // console.log(pine2js(input));
-        // console.log(expectedOutput);
-        expect(pine2js(input).trim()).to.eq(expectedOutput.trim());
+        assertEquals(pine2js(input).trim(), expectedOutput.trim());
     });
 
 });

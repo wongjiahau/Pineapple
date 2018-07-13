@@ -1,11 +1,19 @@
 import {
     FunctionCall,
+    FunctionDeclaration,
     Variable
 } from "./ast";
+import { ErrorMessage } from "./generateErrorMessage";
 
-export type ErrorObject
+export class PineError extends Error {
+    public rawError     !: RawError;
+    public errorMessage !: ErrorMessage;
+}
+
+export type RawError
     = ErrorVariableRedeclare
     | ErrorUsingUnknownFunction
+    | ErrorNoConformingFunction
     ;
 
 export interface ErrorVariableRedeclare {
@@ -17,4 +25,10 @@ export interface ErrorVariableRedeclare {
 export interface ErrorUsingUnknownFunction {
     kind: "ErrorUsingUnknownFunction";
     func: FunctionCall;
+}
+
+export interface ErrorNoConformingFunction {
+    kind: "ErrorNoConformingFunction";
+    func: FunctionCall;
+    matchingFunctions: FunctionDeclaration[];
 }

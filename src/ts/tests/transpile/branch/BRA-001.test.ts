@@ -1,5 +1,6 @@
 import { expect } from "chai";
 import { pine2js } from "../../../pine2js";
+import { assertEquals } from "../../testUtil";
 
 describe("@branch-BRA-001", () => {
     it("if", () => {
@@ -12,11 +13,11 @@ def main:
     let x Number = 4
     let y Number = 6
     if x > y
-        print: "yes"
+        let a = "yes"
     elif y > x
-        print: "no"
+        let b = "no"
     else
-        print: "oops"
+        let c = "oops"
 `;
         const expectedOutput =
 `
@@ -29,22 +30,19 @@ function _main(){
 const $x = (4);
 const $y = (6);
 if(($x._$greaterThan_Number($y))){
-    "yes"._print()
+    const $a = "yes"
 } else if(($y._$greaterThan_Number($x))){
-    "no"._print()
+    const $b = "no"
 } else {
-    "oops"._print()
+    const $c = "oops"
 }
 
 ;
 }
-
 `.trim();
 
         const result = pine2js(input).trim();
-        // console.log(expectedOutput);
-        // console.log(result);
-        expect(result).to.eq(expectedOutput);
+        assertEquals(result, expectedOutput);
     });
 
 });

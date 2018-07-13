@@ -13,12 +13,13 @@ import {
     Statement,
     StringExpression,
     TestExpression,
-    TokenLocation,
     TypeExpression,
     Variable,
     VariableDeclaration
 } from "./ast";
-import { ErrorObject, ErrorUsingUnknownFunction, ErrorVariableRedeclare } from "./errorType";
+
+import { ErrorNoConformingFunction, ErrorUsingUnknownFunction, ErrorVariableRedeclare, PineError, RawError } from "./errorType";
+import { generateErrorMessage } from "./generateErrorMessage";
 import { stringifyFuncSignature, stringifyType } from "./transpile";
 
 export function fillUpTypeInformation(ast: Declaration, prevFuntab: FunctionTable): Declaration {
@@ -33,7 +34,11 @@ export function fillUpTypeInformation(ast: Declaration, prevFuntab: FunctionTabl
 
 export function newFunctionTable(f: FunctionDeclaration, funtab: FunctionTable): FunctionTable {
     const result: FunctionTable = {};
-    result[stringifyFuncSignature(f.signature)] = f;
+    const key = stringifyFuncSignature(f.signature);
+    if (!result[key]) {
+        result[key] = [];
+    }
+    result[key].push(f);
     return {...result, ...funtab};
 }
 
@@ -51,7 +56,7 @@ export interface VariableTable {
 }
 
 export interface FunctionTable {
-    [key: string]: FunctionDeclaration;
+    [key: string]: FunctionDeclaration[];
 }
 
 function updateVariableTable(vtab: VariableTable, variable: Variable): VariableTable {
@@ -68,8 +73,10 @@ function updateVariableTable(vtab: VariableTable, variable: Variable): VariableT
     return vtab;
 }
 
-function raise(error: ErrorObject) {
-    throw new Error(JSON.stringify(error));
+function raise(error: RawError) {
+    const throwable = new PineError();
+    throwable.rawError = error;
+    throw throwable;
 }
 
 export function fillUp(s: Statement, vtab: VariableTable, ftab: FunctionTable): Statement {
@@ -105,9 +112,7 @@ export function fillUp(s: Statement, vtab: VariableTable, ftab: FunctionTable): 
         }
         break;
     case "FunctionCall":
-        for (let i = 0; i < s.body.parameters.length; i++) {
-            s.body.parameters[i] = fillUpExpressionTypeInfo(s.body.parameters[i], vtab, ftab);
-        }
+        s.body = fillUpFunctionCallTypeInfo(s.body, vtab, ftab);
         break;
     case "BranchStatement":
         s.body = fillUpBranchTypeInfo(s.body, vtab, ftab);
@@ -223,7 +228,19 @@ export function fillUpFunctionCallTypeInfo(e: FunctionCall, vtab: VariableTable,
 export function getFuncSignature(f: FunctionCall, ftab: FunctionTable): TypeExpression {
     const key = stringifyFuncSignature(f.signature);
     if (key in ftab) {
-        return ftab[key].returnType;
+        const matchingFunctions = ftab[key];
+        for (let i = 0; i < matchingFunctions.length; i++) {
+            if (paramTypesConforms(matchingFunctions[i].parameters, f.parameters)) {
+                return matchingFunctions[i].returnType;
+            } else {
+                const error: ErrorNoConformingFunction = {
+                    kind: "ErrorNoConformingFunction",
+                    func: f,
+                    matchingFunctions: matchingFunctions
+                };
+                raise(error);
+            }
+        }
     } else {
         const error: ErrorUsingUnknownFunction = {
             kind: "ErrorUsingUnknownFunction",
@@ -231,6 +248,24 @@ export function getFuncSignature(f: FunctionCall, ftab: FunctionTable): TypeExpr
         };
         raise(error);
     }
+}
+
+export function paramTypesConforms(
+    actualParams: VariableDeclaration[],
+    matchingParams: Expression[],
+): boolean {
+    if (actualParams.length !== matchingParams.length) {
+        return false;
+    }
+    for (let i = 0; i < actualParams.length; i++) {
+        if (!typeEquals(
+            actualParams[i].typeExpected,
+            matchingParams[i].returnType
+        )) {
+            return false;
+        }
+    }
+    return true;
 }
 
 export function fillUpArrayTypeInfo(e: ArrayExpression, vtab: VariableTable): ArrayExpression {

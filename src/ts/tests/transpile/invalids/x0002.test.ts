@@ -1,5 +1,9 @@
 import { expect } from "chai";
+import { PineError } from "../../../errorType";
+import { getFuncSignature } from "../../../generateErrorMessage";
 import { pine2js } from "../../../pine2js";
+import { catchError } from "../../testUtil";
+import { ErrorUsingUnknownFunction } from "./../../../errorType";
 
 describe("x0002", () => {
     it("using unknown named-infix function", () => {
@@ -7,21 +11,8 @@ describe("x0002", () => {
 `def main:
     let x = 1 plus: 2
 `;
-        const expected =
-`
-ERROR >>> You cannot call the function 'plus:' as it does not exist.
-
-          | 1 | def main:
-ERROR >>> | 2 |     let x = 1 plus: 2
-          | 3 |
-
-The error is located at line 2, column 12.
-
-For more information, Google search PINER_USUF.
-`;
-        const result = pine2js(input);
-        // console.log(result.trim());
-        // console.log(expected.trim());
-        expect(result.trim()).to.eq(expected.trim());
+        const result = catchError(() => pine2js(input)) as PineError;
+        const error = result.rawError as ErrorUsingUnknownFunction;
+        expect(getFuncSignature(error.func.signature)).to.eq("plus:");
     });
 });
