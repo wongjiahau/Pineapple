@@ -1,7 +1,7 @@
 import { pine2js } from "../../../pine2js";
 import { assertEquals } from "../../testUtil";
 
-describe("@preprocess-PP-001", () => {
+describe("@preprocess-PPR-001", () => {
     it("should ignore consecutive newlines", () => {
         const input =
 `def main:
@@ -11,9 +11,11 @@ describe("@preprocess-PP-001", () => {
 `;
         const expectedOutput =
 `
-function _main(){
+function _main_(){
 const $x = "hello world";
-}`;
+}
+
+`;
         assertEquals(pine2js(input).trim(), expectedOutput.trim());
     });
 

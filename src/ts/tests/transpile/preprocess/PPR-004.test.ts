@@ -8,7 +8,7 @@ describe("@preprocess-PP-004.test.ts", () => {
     let y = 6`;
         const expectedOutput =
 `
-function _main(){
+function _main_(){
 const $y = (6);
 }
 `;

@@ -1,5 +1,6 @@
 import { expect } from "chai";
 import { pine2js } from "../../../../pine2js";
+import { assertEquals } from "../../../testUtil";
 
 describe("@func-call-infix-FCI-003", () => {
     it("double symbols", () => {
@@ -13,18 +14,15 @@ def main:
 `;
         const expectedOutput =
 `
-String.prototype._$plus$plus_String=function($that){
-const $this = this;
-throw new Error('Not implemented yet!')
+function _$plus$plus_String_String($this,$that){
+$$pass$$();
 }
 
-function _main(){
-const $y = ("pine"._$plus$plus_String("apple"));
+function _main_(){
+const $y = _$plus$plus_String_String("pine","apple");
 }
 `;
-        // console.log(pine2js(input));
-        // console.log(expectedOutput);
-        expect(pine2js(input).trim()).to.eq(expectedOutput.trim());
+        assertEquals(pine2js(input).trim(), expectedOutput.trim());
     });
 
 });

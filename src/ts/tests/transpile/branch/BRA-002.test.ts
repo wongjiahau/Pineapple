@@ -20,17 +20,17 @@ def main:
 `;
         const expectedOutput =
 `
-Number.prototype._$greaterThan_Number=function($that){
-const $this = this;
-throw new Error('Not implemented yet!')
+
+function _$greaterThan_Number_Number($this,$that){
+$$pass$$();
 }
 
-function _main(){
-if(((1)._$greaterThan_Number((2)))){
+function _main_(){
+if(_$greaterThan_Number_Number((1),(2))){
     const $a = "no"
-} else if(((2)._$greaterThan_Number((3)))){
+} else if(_$greaterThan_Number_Number((2),(3))){
     const $b = "no"
-} else if(((3)._$greaterThan_Number((4)))){
+} else if(_$greaterThan_Number_Number((3),(4))){
     const $c = "no"
 } else {
     const $d = "oops"
@@ -38,7 +38,9 @@ if(((1)._$greaterThan_Number((2)))){
 
 
 ;
-}`.trim();
+}
+
+`.trim();
 
         const result = pine2js(input).trim();
         assertEquals(result, expectedOutput);

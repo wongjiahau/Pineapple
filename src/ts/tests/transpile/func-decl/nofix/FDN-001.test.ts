@@ -1,5 +1,5 @@
-import { expect } from "chai";
 import { pine2js } from "../../../../pine2js";
+import { assertEquals } from "../../../testUtil";
 
 describe("@func-decl-nofix-FDN-001", () => {
     it("case1", () => {
@@ -9,11 +9,10 @@ describe("@func-decl-nofix-FDN-001", () => {
 `;
         const expectedOutput =
 `
-function _main(){
+function _main_(){
 const $myName = "123";
 }
 `;
-        // console.log(pine2js(input));
-        expect(pine2js(input).trim()).to.eq(expectedOutput.trim());
+        assertEquals(pine2js(input).trim(), expectedOutput.trim());
     });
 });

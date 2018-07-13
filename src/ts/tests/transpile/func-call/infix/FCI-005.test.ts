@@ -1,5 +1,6 @@
 import { expect } from "chai";
 import { pine2js } from "../../../../pine2js";
+import { assertEquals } from "../../../testUtil";
 
 describe("FCI-005", () => {
     it("recursive type inference", () => {
@@ -12,13 +13,11 @@ def (this Number) (--) (that String) -> String
 `;
         const expectedOutput =
 `
-Number.prototype._$minus$minus_String=function($that){
-const $this = this;
-return ($this._$minus$minus_String(((5)._$minus$minus_String($that))))}
+function _$minus$minus_Number_String($this,$that){
+return _$minus$minus_Number_String($this,_$minus$minus_Number_String((5),$that));
+}
 `;
-        // console.log(pine2js(input));
-        // console.log(expectedOutput);
-        expect(pine2js(input).trim()).to.eq(expectedOutput.trim());
+        assertEquals(pine2js(input).trim(), expectedOutput.trim());
     });
 
 });

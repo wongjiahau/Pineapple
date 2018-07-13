@@ -1,5 +1,5 @@
-import { expect } from "chai";
 import { pine2js } from "../../../../pine2js";
+import { assertEquals } from "../../../testUtil";
 
 describe("LAR-003", () => {
     it("empty array", () => {
@@ -11,14 +11,12 @@ def main:
 `;
         const expectedOutput =
 `
-function _main(){
+function _main_(){
 const $x = (new ArrayOfString([]));
 const $y = (new ArrayOfNumber([]));
 }
 `;
-        // console.log(pine2js(input));
-        // console.log(expectedOutput);
-        expect(pine2js(input).trim()).to.eq(expectedOutput.trim());
+        assertEquals(pine2js(input).trim(), expectedOutput.trim());
     });
 
 });

@@ -14,15 +14,14 @@ def main:
 `;
         const expectedOutput =
 `
-String.prototype._print=function(){
-const $this = this;
-throw new Error('Not implemented yet!')
-
+function _print_String($this){
+$$pass$$();
 }
 
-function _main(){
-"hello world"._print();
+function _main_(){
+_print_String("hello world");
 }
+
 `;
         assertEquals(pine2js(input).trim(), expectedOutput.trim());
     });

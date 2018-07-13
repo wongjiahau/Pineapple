@@ -1,7 +1,7 @@
-import { expect } from "chai";
 import { pine2js } from "../../../../pine2js";
+import { assertEquals } from "../../../testUtil";
 
-describe("@literal-boolean-LB-001", () => {
+describe("LBO-001", () => {
     it("case1", () => {
         const input =
 `
@@ -10,13 +10,11 @@ def main:
 `;
         const expectedOutput =
 `
-function _main(){
+function _main_(){
 const $x = true;
 }
 `;
-        // console.log(pine2js(input));
-        // console.log(expectedOutput);
-        expect(pine2js(input)).to.eq(expectedOutput);
+        assertEquals(pine2js(input).trim(), expectedOutput.trim());
     });
 
     it("case2", () => {
@@ -27,13 +25,11 @@ def main:
 `;
         const expectedOutput =
 `
-function _main(){
+function _main_(){
 const $y = false;
 }
 `;
-        // console.log(pine2js(input));
-        // console.log(expectedOutput);
-        expect(pine2js(input)).to.eq(expectedOutput);
+        assertEquals(pine2js(input).trim(), expectedOutput.trim());
     });
 
 });

@@ -1,5 +1,6 @@
 import { expect } from "chai";
 import { pine2js } from "../../../pine2js";
+import { assertEquals } from "../../testUtil";
 
 describe("@preprocess-PP-002", () => {
     it("should ignore consequtive newlines", () => {
@@ -17,24 +18,20 @@ def say: (this String) -> Void
 
 `;
         const expectedOutput =
-`String.prototype._print=function(){
-const $this = this;
+`
+function _print_String($this){
 // <javascript>
 console.log($this.valueOf());
-// </javascript>
-
+// </javascript>;
 }
-String.prototype._say=function(){
-const $this = this;
+
+function _say_String($this){
 // <javascript>
 console.log($this.valueOf());
-// </javascript>
-
+// </javascript>;
 }
 `;
-        // console.log(pine2js(input));
-        // console.log(expectedOutput);
-        expect(pine2js(input).trim()).to.eq(expectedOutput.trim());
+        assertEquals(pine2js(input).trim(), expectedOutput.trim());
     });
 
 });

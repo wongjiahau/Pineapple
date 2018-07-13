@@ -10,10 +10,10 @@ def show: (this Int[])
 `;
         const expectedOutput =
 `
-ArrayOfInt.prototype._show=function(){
-const $this = this;
-const $message = "Not implemented"
+function _show_ArrayOfInt($this){
+const $message = "Not implemented";
 }
+
 `;
         assertEquals(pine2js(input).trim(), expectedOutput.trim());
     });

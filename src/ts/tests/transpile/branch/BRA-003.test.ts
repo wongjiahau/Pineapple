@@ -1,5 +1,6 @@
 import { expect } from "chai";
 import { pine2js } from "../../../pine2js";
+import { assertEquals } from "../../testUtil";
 
 describe("BRA-003", () => {
     it("if else without elif", () => {
@@ -16,25 +17,23 @@ def main:
 `;
         const expectedOutput =
 `
-Number.prototype._$greaterThan_Number=function($that){
-const $this = this;
-throw new Error('Not implemented yet!')
+function _$greaterThan_Number_Number($this,$that){
+$$pass$$();
 }
 
-function _main(){
-if(((5)._$greaterThan_Number((6)))){
+function _main_(){
+if(_$greaterThan_Number_Number((5),(6))){
     return "ok"
 } else {
     return "no"
 }
 ;
 }
+
 `.trim();
 
         const result = pine2js(input).trim();
-        // console.log(expectedOutput);
-        // console.log(result);
-        expect(result).to.eq(expectedOutput);
+        assertEquals(result, expectedOutput);
     });
 
 });

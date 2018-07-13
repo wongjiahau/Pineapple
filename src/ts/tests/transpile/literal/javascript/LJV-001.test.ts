@@ -1,5 +1,5 @@
-import { expect } from "chai";
 import { pine2js } from "../../../../pine2js";
+import { assertEquals } from "../../../testUtil";
 
 describe("@literal-javascript-LJ-001", () => {
     it("case1", () => {
@@ -10,17 +10,14 @@ describe("@literal-javascript-LJ-001", () => {
     </javascript>
 `;
         const expectedOutput =
-`String.prototype._print=function(){
-const $this = this;
+`
+function _print_String($this){
 // <javascript>
 console.log($this);
-// </javascript>
-
+// </javascript>;
 }
 `;
-        // console.log(pine2js(input));
-        // console.log(expectedOutput);
-        expect(pine2js(input)).to.eq(expectedOutput);
+        assertEquals(pine2js(input).trim(), expectedOutput.trim());
     });
 
 });

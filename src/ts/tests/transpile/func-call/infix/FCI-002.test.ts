@@ -1,5 +1,6 @@
 import { expect } from "chai";
 import { pine2js } from "../../../../pine2js";
+import { assertEquals } from "../../../testUtil";
 
 describe("@func-call-infix-FCI-002", () => {
     it("nested infix function call", () => {
@@ -13,19 +14,14 @@ def main:
 `;
         const expectedOutput =
 `
-Number.prototype._$plus_Number=function($that){
-const $this = this;
-throw new Error('Not implemented yet!')
+function _$plus_Number_Number($this,$that){
+$$pass$$();
 }
 
-function _main(){
-const $y = (((6)._$plus_Number((6)))._$plus_Number((6)));
-}
-
-`;
-        // console.log(pine2js(input));
-        // console.log(expectedOutput);
-        expect(pine2js(input).trim()).to.eq(expectedOutput.trim());
+function _main_(){
+const $y = _$plus_Number_Number(_$plus_Number_Number((6),(6)),(6));
+}`;
+        assertEquals(pine2js(input).trim(), expectedOutput.trim());
     });
 
 });

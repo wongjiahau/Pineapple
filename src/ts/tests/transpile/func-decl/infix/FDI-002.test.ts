@@ -1,7 +1,8 @@
 import { expect } from "chai";
 import { pine2js } from "../../../../pine2js";
+import { assertEquals } from "../../../testUtil";
 
-describe("@func-decl-infix-FDI-002", () => {
+describe("FDI-002", () => {
     it("double equals", () => {
         const input =
 `
@@ -12,16 +13,13 @@ def (x Any) (==) (y Any) -> Int
 `;
         const expectedOutput =
 `
-Any.prototype._$equal$equal_Any=function($y){
-const $x = this;
+function _$equal$equal_Any_Any($x,$y){
 // <javascript>
 return $x === $y;
-// </javascript>
+// </javascript>;
 }
 `;
-        // console.log(pine2js(input));
-        // console.log(expectedOutput);
-        expect(pine2js(input).trim()).to.eq(expectedOutput.trim());
+        assertEquals(pine2js(input).trim(), expectedOutput.trim());
     });
 
 });

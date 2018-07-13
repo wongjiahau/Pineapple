@@ -1,5 +1,5 @@
-import { expect } from "chai";
 import { pine2js } from "../../../pine2js";
+import { assertEquals } from "../../testUtil";
 
 describe("@array-access-AAC-003", () => {
     it("type inference on array element", () => {
@@ -13,20 +13,18 @@ def main:
 `;
         const expectedOutput =
 `
-Number.prototype._$plus_Number=function($that){
-const $this = this;
-throw new Error('Not implemented yet!')
+function _$plus_Number_Number($this,$that){
+$$pass$$();
 }
 
-function _main(){
-const $x = ((new ArrayOfNumber([(1),(2),]))[(0)]._$plus_Number((new ArrayOfNumber([(2),(3),]))[(0)]));
+function _main_(){
+const $x = _$plus_Number_Number((new ArrayOfNumber([(1),(2),]))[(0)],(new ArrayOfNumber([(2),(3),]))[(0)]);
 }
+
 `.trim();
 
         const result = pine2js(input).trim();
-        // console.log(expectedOutput);
-        // console.log(result);
-        expect(result).to.eq(expectedOutput);
+        assertEquals(result, expectedOutput);
     });
 
 });

@@ -21,17 +21,16 @@ def main:
 `;
         const expectedOutput =
 `
-Number.prototype._$greaterThan_Number=function($that){
-const $this = this;
-throw new Error('Not implemented yet!')
+function _$greaterThan_Number_Number($this,$that){
+$$pass$$();
 }
 
-function _main(){
+function _main_(){
 const $x = (4);
 const $y = (6);
-if(($x._$greaterThan_Number($y))){
+if(_$greaterThan_Number_Number($x,$y)){
     const $a = "yes"
-} else if(($y._$greaterThan_Number($x))){
+} else if(_$greaterThan_Number_Number($y,$x)){
     const $b = "no"
 } else {
     const $c = "oops"
@@ -39,6 +38,7 @@ if(($x._$greaterThan_Number($y))){
 
 ;
 }
+
 `.trim();
 
         const result = pine2js(input).trim();

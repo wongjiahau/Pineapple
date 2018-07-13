@@ -1,5 +1,6 @@
 import { expect } from "chai";
 import { pine2js } from "../../../../pine2js";
+import { assertEquals } from "../../../testUtil";
 
 describe("@literal-array-LAR-001", () => {
     it("list with some elements", () => {
@@ -10,13 +11,11 @@ def main:
 `;
         const expectedOutput =
 `
-function _main(){
+function _main_(){
 const $x = (new ArrayOfNumber([(1.1),(2.2),(3.3),(4.4),]));
 }
 `;
-        // console.log(pine2js(input));
-        // console.log(expectedOutput);
-        expect(pine2js(input).trim()).to.eq(expectedOutput.trim());
+        assertEquals(pine2js(input).trim(), expectedOutput.trim());
     });
 
 });

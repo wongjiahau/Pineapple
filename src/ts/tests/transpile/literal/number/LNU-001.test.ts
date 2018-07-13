@@ -11,7 +11,7 @@ def main:
 ;
         const expectedOutput =
 `
-function _main(){
+function _main_(){
 const $x = (12345);
 }
 `;

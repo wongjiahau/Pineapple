@@ -42,32 +42,10 @@ export function tpDeclaration(input: Declaration): string {
 
 export function tpFunctionDeclaration(f: FunctionDeclaration): string {
     const funcSignature = stringifyFuncSignature(f.signature);
+    const typeSignature = f.parameters.map((x) => stringifyType(x.typeExpected)).join("_");
+    const params = tpParameters(f.parameters);
     const statements = tpStatement(f.statements);
-    if (f.parameters.length === 0) {
-        return "" +
-        `
-function ${funcSignature}(${tpParameters(f.parameters)}){
-${statements};
-}
-`;
-    }
-    const initStatement = `const $${f.parameters[0].variable.repr} = this;`;
-    const targetType = stringifyType(f.parameters[0].typeExpected);
-    if (f.parameters.length === 1) {
-        return `${targetType}.prototype.${funcSignature}=function(){
-${initStatement}
-${statements}
-}
-`;
-    }
-    if (f.parameters.length === 2) {
-        return `${targetType}.prototype.`
-        + `${funcSignature}_${stringifyType(f.parameters[1].typeExpected)}`
-        + `=function(${f.parameters.slice(1).map((x) => "$" + x.variable.repr).join(",")}){
-${initStatement}
-${statements}}
-`;
-    }
+    return `function ${funcSignature}_${typeSignature}(${params}){\n${statements};\n}\n\n`;
 }
 
 export function tpStatement(s: Statement): string {
@@ -80,7 +58,7 @@ export function tpStatement(s: Statement): string {
         case "BranchStatement":     return tpBranchStatement(s.body)        + next;
         case "ForStatement":        return tpForStatement(s.body)           + next;
         case "WhileStatement":      return tpWhileStatement(s.body)         + next;
-        case "PassStatement":       return "throw new Error('Not implemented yet!')\n";
+        case "PassStatement":       return "$$pass$$()";
     }
 }
 
@@ -133,16 +111,9 @@ export function tpReturnStatement(r: ReturnStatement): string {
 
 export function tpFunctionCall(f: FunctionCall): string {
     const funcSignature = stringifyFuncSignature(f.signature);
-    if (f.parameters.length === 0) {
-        return `${funcSignature}();`;
-    }
-    if (f.parameters.length === 1) {
-        return `${tpExpression(f.parameters[0])}.${funcSignature}()`;
-    }
-    if (f.parameters.length === 2) {
-        return `(${tpExpression(f.parameters[0])}` +
-        `.${funcSignature}_${stringifyType(f.parameters[1].returnType)}(${tpExpression(f.parameters[1])}))`;
-    }
+    const typeSignature = f.parameters.map((x) => stringifyType(x.returnType)).join("_");
+    const params = f.parameters.map((x) => tpExpression(x));
+    return `${funcSignature}_${typeSignature}(${params.join(",")})`;
 }
 
 export function stringifyFuncSignature(signature: AtomicToken[]): string {
@@ -196,7 +167,7 @@ export function tpAssignmentStatement(a: AssignmentStatement): string {
 }
 
 export function tpParameters(v: VariableDeclaration[]): string {
-    return removeLastComma(v.map((x) => x.variable.repr).join(","));
+    return removeLastComma(v.map((x) => "$" + x.variable.repr).join(","));
 }
 
 export function tpExpression(e: Expression): string {
@@ -220,8 +191,7 @@ export function tpJavascriptCode(s: JavascriptCode): string {
     return "" +
 `// <javascript>
 ${s.repr.replace(/(<javascript>|<\/javascript>|@.+)/g, "").trim()}
-// </javascript>
-`;
+// </javascript>`;
 }
 export function tpStringExpression(s: StringExpression): string {
     return `"${s.repr.slice(1, -1)}"`;

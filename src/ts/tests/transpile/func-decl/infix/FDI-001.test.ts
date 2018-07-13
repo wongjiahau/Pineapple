@@ -1,5 +1,6 @@
 import { expect } from "chai";
 import { pine2js } from "../../../../pine2js";
+import { assertEquals } from "../../../testUtil";
 
 describe("@func-decl-infix-FDI-001", () => {
     it("infix function declaration", () => {
@@ -12,16 +13,14 @@ def (x Int) (+) (y Int) -> Int
 `;
         const expectedOutput =
 `
-Int.prototype._$plus_Int=function($y){
-const $x = this;
+function _$plus_Int_Int($x,$y){
 // <javascript>
 return $x + $y;
-// </javascript>
+// </javascript>;
 }
+
 `;
-        // console.log(pine2js(input));
-        // console.log(expectedOutput);
-        expect(pine2js(input).trim()).to.eq(expectedOutput.trim());
+        assertEquals(pine2js(input).trim(), expectedOutput.trim());
     });
 
 });

@@ -1,5 +1,6 @@
 import { expect } from "chai";
 import { pine2js } from "../../../pine2js";
+import { assertEquals } from "../../testUtil";
 
 describe("WLO-001", () => {
     it("while loop 1", () => {
@@ -18,26 +19,23 @@ def main:
 `;
         const expectedOutput =
 `
-Number.prototype._$lessThan_Number=function($that){
-const $this = this;
-throw new Error('Not implemented yet!')
-}
-Number.prototype._$plus_Number=function($that){
-const $this = this;
-throw new Error('Not implemented yet!')
+function _$lessThan_Number_Number($this,$that){
+$$pass$$();
 }
 
-function _main(){
+function _$plus_Number_Number($this,$that){
+$$pass$$();
+}
+
+function _main_(){
 const $x = (0);
-while(($x._$lessThan_Number((10)))){
-    x = ($x._$plus_Number((1)))
+while(_$lessThan_Number_Number($x,(10))){
+    x = _$plus_Number_Number($x,(1))
 }
 ;
 }
 `;
-        // console.log(pine2js(input));
-        // console.log(expectedOutput);
-        expect(pine2js(input).trim()).to.eq(expectedOutput.trim());
+        assertEquals(pine2js(input).trim(), expectedOutput.trim());
     });
 
 });
