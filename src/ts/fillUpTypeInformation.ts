@@ -15,7 +15,8 @@ import {
     TestExpression,
     TypeExpression,
     Variable,
-    VariableDeclaration
+    VariableDeclaration,
+    AtomicToken
 } from "./ast";
 
 import {
@@ -27,13 +28,23 @@ import {
 } from "./errorType";
 
 import { stringifyFuncSignature, stringifyType } from "./transpile";
+import { newTypeTree, TypeTree, childOf } from "./typeTree";
 
-export function fillUpTypeInformation(ast: Declaration, prevFuntab: FunctionTable): Declaration {
+export function fillUpTypeInformation(
+        ast: Declaration,
+        prevFuntab: FunctionTable,
+        prevTypeTree: TypeTree
+    ): Declaration {
     const vtab = getVariableTable(ast.body.parameters);
     const ftab = newFunctionTable(ast.body, prevFuntab);
-    ast.body.statements = fillUp(ast.body.statements, vtab, ftab);
+    const symbols: SymbolTable = {
+        vartab: vtab,
+        functab: ftab,
+        typeTree: prevTypeTree
+    };
+    ast.body.statements = fillUp(ast.body.statements, symbols);
     if (ast.next !== null) {
-        ast.next = fillUpTypeInformation(ast.next, ftab);
+        ast.next = fillUpTypeInformation(ast.next, ftab, prevTypeTree);
     }
     return ast;
 }
@@ -55,6 +66,12 @@ export function getVariableTable(variables: VariableDeclaration[]): VariableTabl
         result[variables[i].variable.repr] = variables[i].variable;
     }
     return result;
+}
+
+export interface SymbolTable {
+    vartab: VariableTable;
+    functab: FunctionTable;
+    typeTree: TypeTree;
 }
 
 export interface VariableTable {
@@ -85,28 +102,28 @@ function raise(error: RawError) {
     throw throwable;
 }
 
-export function fillUp(s: Statement, vtab: VariableTable, ftab: FunctionTable): Statement {
+export function fillUp(s: Statement, symbols: SymbolTable): Statement {
     switch (s.body.kind) {
     case "ReturnStatement":
-        s.body.expression = fillUpExpressionTypeInfo(s.body.expression, vtab, ftab);
+        s.body.expression = fillUpExpressionTypeInfo(s.body.expression, symbols);
         break;
     case "AssignmentStatement":
         switch (s.body.variable.kind) {
         case "VariableDeclaration":
             if (s.body.variable.typeExpected === null) {
                 // Inference-typed
-                s.body.expression = fillUpExpressionTypeInfo(s.body.expression, vtab, ftab);
-                s.body.variable.variable.returnType = getType(s.body.expression, vtab);
+                s.body.expression = fillUpExpressionTypeInfo(s.body.expression, symbols);
+                s.body.variable.variable.returnType = getType(s.body.expression, symbols.vartab);
             } else {
                 // Statically-typed
                 s.body.expression.returnType = s.body.variable.typeExpected;
                 s.body.variable.variable.returnType = s.body.variable.typeExpected;
             }
-            vtab = updateVariableTable(vtab, s.body.variable.variable);
+            symbols.vartab = updateVariableTable(symbols.vartab, s.body.variable.variable);
             break;
         case "Variable":
-            const matching = vtab[s.body.variable.repr];
-            s.body.expression = fillUpExpressionTypeInfo(s.body.expression, vtab, ftab);
+            const matching = symbols.vartab[s.body.variable.repr];
+            s.body.expression = fillUpExpressionTypeInfo(s.body.expression, symbols);
             if (!typeEquals(matching.returnType, s.body.expression.returnType)) {
                 errorMessage(
 `The data type of ${matching.repr} should be ${stringifyType(matching.returnType)}, ` +
@@ -118,68 +135,68 @@ export function fillUp(s: Statement, vtab: VariableTable, ftab: FunctionTable): 
         }
         break;
     case "FunctionCall":
-        s.body = fillUpFunctionCallTypeInfo(s.body, vtab, ftab);
+        s.body = fillUpFunctionCallTypeInfo(s.body, symbols);
         break;
     case "BranchStatement":
-        s.body = fillUpBranchTypeInfo(s.body, vtab, ftab);
+        s.body = fillUpBranchTypeInfo(s.body, symbols);
         break;
     case "ForStatement":
-        s.body = fillUpForStmtTypeInfo(s.body, vtab, ftab);
+        s.body = fillUpForStmtTypeInfo(s.body, symbols);
         break;
     case "WhileStatement":
-        s.body.test = fillUpTestExprTypeInfo(s.body.test, vtab, ftab);
-        s.body.body = fillUp(s.body.body, vtab, ftab);
+        s.body.test = fillUpTestExprTypeInfo(s.body.test, symbols);
+        s.body.body = fillUp(s.body.body, symbols);
         break;
     }
     if (s.next !== null) {
-        s.next = fillUp(s.next, vtab, ftab);
+        s.next = fillUp(s.next, symbols);
     }
     return s;
 }
 
-export function fillUpForStmtTypeInfo(f: ForStatement, vtab: VariableTable, ftab: FunctionTable): ForStatement {
-    f.expression = fillUpExpressionTypeInfo(f.expression, vtab, ftab);
+export function fillUpForStmtTypeInfo(f: ForStatement, symbols: SymbolTable): ForStatement {
+    f.expression = fillUpExpressionTypeInfo(f.expression, symbols);
     if (f.expression.returnType.kind === "ArrayType") {
         f.iterator.returnType = f.expression.returnType.arrayOf;
-        vtab = updateVariableTable(vtab, f.iterator);
+        symbols.vartab = updateVariableTable(symbols.vartab, f.iterator);
     } else {
         errorMessage("The expresison type in for statement should be array.", null);
     }
-    f.body = fillUp(f.body, vtab, ftab);
+    f.body = fillUp(f.body, symbols);
     return f;
 }
 
-export function fillUpTestExprTypeInfo(t: TestExpression, vtab: VariableTable, ftab: FunctionTable): TestExpression {
-    t.current = fillUpFunctionCallTypeInfo(t.current, vtab, ftab);
+export function fillUpTestExprTypeInfo(t: TestExpression, symbols: SymbolTable): TestExpression {
+    t.current = fillUpFunctionCallTypeInfo(t.current, symbols);
     let next = t.next;
     while (next !== null) {
-        next.current = fillUpFunctionCallTypeInfo(next.current, vtab, ftab);
+        next.current = fillUpFunctionCallTypeInfo(next.current, symbols);
         next = next.next;
     }
     return t;
 }
 
-export function fillUpBranchTypeInfo(b: BranchStatement, vtab: VariableTable, ftab: FunctionTable): BranchStatement {
-    b.body = fillUp(b.body, vtab, ftab);
+export function fillUpBranchTypeInfo(b: BranchStatement, symbols: SymbolTable): BranchStatement {
+    b.body = fillUp(b.body, symbols);
     if (b.test !== null) {
-        b.test = fillUpTestExprTypeInfo(b.test, vtab, ftab);
+        b.test = fillUpTestExprTypeInfo(b.test, symbols);
     }
     if (b.elseBranch !== null) {
-        b.elseBranch = fillUpBranchTypeInfo(b.elseBranch, vtab, ftab);
+        b.elseBranch = fillUpBranchTypeInfo(b.elseBranch, symbols);
     }
     return b;
 }
 
-export function fillUpExpressionTypeInfo(e: Expression, vtab: VariableTable, ftab: FunctionTable): Expression {
+export function fillUpExpressionTypeInfo(e: Expression, symbols: SymbolTable): Expression {
     switch (e.kind) {
-        case "FunctionCall":    return fillUpFunctionCallTypeInfo(e, vtab, ftab);
-        case "Array":           return fillUpArrayTypeInfo       (e, vtab);
+        case "FunctionCall":    return fillUpFunctionCallTypeInfo(e, symbols);
+        case "Array":           return fillUpArrayTypeInfo       (e, symbols);
         case "Number":          return fillUpSimpleTypeInfo      (e, "Number");
         case "String":          return fillUpSimpleTypeInfo      (e, "String");
         case "Boolean":         return fillUpSimpleTypeInfo      (e, "Boolean");
-        case "Variable":        return fillUpVariableTypeInfo    (e, vtab);
+        case "Variable":        return fillUpVariableTypeInfo    (e, symbols.vartab);
         case "ArrayAccess":
-            e.subject = fillUpExpressionTypeInfo(e.subject, vtab, ftab);
+            e.subject = fillUpExpressionTypeInfo(e.subject, symbols);
             return fillUpArrayAccessTypeInfo(e);
         default: return e;
     }
@@ -223,21 +240,30 @@ export function fillUpSimpleTypeInfo(e: SimpleExpression, name: string): SimpleE
     };
 }
 
-export function fillUpFunctionCallTypeInfo(e: FunctionCall, vtab: VariableTable, ftab: FunctionTable): FunctionCall {
+export function fillUpFunctionCallTypeInfo(e: FunctionCall, symbols: SymbolTable): FunctionCall {
     for (let i = 0; i < e.parameters.length; i++) {
-        e.parameters[i] = fillUpExpressionTypeInfo(e.parameters[i], vtab, ftab);
+        e.parameters[i] = fillUpExpressionTypeInfo(e.parameters[i], symbols);
     }
-    e.returnType = getFuncSignature(e, ftab);
+    e = getFuncSignature(e, symbols.functab, symbols.typeTree);
     return e;
 }
 
-export function getFuncSignature(f: FunctionCall, ftab: FunctionTable): TypeExpression {
+export function getFuncSignature(f: FunctionCall, functab: FunctionTable, typetree: TypeTree)
+    :FunctionCall {
     const key = stringifyFuncSignature(f.signature);
-    if (key in ftab) {
-        const matchingFunctions = ftab[key];
+    if (key in functab) {
+        const matchingFunctions = functab[key];
         for (let i = 0; i < matchingFunctions.length; i++) {
-            if (paramTypesConforms(matchingFunctions[i].parameters, f.parameters)) {
-                return matchingFunctions[i].returnType;
+            if (paramTypesConforms(
+                    matchingFunctions[i].parameters,
+                    f.parameters,
+                    typetree
+                )) {
+                for (let j = 0; j < f.parameters.length; j++) {
+                    f.parameters[j].returnType =
+                        matchingFunctions[i].parameters[j].typeExpected;
+                }
+                return f;
             } else {
                 const error: ErrorNoConformingFunction = {
                     kind: "ErrorNoConformingFunction",
@@ -259,25 +285,26 @@ export function getFuncSignature(f: FunctionCall, ftab: FunctionTable): TypeExpr
 export function paramTypesConforms(
     actualParams: VariableDeclaration[],
     matchingParams: Expression[],
+    typeTree: TypeTree
 ): boolean {
     if (actualParams.length !== matchingParams.length) {
         return false;
     }
     for (let i = 0; i < actualParams.length; i++) {
-        if (!typeEquals(
-            actualParams[i].typeExpected,
-            matchingParams[i].returnType
-        )) {
+        const expectedType = actualParams[i].typeExpected;
+        const actualType = matchingParams[i].returnType;
+        if (!typeEquals(expectedType, actualType)
+         && !childOf(actualType, expectedType, typeTree)) {
             return false;
         }
     }
     return true;
 }
 
-export function fillUpArrayTypeInfo(e: ArrayExpression, vtab: VariableTable): ArrayExpression {
+export function fillUpArrayTypeInfo(e: ArrayExpression, symbols: SymbolTable): ArrayExpression {
     return {
         ...e,
-        returnType: getType(e, vtab)
+        returnType: getType(e, symbols.vartab)
     };
 }
 

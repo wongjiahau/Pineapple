@@ -1,26 +1,27 @@
-import { expect } from "chai";
 import { pine2js } from "../../../../pine2js";
+import { assertEquals } from "../../../testUtil";
 
 describe("FCI-006", () => {
     it("parent type inference", () => {
         const input =
 `
-def (this Array) (++) (that Array) -> Array
+def (this Any).show
     pass
 
-def main:
-    let result = [0] ++ [1]
-    result = [1] ++ result
+def .main
+    "Hello".show
 `;
         const expectedOutput =
 `
-function main(){
-    const result = new ArrayOfNumber([(0)])._$plus$plus_Array()
+function _show_Any($this){
+$$pass$$();
+}
+
+function _main_(){
+_show_Any("Hello");
 }
 `;
-        // console.log(pine2js(input));
-        // console.log(expectedOutput);
-        expect(pine2js(input).trim()).to.eq(expectedOutput.trim());
+        assertEquals(pine2js(input).trim(), expectedOutput.trim());
     });
 
 });

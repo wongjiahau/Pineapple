@@ -5,6 +5,7 @@ import { fillUpTypeInformation } from "./fillUpTypeInformation";
 import { generateErrorMessage } from "./generateErrorMessage";
 import { preprocess } from "./preprocess";
 import { tpDeclaration } from "./transpile";
+import { initTypeTree } from "./typeTree";
 const parser     = require("../jison/pineapple-parser-v2");
 
 export function pine2js(input: string, filename: string= ""): string {
@@ -14,9 +15,9 @@ export function pine2js(input: string, filename: string= ""): string {
     try {
         let ast      = parser.parse(result);
         // prettyPrint(ast, true);
-        ast = fillUpTypeInformation(ast, {});
+        ast = fillUpTypeInformation(ast, {}, initTypeTree());
     } catch (error) {
-        // console.log(error);
+        console.log(error);
         const x = (error as PineError);
         x.errorMessage = generateErrorMessage(input, x.rawError, filename);
         throw error;

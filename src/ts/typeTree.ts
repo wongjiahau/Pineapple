@@ -24,6 +24,20 @@ export function insertChild(child: TypeExpression, parent: TypeExpression, tree:
     return tree;
 }
 
+export function childOf(child: TypeExpression, parent: TypeExpression, tree: TypeTree): boolean {
+    if(parent.kind === "SimpleType" && parent.name.repr === "Any") {
+        return true;
+    }
+    const matchingParent = findParentOf(child, tree);
+    if (matchingParent === null) {
+        return false;
+    } else if (typeEquals(matchingParent, parent)) {
+        return true;
+    } else {
+        return childOf(matchingParent, parent, tree);
+    }
+}
+
 export function findParentOf(child: TypeExpression, /*in*/ tree: TypeTree): TypeExpression | null {
     if (tree.children.some((x) => typeEquals(x.current, child))) {
         return tree.current;
@@ -39,12 +53,12 @@ export function findParentOf(child: TypeExpression, /*in*/ tree: TypeTree): Type
 }
 
 export function initTypeTree(): TypeTree {
-    const objectType = newSimpleType("Object");
-    const arrayType = newArrayType(objectType);
+    const anyType = newSimpleType("Any");
+    const arrayType = newArrayType(anyType);
     const numberType = newSimpleType("Number");
     const numberArrayType = newArrayType(numberType);
-    let tree = newTypeTree(objectType);
-    tree = insertChild(arrayType, objectType, tree);
+    let tree = newTypeTree(anyType);
+    tree = insertChild(arrayType, anyType, tree);
     tree = insertChild(numberArrayType, arrayType, tree);
     return tree;
 }
