@@ -5,15 +5,14 @@ describe("@func-decl-prefix-FDPr-001", () => {
     it("case 1", () => {
         const input =
 `
-def show: (this Int[])
-    let message = "Not implemented"
+def (this Int[]).show
+    pass
 `;
         const expectedOutput =
 `
 function _show_ArrayOfInt($this){
-const $message = "Not implemented";
+$$pass$$();
 }
-
 `;
         assertEquals(pine2js(input).trim(), expectedOutput.trim());
     });

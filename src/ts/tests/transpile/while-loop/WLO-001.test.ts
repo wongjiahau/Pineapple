@@ -1,4 +1,3 @@
-import { expect } from "chai";
 import { pine2js } from "../../../pine2js";
 import { assertEquals } from "../../testUtil";
 
@@ -6,13 +5,13 @@ describe("WLO-001", () => {
     it("while loop 1", () => {
         const input =
 `
-def (this Number) (<) (that Number) -> Boolean
+def (this Number) < (that Number) -> Boolean
     pass
 
-def (this Number) (+) (that Number) -> Number
+def (this Number) + (that Number) -> Number
     pass
 
-def main:
+def .main
     let x mutable = 0
     while x < 10
         x = x + 1

@@ -1,4 +1,3 @@
-import { expect } from "chai";
 import { pine2js } from "../../../../pine2js";
 import { assertEquals } from "../../../testUtil";
 
@@ -6,7 +5,7 @@ describe("FDI-002", () => {
     it("double equals", () => {
         const input =
 `
-def (x Any) (==) (y Any) -> Int
+def (x Any) == (y Any) -> Int
     <javascript>
     return $x === $y;
     </javascript>

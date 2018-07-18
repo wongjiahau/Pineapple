@@ -5,7 +5,7 @@ describe.skip("@literal-array-LAR-002", () => {
     it("multiline lists", () => {
         const input =
 `
-def main:
+def .main
     let fruits =
         o "pineapple"
         o "apple"

@@ -18,8 +18,14 @@ import {
     VariableDeclaration
 } from "./ast";
 
-import { ErrorNoConformingFunction, ErrorUsingUnknownFunction, ErrorVariableRedeclare, PineError, RawError } from "./errorType";
-import { generateErrorMessage } from "./generateErrorMessage";
+import {
+    ErrorNoConformingFunction,
+    ErrorUsingUnknownFunction,
+    ErrorVariableRedeclare,
+    PineError,
+    RawError
+} from "./errorType";
+
 import { stringifyFuncSignature, stringifyType } from "./transpile";
 
 export function fillUpTypeInformation(ast: Declaration, prevFuntab: FunctionTable): Declaration {

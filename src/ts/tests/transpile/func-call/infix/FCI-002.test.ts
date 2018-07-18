@@ -1,4 +1,3 @@
-import { expect } from "chai";
 import { pine2js } from "../../../../pine2js";
 import { assertEquals } from "../../../testUtil";
 
@@ -6,10 +5,10 @@ describe("@func-call-infix-FCI-002", () => {
     it("nested infix function call", () => {
         const input =
 `
-def (this Number) (+) (that Number) -> Number
+def (this Number) + (that Number) -> Number
     pass
 
-def main:
+def .main
     let y = 6 + 6 + 6
 `;
         const expectedOutput =

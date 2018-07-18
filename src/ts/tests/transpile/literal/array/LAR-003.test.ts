@@ -5,7 +5,7 @@ describe("LAR-003", () => {
     it("empty array", () => {
         const input =
 `
-def main:
+def .main
     let x String[] = []
     let y Number[] = []
 `;

@@ -5,7 +5,7 @@ describe("@literal-number-LNU-001", () => {
     it("every number should be surrounded by brackets", () => {
         const input =
 `
-def main:
+def .main
     let x = 12345
 `
 ;

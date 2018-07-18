@@ -6,7 +6,7 @@ describe("@preprocess-PP-003.test.ts", () => {
     it("should ignore dangling newlines", () => {
         const input =
 `
-def main:
+def .main
     let y = 6
 
 

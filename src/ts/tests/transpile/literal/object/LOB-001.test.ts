@@ -5,7 +5,7 @@ describe.skip("@literal-object-LOB-001", () => {
     it("object literals", () => {
         const input =
 `
-def main:
+def .main
     let y = 6
 
     let people =

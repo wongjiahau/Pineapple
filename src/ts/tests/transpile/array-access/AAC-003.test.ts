@@ -5,10 +5,10 @@ describe("@array-access-AAC-003", () => {
     it("type inference on array element", () => {
         const input =
 `
-def (this Number) (+) (that Number) -> Number
+def (this Number) + (that Number) -> Number
     pass
 
-def main:
+def .main
     let x = [1,2][0] + [2,3][0]
 `;
         const expectedOutput =

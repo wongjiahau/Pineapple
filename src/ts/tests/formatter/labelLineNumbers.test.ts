@@ -5,14 +5,14 @@ describe("label line numbers", () => {
     it("case 1", () => {
         const input =
 `
-def main:
+def .main
     print: "Hello world"
     print: "Bye"
 `.trim();
         const result = labelLineNumbers(input, 2);
         const expected =
 `
-          | 1 | def main:
+          | 1 | def .main
 ERROR >>> | 2 |     print: "Hello world"
           | 3 |     print: "Bye"
 `.trim();

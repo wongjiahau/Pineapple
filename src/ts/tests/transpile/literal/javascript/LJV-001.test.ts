@@ -4,7 +4,7 @@ import { assertEquals } from "../../../testUtil";
 describe("@literal-javascript-LJ-001", () => {
     it("case1", () => {
         const input =
-`def print: (this String) -> Void
+`def (this String).print -> Void
     <javascript>
     console.log($this);
     </javascript>

@@ -169,10 +169,10 @@ const _Token = (repr, location) => ({repr, location});
 "nil"                                       return 'NIL'
 
 // Identifiers
-[a-z][a-zA-Z0-9]*[:]            return 'FUNCNAME'    
+[.][a-z][a-zA-Z0-9]*            return 'FUNCNAME'    
 [A-Z][a-zA-Z0-9]*               return 'TYPENAME'
 [a-z][a-zA-Z]*                  return 'VARNAME'
-[.][a-z][a-zA-Z]*               return 'MEMBERNAME'
+['][a-z][a-zA-Z0-9]*            return 'MEMBERNAME'
 [-!$%^&*_+|~=`\[\]:";'<>?,.\/]+ return 'OPERATOR'
 
 
@@ -229,9 +229,8 @@ MembernameTypeList
     ;
 
 FunctionDeclaration
-    : DEF NofixFuncDeclaration  {$$=$2}
-    | DEF PrefixFuncDeclaration {$$=$2}
-    | DEF SuffixFuncDeclaration {console.log("suffix")}
+    : DEF NulliFuncDeclaration  {$$=$2}
+    | DEF MonoFuncDeclaration {$$=$2}
     | DEF InfixFuncDeclaration  {$$=$2}
     | DEF MixfixFuncDeclaration {console.log("mixfix")}
     ;
@@ -239,24 +238,21 @@ FunctionDeclaration
 InfixFuncDeclaration
     : VarDecl FuncAtom VarDecl '->' TypeExpression Block 
         {$$=_FunctionDeclaration([$2],$5,[$1,$3],$6,"infix")}
-    | VarDecl '(' OperatorAtom ')' VarDecl '->' TypeExpression Block
-        {$$=_FunctionDeclaration([$3],$7,[$1,$5],$8,"infix")}
+    | VarDecl OperatorAtom VarDecl '->' TypeExpression Block
+        {$$=_FunctionDeclaration([$2],$5,[$1,$3],$6,"infix")}
     ;
 
-PrefixFuncDeclaration
-    : FuncAtom VarDecl '->' TypeExpression Block 
-        {$$=_FunctionDeclaration([$1],$4,[$2],$5,"prefix")}
-    | FuncAtom VarDecl Block {$$=_FunctionDeclaration([$1],null,[$2],$3,"prefix")}
+MonoFuncDeclaration
+    : VarDecl FuncAtom '->' TypeExpression Block 
+        {$$=_FunctionDeclaration([$2],$4,[$1],$5,"Mono")}
+    | VarDecl FuncAtom Block 
+        {$$=_FunctionDeclaration([$2],null,[$1],$3,"Mono")}
     ;
 
-SuffixFuncDeclaration
-    : VarDecl FuncAtom '->' TypeExpression Block
-    ;
-
-NofixFuncDeclaration
+NulliFuncDeclaration
     : FuncAtom '->' TypeExpression Block
-        {$$=_FunctionDeclaration([$1],$3,[],$4,"nofix")}
-    | FuncAtom Block {$$=_FunctionDeclaration([$1],null,[],$2,"nofix")}
+        {$$=_FunctionDeclaration([$1],$3,[],$4,"Nulli")}
+    | FuncAtom Block {$$=_FunctionDeclaration([$1],null,[],$2,"Nulli")}
     ;
 
 MixfixFuncDeclaration
@@ -332,6 +328,7 @@ LinkStatement
 VarDecl /* Variable declaration */
     : VariableAtom                          {$$=_VariableDeclaration($1,null)}
     | VariableAtom TypeExpression           {$$=_VariableDeclaration($1,$2)}
+    | '(' VariableAtom ')'                  {$$=_VariableDeclaration($2,null)}
     | '(' VariableAtom TypeExpression ')'   {$$=_VariableDeclaration($2,$3)}
     ;
 
@@ -367,13 +364,12 @@ Expression
 
 FuncCall
     : InfixFuncCall
-    | PrefixFuncCall
-    | SuffixFuncCall
+    | MonoFuncCall
     | MixfixFuncCall
-    | NofixFuncCall
+    | NulliFuncCall
     ;
 
-NofixFuncCall
+NulliFuncCall
     : FuncAtom
     ;
 
@@ -387,12 +383,8 @@ FuncId
     | OperatorAtom
     ;
 
-PrefixFuncCall
-    : FuncAtom AtomicExpr {$$=_FunctionCall("prefix",[$1],[$2],this._$)}
-    ;
-
-SuffixFuncCall
-    : AtomicExpr FuncAtom
+MonoFuncCall
+    : AtomicExpr FuncAtom {$$=_FunctionCall("Mono",[$2],[$1],this._$)}
     ;
 
 MixfixFuncCall

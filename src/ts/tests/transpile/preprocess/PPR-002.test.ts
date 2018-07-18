@@ -6,12 +6,12 @@ describe("@preprocess-PP-002", () => {
     it("should ignore consequtive newlines", () => {
         const input =
 `
-def print: (this String) -> Void
+def (this String).show -> Void
     <javascript>
     console.log($this.valueOf());
     </javascript>
 
-def say: (this String) -> Void
+def (this String).say -> Void
     <javascript>
     console.log($this.valueOf());
     </javascript>
@@ -19,7 +19,7 @@ def say: (this String) -> Void
 `;
         const expectedOutput =
 `
-function _print_String($this){
+function _show_String($this){
 // <javascript>
 console.log($this.valueOf());
 // </javascript>;
@@ -30,6 +30,8 @@ function _say_String($this){
 console.log($this.valueOf());
 // </javascript>;
 }
+
+
 `;
         assertEquals(pine2js(input).trim(), expectedOutput.trim());
     });

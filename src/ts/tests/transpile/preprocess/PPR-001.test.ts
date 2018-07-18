@@ -4,7 +4,7 @@ import { assertEquals } from "../../testUtil";
 describe("@preprocess-PPR-001", () => {
     it("should ignore consecutive newlines", () => {
         const input =
-`def main:
+`def .main
     let x = "hello world"
 
 

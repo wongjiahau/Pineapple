@@ -14,7 +14,7 @@ def (this Int[]) add: (that Int[]) -> Int[]
         result = result append: (this[i] + that[i])
     return result
 
-def main:
+def .main
     let y = 8 add: 9
     let xs = [1 2 3] add: [4 5 6]
 `;

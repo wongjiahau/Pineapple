@@ -5,12 +5,12 @@ describe("FLO-001", () => {
     it("for loop 1", () => {
         const input =
 `
-def print: (this String)
+def (this String).print
     pass
 
-def main:
+def .main
     for i in ["a", "b", "c"]
-        print: i
+        i.print
 `;
         const expectedOutput =
 `

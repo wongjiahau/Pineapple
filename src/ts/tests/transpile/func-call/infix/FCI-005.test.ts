@@ -8,7 +8,7 @@ describe("FCI-005", () => {
     // This part is just to test the functionalit of recursive type inference
         const input =
 `
-def (this Number) (--) (that String) -> String
+def (this Number) -- (that String) -> String
     return this -- (5 -- that)
 `;
         const expectedOutput =

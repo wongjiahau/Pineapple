@@ -1,4 +1,3 @@
-import { expect } from "chai";
 import { pine2js } from "../../../../pine2js";
 import { assertEquals } from "../../../testUtil";
 
@@ -6,7 +5,7 @@ describe("@func-decl-infix-FDI-001", () => {
     it("infix function declaration", () => {
         const input =
 `
-def (x Int) (+) (y Int) -> Int
+def (x Int) + (y Int) -> Int
     <javascript>
     return $x + $y;
     </javascript>

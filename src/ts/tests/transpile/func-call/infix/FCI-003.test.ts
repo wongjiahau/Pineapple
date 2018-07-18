@@ -6,10 +6,10 @@ describe("@func-call-infix-FCI-003", () => {
     it("double symbols", () => {
         const input =
 `
-def (this String) (++) (that String) -> String
+def (this String) ++ (that String) -> String
     pass
 
-def main:
+def .main
     let y = "pine" ++ "apple"
 `;
         const expectedOutput =

@@ -4,7 +4,7 @@ import { pine2js } from "../../../pine2js";
 describe("@preprocess-PP-004.test.ts", () => {
     it("should auto add missing newline at EOF", () => {
         const input =
-`def main:
+`def .main
     let y = 6`;
         const expectedOutput =
 `

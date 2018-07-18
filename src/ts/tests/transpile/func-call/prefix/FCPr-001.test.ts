@@ -6,21 +6,22 @@ describe("q003", () => {
     it("@func-call-prefix-FCPr-001", () => {
         const input =
 `
-def print: this String
+def (this String).show
     pass
 
-def main:
-    print: "hello world"
+def .main
+    "hello world".show
 `;
         const expectedOutput =
 `
-function _print_String($this){
+function _show_String($this){
 $$pass$$();
 }
 
 function _main_(){
-_print_String("hello world");
+_show_String("hello world");
 }
+
 
 `;
         assertEquals(pine2js(input).trim(), expectedOutput.trim());

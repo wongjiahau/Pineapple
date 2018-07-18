@@ -1,4 +1,3 @@
-import { expect } from "chai";
 import { pine2js } from "../../../pine2js";
 import { assertEquals } from "../../testUtil";
 
@@ -6,10 +5,10 @@ describe("@branch-BRA-001", () => {
     it("if", () => {
         const input =
 `
-def (this Number) (>) (that Number) -> Boolean
+def (this Number) > (that Number) -> Boolean
     pass
 
-def main:
+def .main
     let x Number = 4
     let y Number = 6
     if x > y

@@ -5,7 +5,7 @@ describe("LBO-001", () => {
     it("case1", () => {
         const input =
 `
-def main:
+def .main
     let x = true
 `;
         const expectedOutput =
@@ -20,7 +20,7 @@ const $x = true;
     it("case2", () => {
         const input =
 `
-def main:
+def .main
     let y = false
 `;
         const expectedOutput =

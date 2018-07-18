@@ -1,4 +1,3 @@
-import { expect } from "chai";
 import { pine2js } from "../../../pine2js";
 import { assertEquals } from "../../testUtil";
 
@@ -6,10 +5,10 @@ describe("BRA-003", () => {
     it("if else without elif", () => {
         const input =
 `
-def (this Number) (>) (that Number) -> Boolean
+def (this Number) > (that Number) -> Boolean
     pass
 
-def main:
+def .main
     if 5 > 6
         return "ok"
     else

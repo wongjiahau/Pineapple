@@ -6,7 +6,7 @@ describe("@array-access-AAC-002", () => {
     it("case 1", () => {
         const input =
 `
-def main:
+def .main
     let x = [1,2][0]
 `;
         const expectedOutput =

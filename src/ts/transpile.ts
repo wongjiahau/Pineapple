@@ -117,12 +117,12 @@ export function tpFunctionCall(f: FunctionCall): string {
 }
 
 export function stringifyFuncSignature(signature: AtomicToken[]): string {
-    return "_" + signature.map((x) => getName(x.repr).slice(0, -1)).join("$");
+    return "_" + signature.map((x) => getName(x.repr)).join("$");
 }
 
 export function getName(funcSignature: string): string {
-    if (/[a-z][a-zA-Z]*[:]/.test(funcSignature)) {
-        return funcSignature;
+    if (/[.][a-z][a-zA-Z]*/.test(funcSignature)) {
+        return funcSignature.slice(1);
     } else {
         return getOperatorName(funcSignature);
     }
@@ -140,7 +140,7 @@ export function getOperatorName(op: string): string {
         "~"	 : "tilde",          "_"	: "underscore",     "?"	: "questionMark",
         "^"  : "caret"
     };
-    const result = "$" + op.split("").map((x) => dic[x]).join("$") + ":";
+    const result = "$" + op.split("").map((x) => dic[x]).join("$");
     return result;
 }
 
