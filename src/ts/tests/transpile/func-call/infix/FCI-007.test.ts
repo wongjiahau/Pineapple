@@ -1,25 +1,34 @@
 import { pine2js } from "../../../../pine2js";
 import { assertEquals } from "../../../testUtil";
 
-describe("@func-call-infix-FCI-002", () => {
-    it("nested infix function call", () => {
+describe("FCI-007", () => {
+    it("should find for more specific type if possible", () => {
         const input =
 `
-def (this Number) + (that Number) -> Number
+def (this Any).show
+    pass
+
+def (this String).show
     pass
 
 def .main
-    let y = 6 + 7 + 8
+    "Hello".show
 `;
         const expectedOutput =
 `
-function _$plus_Number_Number($this,$that){
+
+function _show_Any($this){
+$$pass$$();
+}
+
+function _show_String($this){
 $$pass$$();
 }
 
 function _main_(){
-const $y = _$plus_Number_Number(_$plus_Number_Number((6),(7)),(8));
+_show_String("Hello");
 }
+
 `;
         assertEquals(pine2js(input).trim(), expectedOutput.trim());
     });

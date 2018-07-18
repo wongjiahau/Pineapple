@@ -2,6 +2,7 @@ import {
     ArrayAccess,
     ArrayElement,
     ArrayExpression,
+    AtomicToken,
     BooleanExpression,
     BranchStatement,
     Declaration,
@@ -15,8 +16,7 @@ import {
     TestExpression,
     TypeExpression,
     Variable,
-    VariableDeclaration,
-    AtomicToken
+    VariableDeclaration
 } from "./ast";
 
 import {
@@ -28,7 +28,8 @@ import {
 } from "./errorType";
 
 import { stringifyFuncSignature, stringifyType } from "./transpile";
-import { newTypeTree, TypeTree, childOf } from "./typeTree";
+import { childOf, newTypeTree, TypeTree } from "./typeTree";
+import { prettyPrint } from "./pine2js";
 
 export function fillUpTypeInformation(
         ast: Declaration,
@@ -49,14 +50,13 @@ export function fillUpTypeInformation(
     return ast;
 }
 
-export function newFunctionTable(f: FunctionDeclaration, funtab: FunctionTable): FunctionTable {
-    const result: FunctionTable = {};
-    const key = stringifyFuncSignature(f.signature);
-    if (!result[key]) {
-        result[key] = [];
+export function newFunctionTable(newFunc: FunctionDeclaration, previousFuncTab: FunctionTable): FunctionTable {
+    const key = stringifyFuncSignature(newFunc.signature);
+    if (!previousFuncTab[key]) {
+        previousFuncTab[key] = [];
     }
-    result[key].push(f);
-    return {...result, ...funtab};
+    previousFuncTab[key].push(newFunc);
+    return previousFuncTab;
 }
 
 export function getVariableTable(variables: VariableDeclaration[]): VariableTable {
@@ -249,30 +249,27 @@ export function fillUpFunctionCallTypeInfo(e: FunctionCall, symbols: SymbolTable
 }
 
 export function getFuncSignature(f: FunctionCall, functab: FunctionTable, typetree: TypeTree)
-    :FunctionCall {
+    : FunctionCall {
     const key = stringifyFuncSignature(f.signature);
     if (key in functab) {
         const matchingFunctions = functab[key];
-        for (let i = 0; i < matchingFunctions.length; i++) {
-            if (paramTypesConforms(
-                    matchingFunctions[i].parameters,
-                    f.parameters,
-                    typetree
-                )) {
-                for (let j = 0; j < f.parameters.length; j++) {
-                    f.parameters[j].returnType =
-                        matchingFunctions[i].parameters[j].typeExpected;
-                }
-                return f;
-            } else {
-                const error: ErrorNoConformingFunction = {
-                    kind: "ErrorNoConformingFunction",
-                    func: f,
-                    matchingFunctions: matchingFunctions
-                };
-                raise(error);
+        const closestFunction = getClosestFunction(f, matchingFunctions, typetree);
+        if (closestFunction !== null) {
+            for (let j = 0; j < f.parameters.length; j++) {
+                f.parameters[j].returnType =
+                   closestFunction.parameters[j].typeExpected;
             }
+            f.returnType = closestFunction.returnType;
+            return f;
+        } else {
+            const error: ErrorNoConformingFunction = {
+                kind: "ErrorNoConformingFunction",
+                func: f,
+                matchingFunctions: matchingFunctions
+            };
+            raise(error);
         }
+
     } else {
         const error: ErrorUsingUnknownFunction = {
             kind: "ErrorUsingUnknownFunction",
@@ -282,23 +279,52 @@ export function getFuncSignature(f: FunctionCall, functab: FunctionTable, typetr
     }
 }
 
+export function getClosestFunction(
+    f: FunctionCall,
+    matchingFunctions: FunctionDeclaration[],
+    typeTree: TypeTree
+): FunctionDeclaration | null {
+    const first = matchingFunctions[0];
+    let closestFunction = first;
+    let minimumDistance = paramTypesConforms(first.parameters, f.parameters, typeTree);
+    for (let i = 1; i < matchingFunctions.length; i++) {
+        const distance = paramTypesConforms(
+                matchingFunctions[i].parameters,
+                f.parameters,
+                typeTree
+        );
+        if (distance < minimumDistance) {
+            closestFunction = matchingFunctions[i];
+            minimumDistance = distance;
+            return matchingFunctions[i];
+        }
+    }
+    // 99 means no matching parent
+    if (minimumDistance >= 99) {
+        return null;
+    } else {
+        return closestFunction;
+    }
+}
+
 export function paramTypesConforms(
     actualParams: VariableDeclaration[],
     matchingParams: Expression[],
     typeTree: TypeTree
-): boolean {
+): number {
     if (actualParams.length !== matchingParams.length) {
-        return false;
+        return 99;
     }
     for (let i = 0; i < actualParams.length; i++) {
         const expectedType = actualParams[i].typeExpected;
         const actualType = matchingParams[i].returnType;
-        if (!typeEquals(expectedType, actualType)
-         && !childOf(actualType, expectedType, typeTree)) {
-            return false;
+        if (typeEquals(expectedType, actualType)) {
+            return 0;
+        } else {
+            return childOf(actualType, expectedType, typeTree);
         }
     }
-    return true;
+    return 99;
 }
 
 export function fillUpArrayTypeInfo(e: ArrayExpression, symbols: SymbolTable): ArrayExpression {

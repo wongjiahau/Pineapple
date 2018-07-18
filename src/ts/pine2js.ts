@@ -14,10 +14,10 @@ export function pine2js(input: string, filename: string= ""): string {
     const result = preprocess(input);
     try {
         let ast      = parser.parse(result);
-        // prettyPrint(ast, true);
         ast = fillUpTypeInformation(ast, {}, initTypeTree());
+        // prettyPrint(ast, true);
     } catch (error) {
-        console.log(error);
+        // console.log(error);
         const x = (error as PineError);
         x.errorMessage = generateErrorMessage(input, x.rawError, filename);
         throw error;

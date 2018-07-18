@@ -8,7 +8,7 @@ import { ErrorUsingUnknownFunction } from "./../../../errorType";
 describe("x0002", () => {
     it("using unknown named-infix function", () => {
         const input =
-`def main:
+`def .main
     let x = 1 plus: 2
 `;
         const result = catchError(() => pine2js(input)) as PineError;

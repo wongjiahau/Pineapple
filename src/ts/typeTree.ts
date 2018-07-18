@@ -24,17 +24,19 @@ export function insertChild(child: TypeExpression, parent: TypeExpression, tree:
     return tree;
 }
 
-export function childOf(child: TypeExpression, parent: TypeExpression, tree: TypeTree): boolean {
-    if(parent.kind === "SimpleType" && parent.name.repr === "Any") {
-        return true;
+// This function return distance of child to parent
+export function childOf(child: TypeExpression, parent: TypeExpression, tree: TypeTree): number {
+    if (parent.kind === "SimpleType" && parent.name.repr === "Any") {
+        return 1;
     }
     const matchingParent = findParentOf(child, tree);
     if (matchingParent === null) {
-        return false;
+        // 99 means no matching parent
+        return 99;
     } else if (typeEquals(matchingParent, parent)) {
-        return true;
+        return 1;
     } else {
-        return childOf(matchingParent, parent, tree);
+        return 1 + childOf(matchingParent, parent, tree);
     }
 }
 
