@@ -231,15 +231,15 @@ MembernameTypeList
 FunctionDeclaration
     : DEF NulliFuncDeclaration  {$$=$2}
     | DEF MonoFuncDeclaration {$$=$2}
-    | DEF InfixFuncDeclaration  {$$=$2}
+    | DEF BiFuncDeclaration  {$$=$2}
     | DEF MixfixFuncDeclaration {console.log("mixfix")}
     ;
 
-InfixFuncDeclaration
+BiFuncDeclaration
     : VarDecl FuncAtom VarDecl '->' TypeExpression Block 
-        {$$=_FunctionDeclaration([$2],$5,[$1,$3],$6,"infix")}
+        {$$=_FunctionDeclaration([$2],$5,[$1,$3],$6,"Bi")}
     | VarDecl OperatorAtom VarDecl '->' TypeExpression Block
-        {$$=_FunctionDeclaration([$2],$5,[$1,$3],$6,"infix")}
+        {$$=_FunctionDeclaration([$2],$5,[$1,$3],$6,"Bi")}
     ;
 
 MonoFuncDeclaration
@@ -278,7 +278,7 @@ StatementList
 Statement
     : LinkStatement     NEWLINE     {$$=$1}
     | ReturnStatement   NEWLINE     {$$=$1}
-    | FuncCall          NEWLINE     {$$=$1}
+    | AtomicFuncCall    NEWLINE     {$$=$1}
     | ForStatement
     | WhileStatement
     | IfStatement
@@ -313,10 +313,10 @@ ElseStatement
     ;
     
 Test
-    : FuncCall                                  {$$=_TestExpression($1,false,null,null)}
-    | FuncCall LogicOperatorAtom Test           {$$=_TestExpression($1,false,$2,$3)}
-    | NotAtom FuncCall                          {$$=_TestExpression($1,true,null,null)}
-    | NotAtom FuncCall LogicOperatorAtom Test   {$$=_TestExpression($1,true,$2,$3)}
+    : Expression                                  {$$=_TestExpression($1,false,null,null)}
+    | Expression LogicOperatorAtom Test           {$$=_TestExpression($1,false,$2,$3)}
+    | NotAtom Expression                          {$$=_TestExpression($1,true,null,null)}
+    | NotAtom Expression LogicOperatorAtom Test   {$$=_TestExpression($1,true,$2,$3)}
     ;
 
 LinkStatement
@@ -356,35 +356,35 @@ TupleTypeExpression
 
 
 Expression
-    : FuncCall
-    | Object
+    : Object
     | MultilineList
     | AtomicExpr
+    | OperatorFuncCall
     ;
 
-FuncCall
-    : InfixFuncCall
+OperatorFuncCall
+    : OperatorFuncCall OperatorAtom AtomicExpr {$$=_FunctionCall("Bi",[$2],[$1,$3],this._$)}
+    | AtomicExpr OperatorAtom AtomicExpr {$$=_FunctionCall("Bi",[$2],[$1,$3],this._$)}
+    ;
+
+AtomicFuncCall
+    : NulliFuncCall
     | MonoFuncCall
-    | MixfixFuncCall
-    | NulliFuncCall
+    | BiFuncCall
+    // | MixfixFuncCall
     ;
 
 NulliFuncCall
     : FuncAtom
     ;
 
-InfixFuncCall
-    : InfixFuncCall FuncId AtomicExpr {$$=_FunctionCall("infix",[$2],[$1,$3],this._$)}
-    | AtomicExpr FuncId AtomicExpr {$$=_FunctionCall("infix",[$2],[$1,$3],this._$)}
-    ;
-
-FuncId
-    : FuncAtom
-    | OperatorAtom
-    ;
-
 MonoFuncCall
     : AtomicExpr FuncAtom {$$=_FunctionCall("Mono",[$2],[$1],this._$)}
+    ;
+
+BiFuncCall
+    : AtomicExpr FuncAtom '(' AtomicExpr ')'  
+        {$$=_FunctionCall("Bi",[$2],[$1,$4],this._$)}
     ;
 
 MixfixFuncCall
@@ -402,6 +402,7 @@ AtomicExpr
     | ArrayAccess
     | ArraySlicing
     | ObjectAccessExpr
+    | AtomicFuncCall
     ;
 
 ArrayAccess
