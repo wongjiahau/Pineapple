@@ -170,6 +170,7 @@ const _Token = (repr, location) => ({repr, location});
 
 // Identifiers
 [.][a-z][a-zA-Z0-9]*            return 'FUNCNAME'    
+[a-z][a-zA-Z0-9]*[:]            return 'SUBFUNCNAME'    
 [A-Z][a-zA-Z0-9]*               return 'TYPENAME'
 [a-z][a-zA-Z]*                  return 'VARNAME'
 ['][a-z][a-zA-Z0-9]*            return 'MEMBERNAME'
@@ -230,16 +231,15 @@ MembernameTypeList
 
 FunctionDeclaration
     : DEF NulliFuncDeclaration  {$$=$2}
-    | DEF MonoFuncDeclaration {$$=$2}
-    | DEF BiFuncDeclaration  {$$=$2}
-    | DEF MixfixFuncDeclaration {console.log("mixfix")}
+    | DEF MonoFuncDeclaration   {$$=$2}
+    | DEF BiFuncDeclaration     {$$=$2}
+    | DEF TriFuncDeclaration    {$$=$2}
     ;
 
-BiFuncDeclaration
-    : VarDecl FuncAtom VarDecl '->' TypeExpression Block 
-        {$$=_FunctionDeclaration([$2],$5,[$1,$3],$6,"Bi")}
-    | VarDecl OperatorAtom VarDecl '->' TypeExpression Block
-        {$$=_FunctionDeclaration([$2],$5,[$1,$3],$6,"Bi")}
+NulliFuncDeclaration
+    : FuncAtom '->' TypeExpression Block 
+        {$$=_FunctionDeclaration([$1],$3,[],$4,"Nulli")}
+    | FuncAtom Block {$$=_FunctionDeclaration([$1],null,[],$2,"Nulli")}
     ;
 
 MonoFuncDeclaration
@@ -249,19 +249,16 @@ MonoFuncDeclaration
         {$$=_FunctionDeclaration([$2],null,[$1],$3,"Mono")}
     ;
 
-NulliFuncDeclaration
-    : FuncAtom '->' TypeExpression Block
-        {$$=_FunctionDeclaration([$1],$3,[],$4,"Nulli")}
-    | FuncAtom Block {$$=_FunctionDeclaration([$1],null,[],$2,"Nulli")}
+BiFuncDeclaration
+    : VarDecl FuncAtom VarDecl '->' TypeExpression Block 
+        {$$=_FunctionDeclaration([$2],$5,[$1,$3],$6,"Bi")}
+    | VarDecl OperatorAtom VarDecl '->' TypeExpression Block
+        {$$=_FunctionDeclaration([$2],$5,[$1,$3],$6,"Bi")}
     ;
 
-MixfixFuncDeclaration
-    : FuncAtom VarDecl FuncAtom RETURN TypeExpression Block
-    | FuncAtom VarDecl FuncAtom VarDecl RETURN TypeExpression Block
-    | FuncAtom VarDecl FuncAtom VarDecl FuncAtom RETURN TypeExpression Block
-    | FuncAtom VarDecl FuncAtom VarDecl FuncAtom VarDecl RETURN TypeExpression Block
-    | FuncAtom VarDecl FuncAtom VarDecl FuncAtom VarDecl FuncAtom RETURN TypeExpression Block
-    | FuncAtom VarDecl FuncAtom VarDecl FuncAtom VarDecl FuncAtom VarDecl RETURN TypeExpression Block
+TriFuncDeclaration
+    : VarDecl FuncAtom '(' VarDecl SubFuncAtom  VarDecl ')' '->' TypeExpression Block
+        {$$=_FunctionDeclaration([$2,$5],$9,[$1,$4,$6],$10,"Tri")}
     ;
 
 Block
@@ -371,7 +368,7 @@ AtomicFuncCall
     : NulliFuncCall
     | MonoFuncCall
     | BiFuncCall
-    // | MixfixFuncCall
+    | TriFuncCall
     ;
 
 NulliFuncCall
@@ -387,13 +384,9 @@ BiFuncCall
         {$$=_FunctionCall("Bi",[$2],[$1,$4],this._$)}
     ;
 
-MixfixFuncCall
-    : FuncAtom AtomicExpr FuncAtom 
-    | FuncAtom AtomicExpr FuncAtom AtomicExpr
-    | FuncAtom AtomicExpr FuncAtom AtomicExpr FuncAtom
-    | FuncAtom AtomicExpr FuncAtom AtomicExpr FuncAtom AtomicExpr
-    | FuncAtom AtomicExpr FuncAtom AtomicExpr FuncAtom AtomicExpr FuncAtom
-    | FuncAtom AtomicExpr FuncAtom AtomicExpr FuncAtom AtomicExpr FuncAtom AtomicExpr
+TriFuncCall
+    : AtomicExpr FuncAtom '(' AtomicExpr SubFuncAtom AtomicExpr ')'  
+        {$$=_FunctionCall("Tri",[$2,$5],[$1,$4,$6],this._$)}
     ;
 
 AtomicExpr
@@ -484,6 +477,10 @@ NumberAtom
 
 FuncAtom
     : FUNCNAME {$$=_Token($1, this._$)}
+    ;
+
+SubFuncAtom
+    : SUBFUNCNAME {$$=_Token($1, this._$)}
     ;
 
 MembernameAtom

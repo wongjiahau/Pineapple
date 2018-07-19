@@ -121,12 +121,14 @@ export function tpFunctionCall(f: FunctionCall): string {
 }
 
 export function stringifyFuncSignature(signature: AtomicToken[]): string {
-    return "_" + signature.map((x) => getName(x.repr)).join("$");
+    return "_" + signature.map((x) => getName(x.repr)).join("_");
 }
 
 export function getName(funcSignature: string): string {
     if (/[.][a-z][a-zA-Z]*/.test(funcSignature)) {
         return funcSignature.slice(1);
+    } else if (/[a-z][a-zA-Z]*[:]/.test(funcSignature)) {
+        return funcSignature.slice(0, -1);
     } else {
         return getOperatorName(funcSignature);
     }
