@@ -1,0 +1,24 @@
+language: node_js
+node_js:
+  - "7"
+
+cache:
+  directories:
+    - "./src/node_modules"
+    - $(npm config get prefix)/lib/node_modules
+  
+before_script:
+  - sed -i 's/\[ "node" \]/\[\]/g' "./src/ts/tsconfig.json" # For correcting Error TS2688
+  - cd src
+  - npm install
+  - npm install -g typescript@2.7.2
+  - npm install -g jison
+  - npm install -g jest
+
+script:
+  - cd ts
+  - ./transpile.sh 0
+  - cd ../jison
+  - jison pineapple-parser-v2.jison 
+  - cd ..
+  - jest 
