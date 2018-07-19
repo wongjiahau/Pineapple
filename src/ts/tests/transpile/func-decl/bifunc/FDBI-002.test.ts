@@ -1,7 +1,7 @@
 import { pine2js } from "../../../../pine2js";
 import { assertEquals } from "../../../testUtil";
 
-describe("FDI-002", () => {
+describe("FDBI-002", () => {
     it("double equals", () => {
         const input =
 `

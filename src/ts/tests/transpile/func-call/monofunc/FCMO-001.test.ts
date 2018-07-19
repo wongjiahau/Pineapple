@@ -2,25 +2,27 @@ import { expect } from "chai";
 import { pine2js } from "../../../../pine2js";
 import { assertEquals } from "../../../testUtil";
 
-describe("@func-call-infix-FCI-003", () => {
-    it("double symbols", () => {
+describe("FCMO-001", () => {
+    it("case 1", () => {
         const input =
 `
-def (this String) ++ (that String) -> String
+def (this String).show
     pass
 
 def .main
-    let y = "pine" ++ "apple"
+    "hello world".show
 `;
         const expectedOutput =
 `
-function _$plus$plus_String_String($this,$that){
+function _show_String($this){
 $$pass$$();
 }
 
 function _main_(){
-const $y = _$plus$plus_String_String("pine","apple");
+_show_String("hello world");
 }
+
+
 `;
         assertEquals(pine2js(input).trim(), expectedOutput.trim());
     });

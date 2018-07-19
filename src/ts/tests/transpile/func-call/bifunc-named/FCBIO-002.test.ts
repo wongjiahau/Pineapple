@@ -1,24 +1,24 @@
 import { pine2js } from "../../../../pine2js";
 import { assertEquals } from "../../../testUtil";
 
-describe("FCI-006", () => {
-    it("parent type inference", () => {
+describe("FCBI-002", () => {
+    it("nested bifunction call", () => {
         const input =
 `
-def (this Any).show
+def (this Number) + (that Number) -> Number
     pass
 
 def .main
-    "Hello".show
+    let y = 6 + 7 + 8
 `;
         const expectedOutput =
 `
-function _show_Any($this){
+function _$plus_Number_Number($this,$that){
 $$pass$$();
 }
 
 function _main_(){
-_show_Any("Hello");
+const $y = _$plus_Number_Number(_$plus_Number_Number((6),(7)),(8));
 }
 `;
         assertEquals(pine2js(input).trim(), expectedOutput.trim());

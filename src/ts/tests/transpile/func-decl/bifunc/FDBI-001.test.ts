@@ -1,8 +1,8 @@
 import { pine2js } from "../../../../pine2js";
 import { assertEquals } from "../../../testUtil";
 
-describe("@func-decl-infix-FDI-001", () => {
-    it("infix function declaration", () => {
+describe("FDBI-001", () => {
+    it("symbolic bifunction declaration", () => {
         const input =
 `
 def (x Int) + (y Int) -> Int

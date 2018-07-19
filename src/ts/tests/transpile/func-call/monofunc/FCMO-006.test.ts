@@ -1,17 +1,24 @@
 import { pine2js } from "../../../../pine2js";
 import { assertEquals } from "../../../testUtil";
 
-describe("@func-decl-prefix-FDPr-001", () => {
-    it("case 1", () => {
+describe("FCMO-002", () => {
+    it("parent type inference", () => {
         const input =
 `
-def (this Int[]).show
+def (this Any).show
     pass
+
+def .main
+    "Hello".show
 `;
         const expectedOutput =
 `
-function _show_ArrayOfInt($this){
+function _show_Any($this){
 $$pass$$();
+}
+
+function _main_(){
+_show_Any("Hello");
 }
 `;
         assertEquals(pine2js(input).trim(), expectedOutput.trim());

@@ -1,7 +1,7 @@
 import { pine2js } from "../../../../pine2js";
 import { assertEquals } from "../../../testUtil";
 
-describe("FCI-004", () => {
+describe("FCBI-004", () => {
     it("function call type inference", () => {
         const input =
 `

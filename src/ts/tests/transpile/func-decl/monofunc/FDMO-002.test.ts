@@ -1,7 +1,7 @@
 import { pine2js } from "../../../../pine2js";
 import { assertEquals } from "../../../testUtil";
 
-describe("FDPr-002", () => {
+describe("FDMO-002", () => {
     it("order of function declaration should not matter", () => {
         const input =
 `

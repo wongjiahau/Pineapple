@@ -1,8 +1,8 @@
 import { pine2js } from "../../../../pine2js";
 import { assertEquals } from "../../../testUtil";
 
-describe("@func-call-infix-FCI-001", () => {
-    it("infix function call", () => {
+describe("fcbi", () => {
+    it("bifunction call", () => {
         const input =
 `
 def (this Number) + (that Number) -> Number

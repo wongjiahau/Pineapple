@@ -2,7 +2,7 @@ import { expect } from "chai";
 import { pine2js } from "../../../../pine2js";
 import { assertEquals } from "../../../testUtil";
 
-describe("FCI-005", () => {
+describe("FCBI-005", () => {
     it("recursive type inference", () => {
     // Note that the input is an invalid function in Pineapple
     // This part is just to test the functionalit of recursive type inference

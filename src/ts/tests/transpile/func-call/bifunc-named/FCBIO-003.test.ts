@@ -1,34 +1,26 @@
+import { expect } from "chai";
 import { pine2js } from "../../../../pine2js";
 import { assertEquals } from "../../../testUtil";
 
-describe("FCI-007", () => {
-    it("should find for more specific type if possible", () => {
+describe("FCBI-003", () => {
+    it("double symbols", () => {
         const input =
 `
-def (this Any).show
-    pass
-
-def (this String).show
+def (this String) ++ (that String) -> String
     pass
 
 def .main
-    "Hello".show
+    let y = "pine" ++ "apple"
 `;
         const expectedOutput =
 `
-
-function _show_Any($this){
-$$pass$$();
-}
-
-function _show_String($this){
+function _$plus$plus_String_String($this,$that){
 $$pass$$();
 }
 
 function _main_(){
-_show_String("Hello");
+const $y = _$plus$plus_String_String("pine","apple");
 }
-
 `;
         assertEquals(pine2js(input).trim(), expectedOutput.trim());
     });
