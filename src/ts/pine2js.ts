@@ -1,31 +1,25 @@
 // import { getFunctionTable } from "./getFunctionTable";
 import { Declaration, LinkedNode, TokenLocation } from "./ast";
-import { PineError, RawError } from "./errorType";
-import { fillUpTypeInformation } from "./fillUpTypeInformation";
-import { generateErrorMessage } from "./generateErrorMessage";
-import { preprocess } from "./preprocess";
+import { getIntermediateForm, IntermediateForm } from "./getIntermediateForm";
+import { SourceCode } from "./pineRepl";
 import { transpile } from "./transpile";
 import { initTypeTree } from "./typeTree";
-const parser     = require("../jison/pineapple-parser-v2");
 
 /**
  * WARNING: The `pine2js` function is meant for unit testing only
  */
 export function pine2js(input: string, filename: string= ""): string {
-    const result = preprocess(input);
-    try {
-        const syntaxTree = parser.parse(result) as LinkedNode<Declaration>;
-        // const flattenned = flattenSyntaxTree(syntaxTree);
-        const [newSyntaxTree, funcTab , typeTree]
-            = fillUpTypeInformation(flattenSyntaxTree(syntaxTree), {}, initTypeTree());
-        // prettyPrint(ast, true);
-        return transpile(newSyntaxTree);
-    } catch (error) {
-        console.log(error);
-        const x = (error as PineError);
-        x.errorMessage = generateErrorMessage(input, x.rawError, filename);
-        throw error;
-    }
+    const source: SourceCode = {
+            filename: filename,
+            content: input
+    };
+    const initForm: IntermediateForm = {
+        funcTab: {},
+        typeTree: initTypeTree(),
+        syntaxTrees: []
+    };
+    const intermediateForm = getIntermediateForm(source, initForm);
+    return transpile(intermediateForm.syntaxTrees);
 }
 
 export function prettyPrint(ast: Declaration, removeLocation: boolean): void {
@@ -44,14 +38,4 @@ function removeTokenLocation(ast: any): any {
         }
     }
     return ast;
-}
-
-function flattenSyntaxTree(ast: LinkedNode<Declaration>): Declaration[] {
-    const result: Declaration[] = [];
-    let next: LinkedNode<Declaration> | null = ast;
-    while (next) {
-        result.push(next.body);
-        next = next.next;
-    }
-    return result;
 }

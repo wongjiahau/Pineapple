@@ -1,5 +1,9 @@
 import { Declaration } from "./ast";
+import { PineError } from "./errorType";
+import { ErrorMessage } from "./generateErrorMessage";
 import { getIntermediateForm, initialIntermediateForm } from "./getIntermediateForm";
+import { labelLineNumbers } from "./labelLineNumbers";
+import { labelNewlines } from "./labelNewlines";
 import { tpDeclaration } from "./transpile";
 
 const program = require("commander");
@@ -18,9 +22,19 @@ program.args.forEach((arg: string) => {
     try {
         interpret(arg);
     } catch (error) {
-        console.log(error.errorMessage.message);
+        const output = renderErrorMessage((error as PineError).errorMessage);
+        console.log(output);
     }
 });
+
+function renderErrorMessage(e: ErrorMessage): string {
+    let result = "\n";
+    result += "ERROR >>> \n\n\t";
+    result += e.message + "\n\n";
+    result += labelLineNumbers(e.relatedSourceCode, e.location.first_line) + "\n";
+    result += `The error is located at '${e.filename}' at line ${e.location.first_line}.`;
+    return result.split("\n").map((x) => "  " + x).join("\n") + "\n";
+}
 
 function loadSource(sources: SourceCode[]): Declaration[] {
     let result = initialIntermediateForm();
@@ -31,12 +45,13 @@ function loadSource(sources: SourceCode[]): Declaration[] {
 }
 
 function interpret(filename: string): void {
-    const source  = loadFile(filename);
-    const libraries = loadLibraryFunctions();
+    const source      = loadFile(filename);
+    const libraries   = loadLibraryFunctions();
     libraries.push(source);
     const syntaxTrees = loadSource(libraries);
-    let output    = loadPrimitiveTypes();
+    let output        = loadPrimitiveTypes();
     output += syntaxTrees.map((x) => tpDeclaration(x)).join("\n");
+    // console.log(output);
     output       += "\n_main_();"; // Call the main function
     fs.writeFileSync("__temp__.pine.js", output);
     exec("node __temp__.pine.js", (err, stdout, stderr) => {
