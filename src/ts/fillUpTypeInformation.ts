@@ -29,25 +29,25 @@ import {
 
 import { stringifyFuncSignature, stringifyType } from "./transpile";
 import { childOf, newTypeTree, TypeTree } from "./typeTree";
-import { prettyPrint } from "./pine2js";
 
 export function fillUpTypeInformation(
         ast: Declaration,
         prevFuntab: FunctionTable,
         prevTypeTree: TypeTree
-    ): Declaration {
+    ): [Declaration, FunctionTable, TypeTree] {
     const vtab = getVariableTable(ast.body.parameters);
-    const ftab = newFunctionTable(ast.body, prevFuntab);
+    let newFuncTab = newFunctionTable(ast.body, prevFuntab);
     const symbols: SymbolTable = {
         vartab: vtab,
-        functab: ftab,
+        functab: newFuncTab,
         typeTree: prevTypeTree
     };
     ast.body.statements = fillUp(ast.body.statements, symbols);
     if (ast.next !== null) {
-        ast.next = fillUpTypeInformation(ast.next, ftab, prevTypeTree);
+        [ast, newFuncTab, prevTypeTree] =
+            fillUpTypeInformation(ast.next, newFuncTab, prevTypeTree);
     }
-    return ast;
+    return [ast, newFuncTab, prevTypeTree];
 }
 
 export function newFunctionTable(newFunc: FunctionDeclaration, previousFuncTab: FunctionTable): FunctionTable {

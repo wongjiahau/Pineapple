@@ -1,14 +1,4 @@
-def print: (this Object)
+def (this Any).show
     <javascript>
     console.log($this.valueOf())
-    </javascript>
-
-def print: (this String)
-    <javascript>
-    console.log($this.valueOf());
-    </javascript>
-
-def print: (this Number)
-    <javascript>
-    console.log("The Number is " + $this.valueOf());
     </javascript>

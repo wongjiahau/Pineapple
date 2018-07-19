@@ -1,4 +1,4 @@
-def (x Array) (++) (y Array) -> Array
+def (x Array) ++ (y Array) -> Array
     <javascript>
     return $x.concat($y);
     </javascript>

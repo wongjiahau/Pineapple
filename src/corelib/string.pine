@@ -1,4 +1,4 @@
-def (this String) (++) (that String) -> String
+def (this String) ++ (that String) -> String
     <javascript>
     return $this + $that;
     </javascript>

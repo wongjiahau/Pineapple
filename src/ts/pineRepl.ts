@@ -1,4 +1,6 @@
-import { pine2js } from "./pine2js";
+import { Declaration } from "./ast";
+import { getIntermediateForm, initialIntermediateForm } from "./getIntermediateForm";
+import { tpDeclaration } from "./transpile";
 
 const program = require("commander");
 program
@@ -13,40 +15,52 @@ if (program.log) {
 const fs = require("fs");
 const {exec} = require("child_process");
 program.args.forEach((arg: string) => {
-    interpret(arg);
+    try {
+        interpret(arg);
+    } catch (error) {
+        console.log(error.errorMessage.message);
+    }
 });
 
-function interpret(filename: string): void {
-    const js = pine2js(readFile(filename), filename);
-    if (js.indexOf("ERROR >>>") > -1) {
-        console.log(js + "\n");
-    } else {
-        let output = loadPrimitiveTypes();
-        const source = loadLibraryFunctions();
-        output += pine2js(source) + js;
-        output += "\n_main();"; // Call the main function
-        fs.writeFileSync("__temp__.pine.js", output);
-        exec("node __temp__.pine.js", (err, stdout, stderr) => {
-            if (err) {
-                console.log("Error: " + err);
-            } else {
-                console.log(stdout);
-                console.log(stderr);
-            }
-        });
+function loadSource(sources: SourceCode[]): Declaration[] {
+    let result = initialIntermediateForm();
+    for (let i = 0; i < sources.length; i++) {
+        result = getIntermediateForm(sources[i], result);
     }
+    return result.syntaxTrees;
 }
 
-function readFile(filename: string): string {
-    return fs.readFileSync(filename).toString();
+function interpret(filename: string): void {
+    const source  = loadFile(filename);
+    const libraries = loadLibraryFunctions();
+    libraries.push(source);
+    const syntaxTrees = loadSource(libraries);
+    let output    = loadPrimitiveTypes();
+    output += syntaxTrees.map((x) => tpDeclaration(x)).join("\n");
+    output       += "\n_main_();"; // Call the main function
+    fs.writeFileSync("__temp__.pine.js", output);
+    exec("node __temp__.pine.js", (err, stdout, stderr) => {
+        if (err) {
+            console.log("Error: " + err);
+        } else {
+            console.log(stdout);
+            console.log(stderr);
+        }
+    });
 }
 
-function loadLibraryFunctions(): string {
+function loadFile(filename: string): SourceCode {
+    return {
+        content: fs.readFileSync(filename).toString(),
+        filename: filename
+    };
+}
+
+function loadLibraryFunctions(): SourceCode[] {
     const CORE_LIBRARY_DIRECTORY = "../corelib/";
     return fs.readdirSync(CORE_LIBRARY_DIRECTORY).map((x: string) => {
-        const content = readFile(CORE_LIBRARY_DIRECTORY + x);
-        return content;
-    }).join("\n");
+        return loadFile(CORE_LIBRARY_DIRECTORY + x);
+    });
 }
 
 function loadPrimitiveTypes(): string {
@@ -55,4 +69,9 @@ function loadPrimitiveTypes(): string {
         constructor(xs) {super(...xs)}
     }
 `;
+}
+
+export interface SourceCode {
+    filename: string;
+    content: string;
 }

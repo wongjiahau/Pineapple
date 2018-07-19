@@ -1,10 +1,10 @@
-def (x Number) (+) (y Number) -> Int
+def (this Number) + (that Number) -> Int
     <javascript>
-    return $x + $y;
+    return $this + $that;
     </javascript>
 
-def (x Number) (<) (y Number) -> Boolean
+def (this Number) < (that Number) -> Boolean
     <javascript>
-    return $x < $y;
+    return $this < $that;
     </javascript>
 
