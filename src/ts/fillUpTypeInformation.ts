@@ -2,7 +2,6 @@ import {
     ArrayAccess,
     ArrayElement,
     ArrayExpression,
-    AtomicToken,
     BooleanExpression,
     BranchStatement,
     Declaration,
@@ -10,6 +9,7 @@ import {
     ForStatement,
     FunctionCall,
     FunctionDeclaration,
+    LinkedNode,
     NumberExpression,
     Statement,
     StringExpression,
@@ -31,23 +31,28 @@ import { stringifyFuncSignature, stringifyType } from "./transpile";
 import { childOf, newTypeTree, TypeTree } from "./typeTree";
 
 export function fillUpTypeInformation(
-        ast: Declaration,
+        decls: Declaration[],
         prevFuntab: FunctionTable,
         prevTypeTree: TypeTree
-    ): [Declaration, FunctionTable, TypeTree] {
-    const vtab = getVariableTable(ast.body.parameters);
-    let newFuncTab = newFunctionTable(ast.body, prevFuntab);
-    const symbols: SymbolTable = {
-        vartab: vtab,
-        functab: newFuncTab,
-        typeTree: prevTypeTree
-    };
-    ast.body.statements = fillUp(ast.body.statements, symbols);
-    if (ast.next !== null) {
-        [ast.next, newFuncTab, prevTypeTree] =
-            fillUpTypeInformation(ast.next, newFuncTab, prevTypeTree);
+    ): [Declaration[], FunctionTable, TypeTree] {
+    // Complete the function table
+    // This step is to allow programmer to define function anywhere
+    // without needing to adhere to strict top-down or bottom-up structure
+    let funcTab = prevFuntab;
+    for (let i = 0; i < decls.length; i++) {
+        funcTab = newFunctionTable(decls[i], funcTab);
     }
-    return [ast, newFuncTab, prevTypeTree];
+
+    for (let i = 0; i < decls.length; i++) {
+        const vtab = getVariableTable(decls[i].parameters);
+        const symbols: SymbolTable = {
+            vartab: vtab,
+            functab: funcTab,
+            typeTree: prevTypeTree
+        };
+        decls[i].statements = fillUp(decls[i].statements, symbols);
+    }
+    return [decls, funcTab, prevTypeTree];
 }
 
 export function newFunctionTable(newFunc: FunctionDeclaration, previousFuncTab: FunctionTable): FunctionTable {
@@ -102,7 +107,7 @@ function raise(error: RawError) {
     throw throwable;
 }
 
-export function fillUp(s: Statement, symbols: SymbolTable): Statement {
+export function fillUp(s: LinkedNode<Statement>, symbols: SymbolTable): LinkedNode<Statement> {
     switch (s.body.kind) {
     case "ReturnStatement":
         s.body.expression = fillUpExpressionTypeInfo(s.body.expression, symbols);

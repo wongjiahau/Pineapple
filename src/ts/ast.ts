@@ -1,9 +1,16 @@
 // Abstract Syntax Tree Node Interfaces
-export interface Declaration {
-    kind: "Declaration";
-    body: FunctionDeclaration ;
-    next: Declaration | null;
+export interface LinkedNode<T> {
+    body: T;
+    next: LinkedNode<T> | null;
 }
+
+export type Declaration
+    = FunctionDeclaration
+    // | StructDeclaration
+    // | InterfaceDeclaration
+    // | EnumDeclaration
+    // | ImplementionDeclaration
+    ;
 
 export interface FunctionDeclaration {
     kind: "FunctionDeclaration";
@@ -11,12 +18,11 @@ export interface FunctionDeclaration {
     signature: AtomicToken[];
     returnType: TypeExpression;
     parameters: VariableDeclaration[];
-    statements: Statement;
+    statements: LinkedNode<Statement>;
 }
 
-export interface Statement {
-    body
-        : AssignmentStatement
+export type Statement
+        = AssignmentStatement
         | FunctionCall
         | JavascriptCode
         | ReturnStatement
@@ -26,12 +32,6 @@ export interface Statement {
         | PassStatement
         ;
 
-    next
-        : Statement
-        | null
-        ;
-}
-
 export interface PassStatement {
     kind: "PassStatement";
 }
@@ -39,20 +39,20 @@ export interface PassStatement {
 export interface WhileStatement {
     kind: "WhileStatement";
     test: TestExpression;
-    body: Statement;
+    body: LinkedNode<Statement>;
 }
 
 export interface ForStatement {
     kind: "ForStatement";
     iterator: Variable;
     expression: Expression;
-    body: Statement;
+    body: LinkedNode<Statement>;
 }
 
 export interface BranchStatement {
     kind: "BranchStatement";
     test: TestExpression;
-    body: Statement;
+    body: LinkedNode<Statement>;
     elseBranch: BranchStatement;
 }
 

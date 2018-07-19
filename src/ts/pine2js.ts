@@ -1,24 +1,25 @@
 // import { getFunctionTable } from "./getFunctionTable";
-import { Declaration, TokenLocation } from "./ast";
+import { Declaration, LinkedNode, TokenLocation } from "./ast";
 import { PineError, RawError } from "./errorType";
 import { fillUpTypeInformation } from "./fillUpTypeInformation";
 import { generateErrorMessage } from "./generateErrorMessage";
 import { preprocess } from "./preprocess";
-import { tpDeclaration } from "./transpile";
+import { transpile } from "./transpile";
 import { initTypeTree } from "./typeTree";
 const parser     = require("../jison/pineapple-parser-v2");
 
 /**
- * WARNING: The `pine2js` function is meant for testing only
+ * WARNING: The `pine2js` function is meant for unit testing only
  */
 export function pine2js(input: string, filename: string= ""): string {
     const result = preprocess(input);
     try {
-        const syntaxTree = parser.parse(result);
-        const [newSyntaxTree, funcTab , typeTree ]
-            = fillUpTypeInformation(syntaxTree, {}, initTypeTree());
+        const syntaxTree = parser.parse(result) as LinkedNode<Declaration>;
+        // const flattenned = flattenSyntaxTree(syntaxTree);
+        const [newSyntaxTree, funcTab , typeTree]
+            = fillUpTypeInformation(flattenSyntaxTree(syntaxTree), {}, initTypeTree());
         // prettyPrint(ast, true);
-        return tpDeclaration(newSyntaxTree);
+        return transpile(newSyntaxTree);
     } catch (error) {
         console.log(error);
         const x = (error as PineError);
@@ -43,4 +44,14 @@ function removeTokenLocation(ast: any): any {
         }
     }
     return ast;
+}
+
+function flattenSyntaxTree(ast: LinkedNode<Declaration>): Declaration[] {
+    const result: Declaration[] = [];
+    let next: LinkedNode<Declaration> | null = ast;
+    while (next) {
+        result.push(next.body);
+        next = next.next;
+    }
+    return result;
 }

@@ -1,3 +1,4 @@
+import { LinkedNode } from "./ast";
 /**
  * This file is to transpile Pineapple code to Javascript code
  */
@@ -29,14 +30,17 @@ import {
 
 // Note: tp means transpile
 // Example: tpDeclaration means transpileDeclaration
+export function transpile(decls: Declaration[]): string {
+    return decls.map((x) => tpDeclaration(x)).join("");
+}
 
 export function tpDeclaration(input: Declaration): string {
     if (!input) {
         return "";
     }
-    const next = input.next ? tpDeclaration(input.next) : "";
-    if (input.body.kind === "FunctionDeclaration") {
-        return tpFunctionDeclaration(input.body) + next;
+    switch (input.kind) {
+        case "FunctionDeclaration":
+        return tpFunctionDeclaration(input);
     }
 }
 
@@ -48,7 +52,7 @@ export function tpFunctionDeclaration(f: FunctionDeclaration): string {
     return `function ${funcSignature}_${typeSignature}(${params}){\n${statements};\n}\n\n`;
 }
 
-export function tpStatement(s: Statement): string {
+export function tpStatement(s: LinkedNode<Statement>): string {
     const next = s.next　? ";\n" + tpStatement(s.next) : "";
     switch (s.body.kind) {
         case "FunctionCall":        return tpFunctionCall(s.body)           + next;

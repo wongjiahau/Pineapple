@@ -9,10 +9,10 @@ describe("x0002", () => {
     it("using unknown named-infix function", () => {
         const input =
 `def .main
-    let x = 1 plus: 2
+    let x = 1.plus(2)
 `;
         const result = catchError(() => pine2js(input)) as PineError;
         const error = result.rawError as ErrorUsingUnknownFunction;
-        expect(getFuncSignature(error.func.signature)).to.eq("plus:");
+        expect(getFuncSignature(error.func.signature)).to.eq(".plus");
     });
 });
