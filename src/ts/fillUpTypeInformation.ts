@@ -44,7 +44,7 @@ export function fillUpTypeInformation(
     };
     ast.body.statements = fillUp(ast.body.statements, symbols);
     if (ast.next !== null) {
-        [ast, newFuncTab, prevTypeTree] =
+        [ast.next, newFuncTab, prevTypeTree] =
             fillUpTypeInformation(ast.next, newFuncTab, prevTypeTree);
     }
     return [ast, newFuncTab, prevTypeTree];
