@@ -90,13 +90,12 @@ for(let i = 0; i < ${itemsName}.length; i++){
 export function tpBranchStatement(b: BranchStatement): string {
     if (b.test === null) {
         return `{
-    ${tpStatement(b.body)}
+${tpStatement(b.body)}
 }`;
     } else {
         return `if(${tpTestExpression(b.test)}){
-    ${tpStatement(b.body)}
-} ${b.elseBranch ? `else ${tpBranchStatement(b.elseBranch)}` : "" }
-`;
+${tpStatement(b.body)}
+}${b.elseBranch ? `else ${tpBranchStatement(b.elseBranch)}` : "" }`;
     }
 }
 

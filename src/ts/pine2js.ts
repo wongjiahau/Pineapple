@@ -1,5 +1,3 @@
-// import { getFunctionTable } from "./getFunctionTable";
-import { Declaration, LinkedNode, TokenLocation } from "./ast";
 import { getIntermediateForm, IntermediateForm } from "./getIntermediateForm";
 import { SourceCode } from "./pineRepl";
 import { transpile } from "./transpile";

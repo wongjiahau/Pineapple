@@ -12,7 +12,8 @@ def .main
     let x Number = 4
     let y Number = 6
     if x > y
-        let a = "yes"
+        if y > x
+            let a = "yes"
     elif y > x
         let b = "no"
     else
@@ -28,20 +29,19 @@ function _main_(){
 const $x = (4);
 const $y = (6);
 if(_$greaterThan_Number_Number($x,$y)){
-    const $a = "yes"
-} else if(_$greaterThan_Number_Number($y,$x)){
-    const $b = "no"
-} else {
-    const $c = "oops"
+if(_$greaterThan_Number_Number($y,$x)){
+const $a = "yes"
 }
-
-;
+}else if(_$greaterThan_Number_Number($y,$x)){
+const $b = "no"
+}else {
+const $c = "oops"
+};
 }
+`;
 
-`.trim();
-
-        const result = pine2js(input).trim();
-        assertEquals(result, expectedOutput);
+        const result = pine2js(input);
+        assertEquals(result.trim(), expectedOutput.trim());
     });
 
 });

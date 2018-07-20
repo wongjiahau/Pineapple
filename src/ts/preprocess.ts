@@ -1,4 +1,5 @@
 import { labelIndentation } from "./labelIndentation";
+import { labelLineNumbers } from "./labelLineNumbers";
 import { labelNewlines } from "./labelNewlines";
 import { smoothify } from "./smoothify";
 
@@ -8,8 +9,8 @@ export function preprocess(input: string): string {
     result = labelNewlines(result);
     result = smoothify(result);
     result = labelIndentation(result);
-    // result = result.replace(/@DEDENT@DEDENT/g, "@DEDENT@NEWLINE@DEDENT");
+    // result = result.replace(/@DEDENT@DEDENT/g, "@DEDENT@DEDENT@NEWLINE");
+    // console.log(labelLineNumbers(result, 0));
     result += "@EOF";
-    // console.log(labelLineNumbers(result));
     return result;
 }

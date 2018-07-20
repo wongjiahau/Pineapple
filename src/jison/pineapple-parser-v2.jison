@@ -289,12 +289,12 @@ StatementList
     ;
 
 Statement
-    : LinkStatement     NEWLINE     {$$=$1}
+    : AssignmentStatement           {$$=$1}
     | ReturnStatement   NEWLINE     {$$=$1}
     | AtomicFuncCall    NEWLINE     {$$=$1}
+    | IfStatement                   {$$=$1}
     | ForStatement
     | WhileStatement
-    | IfStatement
     ;
 
 ReturnStatement
@@ -332,10 +332,10 @@ Test
     | NotAtom Expression LogicOperatorAtom Test   {$$=_TestExpression($1,true,$2,$3)}
     ;
 
-LinkStatement
-    : LET VarDecl ASSIGN_OP Expression {$$=_AssignmentStatement($2,true,false,$4)}
-    | LET VarDecl MUTABLE ASSIGN_OP Expression {$$=_AssignmentStatement($2,true,true,$5)}
-    | VariableAtom ASSIGN_OP Expression {$$=_AssignmentStatement($1,false,null,$3)}
+AssignmentStatement
+    : LET VarDecl ASSIGN_OP MultilineExpr         {$$=_AssignmentStatement($2,true,false,$4)}
+    | LET VarDecl MUTABLE ASSIGN_OP MultilineExpr {$$=_AssignmentStatement($2,true,true,$5)}
+    | VariableAtom ASSIGN_OP MultilineExpr        {$$=_AssignmentStatement($1,false,null,$3)}
     ;
 
 VarDecl /* Variable declaration */
@@ -370,10 +370,15 @@ TupleTypeExpression
     ;
 
 
-Expression
+
+MultilineExpr
     : Object
     | MultilineList
-    | AtomicExpr
+    | Expression NEWLINE
+    ;
+
+Expression
+    : AtomicExpr
     | OperatorFuncCall
     | CurriedOperatorFunc
     ;
@@ -471,13 +476,13 @@ Object
     ;
 
 KeyValueList
-    : KeyValue NEWLINE KeyValueList {$$=_KeyValueList($1,$3)}
-    | KeyValue NEWLINE {$$=_KeyValueList($1,null)}
+    : KeyValue KeyValueList {$$=_KeyValueList($1,$2)}
     | KeyValue {$$=_KeyValueList($1,null)}
     ;
 
 KeyValue
-    : MembernameAtom ASSIGN_OP Expression {$$=_KeyValue($1,$3)}
+    : MembernameAtom ASSIGN_OP MultilineExpr   {$$=_KeyValue($1,$3)}
+    | StringAtom ASSIGN_OP MultilineExpr       {$$=_KeyValue($1,$3)}
     ;
 
 Array
