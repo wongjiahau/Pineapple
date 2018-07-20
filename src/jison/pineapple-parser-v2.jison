@@ -77,6 +77,8 @@ const _FunctionCall = (fix,signature,parameters,location) => ({
     location
 });
 
+const _CurriedMonoFunc = (signature) => ({kind: "CurriedMonoFunc", signature})
+
 const _Pon = (keyValue) => ({
     kind: "Pon",
     keyValueList: keyValue
@@ -150,6 +152,7 @@ const _Token = (repr, location) => ({repr, location});
 [=.<>]{2,} return 'OPERATOR'
 
 // Built-in symbols
+"_"     return '_'
 ","     return ','
 "->"    return '->'
 "="     return 'ASSIGN_OP'
@@ -177,7 +180,7 @@ const _Token = (repr, location) => ({repr, location});
 [-!$%^&*_+|~=`\[\]:";'<>?,.\/]+ return 'OPERATOR'
 
 
-// Misc
+// Misc(to be implemented soon)
 "::"                 return '::'
 [0-9]+               return 'TOKEN_ID'
 "DOT"                return 'DOT'
@@ -357,6 +360,7 @@ Expression
     | MultilineList
     | AtomicExpr
     | OperatorFuncCall
+    | CurriedOperatorFunc
     ;
 
 OperatorFuncCall
@@ -380,12 +384,12 @@ MonoFuncCall
     ;
 
 BiFuncCall
-    : AtomicExpr FuncAtom '(' AtomicExpr ')'  
+    : AtomicExpr FuncAtom '(' Expression ')'  
         {$$=_FunctionCall("Bi",[$2],[$1,$4],this._$)}
     ;
 
 TriFuncCall
-    : AtomicExpr FuncAtom '(' AtomicExpr SubFuncAtom AtomicExpr ')'  
+    : AtomicExpr FuncAtom '(' Expression SubFuncAtom Expression ')'  
         {$$=_FunctionCall("Tri",[$2,$5],[$1,$4,$6],this._$)}
     ;
 
@@ -396,7 +400,25 @@ AtomicExpr
     | ArraySlicing
     | ObjectAccessExpr
     | AtomicFuncCall
+    | CurriedFunc 
     ;
+
+CurriedFunc
+    : CurriedMonoFunc 
+    | CurriedBiFunc
+    | CurriedTriFunc
+    ;
+
+CurriedMonoFunc
+    : '_' FuncAtom {$$=_CurriedMonoFunc([$2])}
+    ;
+
+CurriedOperatorFunc
+    : '_' OperatorAtom AtomicExpr
+    | AtomicExpr OperatorAtom '_'
+    | '_' OperatorAtom '_'
+    ;
+
 
 ArrayAccess
     : AtomicExpr '[' Expression ']' {$$=_ArrayAccess($1,$3)}

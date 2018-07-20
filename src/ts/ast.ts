@@ -103,8 +103,21 @@ export type Expression
     | PonExpression // Pineapple Object Notation (PON)
     | ArrayExpression // a.k.a. Array
     | ArrayAccess
+    | CurriedFunc
     // | MonoExpression
     ;
+
+export type CurriedFunc
+    = CurriedMonoFunc
+    // | CurriedBiFunc
+    // | CurriedTriFunc
+    ;
+
+export interface CurriedMonoFunc {
+    kind: "CurriedMonoFunc";
+    signature: AtomicToken[];
+    returnType: TypeExpression;
+}
 
 export type FunctionAffix = "nofix" | "prefix" | "suffix" | "infix" | "mixfix";
 

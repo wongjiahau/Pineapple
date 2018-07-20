@@ -1,4 +1,3 @@
-import { LinkedNode } from "./ast";
 /**
  * This file is to transpile Pineapple code to Javascript code
  */
@@ -10,6 +9,7 @@ import {
     AtomicToken,
     BooleanExpression,
     BranchStatement,
+    CurriedMonoFunc,
     Declaration,
     Expression,
     ForStatement,
@@ -17,6 +17,7 @@ import {
     FunctionDeclaration,
     JavascriptCode,
     KeyValueList,
+    LinkedNode,
     NumberExpression,
     PonExpression,
     ReturnStatement,
@@ -186,7 +187,12 @@ export function tpExpression(e: Expression): string {
         case "Array":           return tpArrayExpression(e);
         case "Boolean":         return tpBooleanExpression(e);
         case "ArrayAccess":     return tpArrayAccess(e);
+        case "CurriedMonoFunc": return tpCurriedMonoFunc(e);
     }
+}
+
+export function tpCurriedMonoFunc(e: CurriedMonoFunc): string {
+    return `(($$0) => ${stringifyFuncSignature(e.signature)}($$0))`;
 }
 
 export function tpArrayAccess(a: ArrayAccess): string {
