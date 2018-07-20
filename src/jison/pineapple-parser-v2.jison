@@ -77,7 +77,14 @@ const _FunctionCall = (fix,signature,parameters,location) => ({
     location
 });
 
-const _CurriedMonoFunc = (signature) => ({kind: "CurriedMonoFunc", signature})
+const _CurriedMonoFunc = (signature) => ({kind: "CurriedMonoFunc", signature});
+
+const _CurriedOperatorFunc = (leftOperand,signature,rightOperand) => ({
+    kind: "CurriedOperatorFunc",
+    leftOperand,
+    signature,
+    rightOperand
+});
 
 const _Pon = (keyValue) => ({
     kind: "Pon",
@@ -414,9 +421,9 @@ CurriedMonoFunc
     ;
 
 CurriedOperatorFunc
-    : '_' OperatorAtom AtomicExpr
-    | AtomicExpr OperatorAtom '_'
-    | '_' OperatorAtom '_'
+    : '_' OperatorAtom AtomicExpr   {$$=_CurriedOperatorFunc(null,[$2],$3)},
+    | AtomicExpr OperatorAtom '_'   {$$=_CurriedOperatorFunc($1,[$2],null)},
+    | '_' OperatorAtom '_'          {$$=_CurriedOperatorFunc(null,[$2],null)},
     ;
 
 

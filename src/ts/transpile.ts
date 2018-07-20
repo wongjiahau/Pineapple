@@ -10,6 +10,7 @@ import {
     BooleanExpression,
     BranchStatement,
     CurriedMonoFunc,
+    CurriedOperatorFunc,
     Declaration,
     Expression,
     ForStatement,
@@ -179,15 +180,29 @@ export function tpParameters(v: VariableDeclaration[]): string {
 
 export function tpExpression(e: Expression): string {
     switch (e.kind) {
-        case "FunctionCall":    return tpFunctionCall(e);
-        case "String":          return tpStringExpression(e);
-        case "Number":          return tpNumberExpression(e);
-        case "Variable":        return "$" + e.repr;
-        case "Pon":             return tpPonExpression(e);
-        case "Array":           return tpArrayExpression(e);
-        case "Boolean":         return tpBooleanExpression(e);
-        case "ArrayAccess":     return tpArrayAccess(e);
-        case "CurriedMonoFunc": return tpCurriedMonoFunc(e);
+        case "FunctionCall":        return tpFunctionCall(e);
+        case "String":              return tpStringExpression(e);
+        case "Number":              return tpNumberExpression(e);
+        case "Variable":            return "$" + e.repr;
+        case "Pon":                 return tpPonExpression(e);
+        case "Array":               return tpArrayExpression(e);
+        case "Boolean":             return tpBooleanExpression(e);
+        case "ArrayAccess":         return tpArrayAccess(e);
+        case "CurriedMonoFunc":     return tpCurriedMonoFunc(e);
+        case "CurriedOperatorFunc": return tpCurriedOperatorFunc(e);
+    }
+}
+
+export function tpCurriedOperatorFunc(e: CurriedOperatorFunc): string {
+    const signature = stringifyFuncSignature(e.signature);
+    if (!e.leftOperand && e.rightOperand) {
+        return `(($$0) => ${signature}($$0, ${tpExpression(e.rightOperand)}))`;
+    } else if (e.leftOperand && !e.rightOperand) {
+        return `(($$0) => ${signature}(${tpExpression(e.leftOperand)}, $$0))`;
+    } else if (e.leftOperand === null && e.rightOperand === null) {
+        return `(($$0,$$1) => ${signature}($$0,$$1))`;
+    } else {
+        throw new Error("LeftOperatnd and RightOperand can't be not null together");
     }
 }
 

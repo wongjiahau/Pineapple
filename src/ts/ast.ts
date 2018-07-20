@@ -109,9 +109,18 @@ export type Expression
 
 export type CurriedFunc
     = CurriedMonoFunc
+    | CurriedOperatorFunc
     // | CurriedBiFunc
     // | CurriedTriFunc
     ;
+
+export interface CurriedOperatorFunc {
+    kind: "CurriedOperatorFunc";
+    leftOperand: Expression | null;
+    signature: AtomicToken[];
+    rightOperand: Expression | null;
+    returnType: TypeExpression;
+}
 
 export interface CurriedMonoFunc {
     kind: "CurriedMonoFunc";
