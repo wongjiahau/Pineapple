@@ -80,6 +80,7 @@ export interface AssignmentStatement {
 export type TypeExpression
     = SimpleType
     | ArrayType
+    | FunctionType
     ;
 
 export interface SimpleType {
@@ -92,6 +93,12 @@ export interface ArrayType {
     kind: "ArrayType";
     nullable: boolean;
     arrayOf: TypeExpression;
+}
+
+export interface FunctionType {
+    kind: "FunctionType";
+    inputType: TypeExpression[];
+    outputType: TypeExpression;
 }
 
 export type Expression

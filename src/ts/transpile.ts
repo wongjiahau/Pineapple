@@ -158,6 +158,8 @@ export function stringifyType(t: TypeExpression): string {
             return t.name.repr;
         case "ArrayType":
             return "ArrayOf" + stringifyType(t.arrayOf);
+        case "FunctionType":
+            return `Func$${t.inputType.map(stringifyType).join("$")}$${stringifyType(t.outputType)}`;
     }
 }
 

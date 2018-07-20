@@ -86,6 +86,12 @@ const _CurriedOperatorFunc = (leftOperand,signature,rightOperand) => ({
     rightOperand
 });
 
+const _FunctionType = (inputType, outputType) => ({
+    kind: "FunctionType",
+    inputType,
+    outputType
+});
+
 const _Pon = (keyValue) => ({
     kind: "Pon",
     keyValueList: keyValue
@@ -350,10 +356,12 @@ TypeExpression
     ;
 
 AtomicTypeExpr
-    : TypenameAtom {$$=_SimpleType($1,false)}
-    | TypenameAtom '?' {$$=_SimpleType($1,true)}
-    | AtomicTypeExpr '[' ']' {$$=_ArrayType($1,false)}
+    : TypenameAtom              {$$=_SimpleType($1,false)}
+    | TypenameAtom '?'          {$$=_SimpleType($1,true)}
+    | AtomicTypeExpr '[' ']'    {$$=_ArrayType($1,false)}
     | AtomicTypeExpr '[' TupleTypeExpression ']'
+    | '(' TypeExpression '->' TypeExpression ')' {$$=_FunctionType([$2],$4)}
+    | '(' TypeExpression ',' TypeExpression '->' TypeExpression ')' 
     ;
 
 TupleTypeExpression
