@@ -173,6 +173,8 @@ const _Token = (repr, location) => ({repr, location});
 ")"     return ')'
 "["     return '['
 "]"     return ']'
+"{"     return '{'
+"}"     return '}'
 "o"     return 'LIST_BULLET'
 "?"     return '?'
 
@@ -372,7 +374,7 @@ TupleTypeExpression
 
 
 MultilineExpr
-    : Object
+    : MultilineObject
     | MultilineList
     | Expression NEWLINE
     ;
@@ -415,6 +417,7 @@ TriFuncCall
 
 AtomicExpr
     : '(' Expression ')' {$$=$2}
+    | SinglelineObject 
     | Value
     | ArrayAccess
     | ArraySlicing
@@ -458,7 +461,7 @@ ObjectAccessExpr
 
 ObjectAccess
     : MembernameAtom
-    | '{' Expression '}'
+    // | '{' Expression '}'
     ;
 
 Value
@@ -470,20 +473,35 @@ Value
     | VariableAtom
     ;
 
-Object
+MultilineObject
     : EMPTY_OBJECT_DECLARATOR
-    | NEWLINE INDENT KeyValueList DEDENT {$$=_Pon($3)}
+    | NEWLINE INDENT MultilineKeyValueList DEDENT {$$=_Pon($3)}
     ;
 
-KeyValueList
-    : KeyValue KeyValueList {$$=_KeyValueList($1,$2)}
-    | KeyValue {$$=_KeyValueList($1,null)}
+MultilineKeyValueList
+    : MultilineKeyValue MultilineKeyValueList {$$=_KeyValueList($1,$2)}
+    | MultilineKeyValue {$$=_KeyValueList($1,null)}
     ;
 
-KeyValue
+MultilineKeyValue
     : MembernameAtom ASSIGN_OP MultilineExpr   {$$=_KeyValue($1,$3)}
     | StringAtom ASSIGN_OP MultilineExpr       {$$=_KeyValue($1,$3)}
     ;
+
+SinglelineObject
+    : '{' KeyValueList '}' {$$=_Pon($2)}
+    ;
+
+KeyValueList
+    : KeyValue ',' KeyValueList {$$=_KeyValueList($1,$3)}
+    | KeyValue                  {$$=_KeyValueList($1,null)}
+    ;
+
+KeyValue 
+    : MembernameAtom ASSIGN_OP Expression   {$$=_KeyValue($1,$3)}
+    | StringAtom ASSIGN_OP Expression       {$$=_KeyValue($1,$3)}
+    ;
+    
 
 Array
     : '[' Elements ']'   {$$=_ArrayExpression($2,this._$)}

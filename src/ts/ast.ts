@@ -6,7 +6,7 @@ export interface LinkedNode<T> {
 
 export type Declaration
     = FunctionDeclaration
-    // | StructDeclaration
+    | StructDeclaration
     // | InterfaceDeclaration
     // | EnumDeclaration
     // | ImplementionDeclaration
@@ -19,6 +19,10 @@ export interface FunctionDeclaration {
     returnType: TypeExpression;
     parameters: VariableDeclaration[];
     statements: LinkedNode<Statement>;
+}
+
+export interface StructDeclaration {
+    kind: "StructDeclaration";
 }
 
 export type Statement

@@ -2,8 +2,8 @@ import { expect } from "chai";
 import { pine2js } from "../../../../pine2js";
 import { assertEquals } from "../../../testUtil";
 
-describe("@literal-object-LOB-001", () => {
-    it("object literals", () => {
+describe("LOB-001", () => {
+    it("object literals with string key", () => {
         const input =
 `
 def .main
