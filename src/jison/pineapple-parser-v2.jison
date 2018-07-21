@@ -300,11 +300,11 @@ Statement
     ;
 
 ReturnStatement
-    : RETURN Expression {$$=_ReturnStatement($2)}
+    : RETURN SinglelineExpr {$$=_ReturnStatement($2)}
     ;
 
 ForStatement
-    : FOR VariableAtom IN Expression Block {$$=_ForStatement($2,$4,$5)}
+    : FOR VariableAtom IN SinglelineExpr Block {$$=_ForStatement($2,$4,$5)}
     ;
 
 WhileStatement
@@ -328,10 +328,10 @@ ElseStatement
     ;
     
 Test
-    : Expression                                  {$$=_TestExpression($1,false,null,null)}
-    | Expression LogicOperatorAtom Test           {$$=_TestExpression($1,false,$2,$3)}
-    | NotAtom Expression                          {$$=_TestExpression($1,true,null,null)}
-    | NotAtom Expression LogicOperatorAtom Test   {$$=_TestExpression($1,true,$2,$3)}
+    : SinglelineExpr                                  {$$=_TestExpression($1,false,null,null)}
+    | SinglelineExpr LogicOperatorAtom Test           {$$=_TestExpression($1,false,$2,$3)}
+    | NotAtom SinglelineExpr                          {$$=_TestExpression($1,true,null,null)}
+    | NotAtom SinglelineExpr LogicOperatorAtom Test   {$$=_TestExpression($1,true,$2,$3)}
     ;
 
 AssignmentStatement
@@ -376,10 +376,10 @@ TupleTypeExpression
 MultilineExpr
     : MultilineObject
     | MultilineList
-    | Expression NEWLINE
+    | SinglelineExpr NEWLINE
     ;
 
-Expression
+SinglelineExpr
     : AtomicExpr
     | OperatorFuncCall
     | CurriedOperatorFunc
@@ -406,24 +406,29 @@ MonoFuncCall
     ;
 
 BiFuncCall
-    : AtomicExpr FuncAtom '(' Expression ')'  
+    : AtomicExpr FuncAtom '(' SinglelineExpr ')'  
         {$$=_FunctionCall("Bi",[$2],[$1,$4],this._$)}
     ;
 
 TriFuncCall
-    : AtomicExpr FuncAtom '(' Expression SubFuncAtom Expression ')'  
+    : AtomicExpr FuncAtom '(' SinglelineExpr SubFuncAtom SinglelineExpr ')'  
         {$$=_FunctionCall("Tri",[$2,$5],[$1,$4,$6],this._$)}
     ;
 
 AtomicExpr
-    : '(' Expression ')' {$$=$2}
+    : '(' SinglelineExpr ')' {$$=$2}
     | SinglelineObject 
-    | Value
+    | ObjectAccessExpr
+    | SinglelineArray
     | ArrayAccess
     | ArraySlicing
-    | ObjectAccessExpr
     | AtomicFuncCall
     | CurriedFunc 
+    | BooleanAtom
+    | StringAtom
+    | NumberAtom
+    | VariableAtom
+    | NIL
     ;
 
 CurriedFunc
@@ -444,15 +449,15 @@ CurriedOperatorFunc
 
 
 ArrayAccess
-    : AtomicExpr '[' Expression ']' {$$=_ArrayAccess($1,$3)}
+    : AtomicExpr '[' SinglelineExpr ']' {$$=_ArrayAccess($1,$3)}
     ;
 
 ArraySlicing
-    : AtomicExpr '.{..<' Expression '}' 
-    | AtomicExpr '.{..' Expression  '}' 
-    | AtomicExpr '.{' Expression  '..}'
-    | AtomicExpr '.{' Expression  '..' Expression  '}' 
-    | AtomicExpr '.{' Expression  '..<' Expression '}' 
+    : AtomicExpr '.{..<' SinglelineExpr '}' 
+    | AtomicExpr '.{..' SinglelineExpr  '}' 
+    | AtomicExpr '.{' SinglelineExpr  '..}'
+    | AtomicExpr '.{' SinglelineExpr  '..' SinglelineExpr  '}' 
+    | AtomicExpr '.{' SinglelineExpr  '..<' SinglelineExpr '}' 
     ;
 
 ObjectAccessExpr
@@ -461,16 +466,7 @@ ObjectAccessExpr
 
 ObjectAccess
     : MembernameAtom
-    // | '{' Expression '}'
-    ;
-
-Value
-    : NIL
-    | Array
-    | BooleanAtom
-    | StringAtom
-    | NumberAtom
-    | VariableAtom
+    // | '{' SinglelineExpr '}'
     ;
 
 MultilineObject
@@ -498,12 +494,11 @@ KeyValueList
     ;
 
 KeyValue 
-    : MembernameAtom ASSIGN_OP Expression   {$$=_KeyValue($1,$3)}
-    | StringAtom ASSIGN_OP Expression       {$$=_KeyValue($1,$3)}
+    : MembernameAtom ASSIGN_OP SinglelineExpr   {$$=_KeyValue($1,$3)}
+    | StringAtom ASSIGN_OP SinglelineExpr       {$$=_KeyValue($1,$3)}
     ;
-    
 
-Array
+SinglelineArray
     : '[' Elements ']'   {$$=_ArrayExpression($2,this._$)}
     | '[' ']'            {$$=_ArrayExpression(null,this._$)}
     ;
@@ -518,8 +513,8 @@ MultilineList
     ;
 
 MultilineElements
-    : LIST_BULLET Expression NEWLINE MultilineElements {$$=_ArrayElement($2,$4)}
-    | LIST_BULLET Expression NEWLINE {$$=_ArrayElement($2,null)}
+    : LIST_BULLET SinglelineExpr NEWLINE MultilineElements {$$=_ArrayElement($2,$4)}
+    | LIST_BULLET SinglelineExpr NEWLINE {$$=_ArrayElement($2,null)}
     ;
 
 BooleanAtom
