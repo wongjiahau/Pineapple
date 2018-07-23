@@ -83,7 +83,7 @@ export interface AssignmentStatement {
 
 export type TypeExpression
     = SimpleType
-    | ArrayType
+    | CompoundType
     | FunctionType
     ;
 
@@ -93,10 +93,11 @@ export interface SimpleType {
     nullable: boolean;
 }
 
-export interface ArrayType {
-    kind: "ArrayType";
+export interface CompoundType {
+    kind: "CompoundType";
+    name: string;
+    of: TypeExpression;
     nullable: boolean;
-    arrayOf: TypeExpression;
 }
 
 export interface FunctionType {

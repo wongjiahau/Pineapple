@@ -1,4 +1,4 @@
-import {ArrayType, SimpleType, TypeExpression} from "./ast";
+import {CompoundType, SimpleType, TypeExpression} from "./ast";
 import { typeEquals } from "./fillUpTypeInformation";
 
 export interface TypeTree {
@@ -59,9 +59,11 @@ export function initTypeTree(): TypeTree {
     const arrayType = newArrayType(anyType);
     const numberType = newSimpleType("Number");
     const numberArrayType = newArrayType(numberType);
+    const stringType = newSimpleType("String");
     let tree = newTypeTree(anyType);
     tree = insertChild(arrayType, anyType, tree);
     tree = insertChild(numberArrayType, arrayType, tree);
+    tree = insertChild(stringType, arrayType, tree);
     return tree;
 }
 
@@ -76,10 +78,11 @@ export function newSimpleType(name: string): SimpleType {
     };
 }
 
-export function newArrayType(arrayOfWhat: TypeExpression): ArrayType {
+export function newArrayType(arrayOfWhat: TypeExpression): CompoundType {
     return {
-        kind: "ArrayType" ,
-        arrayOf: arrayOfWhat,
+        name: "Array",
+        kind: "CompoundType" ,
+        of: arrayOfWhat,
         nullable: false
     };
 }

@@ -161,8 +161,8 @@ export function fillUp(s: LinkedNode<Statement>, symbols: SymbolTable): LinkedNo
 
 export function fillUpForStmtTypeInfo(f: ForStatement, symbols: SymbolTable): ForStatement {
     f.expression = fillUpExpressionTypeInfo(f.expression, symbols);
-    if (f.expression.returnType.kind === "ArrayType") {
-        f.iterator.returnType = f.expression.returnType.arrayOf;
+    if (f.expression.returnType.kind === "CompoundType") {
+        f.iterator.returnType = f.expression.returnType.of;
         symbols.vartab = updateVariableTable(symbols.vartab, f.iterator);
     } else {
         errorMessage("The expresison type in for statement should be array.", null);
@@ -212,10 +212,10 @@ export function fillUpArrayAccessTypeInfo(a: ArrayAccess): ArrayAccess {
         case "SimpleType":
             errorMessage(`Variable \`${a.subject}\` is not array type.`, a.subject.location);
             break;
-        case "ArrayType":
+        case "CompoundType":
             return {
                 ...a,
-                returnType: a.subject.returnType.arrayOf
+                returnType: a.subject.returnType.of
             };
     }
 }
@@ -354,8 +354,9 @@ export function getType(e: Expression, vtab: VariableTable): TypeExpression {
             return e.returnType;
         case "Array":
             return {
-                kind: "ArrayType",
-                arrayOf: getElementsType(e.elements, vtab),
+                kind: "CompoundType",
+                name: "Array",
+                of: getElementsType(e.elements, vtab),
                 nullable: false,
             };
     }

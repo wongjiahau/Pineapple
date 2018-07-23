@@ -155,8 +155,8 @@ export function stringifyType(t: TypeExpression): string {
     switch (t.kind) {
         case "SimpleType":
             return t.name.repr;
-        case "ArrayType":
-            return "ArrayOf" + stringifyType(t.arrayOf);
+        case "CompoundType":
+            return t.name + "Of" + stringifyType(t.of);
         case "FunctionType":
             return `Func$${t.inputType.map(stringifyType).join("$")}$${stringifyType(t.outputType)}`;
     }

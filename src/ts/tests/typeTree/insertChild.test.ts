@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import {insertChild, newArrayType, newSimpleType, newTypeTree} from "../../typeTree";
+import {insertChild, newArrayType, newSimpleType, newTypeTree, TypeTree} from "../../typeTree";
 
 describe("insertChild", () => {
     it("case 1", () => {
@@ -7,7 +7,7 @@ describe("insertChild", () => {
         const arrayType = newArrayType(objectType);
         const initTree = newTypeTree(objectType);
         const newTree = insertChild(arrayType, /*as child of*/ objectType, /*in*/ initTree);
-        const expected = {
+        const expected: TypeTree = {
             current: {
                 kind: "SimpleType",
                 name: {
@@ -19,8 +19,9 @@ describe("insertChild", () => {
             children: [
                 {
                     current: {
-                        kind: "ArrayType",
-                        arrayOf: {
+                        name: "Array",
+                        kind: "CompoundType",
+                        of: {
                             kind: "SimpleType",
                             name: {
                                 repr: "Object",
@@ -48,7 +49,7 @@ describe("insertChild", () => {
         let tree = newTypeTree(objectType);
         tree = insertChild(arrayType, objectType, tree);
         tree = insertChild(numberArrayType, arrayType, tree);
-        const expected = {
+        const expected: TypeTree = {
             current: {
                 kind: "SimpleType",
                 name: {
@@ -60,8 +61,9 @@ describe("insertChild", () => {
             children: [
                 {
                     current: {
-                        kind: "ArrayType",
-                        arrayOf: {
+                        name: "Array",
+                        kind: "CompoundType",
+                        of: {
                             kind: "SimpleType",
                             name: {
                                 repr: "Object",
@@ -74,8 +76,9 @@ describe("insertChild", () => {
                     children: [
                         {
                             current: {
-                                kind: "ArrayType",
-                                arrayOf: {
+                                name: "Array",
+                                kind: "CompoundType",
+                                of: {
                                     kind: "SimpleType",
                                     name: {
                                         repr: "Number",

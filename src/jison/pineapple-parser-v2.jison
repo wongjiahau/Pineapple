@@ -63,10 +63,11 @@ const _ArrayAccess = (subject, index) => ({ kind: "ArrayAccess", subject, index 
 
 const _SimpleType = (name, nullable) => ({ kind: "SimpleType", name, nullable});
 
-const _ArrayType = (typeExpr, nullable) => ({
-    kind: "ArrayType",
+const _CompoundType = (name, typeExpr, nullable) => ({
+    kind: "CompoundType",
+    name,
     nullable,
-    arrayOf: typeExpr,
+    of: typeExpr,
 });
 
 const _FunctionCall = (fix,signature,parameters,location) => ({
@@ -360,7 +361,7 @@ TypeExpression
 AtomicTypeExpr
     : TypenameAtom              {$$=_SimpleType($1,false)}
     | TypenameAtom '?'          {$$=_SimpleType($1,true)}
-    | AtomicTypeExpr '[' ']'    {$$=_ArrayType($1,false)}
+    | AtomicTypeExpr '[' ']'    {$$=_CompoundType("Array", $1,false)}
     | AtomicTypeExpr '[' TupleTypeExpression ']'
     | '(' TypeExpression '->' TypeExpression ')' {$$=_FunctionType([$2],$4)}
     | '(' TypeExpression ',' TypeExpression '->' TypeExpression ')' 
