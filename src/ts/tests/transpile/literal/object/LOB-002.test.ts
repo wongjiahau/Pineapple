@@ -2,7 +2,9 @@ import { pine2js } from "../../../../pine2js";
 import { assertEquals } from "../../../testUtil";
 
 describe("LOB-002", () => {
-    it("single line object", () => {
+    // Single line object is temporarily disable,
+    // until its use case is justified
+    it.skip("single line object", () => {
         const input =
 `
 def .main

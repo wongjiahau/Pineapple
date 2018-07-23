@@ -417,7 +417,7 @@ TriFuncCall
 
 AtomicExpr
     : '(' SinglelineExpr ')' {$$=$2}
-    | SinglelineObject 
+    // | SinglelineObject /* temporarily disable, unless its use case is justified*/
     | ObjectAccessExpr
     | SinglelineArray
     | ArrayAccess
