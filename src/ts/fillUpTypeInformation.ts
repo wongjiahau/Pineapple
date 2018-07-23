@@ -40,17 +40,25 @@ export function fillUpTypeInformation(
     // without needing to adhere to strict top-down or bottom-up structure
     let funcTab = prevFuntab;
     for (let i = 0; i < decls.length; i++) {
-        funcTab = newFunctionTable(decls[i], funcTab);
+        const currentDecl = decls[i];
+        switch (currentDecl.kind) {
+            case "FunctionDeclaration":
+                funcTab = newFunctionTable(currentDecl, funcTab);
+        }
     }
 
     for (let i = 0; i < decls.length; i++) {
-        const vtab = getVariableTable(decls[i].parameters);
-        const symbols: SymbolTable = {
-            vartab: vtab,
-            functab: funcTab,
-            typeTree: prevTypeTree
-        };
-        decls[i].statements = fillUp(decls[i].statements, symbols);
+        const currentDecl = decls[i];
+        switch (currentDecl.kind) {
+            case "FunctionDeclaration":
+                const vtab = getVariableTable(currentDecl.parameters);
+                const symbols: SymbolTable = {
+                    vartab: vtab,
+                    functab: funcTab,
+                    typeTree: prevTypeTree
+                };
+                currentDecl.statements = fillUp(currentDecl.statements, symbols);
+        }
     }
     return [decls, funcTab, prevTypeTree];
 }
@@ -320,16 +328,17 @@ export function paramTypesConforms(
     if (actualParams.length !== matchingParams.length) {
         return 99;
     }
+    let score = 0;
     for (let i = 0; i < actualParams.length; i++) {
         const expectedType = actualParams[i].typeExpected;
         const actualType = matchingParams[i].returnType;
         if (typeEquals(expectedType, actualType)) {
-            return 0;
+            score += 0;
         } else {
-            return childOf(actualType, expectedType, typeTree);
+            score += childOf(actualType, expectedType, typeTree);
         }
     }
-    return 99;
+    return score;
 }
 
 export function fillUpArrayTypeInfo(e: ArrayExpression, symbols: SymbolTable): ArrayExpression {

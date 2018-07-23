@@ -84,7 +84,8 @@ export interface AssignmentStatement {
 export type TypeExpression
     = SimpleType
     | CompoundType
-    | FunctionType
+    | FunctionType;
+ :  :  | GenericType
     ;
 
 export interface SimpleType {
@@ -98,6 +99,10 @@ export interface CompoundType {
     name: string;
     of: TypeExpression;
     nullable: boolean;
+}
+
+export interface GenericType {
+    kind: "GenericType";
 }
 
 export interface FunctionType {
