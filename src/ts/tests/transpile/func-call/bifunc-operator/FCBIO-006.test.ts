@@ -3,20 +3,35 @@ import { assertEquals } from "../../../testUtil";
 
 describe("FCBIO-006", () => {
     it("generic type", () => {
-    // Note that the input is an invalid function in Pineapple
-    // This part is just to test the functionalit of recursive type inference
         const input =
 `
 def .main
-    let x = "Hello" ++ "world"
+    let x = [1,2,3].append(1)
+    x.show 
+    
+def (this T[]).append(that T) -> T[]
+    pass
 
-def (this T[]) ++ (that T[]) -> T[]
+def (this Number[]).show
     pass
 `;
         const expectedOutput =
 `
-function _$minus$minus_Number_String($this,$that){
-return _$minus$minus_Number_String($this,_$minus$minus_Number_String((5),$that));
+function _main_(){
+const $x = _append_ArrayOfNumber_Number((new ArrayOfNumber([(1),(2),(3),])),(1));
+_show_ArrayOfNumber($x);
+}
+
+function _append_ArrayOfGeneric$T_Generic$T($this,$that){
+$$pass$$();
+}
+
+function _append_ArrayOfNumber_Number($this,$that){
+$$pass$$();
+}
+
+function _show_ArrayOfNumber($this){
+$$pass$$();
 }
 `;
         assertEquals(pine2js(input).trim(), expectedOutput.trim());

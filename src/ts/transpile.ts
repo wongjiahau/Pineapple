@@ -159,6 +159,8 @@ export function stringifyType(t: TypeExpression): string {
             return t.name + "Of" + stringifyType(t.of);
         case "FunctionType":
             return `Func$${t.inputType.map(stringifyType).join("$")}$${stringifyType(t.outputType)}`;
+        case "GenericType":
+            return `Generic$${t.placeholder.repr}`;
     }
 }
 

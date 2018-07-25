@@ -70,6 +70,12 @@ const _CompoundType = (name, typeExpr, nullable) => ({
     of: typeExpr,
 });
 
+const _GenericType = (placeholder, nullable) => ({
+    kind: "GenericType",
+    placeholder, // "T" | "T1" | "T2",
+    nullable
+});
+
 const _FunctionCall = (fix,signature,parameters,location) => ({
     kind: "FunctionCall",
     fix,
@@ -190,6 +196,7 @@ const _Token = (repr, location) => ({repr, location});
 // Identifiers
 [.][a-z][a-zA-Z0-9]*            return 'FUNCNAME'    
 [a-z][a-zA-Z0-9]*[:]            return 'SUBFUNCNAME'    
+[T][12]?                        return 'GENERICTYPENAME'
 [A-Z][a-zA-Z0-9]*               return 'TYPENAME'
 [a-z][a-zA-Z]*                  return 'VARNAME'
 ['][a-z][a-zA-Z0-9]*            return 'MEMBERNAME'
@@ -361,6 +368,8 @@ TypeExpression
 AtomicTypeExpr
     : TypenameAtom              {$$=_SimpleType($1,false)}
     | TypenameAtom '?'          {$$=_SimpleType($1,true)}
+    | GenericAtom               {$$=_GenericType($1, false)}
+    | GenericAtom '?'           {$$=_GenericType($1, true)}
     | AtomicTypeExpr '[' ']'    {$$=_CompoundType("Array", $1,false)}
     | AtomicTypeExpr '[' TupleTypeExpression ']'
     | '(' TypeExpression '->' TypeExpression ')' {$$=_FunctionType([$2],$4)}
@@ -549,6 +558,10 @@ OperatorAtom
 
 TypenameAtom
     : TYPENAME {$$=_Token($1, this._$)}
+    ;
+
+GenericAtom
+    : GENERICTYPENAME {$$=_Token($1, this._$)}
     ;
 
 JavascriptCodeAtom

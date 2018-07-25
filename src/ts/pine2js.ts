@@ -17,7 +17,13 @@ export function pine2js(input: string, filename: string= ""): string {
         syntaxTrees: []
     };
     const intermediateForm = getIntermediateForm(source, initForm);
-    return transpile(intermediateForm.syntaxTrees);
+    let result = "";
+    for (var key in intermediateForm.funcTab) {
+        result += transpile(intermediateForm.funcTab[key]);
+    }
+    return result;
+    // let source = transpile(intermediateForm.syntaxTrees);
+    // source += transpile(intermediateForm.funcTab)
 }
 
 export function prettyPrint(ast: any, removeLocation: boolean): void {
