@@ -25,7 +25,7 @@ export function getIntermediateForm(
         prevIntermediate.syntaxTrees = prevIntermediate.syntaxTrees.concat(newAst);
         return prevIntermediate;
     } catch (e) {
-        // console.log(e);
+        console.log(e);
         const error = (e as PineError);
         error.errorMessage =
             generateErrorMessage(
