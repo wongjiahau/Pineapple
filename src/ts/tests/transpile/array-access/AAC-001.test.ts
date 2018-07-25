@@ -12,7 +12,7 @@ def .main
         const expectedOutput =
 `
 function _main_(){
-const $x = (new ArrayOfNumber([(1),(2),(3),]));
+const $x = [(1),(2),(3)];
 const $y = $x[(0)];
 }
 `.trim();

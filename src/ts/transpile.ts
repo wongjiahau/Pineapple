@@ -3,7 +3,6 @@
  */
 import {
     ArrayAccess,
-    ArrayElement,
     ArrayExpression,
     AssignmentStatement,
     AtomicToken,
@@ -29,6 +28,7 @@ import {
     VariableDeclaration,
     WhileStatement
 } from "./ast";
+import { flattenLinkedNode } from "./getIntermediateForm";
 
 // Note: tp means transpile
 // Example: tpDeclaration means transpileDeclaration
@@ -236,21 +236,24 @@ export function tpBooleanExpression(e: BooleanExpression): string {
 }
 
 export function tpArrayExpression(e: ArrayExpression): string {
-    return `[${tpListElements(e.elements)}]`;
+    if(e.elements !== null) {
+        return `[${tpListElements(e.elements)}]`;
+    }
     // The following code is pending
     // Because is it necessary to have the typename included?
     // For example, new ArrayOfNumber([1,2,3])
     // Is that necessary?
     const typename = stringifyType(e.returnType);
-    if (e.elements !== null) {
-        return `(new ${typename}([${tpListElements(e.elements)}]))`;
+    const elements = e.elements;
+    if (elements !== null) {
+        return `(new ${typename}([${tpListElements(elements)}]))`;
     } else {
         return `(new ${typename}([]))`;
     }
 }
 
-export function tpListElements(e: ArrayElement): string {
-    return `${tpExpression(e.value)},${e.next ? tpListElements(e.next) : ""}`;
+export function tpListElements(e: LinkedNode<Expression>): string {
+    return flattenLinkedNode(e).map((x) => tpExpression(x)).join(",");
 }
 
 export function tpPonExpression(e: PonExpression): string {

@@ -18,7 +18,7 @@ $$pass$$();
 }
 
 function _main_(){
-const $x = _$plus_Number_Number([(1),(2),][(0)],[(2),(3),][(0)]);
+const $x = _$plus_Number_Number([(1),(2)][(0)],[(2),(3)][(0)]);
 }
 `.trim();
 

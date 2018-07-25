@@ -16,7 +16,7 @@ export function getIntermediateForm(
         const ast = parser.parse(preprocess(sourceCode.content)) as LinkedNode<Declaration>;
         // prettyPrint(ast, true);
         const [newAst, newFuncTab, newTypeTree] = fillUpTypeInformation(
-            flattenSyntaxTree(ast),
+            flattenLinkedNode(ast),
             prevIntermediate.funcTab,
             prevIntermediate.typeTree,
         );
@@ -51,7 +51,7 @@ export interface IntermediateForm {
     typeTree: TypeTree;
 }
 
-export function flattenSyntaxTree<T>(ast: LinkedNode<T>): T[] {
+export function flattenLinkedNode<T>(ast: LinkedNode<T>): T[] {
     const result: T[] = [];
     let next: LinkedNode<T> | null = ast;
     while (next) {

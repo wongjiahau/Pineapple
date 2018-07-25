@@ -97,7 +97,7 @@ export interface SimpleType {
 export interface CompoundType {
     kind: "CompoundType";
     name: string;
-    of: TypeExpression;
+    of: LinkedNode<TypeExpression>;
     nullable: boolean;
 }
 
@@ -194,15 +194,9 @@ export interface KeyValue {
 
 export interface ArrayExpression {
     kind: "Array";
-    elements: ArrayElement | null;
+    elements: LinkedNode<Expression> | null;
     location: TokenLocation;
     returnType: TypeExpression;
-}
-
-export interface ArrayElement {
-    kind: "ArrayElement";
-    value: Expression;
-    next: ArrayElement | null;
 }
 
 export interface StringExpression extends AtomicToken {

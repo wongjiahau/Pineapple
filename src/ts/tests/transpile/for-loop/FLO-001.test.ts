@@ -20,13 +20,12 @@ $$pass$$();
 
 function _main_(){
 
-const itemsOfi = (new ArrayOfString(["a","b","c",]));
+const itemsOfi = ["a","b","c"];
 for(let i = 0; i < itemsOfi.length; i++){
     const $i = itemsOfi[i];
     _print_String($i)
 };
 }
-
 `;
         assertEquals(pine2js(input).trim(), expectedOutput.trim());
     });

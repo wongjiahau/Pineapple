@@ -11,7 +11,7 @@ def .main
         const expectedOutput =
 `
 function _main_(){
-const $x = [(1.1),(2.2),(3.3),(4.4),];
+const $x = [(1.1),(2.2),(3.3),(4.4)];
 }
 `;
         assertEquals(pine2js(input).trim(), expectedOutput.trim());

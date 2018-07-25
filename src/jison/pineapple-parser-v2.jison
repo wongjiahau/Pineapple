@@ -1,9 +1,7 @@
 
 /* description: Parses and executes mathematical expressions. */
 %{
-const _Declaration     = (body,next)  => ({body,next});
-
-const _Statement       = (body,next)  => ({body,next});
+const _LinkedNode = (body, next) => ({body, next});
 
 const _PassStatement = () => ({ kind: "PassStatement" });
 
@@ -117,7 +115,6 @@ const _ArrayExpression = (elements,location) => ({
     location
 });
 
-const _ArrayElement = (value,next) => ({ kind: "ArrayElement", value, next});
 
 const _StringExpression = (repr,location) => ({kind:"String", repr, location});
 
@@ -237,8 +234,8 @@ EntryPoint
     ;
 
 DeclarationList
-    : Declaration DeclarationList {$$=_Declaration($1,$2)}
-    | Declaration {$$=_Declaration($1,null)} 
+    : Declaration DeclarationList {$$=_LinkedNode($1,$2)}
+    | Declaration {$$=_LinkedNode($1,null)} 
     ;
 
 
@@ -289,13 +286,13 @@ TriFuncDeclaration
 
 Block
     : NEWLINE INDENT StatementList DEDENT {$$=$3}
-    | NEWLINE INDENT JavascriptCodeAtom NEWLINE DEDENT {$$=_Statement($3,null)}
-    | NEWLINE INDENT PASS NEWLINE DEDENT {$$=_Statement(_PassStatement(),null)}
+    | NEWLINE INDENT JavascriptCodeAtom NEWLINE DEDENT {$$=_LinkedNode($3,null)}
+    | NEWLINE INDENT PASS NEWLINE DEDENT {$$=_LinkedNode(_PassStatement(),null)}
     ;
 
 StatementList
-    : Statement StatementList {$$=_Statement($1,$2)}
-    | Statement {$$=_Statement($1,null)}
+    : Statement StatementList {$$=_LinkedNode($1,$2)}
+    | Statement {$$=_LinkedNode($1,null)}
     ;
 
 Statement
@@ -371,14 +368,15 @@ AtomicTypeExpr
     | GenericAtom               {$$=_GenericType($1, false)}
     | GenericAtom '?'           {$$=_GenericType($1, true)}
     | AtomicTypeExpr '[' ']'    {$$=_CompoundType("Array", $1,false)}
-    | AtomicTypeExpr '[' TupleTypeExpression ']'
+    | AtomicTypeExpr '[' TypeExpressionList ']'
     | '(' TypeExpression '->' TypeExpression ')' {$$=_FunctionType([$2],$4)}
     | '(' TypeExpression ',' TypeExpression '->' TypeExpression ')' 
+    | TypenameAtom '{' TypeExpressionList '}' 
     ;
 
-TupleTypeExpression
-    : TupleTypeExpression COMMA TypeExpression
-    | TypeExpression
+TypeExpressionList
+    : TypeExpression ',' TypeExpressionList {$$=_LinkedNode($1,$3)}
+    | TypeExpression {$$=_LinkedNode($1,null)}
     ;
 
 
@@ -514,8 +512,8 @@ SinglelineArray
     ;
 
 Elements
-    : AtomicExpr {$$=_ArrayElement($1,null)}
-    | AtomicExpr ',' Elements  {$$=_ArrayElement($1,$3)}
+    : AtomicExpr ',' Elements  {$$=_LinkedNode($1,$3)}
+    | AtomicExpr {$$=_LinkedNode($1,null)}
     ;
 
 MultilineList
@@ -523,8 +521,8 @@ MultilineList
     ;
 
 MultilineElements
-    : LIST_BULLET SinglelineExpr NEWLINE MultilineElements {$$=_ArrayElement($2,$4)}
-    | LIST_BULLET SinglelineExpr NEWLINE {$$=_ArrayElement($2,null)}
+    : LIST_BULLET SinglelineExpr NEWLINE MultilineElements {$$=_LinkedNode($2,$4)}
+    | LIST_BULLET SinglelineExpr NEWLINE {$$=_LinkedNode($2,null)}
     ;
 
 BooleanAtom

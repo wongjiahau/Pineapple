@@ -1,6 +1,5 @@
 import {
     ArrayAccess,
-    ArrayElement,
     ArrayExpression,
     BooleanExpression,
     BranchStatement,
@@ -16,7 +15,8 @@ import {
     TestExpression,
     TypeExpression,
     Variable,
-    VariableDeclaration
+    VariableDeclaration,
+    CompoundType
 } from "./ast";
 
 import {
@@ -30,6 +30,7 @@ import {
 import { stringifyFuncSignature, stringifyType } from "./transpile";
 import { childOf, TypeTree } from "./typeTree";
 import { prettyPrint } from "./pine2js";
+import { flattenLinkedNode } from "./getIntermediateForm";
 
 export function fillUpTypeInformation(
         decls: Declaration[],
@@ -149,7 +150,7 @@ export function fillUp(s: LinkedNode<Statement>, symbols: SymbolTable):
             if (s.body.variable.typeExpected === null) {
                 // Inference-typed
                 [s.body.expression, symbols] = fillUpExpressionTypeInfo(s.body.expression, symbols);
-                s.body.variable.variable.returnType = getType(s.body.expression, symbols.vartab);
+                s.body.variable.variable.returnType = s.body.expression.returnType;
             } else {
                 // Statically-typed
                 s.body.expression.returnType = s.body.variable.typeExpected;
@@ -194,7 +195,7 @@ export function fillUpForStmtTypeInfo(f: ForStatement, symbols: SymbolTable):
     [ForStatement, SymbolTable] {
     [f.expression, symbols] = fillUpExpressionTypeInfo(f.expression, symbols);
     if (f.expression.returnType.kind === "CompoundType") {
-        f.iterator.returnType = f.expression.returnType.of;
+        f.iterator.returnType = f.expression.returnType.of.body;
         symbols.vartab = updateVariableTable(symbols.vartab, f.iterator);
     } else {
         errorMessage("The expresison type in for statement should be array.", null);
@@ -247,14 +248,17 @@ export function fillUpExpressionTypeInfo(e: Expression, symbols: SymbolTable):
 export function fillUpArrayAccessTypeInfo(a: ArrayAccess): ArrayAccess {
     switch (a.subject.returnType.kind) {
         case "SimpleType":
-            errorMessage(`Variable \`${a.subject}\` is not array type.`, a.subject.location);
+            throw new Error("Cannot index simple type");
             break;
         case "CompoundType":
-            return {
-                ...a,
-                returnType: a.subject.returnType.of
-            };
+            if(a.subject.returnType.name === "Array") {
+                a.returnType = a.subject.returnType.of.body;
+            } else {
+                throw new Error("Cannot index non-array type");
+            }
+            break;
     }
+    return a;
 }
 
 export function fillUpVariableTypeInfo(e: Variable, vtab: VariableTable): Variable {
@@ -411,56 +415,41 @@ function substitute(src: TypeExpression, /*into*/ dest: TypeExpression): TypeExp
 }
 
 export function fillUpArrayTypeInfo(e: ArrayExpression, symbols: SymbolTable): ArrayExpression {
-    return {
-        ...e,
-        returnType: getType(e, symbols.vartab)
-    };
+    if(e.elements !== null) {
+        [e.elements, symbols] = fillUpElementsType(e.elements, symbols);
+        e.returnType = getElementsType(e.elements, symbols.vartab);
+    } else {
+        throw new Error("Don't know how to handle yet")
+    }
+    return e;
 }
 
-export function getType(e: Expression, vtab: VariableTable): TypeExpression {
-    let typename = "";
-    switch (e.kind) {
-        case "String":
-            typename = "String";
-            break;
-        case "Number":
-            typename = "Number";
-            break;
-        case "Variable":
-            return vtab[e.repr].returnType;
-        case "FunctionCall":
-            return e.returnType;
-        case "Array":
-            return {
-                kind: "CompoundType",
-                name: "Array",
-                of: getElementsType(e.elements, vtab),
-                nullable: false,
-            };
+export function fillUpElementsType(e: LinkedNode<Expression>, symbols: SymbolTable): 
+    [LinkedNode<Expression>, SymbolTable] {
+    let current: LinkedNode<Expression> | null = e;
+    while(current !== null) {
+        [current.body, symbols] = fillUpExpressionTypeInfo(current.body, symbols);
+        current = current.next;
     }
+    return [e, symbols];
+}
+
+export function getElementsType(a: LinkedNode<Expression>, vtab: VariableTable): CompoundType {
+    const types = flattenLinkedNode(a).map((x) => x.returnType);
+    checkIfAllElementTypeAreHomogeneous(types);
     return {
-        kind: "SimpleType",
-        name: {
-            location: null,
-            repr: typename
+        kind: "CompoundType",
+        name: "Array",
+        of: {
+            body: types[0],
+            next: null
         },
         nullable: false
     };
 }
 
-export function getElementsType(a: ArrayElement, vtab: VariableTable): TypeExpression {
-    const result: TypeExpression[] = [];
-    let current: ArrayElement | null = a;
-    while (current !== null) {
-        result.push(getType(current.value, vtab));
-        current = current.next;
-    }
-    checkIfAllElementTypeAreHomogeneous(result);
-    return result[0];
-}
-
 export function checkIfAllElementTypeAreHomogeneous(ts: TypeExpression[]): void {
-    if (ts.some((x) => x.kind !== ts[0].kind)) {
+    if (ts.some((x) => !typeEquals(x, ts[0]))) {
         throw new Error("Every element in an array should have the same type");
     }
     // TODO: Check if every element is of the same type

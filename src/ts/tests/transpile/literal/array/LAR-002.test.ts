@@ -15,9 +15,8 @@ def .main
         const expectedOutput =
 `
 function _main_(){
-const $fruits = (new ArrayOfString(["pineapple","apple","banana",]));
+const $fruits = ["pineapple","apple","banana"];
 }
-
 `;
         assertEquals(pine2js(input).trim(), expectedOutput.trim());
     });
