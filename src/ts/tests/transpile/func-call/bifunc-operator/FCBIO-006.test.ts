@@ -18,7 +18,7 @@ def (this Number[]).show
         const expectedOutput =
 `
 function _main_(){
-const $x = _append_ArrayOfNumber_Number((new ArrayOfNumber([(1),(2),(3),])),(1));
+const $x = _append_ArrayOfNumber_Number([(1),(2),(3),],(1));
 _show_ArrayOfNumber($x);
 }
 

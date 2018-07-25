@@ -41,16 +41,20 @@ function loadSource(sources: SourceCode[]): Declaration[] {
     for (let i = 0; i < sources.length; i++) {
         result = getIntermediateForm(sources[i], result);
     }
-    return result.syntaxTrees;
+    let declarations: Declaration[] = [];
+    for (var key in result.funcTab) {
+        declarations = declarations.concat(result.funcTab[key]);
+    }
+    return declarations;
 }
 
 function interpret(filename: string): void {
     const source      = loadFile(filename);
     const libraries   = loadLibraryFunctions();
     libraries.push(source);
-    const syntaxTrees = loadSource(libraries);
+    const declarations = loadSource(libraries);
     let output        = loadPrimitiveTypes();
-    output += syntaxTrees.map((x) => tpDeclaration(x)).join("\n");
+    output += declarations.map((x) => tpDeclaration(x)).join("\n");
     // console.log(output);
     output       += "\n_main_();"; // Call the main function
     fs.writeFileSync("__temp__.pine.js", output);
@@ -80,9 +84,6 @@ function loadLibraryFunctions(): SourceCode[] {
 
 function loadPrimitiveTypes(): string {
     return `
-    class ArrayOfNumber extends Array {
-        constructor(xs) {super(...xs)}
-    }
 `;
 }
 

@@ -18,9 +18,8 @@ $$pass$$();
 }
 
 function _main_(){
-const $x = _$plus_Number_Number((new ArrayOfNumber([(1),(2),]))[(0)],(new ArrayOfNumber([(2),(3),]))[(0)]);
+const $x = _$plus_Number_Number([(1),(2),][(0)],[(2),(3),][(0)]);
 }
-
 `.trim();
 
         const result = pine2js(input).trim();

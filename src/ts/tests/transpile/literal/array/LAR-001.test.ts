@@ -1,4 +1,3 @@
-import { expect } from "chai";
 import { pine2js } from "../../../../pine2js";
 import { assertEquals } from "../../../testUtil";
 
@@ -12,7 +11,7 @@ def .main
         const expectedOutput =
 `
 function _main_(){
-const $x = (new ArrayOfNumber([(1.1),(2.2),(3.3),(4.4),]));
+const $x = [(1.1),(2.2),(3.3),(4.4),];
 }
 `;
         assertEquals(pine2js(input).trim(), expectedOutput.trim());

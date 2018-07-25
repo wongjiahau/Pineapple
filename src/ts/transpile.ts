@@ -236,6 +236,11 @@ export function tpBooleanExpression(e: BooleanExpression): string {
 }
 
 export function tpArrayExpression(e: ArrayExpression): string {
+    return `[${tpListElements(e.elements)}]`;
+    // The following code is pending
+    // Because is it necessary to have the typename included?
+    // For example, new ArrayOfNumber([1,2,3])
+    // Is that necessary?
     const typename = stringifyType(e.returnType);
     if (e.elements !== null) {
         return `(new ${typename}([${tpListElements(e.elements)}]))`;
