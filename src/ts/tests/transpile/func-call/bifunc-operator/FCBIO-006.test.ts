@@ -18,21 +18,22 @@ def (this List{Number}).show
         const expectedOutput =
 `
 function _main_(){
-const $x = _append_ArrayOfNumber_Number([(1),(2),(3),],(1));
-_show_ArrayOfNumber($x);
+const $x = _append_ListOfNumber_Number([(1),(2),(3)],(1));
+_show_ListOfNumber($x);
 }
 
-function _append_ArrayOfGeneric$T_Generic$T($this,$that){
+function _append_ListOfGeneric$T_Generic$T($this,$that){
 $$pass$$();
 }
 
-function _append_ArrayOfNumber_Number($this,$that){
+function _append_ListOfNumber_Number($this,$that){
 $$pass$$();
 }
 
-function _show_ArrayOfNumber($this){
+function _show_ListOfNumber($this){
 $$pass$$();
 }
+
 `;
         assertEquals(pine2js(input).trim(), expectedOutput.trim());
     });
