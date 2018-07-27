@@ -1,6 +1,11 @@
-def (this Number) + (that Number) -> Int
+def (this Number) + (that Number) -> Number
     <javascript>
     return $this + $that;
+    </javascript>
+
+def (this Number) - (that Number) -> Number
+    <javascript>
+    return $this - $that;
     </javascript>
 
 def (this Number) < (that Number) -> Boolean

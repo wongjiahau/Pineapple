@@ -18,8 +18,10 @@ export function pine2js(input: string, filename: string= ""): string {
     };
     const intermediateForm = getIntermediateForm(source, initForm);
     let result = "";
-    for (var key in intermediateForm.funcTab) {
-        result += transpile(intermediateForm.funcTab[key]);
+    for (const key in intermediateForm.funcTab) {
+        if (intermediateForm.funcTab.hasOwnProperty(key)) {
+            result += transpile(intermediateForm.funcTab[key]);
+        }
     }
     return result;
     // let source = transpile(intermediateForm.syntaxTrees);

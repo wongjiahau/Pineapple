@@ -7,12 +7,12 @@ describe("FCBIO-006", () => {
 `
 def .main
     let x = [1,2,3].append(1)
-    x.show 
-    
-def (this T[]).append(that T) -> T[]
+    x.show
+
+def (this List{T}).append(that T) -> List{T}
     pass
 
-def (this Number[]).show
+def (this List{Number}).show
     pass
 `;
         const expectedOutput =

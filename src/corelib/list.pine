@@ -1,4 +1,21 @@
-def (x Array) ++ (y Array) -> Array
+def (this T[]) ++ (that T[]) -> T[]
     <javascript>
-    return $x.concat($y);
+    return $this.concat($that);
     </javascript>
+
+def (this T[]).length -> Number
+    <javascript>
+    return $this.length;
+    </javascript>
+
+def (this T[]).append(that T) -> T[]
+    return this ++ [that]
+
+def (this T[]).prepend(that T) -> T[]
+    return [that] ++ this
+
+def (this Number)..<(that Number) -> Number[]
+    if this == (that - 1)
+        return [this]
+    else
+        return [this] ++ ((this + 1)..<that)

@@ -56,13 +56,13 @@ export function findParentOf(child: TypeExpression, /*in*/ tree: TypeTree): Type
 
 export function initTypeTree(): TypeTree {
     const anyType = newSimpleType("Any");
-    const arrayType = newArrayType(anyType);
+    const arrayType = newListType(anyType);
     const numberType = newSimpleType("Number");
-    const numberArrayType = newArrayType(numberType);
+    const numberListType = newListType(numberType);
     const stringType = newSimpleType("String");
     let tree = newTypeTree(anyType);
     tree = insertChild(arrayType, anyType, tree);
-    tree = insertChild(numberArrayType, arrayType, tree);
+    tree = insertChild(numberListType, arrayType, tree);
     tree = insertChild(stringType, arrayType, tree);
     return tree;
 }
@@ -78,11 +78,17 @@ export function newSimpleType(name: string): SimpleType {
     };
 }
 
-export function newArrayType(arrayOfWhat: TypeExpression): CompoundType {
+export function newListType(arrayOfWhat: TypeExpression): CompoundType {
     return {
-        name: "Array",
+        name: {
+            repr: "List",
+            location: null
+        },
         kind: "CompoundType" ,
-        of: arrayOfWhat,
+        of: {
+            current: arrayOfWhat,
+            next: null
+        },
         nullable: false
     };
 }

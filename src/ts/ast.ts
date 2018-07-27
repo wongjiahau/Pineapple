@@ -1,6 +1,6 @@
 // Abstract Syntax Tree Node Interfaces
 export interface LinkedNode<T> {
-    body: T;
+    current: T;
     next: LinkedNode<T> | null;
 }
 
@@ -96,7 +96,7 @@ export interface SimpleType {
 
 export interface CompoundType {
     kind: "CompoundType";
-    name: string;
+    name: AtomicToken;
     of: LinkedNode<TypeExpression>;
     nullable: boolean;
 }
@@ -120,8 +120,8 @@ export type Expression
     | BooleanExpression
     | Variable
     | PonExpression // Pineapple Object Notation (PON)
-    | ArrayExpression // a.k.a. Array
-    | ArrayAccess
+    | ListExpression // a.k.a. Array
+    | ListAccess
     | CurriedFunc
     // | MonoExpression
     ;
@@ -158,8 +158,8 @@ export interface FunctionCall {
     location: TokenLocation;
 }
 
-export interface ArrayAccess {
-    kind: "ArrayAccess";
+export interface ListAccess {
+    kind: "ListAccess";
     subject: Expression;
     index: Expression;
     returnType: TypeExpression;
@@ -178,13 +178,8 @@ export interface Variable extends AtomicToken {
 
 export interface PonExpression {
     kind: "Pon";
-    keyValueList: KeyValueList;
+    keyValueList: LinkedNode<KeyValue>;
     returnType: TypeExpression;
-}
-
-export interface KeyValueList {
-    keyValue: KeyValue;
-    next: KeyValueList | null;
 }
 
 export interface KeyValue {
@@ -192,8 +187,8 @@ export interface KeyValue {
     expression: Expression;
 }
 
-export interface ArrayExpression {
-    kind: "Array";
+export interface ListExpression {
+    kind: "List";
     elements: LinkedNode<Expression> | null;
     location: TokenLocation;
     returnType: TypeExpression;

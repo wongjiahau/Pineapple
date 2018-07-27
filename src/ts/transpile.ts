@@ -2,8 +2,8 @@
  * This file is to transpile Pineapple code to Javascript code
  */
 import {
-    ArrayAccess,
-    ArrayExpression,
+    ListAccess,
+    ListExpression,
     AssignmentStatement,
     AtomicToken,
     BooleanExpression,
@@ -16,7 +16,7 @@ import {
     FunctionCall,
     FunctionDeclaration,
     JavascriptCode,
-    KeyValueList,
+    KeyValue,
     LinkedNode,
     NumberExpression,
     PonExpression,
@@ -56,14 +56,14 @@ export function tpFunctionDeclaration(f: FunctionDeclaration): string {
 
 export function tpStatement(s: LinkedNode<Statement>): string {
     const next = s.next　? ";\n" + tpStatement(s.next) : "";
-    switch (s.body.kind) {
-        case "FunctionCall":        return tpFunctionCall(s.body)           + next;
-        case "AssignmentStatement": return tpAssignmentStatement(s.body)    + next;
-        case "JavascriptCode":      return tpJavascriptCode(s.body)         + next;
-        case "ReturnStatement":     return tpReturnStatement(s.body)        + next;
-        case "BranchStatement":     return tpBranchStatement(s.body)        + next;
-        case "ForStatement":        return tpForStatement(s.body)           + next;
-        case "WhileStatement":      return tpWhileStatement(s.body)         + next;
+    switch (s.current.kind) {
+        case "FunctionCall":        return tpFunctionCall(s.current)           + next;
+        case "AssignmentStatement": return tpAssignmentStatement(s.current)    + next;
+        case "JavascriptCode":      return tpJavascriptCode(s.current)         + next;
+        case "ReturnStatement":     return tpReturnStatement(s.current)        + next;
+        case "BranchStatement":     return tpBranchStatement(s.current)        + next;
+        case "ForStatement":        return tpForStatement(s.current)           + next;
+        case "WhileStatement":      return tpWhileStatement(s.current)         + next;
         case "PassStatement":       return "$$pass$$()";
     }
 }
@@ -155,8 +155,9 @@ export function stringifyType(t: TypeExpression): string {
     switch (t.kind) {
         case "SimpleType":
             return t.name.repr;
-        case "CompoundType":
-            return t.name + "Of" + stringifyType(t.of);
+        case "CompoundType" :
+            // console.log(t);
+            return t.name.repr + "Of" + flattenLinkedNode(t.of).map((x) => stringifyType(x)).join("$");
         case "FunctionType":
             return `Func$${t.inputType.map(stringifyType).join("$")}$${stringifyType(t.outputType)}`;
         case "GenericType":
@@ -188,9 +189,9 @@ export function tpExpression(e: Expression): string {
         case "Number":              return tpNumberExpression(e);
         case "Variable":            return "$" + e.repr;
         case "Pon":                 return tpPonExpression(e);
-        case "Array":               return tpArrayExpression(e);
+        case "List":               return tpArrayExpression(e);
         case "Boolean":             return tpBooleanExpression(e);
-        case "ArrayAccess":         return tpArrayAccess(e);
+        case "ListAccess":         return tpArrayAccess(e);
         case "CurriedMonoFunc":     return tpCurriedMonoFunc(e);
         case "CurriedOperatorFunc": return tpCurriedOperatorFunc(e);
     }
@@ -213,7 +214,7 @@ export function tpCurriedMonoFunc(e: CurriedMonoFunc): string {
     return `(($$0) => ${stringifyFuncSignature(e.signature)}($$0))`;
 }
 
-export function tpArrayAccess(a: ArrayAccess): string {
+export function tpArrayAccess(a: ListAccess): string {
     return `${tpExpression(a.subject)}[${tpExpression(a.index)}]`;
 }
 
@@ -235,9 +236,11 @@ export function tpBooleanExpression(e: BooleanExpression): string {
     return e.repr;
 }
 
-export function tpArrayExpression(e: ArrayExpression): string {
-    if(e.elements !== null) {
+export function tpArrayExpression(e: ListExpression): string {
+    if (e.elements !== null) {
         return `[${tpListElements(e.elements)}]`;
+    } else {
+        return `[]`;
     }
     // The following code is pending
     // Because is it necessary to have the typename included?
@@ -262,10 +265,10 @@ ${tpKeyValueList(e.keyValueList)}
 }`;
 }
 
-export function tpKeyValueList(e: KeyValueList): string {
-    return e.keyValue.memberName.repr.slice(1)
+export function tpKeyValueList(e: LinkedNode<KeyValue>): string {
+    return e.current.memberName.repr.slice(1)
         + " : "
-        + tpExpression(e.keyValue.expression)
+        + tpExpression(e.current.expression)
         + (e.next ? ",\n" + tpKeyValueList(e.next) : "")
         ;
 }

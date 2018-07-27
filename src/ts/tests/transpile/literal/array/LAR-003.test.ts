@@ -6,14 +6,14 @@ describe("LAR-003", () => {
         const input =
 `
 def .main
-    let x String[] = []
-    let y Number[] = []
+    let x List{String} = []
+    let y List{Number} = []
 `;
         const expectedOutput =
 `
 function _main_(){
-const $x = (new ArrayOfString([]));
-const $y = (new ArrayOfNumber([]));
+const $x = [];
+const $y = [];
 }
 `;
         assertEquals(pine2js(input).trim(), expectedOutput.trim());

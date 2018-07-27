@@ -1,100 +1,45 @@
 import {expect} from "chai";
-import {insertChild, newArrayType, newSimpleType, newTypeTree, TypeTree} from "../../typeTree";
+import {prettyPrint} from "../../pine2js";
+import {
+    findParentOf,
+    insertChild,
+    newListType,
+    newSimpleType,
+    newTypeTree,
+    TypeTree
+} from "../../typeTree";
 
 describe("insertChild", () => {
     it("case 1", () => {
         const objectType = newSimpleType("Object");
-        const arrayType = newArrayType(objectType);
-        const initTree = newTypeTree(objectType);
-        const newTree = insertChild(arrayType, /*as child of*/ objectType, /*in*/ initTree);
-        const expected: TypeTree = {
-            current: {
-                kind: "SimpleType",
-                name: {
-                    repr: "Object",
-                    location: null
-                },
-                nullable: false
-            },
-            children: [
-                {
-                    current: {
-                        name: "Array",
-                        kind: "CompoundType",
-                        of: {
-                            kind: "SimpleType",
-                            name: {
-                                repr: "Object",
-                                location: null
-                            },
-                            nullable: false
-                        },
-                        nullable: false
-                    },
-                    children: []
-                }
-            ]
-        };
-        expect(newTree)
-            .to
-            .deep
-            .eq(expected);
-    });
-
-    it("case 2", () => {
-        const objectType = newSimpleType("Object");
-        const arrayType = newArrayType(objectType);
+        const arrayType = newListType(objectType);
         const numberType = newSimpleType("Number");
-        const numberArrayType = newArrayType(numberType);
+        const numberListType = newListType(numberType);
         let tree = newTypeTree(objectType);
         tree = insertChild(arrayType, objectType, tree);
-        tree = insertChild(numberArrayType, arrayType, tree);
-        const expected: TypeTree = {
-            current: {
-                kind: "SimpleType",
-                name: {
-                    repr: "Object",
-                    location: null
-                },
-                nullable: false
+        tree = insertChild(numberListType, arrayType, tree);
+        const parent = findParentOf(numberListType, tree);
+        const expected  = {
+            name: {
+                repr: "List",
+                location: null
             },
-            children: [
-                {
-                    current: {
-                        name: "Array",
-                        kind: "CompoundType",
-                        of: {
-                            kind: "SimpleType",
-                            name: {
-                                repr: "Object",
-                                location: null
-                            },
-                            nullable: false
-                        },
-                        nullable: false
+            kind: "CompoundType",
+            of: {
+                current: {
+                    kind: "SimpleType",
+                    name: {
+                        repr: "Object",
+                        location: null
                     },
-                    children: [
-                        {
-                            current: {
-                                name: "Array",
-                                kind: "CompoundType",
-                                of: {
-                                    kind: "SimpleType",
-                                    name: {
-                                        repr: "Number",
-                                        location: null
-                                    },
-                                    nullable: false
-                                },
-                                nullable: false
-                            },
-                            children: []
-                        }
-                    ]
-                }
-            ]
+                    nullable: false
+                },
+                next: null
+            },
+            nullable: false
         };
-        expect(tree).to.deep.eq(expected);
+
+        expect(parent).deep.eq(expected);
     });
 
 });

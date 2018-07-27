@@ -1,7 +1,7 @@
 
 /* description: Parses and executes mathematical expressions. */
 %{
-const _LinkedNode = (body, next) => ({body, next});
+const _LinkedNode = (current, next) => ({current, next});
 
 const _PassStatement = () => ({ kind: "PassStatement" });
 
@@ -57,7 +57,7 @@ const _Variable = (repr,location) => ({
     location
 });
 
-const _ArrayAccess = (subject, index) => ({ kind: "ArrayAccess", subject, index });
+const _ListAccess = (subject, index) => ({ kind: "ListAccess", subject, index });
 
 const _SimpleType = (name, nullable) => ({ kind: "SimpleType", name, nullable});
 
@@ -102,15 +102,13 @@ const _Pon = (keyValue) => ({
     keyValueList: keyValue
 });
 
-const _KeyValueList = (keyValue, next) => ({keyValue, next});
-
 const _KeyValue = (memberName, expression) => ({
     memberName,
     expression,
 });
 
-const _ArrayExpression = (elements,location) => ({ 
-    kind: "Array", 
+const _ListExpression = (elements,location) => ({ 
+    kind: "List", 
     elements, 
     location
 });
@@ -367,11 +365,10 @@ AtomicTypeExpr
     | TypenameAtom '?'          {$$=_SimpleType($1,true)}
     | GenericAtom               {$$=_GenericType($1, false)}
     | GenericAtom '?'           {$$=_GenericType($1, true)}
-    | AtomicTypeExpr '[' ']'    {$$=_CompoundType("Array", $1,false)}
-    | AtomicTypeExpr '[' TypeExpressionList ']'
     | '(' TypeExpression '->' TypeExpression ')' {$$=_FunctionType([$2],$4)}
     | '(' TypeExpression ',' TypeExpression '->' TypeExpression ')' 
-    | TypenameAtom '{' TypeExpressionList '}' 
+    | TypenameAtom '{' TypeExpressionList '}' {$$=_CompoundType($1,$3, false)}
+    | TypenameAtom '{' TypeExpressionList '}' '?' {$$=_CompoundType($1,$3, true)}
     ;
 
 TypeExpressionList
@@ -427,9 +424,9 @@ AtomicExpr
     : '(' SinglelineExpr ')' {$$=$2}
     // | SinglelineObject /* temporarily disable, unless its use case is justified*/
     | ObjectAccessExpr
-    | SinglelineArray
-    | ArrayAccess
-    | ArraySlicing
+    | SinglelineList
+    | ListAccess
+    | ListSlicing
     | AtomicFuncCall
     | CurriedFunc 
     | BooleanAtom
@@ -456,11 +453,11 @@ CurriedOperatorFunc
     ;
 
 
-ArrayAccess
-    : AtomicExpr '[' SinglelineExpr ']' {$$=_ArrayAccess($1,$3)}
+ListAccess
+    : AtomicExpr '[' SinglelineExpr ']' {$$=_ListAccess($1,$3)}
     ;
 
-ArraySlicing
+ListSlicing
     : AtomicExpr '.{..<' SinglelineExpr '}' 
     | AtomicExpr '.{..' SinglelineExpr  '}' 
     | AtomicExpr '.{' SinglelineExpr  '..}'
@@ -483,8 +480,8 @@ MultilineObject
     ;
 
 MultilineKeyValueList
-    : MultilineKeyValue MultilineKeyValueList {$$=_KeyValueList($1,$2)}
-    | MultilineKeyValue {$$=_KeyValueList($1,null)}
+    : MultilineKeyValue MultilineKeyValueList {$$=_LinkedNode($1,$2)}
+    | MultilineKeyValue {$$=_LinkedNode($1,null)}
     ;
 
 MultilineKeyValue
@@ -497,8 +494,8 @@ SinglelineObject
     ;
 
 KeyValueList
-    : KeyValue ',' KeyValueList {$$=_KeyValueList($1,$3)}
-    | KeyValue                  {$$=_KeyValueList($1,null)}
+    : KeyValue ',' KeyValueList {$$=_LinkedNode($1,$3)}
+    | KeyValue                  {$$=_LinkedNode($1,null)}
     ;
 
 KeyValue 
@@ -506,9 +503,9 @@ KeyValue
     | StringAtom ASSIGN_OP SinglelineExpr       {$$=_KeyValue($1,$3)}
     ;
 
-SinglelineArray
-    : '[' Elements ']'   {$$=_ArrayExpression($2,this._$)}
-    | '[' ']'            {$$=_ArrayExpression(null,this._$)}
+SinglelineList
+    : '[' Elements ']'   {$$=_ListExpression($2,this._$)}
+    | '[' ']'            {$$=_ListExpression(null,this._$)}
     ;
 
 Elements
@@ -517,7 +514,7 @@ Elements
     ;
 
 MultilineList
-    : NEWLINE INDENT MultilineElements DEDENT {$$=_ArrayExpression($3,this._$)}
+    : NEWLINE INDENT MultilineElements DEDENT {$$=_ListExpression($3,this._$)}
     ;
 
 MultilineElements

@@ -55,7 +55,7 @@ export function flattenLinkedNode<T>(ast: LinkedNode<T>): T[] {
     const result: T[] = [];
     let next: LinkedNode<T> | null = ast;
     while (next) {
-        result.push(next.body);
+        result.push(next.current);
         next = next.next;
     }
     return result;
