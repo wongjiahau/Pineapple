@@ -1,0 +1,4 @@
+def .now -> Date 
+    <javascript>
+    return new Date();
+    </javascript>

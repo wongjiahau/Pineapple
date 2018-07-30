@@ -170,7 +170,7 @@ const _Token = (repr, location) => ({repr, location});
 "@EOF"           return 'EOF'
 
 // Custom operator literals that might overlap with built-in symbols
-[=.<>]{2,} return 'OPERATOR'
+[=.<>][-!$%^&*_+|~=`\[\]:";'<>?,.\/]+ return 'OPERATOR'
 
 // Built-in symbols
 "_"     return '_'
