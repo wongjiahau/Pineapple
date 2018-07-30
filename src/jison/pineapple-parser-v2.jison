@@ -414,7 +414,7 @@ AtomicFuncCall
     ;
 
 NulliFuncCall
-    : FuncAtom
+    : FuncAtom  {$$=_FunctionCall("Nulli",[$1],[],this._$)}
     ;
 
 MonoFuncCall
