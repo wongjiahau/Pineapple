@@ -37,6 +37,11 @@ const _TestExpression = (current, negated, chainOperator, next) => ({
     next
 });
 
+const _ImportDeclaration = (filename) => ({
+    kind: "ImportDeclaration",
+    filename,
+});
+
 const _AssignmentStatement = (variable, isDeclaration, isMutable, expression) => ({
     kind: "AssignmentStatement",
     variable,
@@ -149,6 +154,7 @@ const _Token = (repr, location) => ({repr, location});
 "while"     return 'WHILE'
 "mutable"   return 'MUTABLE'
 "pass"      return 'PASS'
+"import"    return 'IMPORT'
 
 // Inivisible token
 "@NEWLINE"       %{
@@ -240,6 +246,11 @@ DeclarationList
 Declaration
     : TypeDeclaration
     | FunctionDeclaration
+    | ImportDeclaration
+    ;
+
+ImportDeclaration
+    : IMPORT StringAtom NEWLINE {$$=_ImportDeclaration($2)}
     ;
 
 TypeDeclaration

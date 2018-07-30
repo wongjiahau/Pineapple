@@ -2,8 +2,8 @@ import { Declaration, LinkedNode } from "./ast";
 import { PineError } from "./errorType";
 import { fillUpTypeInformation, FunctionTable } from "./fillUpTypeInformation";
 import { generateErrorMessage } from "./generateErrorMessage";
+import { SourceCode } from "./interpreter";
 import { prettyPrint } from "./pine2js";
-import { SourceCode } from "./pineRepl";
 import { preprocess } from "./preprocess";
 import { initTypeTree, TypeTree } from "./typeTree";
 const parser     = require("../jison/pineapple-parser-v2");
@@ -20,10 +20,12 @@ export function getIntermediateForm(
             prevIntermediate.funcTab,
             prevIntermediate.typeTree,
         );
-        prevIntermediate.funcTab = newFuncTab;
-        prevIntermediate.typeTree = newTypeTree;
-        prevIntermediate.syntaxTrees = prevIntermediate.syntaxTrees.concat(newAst);
-        return prevIntermediate;
+        return {
+            funcTab: newFuncTab,
+            typeTree: newTypeTree,
+            syntaxTrees: prevIntermediate.syntaxTrees.concat(newAst),
+            importedFiles: prevIntermediate.importedFiles.concat([sourceCode.filename])
+        };
     } catch (e) {
         console.log(e);
         const error = (e as PineError);
@@ -41,7 +43,8 @@ export function initialIntermediateForm(): IntermediateForm {
     return {
         syntaxTrees: [],
         funcTab: {},
-        typeTree: initTypeTree()
+        typeTree: initTypeTree(),
+        importedFiles: []
     };
 }
 
@@ -49,6 +52,7 @@ export interface IntermediateForm {
     syntaxTrees: Declaration[];
     funcTab: FunctionTable;
     typeTree: TypeTree;
+    importedFiles: string[];
 }
 
 export function flattenLinkedNode<T>(ast: LinkedNode<T>): T[] {

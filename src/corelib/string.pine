@@ -2,3 +2,8 @@ def (this String) ++ (that String) -> String
     <javascript>
     return $this + $that;
     </javascript>
+
+def (this String).replace(old String with: new String) -> String
+    <javascript>
+    return $this.split($old).join($new);
+    </javascript>

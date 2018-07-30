@@ -1,5 +1,5 @@
-import { getIntermediateForm, IntermediateForm } from "./getIntermediateForm";
-import { SourceCode } from "./pineRepl";
+import { getIntermediateForm, initialIntermediateForm, IntermediateForm } from "./getIntermediateForm";
+import { SourceCode } from "./interpreter";
 import { transpile } from "./transpile";
 import { initTypeTree } from "./typeTree";
 
@@ -11,12 +11,7 @@ export function pine2js(input: string, filename: string= ""): string {
             filename: filename,
             content: input
     };
-    const initForm: IntermediateForm = {
-        funcTab: {},
-        typeTree: initTypeTree(),
-        syntaxTrees: []
-    };
-    const intermediateForm = getIntermediateForm(source, initForm);
+    const intermediateForm = getIntermediateForm(source, initialIntermediateForm());
     let result = "";
     for (const key in intermediateForm.funcTab) {
         if (intermediateForm.funcTab.hasOwnProperty(key)) {

@@ -7,6 +7,7 @@ export interface LinkedNode<T> {
 export type Declaration
     = FunctionDeclaration
     | StructDeclaration
+    | ImportDeclaration
     // | InterfaceDeclaration
     // | EnumDeclaration
     // | ImplementionDeclaration
@@ -26,15 +27,20 @@ export interface StructDeclaration {
 }
 
 export type Statement
-        = AssignmentStatement
-        | FunctionCall
-        | JavascriptCode
-        | ReturnStatement
-        | BranchStatement
-        | ForStatement
-        | WhileStatement
-        | PassStatement
-        ;
+    = AssignmentStatement
+    | FunctionCall
+    | JavascriptCode
+    | ReturnStatement
+    | BranchStatement
+    | ForStatement
+    | WhileStatement
+    | PassStatement
+    ;
+
+export interface ImportDeclaration {
+    kind: "ImportDeclaration";
+    filename: StringExpression;
+}
 
 export interface PassStatement {
     kind: "PassStatement";

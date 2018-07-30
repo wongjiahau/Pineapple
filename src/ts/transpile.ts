@@ -2,8 +2,6 @@
  * This file is to transpile Pineapple code to Javascript code
  */
 import {
-    ListAccess,
-    ListExpression,
     AssignmentStatement,
     AtomicToken,
     BooleanExpression,
@@ -15,9 +13,12 @@ import {
     ForStatement,
     FunctionCall,
     FunctionDeclaration,
+    ImportDeclaration,
     JavascriptCode,
     KeyValue,
     LinkedNode,
+    ListAccess,
+    ListExpression,
     NumberExpression,
     PonExpression,
     ReturnStatement,
@@ -42,8 +43,14 @@ export function tpDeclaration(input: Declaration): string {
     }
     switch (input.kind) {
         case "FunctionDeclaration":
-        return tpFunctionDeclaration(input);
+            return tpFunctionDeclaration(input);
+        case "ImportDeclaration":
+            return tpImportDeclaration(input);
     }
+}
+
+export function tpImportDeclaration(i: ImportDeclaration): string {
+    return `//import ${i.filename.repr}`;
 }
 
 export function tpFunctionDeclaration(f: FunctionDeclaration): string {
