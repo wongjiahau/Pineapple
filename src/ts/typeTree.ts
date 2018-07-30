@@ -55,13 +55,19 @@ export function findParentOf(child: TypeExpression, /*in*/ tree: TypeTree): Type
 }
 
 export function initTypeTree(): TypeTree {
-    const anyType = newSimpleType("Any");
-    const arrayType = newListType(anyType);
-    const numberType = newSimpleType("Number");
+    const anyType        = newSimpleType("Any");
+    const objectType     = newSimpleType("Object");
+    const dictType       = newSimpleType("Dict");
+    const arrayType      = newListType(anyType);
+    const numberType     = newSimpleType("Number");
     const numberListType = newListType(numberType);
-    const stringType = newSimpleType("String");
+    const stringType     = newSimpleType("String");
+    const dateType       = newSimpleType("Date");
     let tree = newTypeTree(anyType);
+    tree = insertChild(dictType, anyType, tree);
+    tree = insertChild(objectType, dictType, tree);
     tree = insertChild(arrayType, anyType, tree);
+    tree = insertChild(dateType, anyType, tree);
     tree = insertChild(numberListType, arrayType, tree);
     tree = insertChild(stringType, arrayType, tree);
     return tree;

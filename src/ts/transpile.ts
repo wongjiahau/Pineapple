@@ -20,10 +20,11 @@ import {
     ListAccess,
     ListExpression,
     NumberExpression,
-    PonExpression,
+    ObjectExpression,
     ReturnStatement,
     Statement,
     StringExpression,
+    StructDeclaration,
     TestExpression,
     TypeExpression,
     VariableDeclaration,
@@ -46,7 +47,16 @@ export function tpDeclaration(input: Declaration): string {
             return tpFunctionDeclaration(input);
         case "ImportDeclaration":
             return tpImportDeclaration(input);
+        case "StructDeclaration":
+            return tpStructDeclaration(input);
     }
+}
+
+export function tpStructDeclaration(s: StructDeclaration): string {
+    return `
+    /*struct ${s.name.repr} {
+        ${flattenLinkedNode(s.members).map((x) => `${x.name.repr}:${stringifyType(x.expectedType)}`)}
+    }*/`.trim();
 }
 
 export function tpImportDeclaration(i: ImportDeclaration): string {
@@ -169,6 +179,8 @@ export function stringifyType(t: TypeExpression): string {
             return `Func$${t.inputType.map(stringifyType).join("$")}$${stringifyType(t.outputType)}`;
         case "GenericType":
             return `Generic$${t.placeholder.repr}`;
+        case "StructDeclaration":
+            return `Struct${t.name.repr}`;
     }
 }
 
@@ -195,7 +207,7 @@ export function tpExpression(e: Expression): string {
         case "String":              return tpStringExpression(e);
         case "Number":              return tpNumberExpression(e);
         case "Variable":            return "$" + e.repr;
-        case "Pon":                 return tpPonExpression(e);
+        case "ObjectExpression":                 return tpPonExpression(e);
         case "List":               return tpArrayExpression(e);
         case "Boolean":             return tpBooleanExpression(e);
         case "ListAccess":         return tpArrayAccess(e);
@@ -266,7 +278,7 @@ export function tpListElements(e: LinkedNode<Expression>): string {
     return flattenLinkedNode(e).map((x) => tpExpression(x)).join(",");
 }
 
-export function tpPonExpression(e: PonExpression): string {
+export function tpPonExpression(e: ObjectExpression): string {
     return `{
 ${tpKeyValueList(e.keyValueList)}
 }`;

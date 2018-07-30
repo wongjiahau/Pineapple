@@ -24,6 +24,13 @@ export interface FunctionDeclaration {
 
 export interface StructDeclaration {
     kind: "StructDeclaration";
+    name: AtomicToken;
+    members: LinkedNode<MemberDefinition>;
+}
+
+export interface MemberDefinition {
+    name: AtomicToken;
+    expectedType: TypeExpression;
 }
 
 export type Statement
@@ -92,6 +99,7 @@ export type TypeExpression
     | CompoundType
     | FunctionType
     | GenericType
+    | StructDeclaration
     ;
 
 export interface SimpleType {
@@ -125,7 +133,7 @@ export type Expression
     | NumberExpression
     | BooleanExpression
     | Variable
-    | PonExpression // Pineapple Object Notation (PON)
+    | ObjectExpression // Pineapple Object Notation (PON)
     | ListExpression // a.k.a. Array
     | ListAccess
     | CurriedFunc
@@ -182,8 +190,9 @@ export interface Variable extends AtomicToken {
     returnType: TypeExpression; // This info should be fill in by type checker
 }
 
-export interface PonExpression {
-    kind: "Pon";
+export interface ObjectExpression { // NOTE: Object is also Dictionary
+    kind: "ObjectExpression";
+    constructor: AtomicToken | null;
     keyValueList: LinkedNode<KeyValue>;
     returnType: TypeExpression;
 }

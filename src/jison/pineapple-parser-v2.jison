@@ -16,6 +16,17 @@ const _FunctionDeclaration = (signature,returnType,parameters,statements,affix) 
     affix,
 });
 
+const _StructDeclaration = (name, members) => ({
+    kind: "StructDeclaration",
+    name,
+    members
+});
+
+const _MemberDefinition = (name, expectedType) => ({
+    name,
+    expectedType
+})
+
 const _WhileStatement = (test,body) => ({ kind: "WhileStatement", test, body });
 
 const _ForStatement = (iterator,expression,body) => ({
@@ -102,9 +113,10 @@ const _FunctionType = (inputType, outputType) => ({
     outputType
 });
 
-const _Pon = (keyValue) => ({
-    kind: "Pon",
-    keyValueList: keyValue
+const _ObjectExpr = (constructor, keyValueList) => ({
+    kind: "ObjectExpression",
+    constructor,
+    keyValueList,
 });
 
 const _KeyValue = (memberName, expression) => ({
@@ -244,7 +256,7 @@ DeclarationList
 
 
 Declaration
-    : TypeDeclaration
+    : StructDeclaration
     | FunctionDeclaration
     | ImportDeclaration
     ;
@@ -253,12 +265,17 @@ ImportDeclaration
     : IMPORT StringAtom NEWLINE {$$=_ImportDeclaration($2)}
     ;
 
-TypeDeclaration
-    : TYPE TypenameAtom NEWLINE INDENT MembernameTypeList DEDENT
+StructDeclaration
+    : DEF TypenameAtom NEWLINE INDENT MembernameTypeList DEDENT {$$=_StructDeclaration($2,$5)}
     ;
 
 MembernameTypeList
-    : MembernameTypeList MembernameAtom TypeExpression
+    : MemberDefinition NEWLINE MembernameTypeList   {$$=_LinkedNode($1,$3)}
+    | MemberDefinition NEWLINE                      {$$=_LinkedNode($1,null)}
+    ;
+
+MemberDefinition 
+    : MembernameAtom TypeExpression {$$=_MemberDefinition($1,$2)}
     ;
 
 FunctionDeclaration
@@ -391,6 +408,7 @@ TypeExpressionList
 
 MultilineExpr
     : MultilineObject
+    | MulitilineDictionary
     | MultilineList
     | SinglelineExpr NEWLINE
     ;
@@ -486,22 +504,34 @@ ObjectAccess
     ;
 
 MultilineObject
-    : EMPTY_OBJECT_DECLARATOR
-    | NEWLINE INDENT MultilineKeyValueList DEDENT {$$=_Pon($3)}
+    : TypenameAtom NEWLINE INDENT MultilineObjectKeyValueList DEDENT {$$=_ObjectExpr($1,$4)}
     ;
 
-MultilineKeyValueList
-    : MultilineKeyValue MultilineKeyValueList {$$=_LinkedNode($1,$2)}
-    | MultilineKeyValue {$$=_LinkedNode($1,null)}
+MultilineObjectKeyValueList
+    : MultilineObjectKeyValue MultilineObjectKeyValueList {$$=_LinkedNode($1,$2)}
+    | MultilineObjectKeyValue {$$=_LinkedNode($1,null)}
     ;
 
-MultilineKeyValue
-    : MembernameAtom ASSIGN_OP MultilineExpr   {$$=_KeyValue($1,$3)}
-    | StringAtom ASSIGN_OP MultilineExpr       {$$=_KeyValue($1,$3)}
+MultilineObjectKeyValue
+    : MembernameAtom ASSIGN_OP MultilineExpr {$$=_KeyValue($1,$3)}
+    ;
+
+MulitilineDictionary
+    : '{' '}'
+    | NEWLINE INDENT MultilineDictionaryKeyValueList DEDENT {$$=_ObjectExpr(null, $3)}
+    ;
+
+MultilineDictionaryKeyValueList
+    : MultilineDictionaryKeyValue MultilineDictionaryKeyValueList {$$=_LinkedNode($1,$2)}
+    | MultilineDictionaryKeyValue {$$=_LinkedNode($1,null)}
+    ;
+
+MultilineDictionaryKeyValue
+    : StringAtom ASSIGN_OP MultilineExpr {$$=_KeyValue($1,$3)}
     ;
 
 SinglelineObject
-    : '{' KeyValueList '}' {$$=_Pon($2)}
+    : '{' KeyValueList '}' {$$=_ObjectExpr($2)}
     ;
 
 KeyValueList

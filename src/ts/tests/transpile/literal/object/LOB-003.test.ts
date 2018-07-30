@@ -6,33 +6,22 @@ describe("LOB-003", () => {
     it("object literals with member key", () => {
         const input =
 `
-def .main
-    let y = 6
+def People
+    'name   String
+    'age    Number
 
-    let people =
+def .main
+    let people = People
         'name  = "john"
         'age   = 123
-        'wife  =
-            'name = "Natelie"
-            'age  = 99
-        'yo = 123
-
-    let x = 5
 `;
         const expectedOutput =
 `
 function _main_(){
-const $y = (6);
 const $people = {
 name : "john",
-age : (123),
-wife : {
-name : "Natelie",
-age : (99)
-},
-yo : (123)
+age : (123)
 };
-const $x = (5);
 }
 `;
         assertEquals(pine2js(input).trim(), expectedOutput.trim());

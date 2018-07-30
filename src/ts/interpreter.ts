@@ -21,7 +21,8 @@ const fs = require("fs");
 const {exec} = require("child_process");
 program.args.forEach((arg: string) => {
         try {
-            interpret(loadFile(arg));
+            const transpiledCode = fullTranspile(loadFile(arg));
+            execute(transpiledCode);
         } catch (error) {
             // console.log(error);
             const output = renderErrorMessage((error as PineError).errorMessage);
@@ -55,7 +56,7 @@ function loadSource(sources: SourceCode[]): Declaration[] {
     return declarations;
 }
 
-function interpret(source: SourceCode): void {
+export function fullTranspile(source: SourceCode): string {
     // Get the dependencies of each file
     const dependencies = loadDependency(source);
 
@@ -63,14 +64,15 @@ function interpret(source: SourceCode): void {
     const sortedDependencies: string[] = toposort(dependencies).reverse();
 
     // Transpile the code according to execution order
-    const output =
-        loadSource(sortedDependencies.map(loadFile))
+    return loadSource(sortedDependencies.map(loadFile))
         .map((x) => tpDeclaration(x))
         .join("\n")
         + "\n_main_();";
+}
 
-    // Interpret the transpiled code using Node.js
-    fs.writeFileSync("__temp__.pine.js", output);
+function execute(javascriptCode: string): void {
+    // execute the transpiled code using Node.js
+    fs.writeFileSync("__temp__.pine.js", javascriptCode);
     exec("node __temp__.pine.js", (err: any, stdout: any, stderr: any) => {
         if (err) {
             console.log("Error: " + err);
@@ -102,7 +104,7 @@ function loadDependency(initSource: SourceCode): Dependencies {
     }
 }
 
-function loadFile(filename: string): SourceCode {
+export function loadFile(filename: string): SourceCode {
     return {
         content: fs
             .readFileSync(filename)

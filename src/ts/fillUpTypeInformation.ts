@@ -7,6 +7,7 @@ import {
     ForStatement,
     FunctionCall,
     FunctionDeclaration,
+    KeyValue,
     LinkedNode,
     ListAccess,
     ListExpression,
@@ -30,7 +31,7 @@ import {
 import { flattenLinkedNode } from "./getIntermediateForm";
 import { prettyPrint } from "./pine2js";
 import { stringifyFuncSignature, stringifyType } from "./transpile";
-import { childOf, TypeTree } from "./typeTree";
+import { childOf, insertChild, newSimpleType, TypeTree } from "./typeTree";
 
 export function fillUpTypeInformation(
         decls: Declaration[],
@@ -62,6 +63,10 @@ export function fillUpTypeInformation(
                 const [statements, newSymbols] = fillUp(currentDecl.statements, symbols);
                 currentDecl.statements = statements;
                 funcTab = newSymbols.functab;
+                break;
+            case "StructDeclaration":
+                prevTypeTree = insertChild(currentDecl, newSimpleType("Object"), prevTypeTree);
+                break;
         }
     }
     return [decls, funcTab, prevTypeTree];
@@ -233,7 +238,7 @@ export function fillUpExpressionTypeInfo(e: Expression, symbols: SymbolTable):
         case "FunctionCall":
             [e, symbols.functab] = fillUpFunctionCallTypeInfo(e, symbols);
             return [e, symbols];
-        case "List":           e = fillUpArrayTypeInfo       (e, symbols); break;
+        case "List":            e = fillUpArrayTypeInfo       (e, symbols); break;
         case "Number":          e = fillUpSimpleTypeInfo      (e, "Number"); break;
         case "String":          e = fillUpSimpleTypeInfo      (e, "String"); break;
         case "Boolean":         e = fillUpSimpleTypeInfo      (e, "Boolean"); break;
@@ -241,8 +246,27 @@ export function fillUpExpressionTypeInfo(e: Expression, symbols: SymbolTable):
         case "ListAccess":
             [e.subject, symbols] = fillUpExpressionTypeInfo(e.subject, symbols);
             e = fillUpArrayAccessTypeInfo(e);
+            break;
+        case "ObjectExpression":
+            if (e.constructor !== null) {
+                e.returnType = newSimpleType(e.constructor.repr);
+            } else {
+                e.returnType = newSimpleType("Dict");
+            }
+            [e.keyValueList, symbols] = fillUpKeyValueListTypeInfo(e.keyValueList, symbols);
+            break;
     }
     return [e, symbols];
+}
+
+export function fillUpKeyValueListTypeInfo(k: LinkedNode<KeyValue>, symbols: SymbolTable)
+    : [LinkedNode<KeyValue>, SymbolTable] {
+    let current: LinkedNode<KeyValue> | null = k;
+    while (current !== null) {
+        [current.current.expression, symbols] = fillUpExpressionTypeInfo(current.current.expression, symbols);
+        current = current.next;
+    }
+    return [k, symbols];
 }
 
 export function fillUpArrayAccessTypeInfo(a: ListAccess): ListAccess {
