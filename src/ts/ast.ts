@@ -134,10 +134,10 @@ export type Expression
     | BooleanExpression
     | Variable
     | ObjectExpression // Pineapple Object Notation (PON)
+    | ObjectAccess
     | ListExpression // a.k.a. Array
     | ListAccess
     | CurriedFunc
-    // | MonoExpression
     ;
 
 export type CurriedFunc
@@ -194,12 +194,19 @@ export interface ObjectExpression { // NOTE: Object is also Dictionary
     kind: "ObjectExpression";
     constructor: AtomicToken | null;
     keyValueList: LinkedNode<KeyValue>;
-    returnType: TypeExpression;
+    returnType: StructDeclaration | SimpleType /*aka Dictionary*/;
 }
 
 export interface KeyValue {
     memberName: AtomicToken;
     expression: Expression;
+}
+
+export interface ObjectAccess {
+    kind: "ObjectAccess";
+    subject: Expression;
+    key: AtomicToken;
+    returnType: TypeExpression;
 }
 
 export interface ListExpression {

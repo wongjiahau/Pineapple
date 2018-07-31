@@ -20,6 +20,7 @@ import {
     ListAccess,
     ListExpression,
     NumberExpression,
+    ObjectAccess,
     ObjectExpression,
     ReturnStatement,
     Statement,
@@ -207,13 +208,18 @@ export function tpExpression(e: Expression): string {
         case "String":              return tpStringExpression(e);
         case "Number":              return tpNumberExpression(e);
         case "Variable":            return "$" + e.repr;
-        case "ObjectExpression":                 return tpPonExpression(e);
-        case "List":               return tpArrayExpression(e);
+        case "ObjectExpression":    return tpObjectExpression(e);
+        case "List":                return tpArrayExpression(e);
         case "Boolean":             return tpBooleanExpression(e);
-        case "ListAccess":         return tpArrayAccess(e);
+        case "ListAccess":          return tpArrayAccess(e);
         case "CurriedMonoFunc":     return tpCurriedMonoFunc(e);
         case "CurriedOperatorFunc": return tpCurriedOperatorFunc(e);
+        case "ObjectAccess":        return tpObjectAccess(e);
     }
+}
+
+export function tpObjectAccess(o: ObjectAccess): string {
+    return `${tpExpression(o.subject)}.${o.key.repr.slice(1)}`;
 }
 
 export function tpCurriedOperatorFunc(e: CurriedOperatorFunc): string {
@@ -278,7 +284,7 @@ export function tpListElements(e: LinkedNode<Expression>): string {
     return flattenLinkedNode(e).map((x) => tpExpression(x)).join(",");
 }
 
-export function tpPonExpression(e: ObjectExpression): string {
+export function tpObjectExpression(e: ObjectExpression): string {
     return `{
 ${tpKeyValueList(e.keyValueList)}
 }`;

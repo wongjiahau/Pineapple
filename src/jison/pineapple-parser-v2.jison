@@ -124,6 +124,12 @@ const _KeyValue = (memberName, expression) => ({
     expression,
 });
 
+const _ObjectAccess = (subject, key) => ({
+    kind: "ObjectAccess",
+    subject,
+    key
+});
+
 const _ListExpression = (elements,location) => ({ 
     kind: "List", 
     elements, 
@@ -495,12 +501,7 @@ ListSlicing
     ;
 
 ObjectAccessExpr
-    : AtomicExpr ObjectAccess
-    ;
-
-ObjectAccess
-    : MembernameAtom
-    // | '{' SinglelineExpr '}'
+    : AtomicExpr MembernameAtom {$$=_ObjectAccess($1,$2)}
     ;
 
 MultilineObject

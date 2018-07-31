@@ -11,9 +11,11 @@ import {
     LinkedNode,
     ListAccess,
     ListExpression,
+    MemberDefinition,
     NumberExpression,
     Statement,
     StringExpression,
+    StructDeclaration,
     TestExpression,
     TypeExpression,
     Variable,
@@ -36,8 +38,9 @@ import { childOf, insertChild, newSimpleType, TypeTree } from "./typeTree";
 export function fillUpTypeInformation(
         decls: Declaration[],
         prevFuntab: FunctionTable,
-        prevTypeTree: TypeTree
-    ): [Declaration[], FunctionTable, TypeTree] {
+        prevTypeTree: TypeTree,
+        prevStructTab: StructTable
+    ): [Declaration[], FunctionTable, TypeTree, StructTable] {
     // Complete the function table
     // This step is to allow programmer to define function anywhere
     // without needing to adhere to strict top-down or bottom-up structure
@@ -47,6 +50,7 @@ export function fillUpTypeInformation(
         switch (currentDecl.kind) {
             case "FunctionDeclaration":
                 funcTab = newFunctionTable(currentDecl, funcTab);
+                break;
         }
     }
 
@@ -58,7 +62,8 @@ export function fillUpTypeInformation(
                 const symbols: SymbolTable = {
                     vartab: vtab,
                     functab: funcTab,
-                    typeTree: prevTypeTree
+                    typeTree: prevTypeTree,
+                    structTab: prevStructTab,
                 };
                 const [statements, newSymbols] = fillUp(currentDecl.statements, symbols);
                 currentDecl.statements = statements;
@@ -66,10 +71,20 @@ export function fillUpTypeInformation(
                 break;
             case "StructDeclaration":
                 prevTypeTree = insertChild(currentDecl, newSimpleType("Object"), prevTypeTree);
+                prevStructTab = newStructTab(currentDecl, prevStructTab);
                 break;
         }
     }
-    return [decls, funcTab, prevTypeTree];
+    return [decls, funcTab, prevTypeTree, prevStructTab];
+}
+
+export function newStructTab(s: StructDeclaration, structTab: StructTable): StructTable {
+    if (s.name.repr in structTab) {
+        throw new Error(`${s.name.repr} is already defined.`);
+    } else {
+        structTab[s.name.repr] = s;
+    }
+    return structTab;
 }
 
 export function newFunctionTable(newFunc: FunctionDeclaration, previousFuncTab: FunctionTable): FunctionTable {
@@ -112,7 +127,12 @@ export function getVariableTable(variables: VariableDeclaration[]): VariableTabl
 export interface SymbolTable {
     vartab: VariableTable;
     functab: FunctionTable;
+    structTab: StructTable;
     typeTree: TypeTree;
+}
+
+export interface StructTable {
+    [key: string]: StructDeclaration;
 }
 
 export interface VariableTable {
@@ -249,14 +269,51 @@ export function fillUpExpressionTypeInfo(e: Expression, symbols: SymbolTable):
             break;
         case "ObjectExpression":
             if (e.constructor !== null) {
-                e.returnType = newSimpleType(e.constructor.repr);
+                e.returnType = getStruct(e.constructor.repr, symbols.structTab);
             } else {
                 e.returnType = newSimpleType("Dict");
             }
             [e.keyValueList, symbols] = fillUpKeyValueListTypeInfo(e.keyValueList, symbols);
             break;
+        case "ObjectAccess":
+            [e.subject, symbols] = fillUpExpressionTypeInfo(e.subject, symbols);
+            switch (e.subject.returnType.kind) {
+            case "StructDeclaration":
+                e.returnType = findMemberType( e.key.repr, e.subject.returnType);
+                break;
+            case "SimpleType":
+                if (e.subject.returnType.name.repr === "Dict") {
+                    throw new Error("Unimplemented yet");
+                } else {
+                    throw new Error("Must be dictionary type");
+                }
+                break;
+            default:
+                throw new Error("Must be dictionary type of object type");
+            }
+            break;
+        default:
+            throw new Error("Unimplemented yet");
     }
     return [e, symbols];
+}
+
+export function findMemberType(key: string, structDecl: StructDeclaration): TypeExpression {
+    const members = flattenLinkedNode(structDecl.members);
+    const matchingMember = members.filter((x) => x.name.repr === key);
+    if (matchingMember.length > 0) {
+        return matchingMember[0].expectedType;
+    } else {
+        throw new Error(`${structDecl.name.repr} does not have member ${key}`);
+    }
+}
+export function getStruct(name: string, structTab: StructTable): StructDeclaration {
+    const result = structTab[name];
+    if (result !== undefined) {
+        return result;
+    } else {
+        throw new Error(`Cannot find struct ${name}`);
+    }
 }
 
 export function fillUpKeyValueListTypeInfo(k: LinkedNode<KeyValue>, symbols: SymbolTable)
