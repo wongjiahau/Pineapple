@@ -34,6 +34,7 @@ import { flattenLinkedNode } from "./getIntermediateForm";
 import { prettyPrint } from "./pine2js";
 import { stringifyFuncSignature, stringifyType } from "./transpile";
 import { childOf, insertChild, newSimpleType, TypeTree } from "./typeTree";
+import { find } from "./util";
 
 export function fillUpTypeInformation(
         decls: Declaration[],
@@ -270,6 +271,7 @@ export function fillUpExpressionTypeInfo(e: Expression, symbols: SymbolTable):
         case "ObjectExpression":
             if (e.constructor !== null) {
                 e.returnType = getStruct(e.constructor.repr, symbols.structTab);
+                checkIfKeyValueListConforms(e.keyValueList, e.returnType);
             } else {
                 e.returnType = newSimpleType("Dict");
             }
@@ -296,6 +298,28 @@ export function fillUpExpressionTypeInfo(e: Expression, symbols: SymbolTable):
             throw new Error("Unimplemented yet");
     }
     return [e, symbols];
+}
+
+export function checkIfKeyValueListConforms(
+    keyValues: LinkedNode<KeyValue>,
+    structDecl: StructDeclaration
+): void {
+    const kvs = flattenLinkedNode(keyValues).map((x) => x.memberName.repr);
+    const members = flattenLinkedNode(structDecl.members).map((x) => x.name.repr);
+
+    // Check if every declared member is in member definitions
+    for (let i = 0; i < kvs.length; i++) {
+        if (!find(kvs[i], /*in*/ members)) {
+            throw new Error(`Key ${kvs[i]} is not found in ${structDecl.name.repr}`);
+        }
+    }
+
+    // Check if every member definition is present in declared member
+    for (let i = 0; i < members.length; i++) {
+        if (!find(members[i], /*in*/ kvs)) {
+            throw new Error(`Missing key ${members[i]} for ${structDecl.name.repr} type`);
+        }
+    }
 }
 
 export function findMemberType(key: string, structDecl: StructDeclaration): TypeExpression {
