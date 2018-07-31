@@ -1,7 +1,7 @@
-export function find<T>(needle: T, haystack: T[]): T | null {
+export function find<T1, T2>(needle: T1, haystack: T2[], comparer: (x: T1, y: T2) => boolean): T2 | null {
     for (let i = 0; i < haystack.length; i++) {
-        if (needle === haystack[i]) {
-            return needle;
+        if (comparer(needle, haystack[i])) {
+            return haystack[i];
         }
     }
     return null;

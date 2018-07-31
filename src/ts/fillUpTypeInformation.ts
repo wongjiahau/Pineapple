@@ -271,11 +271,11 @@ export function fillUpExpressionTypeInfo(e: Expression, symbols: SymbolTable):
         case "ObjectExpression":
             if (e.constructor !== null) {
                 e.returnType = getStruct(e.constructor.repr, symbols.structTab);
+                [e.keyValueList, symbols] = fillUpKeyValueListTypeInfo(e.keyValueList, symbols);
                 checkIfKeyValueListConforms(e.keyValueList, e.returnType);
             } else {
                 e.returnType = newSimpleType("Dict");
             }
-            [e.keyValueList, symbols] = fillUpKeyValueListTypeInfo(e.keyValueList, symbols);
             break;
         case "ObjectAccess":
             [e.subject, symbols] = fillUpExpressionTypeInfo(e.subject, symbols);
@@ -304,20 +304,27 @@ export function checkIfKeyValueListConforms(
     keyValues: LinkedNode<KeyValue>,
     structDecl: StructDeclaration
 ): void {
-    const kvs = flattenLinkedNode(keyValues).map((x) => x.memberName.repr);
-    const members = flattenLinkedNode(structDecl.members).map((x) => x.name.repr);
+    const kvs = flattenLinkedNode(keyValues);
+    const members = flattenLinkedNode(structDecl.members);
 
     // Check if every declared member is in member definitions
     for (let i = 0; i < kvs.length; i++) {
-        if (!find(kvs[i], /*in*/ members)) {
-            throw new Error(`Key ${kvs[i]} is not found in ${structDecl.name.repr}`);
+        const matchingMember = find(kvs[i], members, (k, m) => k.memberName.repr === m.name.repr);
+        if (matchingMember === null) {
+            throw new Error(`Key ${kvs[i].memberName.repr} is not found in ${structDecl.name.repr}`);
+        } else {
+            // Check if type are equals to expected
+            if (!typeEquals(matchingMember.expectedType, kvs[i].expression.returnType)) {
+                // tslint:disable-next-line:max-line-length
+                throw new Error(`The type of ${matchingMember.name.repr} should be ${stringifyType(matchingMember.expectedType)} but you gave it a ${stringifyType(kvs[i].expression.returnType)}`);
+            }
         }
     }
 
     // Check if every member definition is present in declared member
     for (let i = 0; i < members.length; i++) {
-        if (!find(members[i], /*in*/ kvs)) {
-            throw new Error(`Missing key ${members[i]} for ${structDecl.name.repr} type`);
+        if (!find(members[i], kvs, (m, k) => m.name.repr === k.memberName.repr)) {
+            throw new Error(`Missing key ${members[i].name.repr} for ${structDecl.name.repr} type`);
         }
     }
 }
