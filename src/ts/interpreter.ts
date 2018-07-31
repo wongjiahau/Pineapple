@@ -63,11 +63,19 @@ export function fullTranspile(source: SourceCode): string {
     // Get the dependencies of each file
     const dependencies = loadDependency(source);
 
-    // Now, sort the vertices topologically, to reveal a legal execution order.
-    const sortedDependencies: string[] = toposort(dependencies).reverse();
+    let sources: SourceCode[] = [];
+    if (dependencies.length > 0) {
+        // Now, sort the vertices topologically, to reveal a legal execution order.
+        const sortedDependencies: string[] = toposort(dependencies).reverse();
 
-    // Transpile the code according to execution order
-    return loadSource(sortedDependencies.map(loadFile))
+        // Transpile the code according to execution order
+        sources = sortedDependencies.map(loadFile);
+    } else {
+        // If no dependecy is found
+        sources = [source];
+    }
+
+    return loadSource(sources)
         .map((x) => tpDeclaration(x))
         .join("\n")
         + "\n_main_();";

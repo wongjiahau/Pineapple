@@ -8,13 +8,16 @@ describe("label line numbers", () => {
 def .main
     print: "Hello world"
     print: "Bye"
+    print: "Bye"
 `.trim();
-        const result = labelLineNumbers(input, 2);
+        const result = labelLineNumbers(input, 3);
         const expected =
 `
             | 1 | def .main
-    ERROR >>| 2 |     print: "Hello world"
-            | 3 |     print: "Bye"
+            | 2 |     print: "Hello world"
+    ERROR >>| 3 |     print: "Bye"
+            | 4 |     print: "Bye"
+
 `.trim();
         // console.error(result);
         expect(result.trim()).to.eq(expected);
@@ -38,18 +41,18 @@ def .main
     print: "13"
     print: "14"
 `.trim();
-        const result = labelLineNumbers(input, 10);
+        const result = labelLineNumbers(input, 11);
         const expected =
 `
-            |  6 |     print: "6"
             |  7 |     print: "7"
             |  8 |     print: "8"
             |  9 |     print: "9"
-    ERROR >>| 10 |     print: "10"
-            | 11 |     print: "11"
+            | 10 |     print: "10"
+    ERROR >>| 11 |     print: "11"
             | 12 |     print: "12"
             | 13 |     print: "13"
             | 14 |     print: "14"
+
 `.trim();
         // console.log(result);
         expect(result.trim()).to.eq(expected);
