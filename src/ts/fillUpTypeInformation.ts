@@ -159,6 +159,7 @@ function updateVariableTable(vtab: VariableTable, variable: Variable): VariableT
 }
 
 function raise(error: RawError) {
+    // The error would be caught at getIntermediateForm.ts
     const throwable = new PineError();
     throwable.rawError = error;
     throw throwable;

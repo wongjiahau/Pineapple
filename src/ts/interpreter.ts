@@ -24,9 +24,12 @@ program.args.forEach((arg: string) => {
             const transpiledCode = fullTranspile(loadFile(arg));
             execute(transpiledCode);
         } catch (error) {
-            // console.log(error);
-            const output = renderErrorMessage((error as PineError).errorMessage);
-            console.log(output);
+            if (error.errorMessage) {
+                const output = renderErrorMessage((error as PineError).errorMessage);
+                console.log(output);
+            } else {
+                console.log(error);
+            }
         }
     });
 

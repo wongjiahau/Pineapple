@@ -1,13 +1,17 @@
 export function labelLineNumbers(input: string, pointingWhichLine: number): string {
     let result = "";
-    const lines = input.split("\n");
+    let lines = input.split("\n");
+    const startLine = (pointingWhichLine - 5) > 0 ? (pointingWhichLine - 5) : 0;
+    const endLine = pointingWhichLine + 5 >= lines.length ? lines.length : pointingWhichLine + 5;
+    lines = lines.slice(startLine, endLine);
     for (let i = 0; i < lines.length; i++) {
-        let line = `| ${justifyLeft((i + 1).toString(), (lines.length + 1).toString().length)} | ${lines[i]}`;
+        // tslint:disable-next-line:max-line-length
+        let line = `| ${justifyLeft((i + 1 + startLine).toString(), (lines.length + 1).toString().length)} | ${lines[i]}`;
         line = line.trimRight() + "\n";
-        if (pointingWhichLine - 1 === i) {
-            line = "ERROR >>> " + line;
+        if (endLine - pointingWhichLine === i) {
+            line = "    ERROR >>" + line;
         } else {
-            line = "          " + line;
+            line = "            " + line;
         }
         result += line;
     }
