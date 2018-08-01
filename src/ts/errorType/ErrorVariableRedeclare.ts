@@ -1,4 +1,4 @@
-import { StructDeclaration, Variable } from "../ast";
+import { Variable } from "../ast";
 import { ErrorDetail } from "./errorUtil";
 
 export function ErrorVariableRedeclare(

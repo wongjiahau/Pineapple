@@ -25,12 +25,13 @@ import {
 
 import {
     ErrorNoConformingFunction,
-    ErrorUsingUnknownFunction,
     PineError,
     RawError
 } from "./errorType";
 
+import { ErrorIncorrectTypeGiven } from "./errorType/ErrorIncorrectTypeGiven";
 import { ErrorNoStructRedeclare } from "./errorType/ErrorNoStructRedeclare";
+import { ErrorUsingUnknownFunction } from "./errorType/ErrorUsingUnknownFunction";
 import { ErrorDetail, renderError } from "./errorType/errorUtil";
 import { ErrorVariableRedeclare } from "./errorType/ErrorVariableRedeclare";
 import { flattenLinkedNode } from "./getIntermediateForm";
@@ -181,8 +182,11 @@ export function fillUp(s: LinkedNode<Statement>, symbols: SymbolTable):
                 s.current.variable.variable.returnType = s.current.expression.returnType;
             } else {
                 // Statically-typed
-                s.current.expression.returnType = s.current.variable.typeExpected;
+                [s.current.expression, symbols] = fillUpExpressionTypeInfo(s.current.expression, symbols);
                 s.current.variable.variable.returnType = s.current.variable.typeExpected;
+                if (!typeEquals(s.current.variable.typeExpected, s.current.expression.returnType)) {
+                    raise(ErrorIncorrectTypeGiven(s.current.variable, s.current.expression.returnType));
+                }
             }
             symbols.vartab = updateVariableTable(symbols.vartab, s.current.variable.variable);
             break;
@@ -434,11 +438,7 @@ export function getFuncSignature(f: FunctionCall, functab: FunctionTable, typetr
         }
 
     } else {
-        const error: ErrorUsingUnknownFunction = {
-            kind: "ErrorUsingUnknownFunction",
-            func: f
-        };
-        raise(error);
+        raise(ErrorUsingUnknownFunction(f));
     }
 }
 
