@@ -27,6 +27,7 @@ import {
 import { ErrorAccessingInexistentMember } from "./errorType/ErrorAccessingInexistentMember";
 import { ErrorIncorrectTypeGivenForMember } from "./errorType/ErrorIncorrectTypeGivenForMember";
 import { ErrorIncorrectTypeGivenForVariable } from "./errorType/ErrorIncorrectTypeGivenForVariable";
+import { ErrorMissingMember } from "./errorType/ErrorMissingMember";
 import { ErrorNoConformingFunction } from "./errorType/ErrorNoConformingFunction";
 import { ErrorNoStructRedeclare } from "./errorType/ErrorNoStructRedeclare";
 import { ErrorUsingUnknownFunction } from "./errorType/ErrorUsingUnknownFunction";
@@ -329,7 +330,8 @@ export function checkIfKeyValueListConforms(
     // Check if every member definition is present in declared member
     for (let i = 0; i < members.length; i++) {
         if (!find(members[i], kvs, (m, k) => m.name.repr === k.memberName.repr)) {
-            throw new Error(`Missing key ${members[i].name.repr} for ${structDecl.name.repr} type`);
+            raise(ErrorMissingMember(members[i].name.repr, structDecl, kvs[0].memberName.location));
+            // throw new Error(`Missing key ${members[i].name.repr} for ${structDecl.name.repr} type`);
         }
     }
 }

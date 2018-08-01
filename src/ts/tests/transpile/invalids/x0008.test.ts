@@ -15,7 +15,7 @@ def .main
         'name = "Wong"
 `;
         // 'age member is missing
-        expect(catchError(() => pine2js(input)).name).to.eq("ErrorUsingUnknownFunction");
+        expect(catchError(() => pine2js(input)).name).to.eq("ErrorMissingMember");
     });
 
 });
