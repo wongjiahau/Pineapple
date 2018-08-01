@@ -6,6 +6,7 @@ import {getIntermediateForm, initialIntermediateForm} from "./getIntermediateFor
 import {labelLineNumbers} from "./labelLineNumbers";
 import {labelNewlines} from "./labelNewlines";
 import {tpDeclaration} from "./transpile";
+const clear = require("clear");
 
 const program = require("commander");
 program
@@ -24,7 +25,8 @@ program.args.forEach((arg: string) => {
             const transpiledCode = fullTranspile(loadFile(arg));
             execute(transpiledCode);
         } catch (error) {
-            console.log((error as Error).message);
+            clear();
+            console.log(error.message);
             // if (error.errorMessage) {
             //     const output = renderErrorMessage((error as PineError).errorMessage);
             //     console.log(output);

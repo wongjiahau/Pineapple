@@ -238,7 +238,7 @@ export interface JavascriptCode extends AtomicToken {
 
 export interface AtomicToken {
     repr: string; // shorthand for representation
-    location: TokenLocation | null;
+    location: TokenLocation;
 }
 
 export interface TokenLocation {
@@ -246,4 +246,13 @@ export interface TokenLocation {
     last_line: number;
     first_column: number;
     last_column: number;
+}
+
+export function NullTokenLocation(): TokenLocation {
+    return {
+        first_column: -1,
+        first_line: -1,
+        last_column: -1,
+        last_line: -1,
+    };
 }

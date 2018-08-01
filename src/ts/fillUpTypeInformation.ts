@@ -12,6 +12,7 @@ import {
     ListAccess,
     ListExpression,
     MemberDefinition,
+    NullTokenLocation,
     NumberExpression,
     Statement,
     StringExpression,
@@ -25,13 +26,13 @@ import {
 import {
     ErrorNoConformingFunction,
     ErrorUsingUnknownFunction,
-    ErrorVariableRedeclare,
     PineError,
     RawError
 } from "./errorType";
 
 import { ErrorNoStructRedeclare } from "./errorType/ErrorNoStructRedeclare";
 import { ErrorDetail, renderError } from "./errorType/errorUtil";
+import { ErrorVariableRedeclare } from "./errorType/ErrorVariableRedeclare";
 import { flattenLinkedNode } from "./getIntermediateForm";
 import { SourceCode } from "./interpreter";
 import { prettyPrint } from "./pine2js";
@@ -153,14 +154,9 @@ export interface FunctionTable {
 }
 
 function updateVariableTable(vtab: VariableTable, variable: Variable): VariableTable {
-    const initialDecl = vtab[variable.repr];
-    if (initialDecl) {
-        const error: ErrorVariableRedeclare = {
-            kind: "ErrorVariableRedeclare",
-            initialVariable: initialDecl,
-            newVariable: variable,
-        };
-        raise(error);
+    const initialVariable = vtab[variable.repr];
+    if (initialVariable !== undefined) {
+        raise(ErrorVariableRedeclare(initialVariable, variable));
     }
     vtab[variable.repr] = variable;
     return vtab;
@@ -397,7 +393,7 @@ export function fillUpSimpleTypeInfo(e: SimpleExpression, name: string): SimpleE
             kind: "SimpleType",
             name: {
                 repr: name,
-                location: null,
+                location: NullTokenLocation(),
             },
             nullable: false
         }
@@ -559,7 +555,7 @@ export function getElementsType(a: LinkedNode<Expression>): CompoundType {
         kind: "CompoundType",
         name: {
             repr: "List",
-            location: null
+            location: NullTokenLocation()
         },
         of: {
             current: types[0],
