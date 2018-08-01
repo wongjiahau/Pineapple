@@ -1,6 +1,4 @@
-import chalk from "chalk";
-
-export function labelLineNumbers(input: string, pointingWhichLine: number): string {
+export function labelLineNumbers(input: string, pointingWhichLine: number, styler: (x: string) => string): string {
     let result = "";
     let lines = input.split("\n");
     const numberOfSpaces = (lines.length + 1).toString().length;
@@ -12,7 +10,7 @@ export function labelLineNumbers(input: string, pointingWhichLine: number): stri
         let line = `| ${justifyLeft((i + 1 + startLine).toString(), numberOfSpaces)} | ${lines[i]}`;
         line = line.trimRight() + "\n";
         if (pointingWhichLine - startLine - 1 === i) {
-            line = chalk.bgRed("    ERROR >>" + line);
+            line = styler("    ERROR >>" + line);
         } else {
             line = "            " + line;
         }

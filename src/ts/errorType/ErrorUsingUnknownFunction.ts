@@ -2,9 +2,10 @@ import {AtomicToken, FunctionCall, Variable} from "../ast";
 import {ErrorDetail} from "./errorUtil";
 
 export function ErrorUsingUnknownFunction(relatedFunction: FunctionCall): ErrorDetail {
+    const funcname = displayFuncSignature(relatedFunction.signature);
     return {
-        // tslint:disable-next-line:max-line-length
-        message: `You cannot call the function \`${(displayFuncSignature(relatedFunction.signature))}\` as it does not exist`,
+        name: "ErrorUsingUnknownFunction",
+        message: `You cannot call the function \`${(funcname)}\` as it does not exist`,
         relatedLocation: relatedFunction.location
     };
 }

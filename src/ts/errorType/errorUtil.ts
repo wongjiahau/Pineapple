@@ -18,7 +18,14 @@ export function renderError(
 
     let result = "\n";
     result += boxen(chalk.bold("ERROR: ") + errorDetail.message, errorMessageStyle) + "\n";
-    result += boxen(labelLineNumbers(sourceCode.content, errorDetail.relatedLocation.first_line), sourceCodeStyle);
+    result += boxen(
+        labelLineNumbers(
+            sourceCode.content,
+            errorDetail.relatedLocation.first_line,
+            chalk.bgRed
+        ),
+        sourceCodeStyle
+    );
     // tslint:disable-next-line:max-line-length
     result += `\nThe error is located at ${chalk.underline(sourceCode.filename)} at line ${errorDetail.relatedLocation.first_line}.`;
 

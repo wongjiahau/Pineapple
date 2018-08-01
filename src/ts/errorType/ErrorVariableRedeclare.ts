@@ -6,6 +6,7 @@ export function ErrorVariableRedeclare(
     redeclaredVariable: Variable
 ): ErrorDetail {
     return {
+        name: "ErrorVariableRedeclare",
         message:
             `You cannot redeclare \`${redeclaredVariable.repr}\`` +
             ` as it is already declared at line ${initialVariable.location.first_line}`,

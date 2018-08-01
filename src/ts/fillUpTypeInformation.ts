@@ -23,13 +23,9 @@ import {
     VariableDeclaration
 } from "./ast";
 
-import {
-    ErrorNoConformingFunction,
-    PineError,
-    RawError
-} from "./errorType";
-
-import { ErrorIncorrectTypeGiven } from "./errorType/ErrorIncorrectTypeGiven";
+import { ErrorIncorrectTypeGivenForMember } from "./errorType/ErrorIncorrectTypeGivenForMember";
+import { ErrorIncorrectTypeGivenForVariable } from "./errorType/ErrorIncorrectTypeGivenForVariable";
+import { ErrorNoConformingFunction } from "./errorType/ErrorNoConformingFunction";
 import { ErrorNoStructRedeclare } from "./errorType/ErrorNoStructRedeclare";
 import { ErrorUsingUnknownFunction } from "./errorType/ErrorUsingUnknownFunction";
 import { ErrorDetail, renderError } from "./errorType/errorUtil";
@@ -164,7 +160,9 @@ function updateVariableTable(vtab: VariableTable, variable: Variable): VariableT
 }
 
 function raise(errorDetail: ErrorDetail) {
-    throw new Error(renderError(CURRENT_SOURCE_CODE(), errorDetail));
+    const e = Error(renderError(CURRENT_SOURCE_CODE(), errorDetail));
+    e.name = errorDetail.name;
+    throw e;
 }
 
 export function fillUp(s: LinkedNode<Statement>, symbols: SymbolTable):
@@ -185,7 +183,7 @@ export function fillUp(s: LinkedNode<Statement>, symbols: SymbolTable):
                 [s.current.expression, symbols] = fillUpExpressionTypeInfo(s.current.expression, symbols);
                 s.current.variable.variable.returnType = s.current.variable.typeExpected;
                 if (!typeEquals(s.current.variable.typeExpected, s.current.expression.returnType)) {
-                    raise(ErrorIncorrectTypeGiven(s.current.variable, s.current.expression.returnType));
+                    raise(ErrorIncorrectTypeGivenForVariable(s.current.variable, s.current.expression.returnType));
                 }
             }
             symbols.vartab = updateVariableTable(symbols.vartab, s.current.variable.variable);
@@ -321,8 +319,7 @@ export function checkIfKeyValueListConforms(
         } else {
             // Check if type are equals to expected
             if (!typeEquals(matchingMember.expectedType, kvs[i].expression.returnType)) {
-                // tslint:disable-next-line:max-line-length
-                throw new Error(`The type of ${matchingMember.name.repr} should be ${stringifyType(matchingMember.expectedType)} but you gave it a ${stringifyType(kvs[i].expression.returnType)}`);
+                raise(ErrorIncorrectTypeGivenForMember(matchingMember.expectedType, kvs[i]));
             }
         }
     }
@@ -429,12 +426,7 @@ export function getFuncSignature(f: FunctionCall, functab: FunctionTable, typetr
             functab = newFunctionTable(closestFunction, functab) ;
             return [f, functab];
         } else {
-            const error: ErrorNoConformingFunction = {
-                kind: "ErrorNoConformingFunction",
-                func: f,
-                matchingFunctions: matchingFunctions
-            };
-            raise(error);
+            raise(ErrorNoConformingFunction(f, matchingFunctions));
         }
 
     } else {

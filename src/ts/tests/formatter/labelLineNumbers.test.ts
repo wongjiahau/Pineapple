@@ -10,7 +10,7 @@ def .main
     print: "Bye"
     print: "Bye"
 `.trim();
-        const result = labelLineNumbers(input, 3);
+        const result = labelLineNumbers(input, 3, (x) => x);
         const expected =
 `
             | 1 | def .main
@@ -41,7 +41,7 @@ def .main
     print: "13"
     print: "14"
 `.trim();
-        const result = labelLineNumbers(input, 11);
+        const result = labelLineNumbers(input, 11, (x) => x);
         const expected =
 `
             |  7 |     print: "7"

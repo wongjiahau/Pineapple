@@ -1,4 +1,5 @@
 const toposort = require("toposort");
+import chalk from "chalk";
 import {Declaration} from "./ast";
 import {PineError} from "./errorType";
 import {ErrorMessage} from "./generateErrorMessage";
@@ -27,26 +28,8 @@ program.args.forEach((arg: string) => {
         } catch (error) {
             clear();
             console.log(error.message);
-            // if (error.errorMessage) {
-            //     const output = renderErrorMessage((error as PineError).errorMessage);
-            //     console.log(output);
-            // } else {
-            //     console.log(error);
-            // }
         }
     });
-
-function renderErrorMessage(e: ErrorMessage): string {
-    let result = "\n";
-    result += "ERROR >>> \n\n\t";
-    result += e.message + "\n\n";
-    result += labelLineNumbers(e.relatedSourceCode, e.location.first_line) + "\n";
-    result += `The error is located at '${e.filename}' at line ${e.location.first_line}.`;
-    return result
-        .split("\n")
-        .map((x) => "  " + x)
-        .join("\n") + "\n";
-}
 
 function loadSource(sources: SourceCode[]): Declaration[] {
     let result = initialIntermediateForm();
