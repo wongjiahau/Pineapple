@@ -1,5 +1,6 @@
 import { Declaration, LinkedNode } from "./ast";
 import { PineError } from "./errorType";
+import { CompileError } from "./errorType/ErrorNoStructRedeclare";
 import { fillUpTypeInformation, FunctionTable, StructTable } from "./fillUpTypeInformation";
 import { generateErrorMessage } from "./generateErrorMessage";
 import { SourceCode } from "./interpreter";
@@ -19,7 +20,8 @@ export function getIntermediateForm(
             flattenLinkedNode(ast),
             prevIntermediate.funcTab,
             prevIntermediate.typeTree,
-            prevIntermediate.structTab
+            prevIntermediate.structTab,
+            sourceCode
         );
         return {
             funcTab: newFuncTab,
@@ -29,15 +31,17 @@ export function getIntermediateForm(
             importedFiles: prevIntermediate.importedFiles.concat([sourceCode.filename])
         };
     } catch (e) {
-        const error = (e as PineError);
-        if (error.rawError) {
-            error.errorMessage =
-                generateErrorMessage(
-                    sourceCode.content,
-                    error.rawError,
-                    sourceCode.filename
-                );
-        }
+        const error = (e as CompileError);
+        // error.setSourceCode(sourceCode);
+        // const error = (e as PineError);
+        // if (error.rawError) {
+        //     error.errorMessage =
+        //         generateErrorMessage(
+        //             sourceCode.content,
+        //             error.rawError,
+        //             sourceCode.filename
+        //         );
+        // }
         throw error;
     }
 }

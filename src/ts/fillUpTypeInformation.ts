@@ -30,18 +30,25 @@ import {
     RawError
 } from "./errorType";
 
+import { ErrorNoStructRedeclare } from "./errorType/ErrorNoStructRedeclare";
+import { ErrorDetail, renderError } from "./errorType/errorUtil";
 import { flattenLinkedNode } from "./getIntermediateForm";
+import { SourceCode } from "./interpreter";
 import { prettyPrint } from "./pine2js";
 import { stringifyFuncSignature, stringifyType } from "./transpile";
 import { childOf, insertChild, newSimpleType, TypeTree } from "./typeTree";
 import { find } from "./util";
 
+let CURRENT_SOURCE_CODE: () => SourceCode;
 export function fillUpTypeInformation(
         decls: Declaration[],
         prevFuntab: FunctionTable,
         prevTypeTree: TypeTree,
-        prevStructTab: StructTable
+        prevStructTab: StructTable,
+        sourceCode: SourceCode
     ): [Declaration[], FunctionTable, TypeTree, StructTable] {
+
+    CURRENT_SOURCE_CODE = () => sourceCode;
     // Complete the function table
     // This step is to allow programmer to define function anywhere
     // without needing to adhere to strict top-down or bottom-up structure
@@ -81,7 +88,8 @@ export function fillUpTypeInformation(
 
 export function newStructTab(s: StructDeclaration, structTab: StructTable): StructTable {
     if (s.name.repr in structTab) {
-        throw new Error(`${s.name.repr} is already defined.`);
+        raise(ErrorNoStructRedeclare(s));
+        // throw new Error(`${s.name.repr} is already defined.`);
     } else {
         structTab[s.name.repr] = s;
     }
@@ -158,11 +166,8 @@ function updateVariableTable(vtab: VariableTable, variable: Variable): VariableT
     return vtab;
 }
 
-function raise(error: RawError) {
-    // The error would be caught at getIntermediateForm.ts
-    const throwable = new PineError();
-    throwable.rawError = error;
-    throw throwable;
+function raise(errorDetail: ErrorDetail) {
+    throw new Error(renderError(CURRENT_SOURCE_CODE(), errorDetail));
 }
 
 export function fillUp(s: LinkedNode<Statement>, symbols: SymbolTable):
