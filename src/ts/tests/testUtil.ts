@@ -11,7 +11,9 @@ export function assertEquals<T>(actual: T, expected: T) {
 export function catchError(f: () => void): Error {
     try {
         f();
-        throw new Error("Expected to fail");
+        const e = new Error();
+        e.name = "No error is caught";
+        return e;
     } catch (error) {
         return error;
     }

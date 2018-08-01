@@ -25,6 +25,7 @@ import {
 } from "./ast";
 
 import { ErrorAccessingInexistentMember } from "./errorType/ErrorAccessingInexistentMember";
+import { ErrorExtraMember } from "./errorType/ErrorExtraMember";
 import { ErrorIncorrectTypeGivenForMember } from "./errorType/ErrorIncorrectTypeGivenForMember";
 import { ErrorIncorrectTypeGivenForVariable } from "./errorType/ErrorIncorrectTypeGivenForVariable";
 import { ErrorMissingMember } from "./errorType/ErrorMissingMember";
@@ -39,6 +40,7 @@ import { prettyPrint } from "./pine2js";
 import { stringifyFuncSignature, stringifyType } from "./transpile";
 import { childOf, insertChild, newSimpleType, TypeTree } from "./typeTree";
 import { find } from "./util";
+import { ErrorDuplicatedMember } from "./errorType/ErrorDuplicatedMember";
 
 let CURRENT_SOURCE_CODE: () => SourceCode;
 export function fillUpTypeInformation(
@@ -318,7 +320,7 @@ export function checkIfKeyValueListConforms(
     for (let i = 0; i < kvs.length; i++) {
         const matchingMember = find(kvs[i], members, (k, m) => k.memberName.repr === m.name.repr);
         if (matchingMember === null) {
-            throw new Error(`Key ${kvs[i].memberName.repr} is not found in ${structDecl.name.repr}`);
+            raise(ErrorExtraMember(kvs[i].memberName, structDecl));
         } else {
             // Check if type are equals to expected
             if (!typeEquals(matchingMember.expectedType, kvs[i].expression.returnType)) {
@@ -331,8 +333,17 @@ export function checkIfKeyValueListConforms(
     for (let i = 0; i < members.length; i++) {
         if (!find(members[i], kvs, (m, k) => m.name.repr === k.memberName.repr)) {
             raise(ErrorMissingMember(members[i].name.repr, structDecl, kvs[0].memberName.location));
-            // throw new Error(`Missing key ${members[i].name.repr} for ${structDecl.name.repr} type`);
         }
+    }
+
+    // Check if there are duplicated members
+    const valuesSoFar: {[key: string]: AtomicToken} = {};
+    for (let i = 0; i < kvs.length; ++i) {
+        const member = kvs[i].memberName;
+        if (valuesSoFar[member.repr]) {
+            raise(ErrorDuplicatedMember(member, valuesSoFar[member.repr]));
+        }
+        valuesSoFar[member.repr] = member;
     }
 }
 

@@ -16,7 +16,7 @@ def .main
         'age  = 88
         'wife = "Jane"
 `;
-        expect(catchError(() => pine2js(input)).name).to.eq("ErrorUsingUnknownFunction");
+        expect(catchError(() => pine2js(input)).name).to.eq("ErrorExtraMember");
     });
 
 });
