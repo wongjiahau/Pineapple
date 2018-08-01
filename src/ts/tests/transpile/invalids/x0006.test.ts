@@ -1,5 +1,6 @@
 import { expect } from "chai";
 import { pine2js } from "../../../pine2js";
+import { catchError } from "../../testUtil";
 
 describe("x0006", () => {
     it("accessing non-existent member", () => {
@@ -16,7 +17,7 @@ def .main
 
     let y = x'nam
 `;
-        expect(() => pine2js(input)).to.throws();
+        expect(catchError(() => pine2js(input)).name).to.eq("ErrorAccessingInexistentMember");
     });
 
 });

@@ -1,5 +1,6 @@
 import { expect } from "chai";
 import { pine2js } from "../../../pine2js";
+import { catchError } from "../../testUtil";
 
 describe("x0009", () => {
     it("extra member", () => {
@@ -15,8 +16,7 @@ def .main
         'age  = 88
         'wife = "Jane"
 `;
-        // 'age member is missing
-        expect(() => pine2js(input)).to.throws();
+        expect(catchError(() => pine2js(input)).name).to.eq("ErrorUsingUnknownFunction");
     });
 
 });

@@ -5,6 +5,7 @@ import { labelLineNumbers } from "../labelLineNumbers";
 const boxen = require("boxen");
 
 export interface ErrorDetail  {
+    name: string;
     message: string;
     relatedLocation: TokenLocation;
 }

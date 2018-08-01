@@ -1,4 +1,4 @@
-import {AtomicToken, FunctionCall, Variable} from "../ast";
+import {AtomicToken, FunctionCall} from "../ast";
 import {ErrorDetail} from "./errorUtil";
 
 export function ErrorUsingUnknownFunction(relatedFunction: FunctionCall): ErrorDetail {
@@ -10,6 +10,6 @@ export function ErrorUsingUnknownFunction(relatedFunction: FunctionCall): ErrorD
     };
 }
 
-function displayFuncSignature(xs: AtomicToken[]): string {
+export function displayFuncSignature(xs: AtomicToken[]): string {
     return xs.map((x) => x.repr).join(" ");
 }

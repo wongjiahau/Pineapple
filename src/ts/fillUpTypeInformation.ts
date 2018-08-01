@@ -1,4 +1,5 @@
 import {
+    AtomicToken,
     BooleanExpression,
     BranchStatement,
     CompoundType,
@@ -23,6 +24,7 @@ import {
     VariableDeclaration
 } from "./ast";
 
+import { ErrorAccessingInexistentMember } from "./errorType/ErrorAccessingInexistentMember";
 import { ErrorIncorrectTypeGivenForMember } from "./errorType/ErrorIncorrectTypeGivenForMember";
 import { ErrorIncorrectTypeGivenForVariable } from "./errorType/ErrorIncorrectTypeGivenForVariable";
 import { ErrorNoConformingFunction } from "./errorType/ErrorNoConformingFunction";
@@ -285,7 +287,7 @@ export function fillUpExpressionTypeInfo(e: Expression, symbols: SymbolTable):
             [e.subject, symbols] = fillUpExpressionTypeInfo(e.subject, symbols);
             switch (e.subject.returnType.kind) {
             case "StructDeclaration":
-                e.returnType = findMemberType( e.key.repr, e.subject.returnType);
+                e.returnType = findMemberType( e.key, e.subject.returnType);
                 break;
             case "SimpleType":
                 if (e.subject.returnType.name.repr === "Dict") {
@@ -332,13 +334,13 @@ export function checkIfKeyValueListConforms(
     }
 }
 
-export function findMemberType(key: string, structDecl: StructDeclaration): TypeExpression {
+export function findMemberType(key: AtomicToken, structDecl: StructDeclaration): TypeExpression {
     const members = flattenLinkedNode(structDecl.members);
-    const matchingMember = members.filter((x) => x.name.repr === key);
+    const matchingMember = members.filter((x) => x.name.repr === key.repr);
     if (matchingMember.length > 0) {
         return matchingMember[0].expectedType;
     } else {
-        throw new Error(`${structDecl.name.repr} does not have member ${key}`);
+        raise(ErrorAccessingInexistentMember(structDecl, key));
     }
 }
 export function getStruct(name: string, structTab: StructTable): StructDeclaration {
