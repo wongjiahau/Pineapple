@@ -7,6 +7,9 @@ describe("CUR-001", () => {
 `
 def .main
     let x = _.isPrime
+
+def (this Number).isPrime -> Boolean
+    pass
 `;
         const expectedOutput =
 `

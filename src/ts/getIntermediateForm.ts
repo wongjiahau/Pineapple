@@ -1,8 +1,5 @@
 import { Declaration, LinkedNode } from "./ast";
-import { PineError } from "./errorType";
-import { CompileError } from "./errorType/ErrorNoStructRedeclare";
 import { fillUpTypeInformation, FunctionTable, StructTable } from "./fillUpTypeInformation";
-import { generateErrorMessage } from "./generateErrorMessage";
 import { SourceCode } from "./interpreter";
 import { prettyPrint } from "./pine2js";
 import { preprocess } from "./preprocess";
@@ -15,7 +12,7 @@ export function getIntermediateForm(
 ): IntermediateForm {
     try {
         const ast = parser.parse(preprocess(sourceCode.content)) as LinkedNode<Declaration>;
-        // prettyPrint(ast, true);
+        prettyPrint(ast, true);
         const [newAst, newFuncTab, newTypeTree, newStructTab] = fillUpTypeInformation(
             flattenLinkedNode(ast),
             prevIntermediate.funcTab,

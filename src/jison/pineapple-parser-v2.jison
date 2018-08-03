@@ -98,15 +98,6 @@ const _FunctionCall = (fix,signature,parameters,location) => ({
     location
 });
 
-const _CurriedMonoFunc = (signature) => ({kind: "CurriedMonoFunc", signature});
-
-const _CurriedOperatorFunc = (leftOperand,signature,rightOperand) => ({
-    kind: "CurriedOperatorFunc",
-    leftOperand,
-    signature,
-    rightOperand
-});
-
 const _FunctionType = (inputType, outputType) => ({
     kind: "FunctionType",
     inputType,
@@ -146,6 +137,11 @@ const _BooleanExpression = (repr,location) => ({kind:"Boolean", repr, location})
 const _JavascriptCode = (repr,location) => ({kind:"JavascriptCode",repr, location});
 
 const _Token = (repr, location) => ({repr, location});
+
+const _AnonymousExpression = (location) => ({
+    kind: "AnonymousExpression",
+    location
+});
 
 %}
 
@@ -422,7 +418,6 @@ MultilineExpr
 SinglelineExpr
     : AtomicExpr
     | OperatorFuncCall
-    | CurriedOperatorFunc
     ;
 
 OperatorFuncCall
@@ -463,30 +458,13 @@ AtomicExpr
     | ListAccess
     | ListSlicing
     | AtomicFuncCall
-    | CurriedFunc 
     | BooleanAtom
     | StringAtom
     | NumberAtom
     | VariableAtom
+    | AnonymousExpression
     | NIL
     ;
-
-CurriedFunc
-    : CurriedMonoFunc 
-    | CurriedBiFunc
-    | CurriedTriFunc
-    ;
-
-CurriedMonoFunc
-    : '_' FuncAtom {$$=_CurriedMonoFunc([$2])}
-    ;
-
-CurriedOperatorFunc
-    : '_' OperatorAtom AtomicExpr   {$$=_CurriedOperatorFunc(null,[$2],$3)},
-    | AtomicExpr OperatorAtom '_'   {$$=_CurriedOperatorFunc($1,[$2],null)},
-    | '_' OperatorAtom '_'          {$$=_CurriedOperatorFunc(null,[$2],null)},
-    ;
-
 
 ListAccess
     : AtomicExpr '[' SinglelineExpr ']' {$$=_ListAccess($1,$3)}
@@ -608,4 +586,8 @@ JavascriptCodeAtom
 LogicOperatorAtom
     : AND {$$=_Token($1, this._$)}
     | OR  {$$=_Token($1, this._$)}
+    ;
+
+AnonymousExpression
+    : '_' {$$=_AnonymousExpression(this._$)}
     ;

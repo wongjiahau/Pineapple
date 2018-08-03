@@ -142,28 +142,20 @@ export type Expression
     | ObjectAccess
     | ListExpression // a.k.a. Array
     | ListAccess
-    | CurriedFunc
+    | AnonymousExpression
+    | Lambda
     ;
 
-export type CurriedFunc
-    = CurriedMonoFunc
-    | CurriedOperatorFunc
-    // | CurriedBiFunc
-    // | CurriedTriFunc
-    ;
-
-export interface CurriedOperatorFunc {
-    kind: "CurriedOperatorFunc";
-    leftOperand: Expression | null;
-    signature: AtomicToken[];
-    rightOperand: Expression | null;
+export interface AnonymousExpression {
+    kind: "AnonymousExpression";
+    position: 0 | 1 | 2 | 3 | 4 | 5;
+    location: TokenLocation;
     returnType: TypeExpression;
 }
 
-export interface CurriedMonoFunc {
-    kind: "CurriedMonoFunc";
-    signature: AtomicToken[];
-    returnType: TypeExpression;
+export interface Lambda {
+    kind: "Lambda";
+    // placeholders:
 }
 
 export type FunctionAffix = "nofix" | "prefix" | "suffix" | "infix" | "mixfix";

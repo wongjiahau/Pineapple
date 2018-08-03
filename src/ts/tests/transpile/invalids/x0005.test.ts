@@ -9,7 +9,7 @@ describe("x0005", () => {
 def .main
     let x = [1,2,3].append("1")
 
-def (this T[]).append(that T) -> T[]
+def (this List{T}).append(that T) -> List{T}
     pass
 `;
         expect(catchError(() => pine2js(input)).name).to.eq("ErrorNoConformingFunction");
