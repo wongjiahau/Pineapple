@@ -12,7 +12,7 @@ export function getIntermediateForm(
 ): IntermediateForm {
     try {
         const ast = parser.parse(preprocess(sourceCode.content)) as LinkedNode<Declaration>;
-        prettyPrint(ast, true);
+        // prettyPrint(ast, true);
         const [newAst, newFuncTab, newTypeTree, newStructTab] = fillUpTypeInformation(
             flattenLinkedNode(ast),
             prevIntermediate.funcTab,

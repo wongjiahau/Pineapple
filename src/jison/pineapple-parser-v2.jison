@@ -5,7 +5,7 @@ const _LinkedNode = (current, next) => ({current, next});
 
 const _PassStatement = () => ({ kind: "PassStatement" });
 
-const _ReturnStatement = (expression) => ({ kind: "ReturnStatement", expression});
+const _ReturnStatement = (expression,location) => ({ kind: "ReturnStatement", expression, location});
 
 const _FunctionDeclaration = (signature,returnType,parameters,statements,affix) => ({
     kind: "FunctionDeclaration",
@@ -333,7 +333,7 @@ Statement
     ;
 
 ReturnStatement
-    : RETURN SinglelineExpr {$$=_ReturnStatement($2)}
+    : RETURN SinglelineExpr {$$=_ReturnStatement($2, this._$)}
     ;
 
 ForStatement

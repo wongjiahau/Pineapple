@@ -84,6 +84,7 @@ export interface TestExpression {
 export interface ReturnStatement {
     kind: "ReturnStatement";
     expression: Expression;
+    location: TokenLocation;
 }
 
 export interface AssignmentStatement {
@@ -155,7 +156,8 @@ export interface AnonymousExpression {
 
 export interface Lambda {
     kind: "Lambda";
-    // placeholders:
+    returnType: TypeExpression;
+    // placeholders: //TODO: Complete this
 }
 
 export type FunctionAffix = "nofix" | "prefix" | "suffix" | "infix" | "mixfix";

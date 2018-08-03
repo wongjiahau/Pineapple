@@ -15,6 +15,7 @@ import {
     MemberDefinition,
     NullTokenLocation,
     NumberExpression,
+    ReturnStatement,
     Statement,
     StringExpression,
     StructDeclaration,
@@ -32,6 +33,7 @@ import { ErrorIncorrectTypeGivenForVariable } from "./errorType/ErrorIncorrectTy
 import { ErrorMissingMember } from "./errorType/ErrorMissingMember";
 import { ErrorNoConformingFunction } from "./errorType/ErrorNoConformingFunction";
 import { ErrorNoStructRedeclare } from "./errorType/ErrorNoStructRedeclare";
+import { ErrorUnmatchingReturnType } from "./errorType/ErrorUnmatchingReturnType";
 import { ErrorUsingUndefinedStruct } from "./errorType/ErrorUsingUndefinedStruct";
 import { ErrorUsingUnknownFunction } from "./errorType/ErrorUsingUnknownFunction";
 import { ErrorDetail, renderError } from "./errorType/errorUtil";
@@ -80,6 +82,7 @@ export function fillUpTypeInformation(
                 const [statements, newSymbols] = fillUp(currentDecl.statements, symbols);
                 currentDecl.statements = statements;
                 funcTab = newSymbols.functab;
+                verifyFunctionDeclaration(currentDecl);
                 break;
             case "StructDeclaration":
                 prevTypeTree = insertChild(currentDecl, newSimpleType("Object"), prevTypeTree);
@@ -114,6 +117,18 @@ export function newFunctionTable(newFunc: FunctionDeclaration, previousFuncTab: 
         previousFuncTab[key].push(newFunc);
     }
     return previousFuncTab;
+}
+
+export function verifyFunctionDeclaration(f: FunctionDeclaration) {
+    // Check if return statements are correct
+    const returnStatements =
+        flattenLinkedNode(f.statements).filter((x) => x.kind === "ReturnStatement") as ReturnStatement[];
+    for (let i = 0; i < returnStatements.length; i++) {
+        const r = returnStatements[i];
+        if (!typeEquals(r.expression.returnType, f.returnType)) {
+            raise(ErrorUnmatchingReturnType(r, f.returnType));
+        }
+    }
 }
 
 export function functionEqual(x: FunctionDeclaration, y: FunctionDeclaration): boolean {
