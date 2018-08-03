@@ -1,5 +1,6 @@
 import { Declaration, LinkedNode } from "./ast";
-import { fillUpTypeInformation, FunctionTable, StructTable } from "./fillUpTypeInformation";
+import { ErrorSyntax } from "./errorType/ErrorSyntax";
+import { fillUpTypeInformation, FunctionTable, raise, StructTable } from "./fillUpTypeInformation";
 import { SourceCode } from "./interpreter";
 import { prettyPrint } from "./pine2js";
 import { preprocess } from "./preprocess";
@@ -27,20 +28,16 @@ export function getIntermediateForm(
             syntaxTrees: prevIntermediate.syntaxTrees.concat(newAst),
             importedFiles: prevIntermediate.importedFiles.concat([sourceCode.filename])
         };
-    } catch (e) {
-        const error = (e as CompileError);
-        // error.setSourceCode(sourceCode);
-        // const error = (e as PineError);
-        // if (error.rawError) {
-        //     error.errorMessage =
-        //         generateErrorMessage(
-        //             sourceCode.content,
-        //             error.rawError,
-        //             sourceCode.filename
-        //         );
-        // }
-        throw error;
+    } catch (error) {
+        if (isSyntaxError(error)) {
+            raise(ErrorSyntax(error.hash), sourceCode);
+        }
+        throw error; // Will be caught by interpreter.ts
     }
+}
+
+function isSyntaxError(error: any) {
+    return error.hash !== undefined;
 }
 
 export function initialIntermediateForm(): IntermediateForm {

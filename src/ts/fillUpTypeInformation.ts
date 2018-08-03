@@ -183,8 +183,8 @@ function updateVariableTable(vtab: VariableTable, variable: Variable): VariableT
     return vtab;
 }
 
-function raise(errorDetail: ErrorDetail) {
-    const e = Error(renderError(CURRENT_SOURCE_CODE(), errorDetail));
+export function raise(errorDetail: ErrorDetail, sourceCode: SourceCode = CURRENT_SOURCE_CODE()) {
+    const e = Error(renderError(sourceCode, errorDetail));
     e.name = errorDetail.name;
     throw e;
 }
