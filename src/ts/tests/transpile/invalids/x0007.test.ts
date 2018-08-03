@@ -13,7 +13,7 @@ def .main
 
     let y = x'name
 `;
-        expect(catchError(() => pine2js(input)).name).to.eq("ErrorUsingUnknownFunction");
+        expect(catchError(() => pine2js(input)).name).to.eq("ErrorUsingUndefinedStruct");
     });
 
 });

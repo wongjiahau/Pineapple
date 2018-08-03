@@ -100,7 +100,12 @@ export type TypeExpression
     | FunctionType
     | GenericType
     | StructDeclaration
+    | VoidType
     ;
+
+export interface VoidType {
+    kind: "VoidType";
+}
 
 export interface SimpleType {
     kind: "SimpleType";

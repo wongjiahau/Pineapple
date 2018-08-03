@@ -25,12 +25,14 @@ import {
 } from "./ast";
 
 import { ErrorAccessingInexistentMember } from "./errorType/ErrorAccessingInexistentMember";
+import { ErrorDuplicatedMember } from "./errorType/ErrorDuplicatedMember";
 import { ErrorExtraMember } from "./errorType/ErrorExtraMember";
 import { ErrorIncorrectTypeGivenForMember } from "./errorType/ErrorIncorrectTypeGivenForMember";
 import { ErrorIncorrectTypeGivenForVariable } from "./errorType/ErrorIncorrectTypeGivenForVariable";
 import { ErrorMissingMember } from "./errorType/ErrorMissingMember";
 import { ErrorNoConformingFunction } from "./errorType/ErrorNoConformingFunction";
 import { ErrorNoStructRedeclare } from "./errorType/ErrorNoStructRedeclare";
+import { ErrorUsingUndefinedStruct } from "./errorType/ErrorUsingUndefinedStruct";
 import { ErrorUsingUnknownFunction } from "./errorType/ErrorUsingUnknownFunction";
 import { ErrorDetail, renderError } from "./errorType/errorUtil";
 import { ErrorVariableRedeclare } from "./errorType/ErrorVariableRedeclare";
@@ -40,7 +42,6 @@ import { prettyPrint } from "./pine2js";
 import { stringifyFuncSignature, stringifyType } from "./transpile";
 import { childOf, insertChild, newSimpleType, TypeTree } from "./typeTree";
 import { find } from "./util";
-import { ErrorDuplicatedMember } from "./errorType/ErrorDuplicatedMember";
 
 let CURRENT_SOURCE_CODE: () => SourceCode;
 export function fillUpTypeInformation(
@@ -101,6 +102,9 @@ export function newStructTab(s: StructDeclaration, structTab: StructTable): Stru
 
 export function newFunctionTable(newFunc: FunctionDeclaration, previousFuncTab: FunctionTable): FunctionTable {
     const key = stringifyFuncSignature(newFunc.signature);
+    if (newFunc.returnType === null) {
+        newFunc.returnType = {kind: "VoidType"};
+    }
     if (!previousFuncTab[key]) {
         previousFuncTab[key] = [];
     }
@@ -279,7 +283,7 @@ export function fillUpExpressionTypeInfo(e: Expression, symbols: SymbolTable):
             break;
         case "ObjectExpression":
             if (e.constructor !== null) {
-                e.returnType = getStruct(e.constructor.repr, symbols.structTab);
+                e.returnType = getStruct(e.constructor, symbols.structTab);
                 [e.keyValueList, symbols] = fillUpKeyValueListTypeInfo(e.keyValueList, symbols);
                 checkIfKeyValueListConforms(e.keyValueList, e.returnType);
             } else {
@@ -356,12 +360,12 @@ export function findMemberType(key: AtomicToken, structDecl: StructDeclaration):
         raise(ErrorAccessingInexistentMember(structDecl, key));
     }
 }
-export function getStruct(name: string, structTab: StructTable): StructDeclaration {
-    const result = structTab[name];
+export function getStruct(name: AtomicToken, structTab: StructTable): StructDeclaration {
+    const result = structTab[name.repr];
     if (result !== undefined) {
         return result;
     } else {
-        throw new Error(`Cannot find struct ${name}`);
+        raise(ErrorUsingUndefinedStruct(name, structTab));
     }
 }
 

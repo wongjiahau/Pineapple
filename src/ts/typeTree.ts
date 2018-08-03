@@ -1,4 +1,4 @@
-import {CompoundType, SimpleType, TypeExpression} from "./ast";
+import {CompoundType, NullTokenLocation, SimpleType, TypeExpression} from "./ast";
 import { typeEquals } from "./fillUpTypeInformation";
 
 export interface TypeTree {
@@ -78,7 +78,7 @@ export function newSimpleType(name: string): SimpleType {
         kind: "SimpleType",
         name: {
             repr: name,
-            location: null
+            location: NullTokenLocation()
         },
         nullable: false
     };
@@ -88,7 +88,7 @@ export function newListType(arrayOfWhat: TypeExpression): CompoundType {
     return {
         name: {
             repr: "List",
-            location: null
+            location: NullTokenLocation()
         },
         kind: "CompoundType" ,
         of: {

@@ -182,6 +182,8 @@ export function stringifyType(t: TypeExpression): string {
             return `Generic$${t.placeholder.repr}`;
         case "StructDeclaration":
             return `Struct${t.name.repr}`;
+        case "VoidType":
+            return `Void`;
     }
 }
 

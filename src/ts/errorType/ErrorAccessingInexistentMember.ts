@@ -1,7 +1,6 @@
-import levenshtein from "fast-levenshtein";
-
-import { AtomicToken, MemberDefinition, StructDeclaration } from "../ast";
+import { AtomicToken, StructDeclaration } from "../ast";
 import { flattenLinkedNode } from "../getIntermediateForm";
+import { findSimilarStrings } from "../util";
 import { ErrorDetail } from "./errorUtil";
 
 export function ErrorAccessingInexistentMember(
@@ -9,7 +8,7 @@ export function ErrorAccessingInexistentMember(
     inexistentKey: AtomicToken
 ): ErrorDetail {
     const keys = flattenLinkedNode(relatedStruct.members);
-    const similarKeys = findSimilarKeys(inexistentKey, keys);
+    const similarKeys = findSimilarStrings(inexistentKey.repr, keys.map((x) => x.name.repr));
 
     return {
         name: "ErrorAccessingInexistentMember",
@@ -22,15 +21,4 @@ ${similarKeys.map((x) => "  " + x).join("\n")}
 `,
         relatedLocation: inexistentKey.location
     };
-}
-
-function findSimilarKeys(matcher: AtomicToken, availableKeys: MemberDefinition[]): string[] {
-    const result: string[] = [];
-    const acceptedDistance = matcher.repr.length / 2;
-    for (let i = 0; i < availableKeys.length; i++) {
-        if (levenshtein.get(matcher.repr, availableKeys[i].name.repr) <= acceptedDistance) {
-            result.push(availableKeys[i].name.repr);
-        }
-    }
-    return result;
 }
