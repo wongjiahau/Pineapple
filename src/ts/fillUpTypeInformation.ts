@@ -26,6 +26,7 @@ import {
 } from "./ast";
 
 import { ErrorAccessingInexistentMember } from "./errorType/ErrorAccessingInexistentMember";
+import { ErrorAssigningToImmutableVariable } from "./errorType/ErrorAssigningToImmutableVariable";
 import { ErrorDuplicatedMember } from "./errorType/ErrorDuplicatedMember";
 import { ErrorExtraMember } from "./errorType/ErrorExtraMember";
 import { ErrorIncorrectTypeGivenForMember } from "./errorType/ErrorIncorrectTypeGivenForMember";
@@ -150,6 +151,7 @@ export function getVariableTable(variables: VariableDeclaration[]): VariableTabl
     const result: VariableTable = {};
     for (let i = 0; i < variables.length; i++) {
         variables[i].variable.returnType = variables[i].typeExpected;
+        variables[i].variable.isMutable = variables[i].isMutable;
         result[variables[i].variable.repr] = variables[i].variable;
     }
     return result;
@@ -210,10 +212,14 @@ export function fillUp(s: LinkedNode<Statement>, symbols: SymbolTable):
                     raise(ErrorIncorrectTypeGivenForVariable(s.current.variable, s.current.expression.returnType));
                 }
             }
+            s.current.variable.variable.isMutable = s.current.variable.isMutable;
             symbols.vartab = updateVariableTable(symbols.vartab, s.current.variable.variable);
             break;
         case "Variable":
             const matching = symbols.vartab[s.current.variable.repr];
+            if (!matching.isMutable) {
+                raise(ErrorAssigningToImmutableVariable(s.current.variable));
+            }
             [s.current.expression, symbols] = fillUpExpressionTypeInfo(s.current.expression, symbols);
             if (!typeEquals(matching.returnType, s.current.expression.returnType)) {
                 errorMessage(

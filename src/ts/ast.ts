@@ -91,7 +91,6 @@ export interface AssignmentStatement {
     kind: "AssignmentStatement";
     variable: Variable | VariableDeclaration;
     isDeclaration: boolean;
-    isMutable: boolean;
     expression: Expression;
 }
 
@@ -181,11 +180,13 @@ export interface ListAccess {
 export interface VariableDeclaration {
     kind: "VariableDeclaration";
     variable: Variable;
+    isMutable: boolean;
     typeExpected: TypeExpression; // This info is captured by parser
 }
 
 export interface Variable extends AtomicToken {
     kind: "Variable";
+    isMutable: boolean;
     returnType: TypeExpression; // This info should be fill in by type checker
 }
 

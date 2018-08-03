@@ -53,18 +53,18 @@ const _ImportDeclaration = (filename) => ({
     filename,
 });
 
-const _AssignmentStatement = (variable, isDeclaration, isMutable, expression) => ({
+const _AssignmentStatement = (variable, isDeclaration, expression) => ({
     kind: "AssignmentStatement",
     variable,
     isDeclaration,
-    isMutable,
     expression
 });
 
-const _VariableDeclaration = (variable, typeExpected) => ({
+const _VariableDeclaration = (variable, typeExpected, isMutable=false) => ({
     kind: "VariableDeclaration",
     variable,
     typeExpected,
+    isMutable
 });
 
 const _Variable = (repr,location) => ({
@@ -368,14 +368,15 @@ Test
     ;
 
 AssignmentStatement
-    : LET VarDecl ASSIGN_OP MultilineExpr         {$$=_AssignmentStatement($2,true,false,$4)}
-    | LET VarDecl MUTABLE ASSIGN_OP MultilineExpr {$$=_AssignmentStatement($2,true,true,$5)}
-    | VariableAtom ASSIGN_OP MultilineExpr        {$$=_AssignmentStatement($1,false,null,$3)}
+    : LET VarDecl ASSIGN_OP MultilineExpr         {$$=_AssignmentStatement($2,true,$4)}
+    | VariableAtom ASSIGN_OP MultilineExpr        {$$=_AssignmentStatement($1,false,$3)}
     ;
 
 VarDecl /* Variable declaration */
     : VariableAtom                          {$$=_VariableDeclaration($1,null)}
+    | VariableAtom MUTABLE                  {$$=_VariableDeclaration($1,null,true)}
     | VariableAtom TypeExpression           {$$=_VariableDeclaration($1,$2)}
+    | VariableAtom TypeExpression MUTABLE   {$$=_VariableDeclaration($1,$2,true)}
     | '(' VariableAtom ')'                  {$$=_VariableDeclaration($2,null)}
     | '(' VariableAtom TypeExpression ')'   {$$=_VariableDeclaration($2,$3)}
     ;
