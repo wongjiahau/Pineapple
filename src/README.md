@@ -10,9 +10,9 @@ npm i -g typescript --save
 ```
 
 ## 2. Generate the parser
-```
-cd ./src/jison
-jison pineapple-parser-v2.jison
+```sh
+## Generate parser based on grammar.js
+./rebuild.sh
 ```
 
 ## 3. Run the typescript transipler for REPL
