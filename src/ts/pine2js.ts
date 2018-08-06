@@ -23,19 +23,19 @@ export function pine2js(input: string, filename: string= ""): string {
     // source += transpile(intermediateForm.funcTab)
 }
 
-export function prettyPrint(ast: any, removeLocation: boolean): void {
+export function prettyPrint(tree: any, removeLocation: boolean): void {
     if (removeLocation) {
-        ast = removeTokenLocation(ast);
+        tree = removeProperty(tree, "location");
     }
-    console.log(JSON.stringify(ast, null, 2));
+    console.log(JSON.stringify(tree, null, 2));
 }
 
-function removeTokenLocation(ast: any): any {
+export function removeProperty(ast: any, propertyName: string): any {
     for (const key in ast) {
-        if (key === "location") {
+        if (key === propertyName) {
             delete ast[key];
         } else if (typeof(ast[key]) === "object") {
-            ast[key] = removeTokenLocation(ast[key]);
+            ast[key] = removeProperty(ast[key], propertyName);
         }
     }
     return ast;

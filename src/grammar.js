@@ -11,16 +11,16 @@ extras: $ => [$.comment, /\s/],
  */
 rules: {
 // program
-program: $ => repeat1(choice(
+program: $ => seq(repeat1(choice(
     $.ImportDecl,
     $.StructDecl,
     $.FuncDecl,
-)),
+)), "@EOF"),
 ImportDecl: $ => seq(
-    $.IMPORT, $.string, $.NEWLINE
+    $.IMPORT, $.string, "@NEWLINE"
 ),
 StructDecl: $ => seq(
-    $.DEF, $.typename, $.NEWLINE, $.INDENT, repeat1(seq($.membername, $.TypeExpression)), $.DEDENT
+    $.DEF, $.typename, "@NEWLINE", "@INDENT", repeat1(seq($.membername, $.TypeExpression)), "@DEDENT"
 ),
 FuncDecl: $ => choice(
     // Nullifunc declaration
@@ -42,9 +42,9 @@ FuncDecl: $ => choice(
     seq($.DEF, $.VarDecl, $.funcname, "(", $.VarDecl, $.subfuncname, $.VarDecl, ")", $.Block),
 ),
 Block: $ => choice(
-    seq($.NEWLINE, $.INDENT, repeat1($.Statement), $.DEDENT),
-    seq($.NEWLINE, $.INDENT, $.javascriptSnippet, $.NEWLINE, $.DEDENT),
-    seq($.NEWLINE, $.INDENT, $.PASS, $.NEWLINE, $.DEDENT),
+    seq("@NEWLINE", "@INDENT", repeat1($.Statement), "@DEDENT"),
+    seq("@NEWLINE", "@INDENT", $.javascriptSnippet, "@NEWLINE", "@DEDENT"),
+    seq("@NEWLINE", "@INDENT", $.PASS, "@NEWLINE", "@DEDENT"),
 ),
 Statement: $ => choice(
     // Variable initialization
@@ -54,7 +54,7 @@ Statement: $ => choice(
     seq($.variable, "=", $.MultilineExpr),
 
     // Return statement
-    seq($.RETURN, $.SinglelineExpr, $.NEWLINE),
+    seq($.RETURN, $.SinglelineExpr, "@NEWLINE"),
 
     // For statement
     seq($.FOR, $.variable, $.IN, $.SinglelineExpr, $.Block),
@@ -63,7 +63,7 @@ Statement: $ => choice(
     seq($.WHILE, $.Test, $.Block),
 
     // Returnless function call
-    seq($.AtomicFuncCall, $.NEWLINE),
+    seq($.AtomicFuncCall, "@NEWLINE"),
 
     $.IfStatement
 ),
@@ -99,7 +99,7 @@ MultilineExpr: $ => choice(
     $.MultilineObject,
     $.MultilineDictionary,
     $.MultilineList,
-    $.SinglelineExpr, $.NEWLINE
+    $.SinglelineExpr, "@NEWLINE"
 ),
 SinglelineExpr: $ => prec.left(1, choice(
     $.AtomicExpr,
@@ -139,13 +139,13 @@ ObjectAccessExpr: $ => seq(
     $.AtomicExpr, $.membername
 ),
 MultilineObject: $ => seq(
-    $.typename, $.NEWLINE, $.INDENT, repeat($.MultilineObjectKeyValue), $.DEDENT
+    $.typename, "@NEWLINE", "@INDENT", repeat($.MultilineObjectKeyValue), "@DEDENT"
 ),
 MultilineObjectKeyValue: $ => seq(
     $.membername, "=", $.MultilineExpr
 ),
 MultilineDictionary: $ => seq(
-    $.NEWLINE, $.INDENT, repeat1($.MultilineDictKeyValue), $.DEDENT
+    "@NEWLINE", "@INDENT", repeat1($.MultilineDictKeyValue), "@DEDENT"
 ),
 MultilineDictKeyValue: $ => seq(
     $.string, "=", $.MultilineExpr
@@ -154,11 +154,11 @@ SinglelineList: $ => seq(
     "[", repeat($.AtomicExpr), "]",
 ),
 MultilineList: $ => seq(
-    $.NEWLINE, $.INDENT, repeat1(seq("o", $.SinglelineExpr, $.NEWLINE)), $.DEDENT
+    "@NEWLINE", "@INDENT", repeat1(seq("o", $.SinglelineExpr, "@NEWLINE")), "@DEDENT"
 ),
 
 // keywords
-DEF:     $ => "def",
+DEF:        $ => "def",
 IMPORT:     $ => "import",
 PASS:       $ => "pass",
 RETURN:     $ => "return",
@@ -186,11 +186,6 @@ funcname:           $ => /[.]([a-zA-Z][a-zA-Z0-9]*)?/,
 subfuncname:        $ => /([a-zA-Z][a-zA-Z0-9]*)?[:]/,
 membername:         $ => /['][a-z][a-zA-Z0-9]*/,
 operator:           $ => /[-!$%^@&*+|~=`;<>?,.\/]+/,
-
-// hidden-symbols
-NEWLINE:    $ => "@NEWLINE",
-INDENT:     $ => "@INDENT",
-DEDENT:     $ => "@DEDENT",
 
 // predefined symbols
 ARROW:      $ => "->",
