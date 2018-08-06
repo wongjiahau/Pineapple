@@ -73,7 +73,6 @@ const _Variable = (repr,location) => ({
     location
 });
 
-const _ListAccess = (subject, index) => ({ kind: "ListAccess", subject, index });
 
 const _SimpleType = (name, nullable) => ({ kind: "SimpleType", name, nullable});
 
@@ -209,8 +208,8 @@ const _AnonymousExpression = (location) => ({
 "nil"                                       return 'NIL'
 
 // Identifiers
-[.][a-z][a-zA-Z0-9]*            return 'FUNCNAME'    
-[a-z][a-zA-Z0-9]*[:]            return 'SUBFUNCNAME'    
+[.]([a-z][a-zA-Z0-9]*)?         return 'FUNCNAME'    
+([a-z][a-zA-Z0-9]*)?[:]         return 'SUBFUNCNAME'    
 [T][12]?                        return 'GENERICTYPENAME'
 [A-Z][a-zA-Z0-9]*               return 'TYPENAME'
 [a-z][a-zA-Z]*                  return 'VARNAME'
@@ -456,8 +455,6 @@ AtomicExpr
     // | SinglelineObject /* temporarily disable, unless its use case is justified*/
     | ObjectAccessExpr
     | SinglelineList
-    | ListAccess
-    | ListSlicing
     | AtomicFuncCall
     | BooleanAtom
     | StringAtom
@@ -465,18 +462,6 @@ AtomicExpr
     | VariableAtom
     | AnonymousExpression
     | NIL
-    ;
-
-ListAccess
-    : AtomicExpr '[' SinglelineExpr ']' {$$=_ListAccess($1,$3)}
-    ;
-
-ListSlicing
-    : AtomicExpr '.{..<' SinglelineExpr '}' 
-    | AtomicExpr '.{..' SinglelineExpr  '}' 
-    | AtomicExpr '.{' SinglelineExpr  '..}'
-    | AtomicExpr '.{' SinglelineExpr  '..' SinglelineExpr  '}' 
-    | AtomicExpr '.{' SinglelineExpr  '..<' SinglelineExpr '}' 
     ;
 
 ObjectAccessExpr

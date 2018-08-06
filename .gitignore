@@ -2,3 +2,5 @@
 **/node_modules/**
 pineapple-parser.js
 pineapple-parser-v2.js
+src/build
+src/src
