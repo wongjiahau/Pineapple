@@ -256,6 +256,7 @@ ImportDeclaration
 
 StructDeclaration
     : DEF TypenameAtom NEWLINE INDENT MembernameTypeList DEDENT {$$=_StructDeclaration($2,$5)}
+    | DEF TypenameAtom NEWLINE INDENT PASS NEWLINE DEDENT {$$=_StructDeclaration($2,null)}
     ;
 
 MembernameTypeList
@@ -458,7 +459,8 @@ ObjectAccessExpr
     ;
 
 MultilineObject
-    : TypenameAtom NEWLINE INDENT MultilineObjectKeyValueList DEDENT {$$=_ObjectExpr($1,$4)}
+    : TypenameAtom NEWLINE {$$=_ObjectExpr($1,null)}
+    | TypenameAtom NEWLINE INDENT MultilineObjectKeyValueList DEDENT {$$=_ObjectExpr($1,$4)}
     ;
 
 MultilineObjectKeyValueList

@@ -6,8 +6,6 @@ import {
     AtomicToken,
     BooleanExpression,
     BranchStatement,
-    CurriedMonoFunc,
-    CurriedOperatorFunc,
     Declaration,
     Expression,
     ForStatement,
@@ -17,7 +15,6 @@ import {
     JavascriptCode,
     KeyValue,
     LinkedNode,
-    ListAccess,
     ListExpression,
     NumberExpression,
     ObjectAccess,
@@ -174,10 +171,7 @@ export function stringifyType(t: TypeExpression): string {
         case "SimpleType":
             return t.name.repr;
         case "CompoundType" :
-            // console.log(t);
             return t.name.repr + "Of" + flattenLinkedNode(t.of).map((x) => stringifyType(x)).join("$");
-        case "FunctionType":
-            return `Func$${t.inputType.map(stringifyType).join("$")}$${stringifyType(t.outputType)}`;
         case "GenericType":
             return `Generic$${t.placeholder.repr}`;
         case "StructDeclaration":
@@ -213,36 +207,14 @@ export function tpExpression(e: Expression): string {
         case "ObjectExpression":    return tpObjectExpression(e);
         case "List":                return tpArrayExpression(e);
         case "Boolean":             return tpBooleanExpression(e);
-        case "ListAccess":          return tpArrayAccess(e);
-        case "CurriedMonoFunc":     return tpCurriedMonoFunc(e);
-        case "CurriedOperatorFunc": return tpCurriedOperatorFunc(e);
         case "ObjectAccess":        return tpObjectAccess(e);
+        default:
+            throw new Error(`Cannot handle ${e.kind} yet`);
     }
 }
 
 export function tpObjectAccess(o: ObjectAccess): string {
     return `${tpExpression(o.subject)}.${o.key.repr.slice(1)}`;
-}
-
-export function tpCurriedOperatorFunc(e: CurriedOperatorFunc): string {
-    const signature = stringifyFuncSignature(e.signature);
-    if (!e.leftOperand && e.rightOperand) {
-        return `(($$0) => ${signature}($$0, ${tpExpression(e.rightOperand)}))`;
-    } else if (e.leftOperand && !e.rightOperand) {
-        return `(($$0) => ${signature}(${tpExpression(e.leftOperand)}, $$0))`;
-    } else if (e.leftOperand === null && e.rightOperand === null) {
-        return `(($$0,$$1) => ${signature}($$0,$$1))`;
-    } else {
-        throw new Error("LeftOperatnd and RightOperand can't be not null together");
-    }
-}
-
-export function tpCurriedMonoFunc(e: CurriedMonoFunc): string {
-    return `(($$0) => ${stringifyFuncSignature(e.signature)}($$0))`;
-}
-
-export function tpArrayAccess(a: ListAccess): string {
-    return `${tpExpression(a.subject)}[${tpExpression(a.index)}]`;
 }
 
 export function tpJavascriptCode(s: JavascriptCode): string {
@@ -269,17 +241,6 @@ export function tpArrayExpression(e: ListExpression): string {
     } else {
         return `[]`;
     }
-    // The following code is pending
-    // Because is it necessary to have the typename included?
-    // For example, new ArrayOfNumber([1,2,3])
-    // Is that necessary?
-    const typename = stringifyType(e.returnType);
-    const elements = e.elements;
-    if (elements !== null) {
-        return `(new ${typename}([${tpListElements(elements)}]))`;
-    } else {
-        return `(new ${typename}([]))`;
-    }
 }
 
 export function tpListElements(e: LinkedNode<Expression>): string {
@@ -288,11 +249,15 @@ export function tpListElements(e: LinkedNode<Expression>): string {
 
 export function tpObjectExpression(e: ObjectExpression): string {
     return `{
+${e.constructor !== null ? `kind: "${e.constructor.repr}"` : ""}
 ${tpKeyValueList(e.keyValueList)}
 }`;
 }
 
-export function tpKeyValueList(e: LinkedNode<KeyValue>): string {
+export function tpKeyValueList(e: LinkedNode<KeyValue> | null): string {
+    if (e === null) {
+        return "";
+    }
     return e.current.memberName.repr.slice(1)
         + " : "
         + tpExpression(e.current.expression)
