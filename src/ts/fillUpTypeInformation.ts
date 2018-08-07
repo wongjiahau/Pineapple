@@ -10,9 +10,7 @@ import {
     FunctionDeclaration,
     KeyValue,
     LinkedNode,
-    ListAccess,
     ListExpression,
-    MemberDefinition,
     NullTokenLocation,
     NumberExpression,
     ReturnStatement,
@@ -20,23 +18,24 @@ import {
     StringExpression,
     StructDeclaration,
     TestExpression,
+    TokenLocation,
     TypeExpression,
     Variable,
     VariableDeclaration
 } from "./ast";
 
-import { ErrorAccessingInexistentMember } from "./errorType/ErrorAccessingInexistentMember";
-import { ErrorAssigningToImmutableVariable } from "./errorType/ErrorAssigningToImmutableVariable";
-import { ErrorDuplicatedMember } from "./errorType/ErrorDuplicatedMember";
-import { ErrorExtraMember } from "./errorType/ErrorExtraMember";
-import { ErrorIncorrectTypeGivenForMember } from "./errorType/ErrorIncorrectTypeGivenForMember";
-import { ErrorIncorrectTypeGivenForVariable } from "./errorType/ErrorIncorrectTypeGivenForVariable";
-import { ErrorMissingMember } from "./errorType/ErrorMissingMember";
-import { ErrorNoConformingFunction } from "./errorType/ErrorNoConformingFunction";
-import { ErrorNoStructRedeclare } from "./errorType/ErrorNoStructRedeclare";
-import { ErrorUnmatchingReturnType } from "./errorType/ErrorUnmatchingReturnType";
-import { ErrorUsingUndefinedStruct } from "./errorType/ErrorUsingUndefinedStruct";
-import { ErrorUsingUnknownFunction } from "./errorType/ErrorUsingUnknownFunction";
+import { ErrorAccessingInexistentMember } from "./errorType/E0001-AccessingInexistentMember";
+import { ErrorAssigningToImmutableVariable } from "./errorType/E0002-AssigningToImmutableVariable";
+import { ErrorDuplicatedMember } from "./errorType/E0003-DuplicatedMember";
+import { ErrorExtraMember } from "./errorType/E0004-ExtraMember";
+import { ErrorIncorrectTypeGivenForMember } from "./errorType/E0005-IncorrectTypeGivenForMember";
+import { ErrorIncorrectTypeGivenForVariable } from "./errorType/E0006-IncorrectTypeGivenForVariable";
+import { ErrorMissingMember } from "./errorType/E0007-ErrorMissingMember";
+import { ErrorNoConformingFunction } from "./errorType/E0008-NoConformingFunction";
+import { ErrorNoStructRedeclare } from "./errorType/E0009-NoStructRedeclare";
+import { ErrorUnmatchingReturnType } from "./errorType/E0011-UnmatchingReturnType";
+import { ErrorUsingUndefinedStruct } from "./errorType/E0012-UsingUndefinedStruct";
+import { ErrorUsingUnknownFunction } from "./errorType/E0013-UsingUnknownFunction";
 import { ErrorDetail, renderError } from "./errorType/errorUtil";
 import { ErrorVariableRedeclare } from "./errorType/ErrorVariableRedeclare";
 import { flattenLinkedNode } from "./getIntermediateForm";
@@ -107,7 +106,7 @@ export function newStructTab(s: StructDeclaration, structTab: StructTable): Stru
 export function newFunctionTable(newFunc: FunctionDeclaration, previousFuncTab: FunctionTable): FunctionTable {
     const key = stringifyFuncSignature(newFunc.signature);
     if (newFunc.returnType === null) {
-        newFunc.returnType = {kind: "VoidType"};
+        newFunc.returnType = {kind: "VoidType", location: NullTokenLocation()};
     }
     if (!previousFuncTab[key]) {
         previousFuncTab[key] = [];
@@ -298,10 +297,6 @@ export function fillUpExpressionTypeInfo(e: Expression, symbols: SymbolTable):
         case "String":          e = fillUpSimpleTypeInfo      (e, "String"); break;
         case "Boolean":         e = fillUpSimpleTypeInfo      (e, "Boolean"); break;
         case "Variable":        e = fillUpVariableTypeInfo    (e, symbols.vartab); break;
-        case "ListAccess":
-            [e.subject, symbols] = fillUpExpressionTypeInfo(e.subject, symbols);
-            e = fillUpArrayAccessTypeInfo(e);
-            break;
         case "ObjectExpression":
             if (e.constructor !== null) {
                 e.returnType = getStruct(e.constructor, symbols.structTab);
@@ -400,22 +395,6 @@ export function fillUpKeyValueListTypeInfo(k: LinkedNode<KeyValue>, symbols: Sym
     return [k, symbols];
 }
 
-export function fillUpArrayAccessTypeInfo(a: ListAccess): ListAccess {
-    switch (a.subject.returnType.kind) {
-        case "SimpleType":
-            throw new Error("Cannot index simple type");
-            break;
-        case "CompoundType":
-            if (a.subject.returnType.name.repr === "List") {
-                a.returnType = a.subject.returnType.of.current;
-            } else {
-                throw new Error("Cannot index non-array type");
-            }
-            break;
-    }
-    return a;
-}
-
 export function fillUpVariableTypeInfo(e: Variable, vtab: VariableTable): Variable {
     e.returnType = vtab[e.repr].returnType;
     return e;
@@ -436,7 +415,8 @@ export function fillUpSimpleTypeInfo(e: SimpleExpression, name: string): SimpleE
                 repr: name,
                 location: NullTokenLocation(),
             },
-            nullable: false
+            nullable: false,
+            location: NullTokenLocation()
         }
     };
 }
@@ -466,9 +446,8 @@ export function getFuncSignature(f: FunctionCall, functab: FunctionTable, typetr
             functab = newFunctionTable(closestFunction, functab) ;
             return [f, functab];
         } else {
-            raise(ErrorNoConformingFunction(f, matchingFunctions));
+            raise(ErrorNoConformingFunction(f, matchingFunctions, CURRENT_SOURCE_CODE()));
         }
-
     } else {
         raise(ErrorUsingUnknownFunction(f));
     }
@@ -488,8 +467,15 @@ export function getClosestFunction(
             currentFunc.parameters = substituteGeneric(currentFunc.parameters, matchingParams);
             currentFunc.returnType = substitute(matchingParams[0].returnType, currentFunc.returnType);
         }
-        const distance = paramTypesConforms(currentFunc.parameters, matchingParams, typeTree);
-        if (distance < 99 && distance < minimumDistance) {
+        const [distance, error] = paramTypesConforms(currentFunc.parameters, matchingParams, typeTree);
+        if (error !== null) {
+            raise(ErrorNoConformingFunction(
+                f,
+                error.paramPosition,
+                matchingParams[error.paramPosition],
+                matchingFunctions.map((x) => x.parameters[error.paramPosition].typeExpected),
+            ));
+        } else if (distance < minimumDistance) {
             closestFunction = currentFunc;
             minimumDistance = distance;
         }
@@ -499,26 +485,28 @@ export function getClosestFunction(
 }
 
 export function paramTypesConforms(
-    actualParams: VariableDeclaration[],
-    matchingParams: Expression[],
+    expectedParams: VariableDeclaration[],
+    actualParams: Expression[],
     typeTree: TypeTree
-): number {
-    // prettyPrint(actualParams, true);
-    // prettyPrint(matchingParams, true);
-    if (actualParams.length !== matchingParams.length) {
-        return 99;
-    }
-    let score = 0;
-    for (let i = 0; i < actualParams.length; i++) {
-        const expectedType = actualParams[i].typeExpected;
-        const actualType = matchingParams[i].returnType;
+): [number, {paramPosition: number /*zero-based*/}|null] {
+    let resultScore = 0;
+    for (let i = 0; i < expectedParams.length; i++) {
+        const expectedType = expectedParams[i].typeExpected;
+        const actualType = actualParams[i].returnType;
         if (typeEquals(expectedType, actualType)) {
-            score += 0;
+            resultScore += 0;
         } else {
-            score += childOf(actualType, expectedType, typeTree);
+            const score = childOf(actualType, expectedType, typeTree);
+            if (score !== null) {
+                resultScore += score;
+            } else {
+                 return [99, {
+                    paramPosition: i
+                }];
+            }
         }
     }
-    return score;
+    return [resultScore, null];
 }
 
 function containsGeneric(params: VariableDeclaration[]): boolean {
@@ -545,10 +533,6 @@ function substitute(src: TypeExpression, /*into*/ dest: TypeExpression): TypeExp
     switch (dest.kind) {
         case "CompoundType":
             dest.of.current = substitute(matchingType, dest.of.current);
-            break;
-        case "FunctionType":
-            dest.inputType = dest.inputType.map((x) => substitute(matchingType, x));
-            dest.outputType = substitute(matchingType, dest.outputType);
             break;
         case "GenericType":
             return matchingType;
@@ -593,7 +577,8 @@ export function getElementsType(a: LinkedNode<Expression>): CompoundType {
             current: types[0],
             next: null
         },
-        nullable: false
+        nullable: false,
+        location: NullTokenLocation()
     };
 }
 
@@ -611,3 +596,14 @@ export function typeEquals(x: TypeExpression, y: TypeExpression): boolean {
 function copy<T>(x: T): T {
     return JSON.parse(JSON.stringify(x));
 }
+
+function getText(sourceCode: SourceCode, range: TokenLocation): string {
+    const lines = sourceCode.content.split("\n").slice(range.first_line - 1, range.last_line);
+    if (lines.length === 1) {
+        return lines[0].slice(range.first_column - 1, range.last_column);
+    } else {
+        return lines.join("\n");
+    }
+}
+
+export type SourceCodeExtractor = (x: TokenLocation) => string;

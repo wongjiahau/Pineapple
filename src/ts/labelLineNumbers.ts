@@ -21,7 +21,7 @@ export function labelLineNumbers(
         line = line.trimRight() + "\n";
         if (pointingWhichLine - startLine - 1 === i) {
             line = chalk.bgRed("    ERROR >>" + line);
-            line += marginLeft + numbering("") + chalk.white(renderPointer(location)) + "\n";
+            line += marginLeft + numbering("") + chalk.redBright(renderPointer(location)) + "\n";
         } else {
             line = marginLeft + line;
         }
@@ -33,7 +33,7 @@ export function labelLineNumbers(
 function renderPointer(location: TokenLocation): string {
     let result = "";
     for (let i = 0; i < location.last_column; i++) {
-        if (i >= location.first_column - 1) {
+        if (i > location.first_column - 1) {
             result += "^" ;
         } else {
             result += " ";

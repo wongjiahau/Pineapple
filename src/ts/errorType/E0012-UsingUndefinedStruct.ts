@@ -10,6 +10,7 @@ export function ErrorUsingUndefinedStruct(
     const structs: StructDeclaration[] = Object.keys(structTab).map((x: string) => structTab[x]);
     const similarStructs = findSimilarStrings(undefinedStruct.repr, structs.map((x) => x.name.repr));
     return {
+        code: "0012",
         name: "ErrorUsingUndefinedStruct",
         message:
     `You cannot use ${undefinedStruct.repr} as it does not exist

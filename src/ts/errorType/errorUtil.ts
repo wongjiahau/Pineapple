@@ -1,10 +1,12 @@
 import chalk from "chalk";
-import { TokenLocation } from "../ast";
+import { TokenLocation, TypeExpression } from "../ast";
+import { flattenLinkedNode } from "../getIntermediateForm";
 import { SourceCode } from "../interpreter";
 import { labelLineNumbers } from "../labelLineNumbers";
 const boxen = require("boxen");
 
 export interface ErrorDetail  {
+    code: string;
     name: string;
     message: string;
     relatedLocation: TokenLocation;
@@ -40,4 +42,17 @@ export function renderError(
         .map((x) => "  " + x)
         .join("\n") + "\n";
 
+}
+
+export function stringifyTypeReadable(t: TypeExpression): string {
+    switch (t.kind) {
+        case "CompoundType":
+            return `${t.name.repr}{${flattenLinkedNode(t.of).map(stringifyTypeReadable).join(",")}}`;
+        case "SimpleType":
+            return `${t.name.repr}`;
+        case "VoidType":
+            return "`Void`";
+        case "GenericType":
+            return `${t.placeholder.repr}`;
+    }
 }

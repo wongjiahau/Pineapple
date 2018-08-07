@@ -11,7 +11,9 @@ export function ErrorAccessingInexistentMember(
     const similarKeys = findSimilarStrings(inexistentKey.repr, keys.map((x) => x.name.repr));
 
     return {
+        code: "0001",
         name: "ErrorAccessingInexistentMember",
+        relatedLocation: inexistentKey.location,
         message:
 `${relatedStruct.name.repr} does not have the member ${inexistentKey.repr}
 
@@ -19,6 +21,5 @@ Do you mean one of the following ?
 
 ${similarKeys.map((x) => "  " + x).join("\n")}
 `,
-        relatedLocation: inexistentKey.location
     };
 }

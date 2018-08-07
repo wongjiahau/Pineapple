@@ -1,12 +1,12 @@
-import { ReturnStatement, TokenLocation, TypeExpression } from "../ast";
-import { stringifyTypeReadable } from "./ErrorNoConformingFunction";
-import { ErrorDetail } from "./errorUtil";
+import { ReturnStatement, TypeExpression } from "../ast";
+import { ErrorDetail, stringifyTypeReadable } from "./errorUtil";
 
 export function ErrorUnmatchingReturnType(
     relatedReturnStatement: ReturnStatement,
     expectedReturnType: TypeExpression
 ): ErrorDetail {
     return {
+        code: "0011",
         name: "ErrorUnmatchingReturnType",
         message:
 `The return type should be ${stringifyTypeReadable(expectedReturnType)}, ` +

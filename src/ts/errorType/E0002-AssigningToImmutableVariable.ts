@@ -6,6 +6,7 @@ export function ErrorAssigningToImmutableVariable(
     relatedVariable: Variable
 ): ErrorDetail {
     return {
+        code: "0002",
         name: "ErrorAssigningToImmutableVariable",
         message: `You cannot assign value to variable ${chalk.bold.underline(relatedVariable.repr)}` +
         ` as it is immutable.`,

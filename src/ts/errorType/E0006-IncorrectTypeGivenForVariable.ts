@@ -7,6 +7,7 @@ export function ErrorIncorrectTypeGivenForVariable(
     actualType: TypeExpression
 ): ErrorDetail {
     return {
+        code: "0006",
         name: "ErrorIncorrectTypeGivenForVariable",
         message:
         `Variable \`${relatedVariable.variable.repr}\` wanted ` +

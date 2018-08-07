@@ -314,6 +314,7 @@ Statement
     : AssignmentStatement           {$$=$1}
     | ReturnStatement   NEWLINE     {$$=$1}
     | AtomicFuncCall    NEWLINE     {$$=$1}
+    | OperatorFuncCall  NEWLINE     {$$=$1}
     | IfStatement                   {$$=$1}
     | ForStatement
     | WhileStatement

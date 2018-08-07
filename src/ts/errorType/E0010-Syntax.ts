@@ -12,6 +12,7 @@ export interface ParserErrorDetail {
 
 export function ErrorSyntax(errorHash: ParserErrorDetail): ErrorDetail {
     return {
+        code: "0010",
         name: "ErrorSyntax",
         message: `Unexpected ${errorHash.token} ${chalk.underline(errorHash.text)}`,
         relatedLocation: errorHash.loc
