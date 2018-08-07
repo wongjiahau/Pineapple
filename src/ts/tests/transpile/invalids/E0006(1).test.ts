@@ -2,7 +2,7 @@ import { expect } from "chai";
 import { pine2js } from "../../../pine2js";
 import { catchError } from "../../testUtil";
 
-describe("x0011", () => {
+describe("E0006(1)", () => {
     it("incorrect type for variable", () => {
         const input =
 `

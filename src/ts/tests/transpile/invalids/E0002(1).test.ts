@@ -2,7 +2,7 @@ import { expect } from "chai";
 import { pine2js } from "../../../pine2js";
 import { catchError } from "../../testUtil";
 
-describe("x0015", () => {
+describe("E0002(1)", () => {
     it("assigning value to immutable variable", () => {
         const input =
 `

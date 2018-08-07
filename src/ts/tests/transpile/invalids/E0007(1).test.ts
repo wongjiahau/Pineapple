@@ -2,8 +2,8 @@ import { expect } from "chai";
 import { pine2js } from "../../../pine2js";
 import { catchError } from "../../testUtil";
 
-describe("x0009", () => {
-    it("extra member", () => {
+describe("E0007(1)", () => {
+    it("missing member", () => {
         const input =
 `
 def People
@@ -13,10 +13,9 @@ def People
 def .main
     let x = People
         'name = "Wong"
-        'age  = 88
-        'wife = "Jane"
 `;
-        expect(catchError(() => pine2js(input)).name).to.eq("ErrorExtraMember");
+        // 'age member is missing
+        expect(catchError(() => pine2js(input)).name).to.eq("ErrorMissingMember");
     });
 
 });

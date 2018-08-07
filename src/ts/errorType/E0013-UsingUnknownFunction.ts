@@ -11,6 +11,3 @@ export function ErrorUsingUnknownFunction(relatedFunction: FunctionCall): ErrorD
     };
 }
 
-export function displayFuncSignature(xs: AtomicToken[]): string {
-    return xs.map((x) => x.repr).join(" ");
-}

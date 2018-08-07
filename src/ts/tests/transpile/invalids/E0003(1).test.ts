@@ -2,7 +2,7 @@ import { expect } from "chai";
 import { pine2js } from "../../../pine2js";
 import { catchError } from "../../testUtil";
 
-describe("x0012", () => {
+describe("E0003(1)", () => {
     it("duplicated members", () => {
         const input =
 `

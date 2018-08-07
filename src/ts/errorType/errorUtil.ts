@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import { TokenLocation, TypeExpression } from "../ast";
+import { AtomicToken, TokenLocation, TypeExpression } from "../ast";
 import { flattenLinkedNode } from "../getIntermediateForm";
 import { SourceCode } from "../interpreter";
 import { labelLineNumbers } from "../labelLineNumbers";
@@ -55,4 +55,8 @@ export function stringifyTypeReadable(t: TypeExpression): string {
         case "GenericType":
             return `${t.placeholder.repr}`;
     }
+}
+
+export function displayFuncSignature(xs: AtomicToken[]): string {
+    return xs.map((x) => x.repr).join(" ");
 }

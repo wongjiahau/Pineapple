@@ -2,15 +2,17 @@ import { expect } from "chai";
 import { pine2js } from "../../../pine2js";
 import { catchError } from "../../testUtil";
 
-describe("x0004", () => {
-    it("incorrect type signature for bifunction", () => {
+describe("E0008(3)", () => {
+    it("generic type checking", () => {
         const input =
-`def (this String).concat(that String) -> String
-    pass
-
+`
 def .main
-    let x = "123".concat(234)
+    let x = [1,2,3].append("1")
+
+def (this List{T}).append(that T) -> List{T}
+    pass
 `;
         expect(catchError(() => pine2js(input)).name).to.eq("ErrorNoConformingFunction");
     });
+
 });

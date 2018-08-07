@@ -2,22 +2,18 @@ import { expect } from "chai";
 import { pine2js } from "../../../pine2js";
 import { catchError } from "../../testUtil";
 
-describe("x0006", () => {
-    it("accessing non-existent member", () => {
+describe("E0012(1)", () => {
+    it("using non-existing struct", () => {
         const input =
 `
-def People
-    'name String
-    'age  Number
-
 def .main
     let x = People
         'name = "Wong"
         'age  = 99
 
-    let y = x'nam
+    let y = x'name
 `;
-        expect(catchError(() => pine2js(input)).name).to.eq("ErrorAccessingInexistentMember");
+        expect(catchError(() => pine2js(input)).name).to.eq("ErrorUsingUndefinedStruct");
     });
 
 });

@@ -2,7 +2,7 @@ import { expect } from "chai";
 import { pine2js } from "../../../pine2js";
 import { catchError } from "../../testUtil";
 
-describe("x0014", () => {
+describe("E0010(1)", () => {
     it("syntax error", () => {
         const input =
 `

@@ -6,6 +6,7 @@ export function ErrorVariableRedeclare(
     redeclaredVariable: Variable
 ): ErrorDetail {
     return {
+        code: "0014",
         name: "ErrorVariableRedeclare",
         message:
             `You cannot redeclare \`${redeclaredVariable.repr}\`` +

@@ -2,7 +2,7 @@ import { expect } from "chai";
 import { pine2js } from "../../../pine2js";
 import { catchError } from "../../testUtil";
 
-describe("x0001", () => {
+describe("E0014(1)", () => {
     it("variable redeclaration", () => {
         const input =
 `def .main

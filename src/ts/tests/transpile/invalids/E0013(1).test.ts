@@ -2,7 +2,7 @@ import { expect } from "chai";
 import { pine2js } from "../../../pine2js";
 import { catchError } from "../../testUtil";
 
-describe("x0002", () => {
+describe("E0013(1)", () => {
     it("using unknown named-infix function", () => {
         const input =
 `def .main

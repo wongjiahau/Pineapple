@@ -2,8 +2,8 @@ import { expect } from "chai";
 import { pine2js } from "../../../pine2js";
 import { catchError } from "../../testUtil";
 
-describe("x0010", () => {
-    it("incorrect member type", () => {
+describe("E0001(1)", () => {
+    it("accessing non-existent member", () => {
         const input =
 `
 def People
@@ -13,10 +13,11 @@ def People
 def .main
     let x = People
         'name = "Wong"
-        'age  = "eighty"
+        'age  = 99
+
+    let y = x'nam
 `;
-        // 'age member should take Number instead of String
-        expect(catchError(() => pine2js(input)).name).to.eq("ErrorIncorrectTypeGivenForMember");
+        expect(catchError(() => pine2js(input)).name).to.eq("ErrorAccessingInexistentMember");
     });
 
 });
