@@ -24,9 +24,11 @@ def .main
 function _main_(){
 const $y = (6);
 const $people = {
+
 name" : "john",
 age" : (123),
 wife" : {
+
 name" : "Natelie",
 age" : (99)
 },

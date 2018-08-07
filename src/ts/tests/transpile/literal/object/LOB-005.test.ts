@@ -1,25 +1,24 @@
 import { pine2js } from "../../../../pine2js";
 import { assertEquals } from "../../../testUtil";
 
-describe("LOB-004", () => {
-    it("bodyless object", () => {
+describe("LOB-005", () => {
+    it("returning object directly", () => {
         const input =
 `
 def People
-    pass
+    'name String
 
-def .main
-    let x = People
-    let y = 6
+def .newPeople -> People
+    return People
+        'name = "John"
 `;
         const expectedOutput =
 `
-function _main_(){
-const $x = {
+function _newPeople_(){
+return {
 $kind: "People",
-
+name : "John"
 };
-const $y = (6);
 }
 `;
         assertEquals(pine2js(input).trim(), expectedOutput.trim());

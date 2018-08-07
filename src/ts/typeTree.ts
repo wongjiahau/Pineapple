@@ -25,18 +25,22 @@ export function insertChild(child: TypeExpression, parent: TypeExpression, tree:
 }
 
 // This function return distance of child to parent
-export function childOf(child: TypeExpression, parent: TypeExpression, tree: TypeTree): number {
+export function childOf(child: TypeExpression, parent: TypeExpression, tree: TypeTree): number | null {
     if (parent.kind === "SimpleType" && parent.name.repr === "Any") {
         return 1;
     }
     const matchingParent = findParentOf(child, tree);
     if (matchingParent === null) {
-        // 99 means no matching parent
-        return 99;
+        return null;
     } else if (typeEquals(matchingParent, parent)) {
         return 1;
     } else {
-        return 1 + childOf(matchingParent, parent, tree);
+        const score = childOf(matchingParent, parent, tree);
+        if (score === null) {
+            return score;
+        } else {
+            return 1 + score;
+        }
     }
 }
 
@@ -54,21 +58,28 @@ export function findParentOf(child: TypeExpression, /*in*/ tree: TypeTree): Type
     }
 }
 
+export function includes(tree: TypeTree, t: TypeExpression): boolean {
+    if (typeEquals(tree.current, t)) {
+        return true;
+    } else {
+        return tree.children.some((x) => includes(x, t));
+    }
+}
+
 export function initTypeTree(): TypeTree {
     const anyType        = newSimpleType("Any");
     const objectType     = newSimpleType("Object");
     const dictType       = newSimpleType("Dict");
     const arrayType      = newListType(anyType);
     const numberType     = newSimpleType("Number");
-    const numberListType = newListType(numberType);
     const stringType     = newSimpleType("String");
     const dateType       = newSimpleType("Date");
     let tree = newTypeTree(anyType);
+    tree = insertChild(numberType, anyType, tree);
     tree = insertChild(dictType, anyType, tree);
     tree = insertChild(objectType, dictType, tree);
     tree = insertChild(arrayType, anyType, tree);
     tree = insertChild(dateType, anyType, tree);
-    tree = insertChild(numberListType, arrayType, tree);
     tree = insertChild(stringType, arrayType, tree);
     return tree;
 }
@@ -80,7 +91,8 @@ export function newSimpleType(name: string): SimpleType {
             repr: name,
             location: NullTokenLocation()
         },
-        nullable: false
+        nullable: false,
+        location: NullTokenLocation()
     };
 }
 
@@ -95,6 +107,7 @@ export function newListType(arrayOfWhat: TypeExpression): CompoundType {
             current: arrayOfWhat,
             next: null
         },
-        nullable: false
+        nullable: false,
+        location: NullTokenLocation()
     };
 }

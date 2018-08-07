@@ -313,7 +313,7 @@ StatementList
 
 Statement
     : AssignmentStatement           {$$=$1}
-    | ReturnStatement   NEWLINE     {$$=$1}
+    | ReturnStatement   
     | AtomicFuncCall    NEWLINE     {$$=$1}
     | OperatorFuncCall  NEWLINE     {$$=$1}
     | IfStatement                   {$$=$1}
@@ -322,7 +322,7 @@ Statement
     ;
 
 ReturnStatement
-    : RETURN SinglelineExpr {$$=_ReturnStatement($2, this._$)}
+    : RETURN MultilineExpr {$$=_ReturnStatement($2, this._$)}
     ;
 
 ForStatement

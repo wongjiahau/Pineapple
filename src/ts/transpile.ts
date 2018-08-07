@@ -249,7 +249,7 @@ export function tpListElements(e: LinkedNode<Expression>): string {
 
 export function tpObjectExpression(e: ObjectExpression): string {
     return `{
-${e.constructor !== null ? `kind: "${e.constructor.repr}"` : ""}
+${e.constructor !== null ? `$kind: "${e.constructor.repr}",` : ""}
 ${tpKeyValueList(e.keyValueList)}
 }`;
 }

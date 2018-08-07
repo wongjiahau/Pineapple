@@ -19,6 +19,7 @@ def .main
 `
 function _main_(){
 const $people = {
+$kind: "People",
 name : "john",
 age : (123)
 };

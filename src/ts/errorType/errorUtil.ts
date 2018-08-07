@@ -54,6 +54,8 @@ export function stringifyTypeReadable(t: TypeExpression): string {
             return "`Void`";
         case "GenericType":
             return `${t.placeholder.repr}`;
+        case "StructDeclaration":
+            return `${t.name.repr}`;
     }
 }
 

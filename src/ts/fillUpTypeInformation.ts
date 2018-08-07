@@ -42,7 +42,7 @@ import { flattenLinkedNode } from "./getIntermediateForm";
 import { SourceCode } from "./interpreter";
 import { prettyPrint } from "./pine2js";
 import { stringifyFuncSignature, stringifyType } from "./transpile";
-import { childOf, insertChild, newSimpleType, TypeTree } from "./typeTree";
+import { childOf, includes, insertChild, newSimpleType, TypeTree } from "./typeTree";
 import { find } from "./util";
 
 let CURRENT_SOURCE_CODE: () => SourceCode;
@@ -55,7 +55,7 @@ export function fillUpTypeInformation(
     ): [Declaration[], FunctionTable, TypeTree, StructTable] {
 
     CURRENT_SOURCE_CODE = () => sourceCode;
-    // Complete the function table
+    // Complete the function and struct table
     // This step is to allow programmer to define function anywhere
     // without needing to adhere to strict top-down or bottom-up structure
     let funcTab = prevFuntab;
@@ -64,6 +64,10 @@ export function fillUpTypeInformation(
         switch (currentDecl.kind) {
             case "FunctionDeclaration":
                 funcTab = newFunctionTable(currentDecl, funcTab);
+                break;
+            case "StructDeclaration":
+                prevTypeTree = insertChild(currentDecl, newSimpleType("Object"), prevTypeTree);
+                prevStructTab = newStructTab(currentDecl, prevStructTab);
                 break;
         }
     }
@@ -79,18 +83,34 @@ export function fillUpTypeInformation(
                     typeTree: prevTypeTree,
                     structTab: prevStructTab,
                 };
+                currentDecl.returnType = resolveType(currentDecl.returnType, symbols.typeTree, symbols.structTab);
                 const [statements, newSymbols] = fillUp(currentDecl.statements, symbols);
                 currentDecl.statements = statements;
                 funcTab = newSymbols.functab;
                 verifyFunctionDeclaration(currentDecl);
                 break;
-            case "StructDeclaration":
-                prevTypeTree = insertChild(currentDecl, newSimpleType("Object"), prevTypeTree);
-                prevStructTab = newStructTab(currentDecl, prevStructTab);
-                break;
         }
     }
     return [decls, funcTab, prevTypeTree, prevStructTab];
+}
+
+export function resolveType(
+    t: TypeExpression,
+    typeTree: TypeTree,
+    structTab: StructTable
+): TypeExpression {
+    switch (t.kind) {
+        case "SimpleType":
+            if (includes(typeTree, t)) {
+                return t;
+            }
+            const matchingKey = Object.keys(structTab).filter((x) => x === t.name.repr)[0];
+            if (matchingKey) {
+                return structTab[matchingKey];
+            } else {
+                throw new Error("There is no such type " + t.name.repr);
+            }
+    }
 }
 
 export function newStructTab(s: StructDeclaration, structTab: StructTable): StructTable {
@@ -103,7 +123,10 @@ export function newStructTab(s: StructDeclaration, structTab: StructTable): Stru
     return structTab;
 }
 
-export function newFunctionTable(newFunc: FunctionDeclaration, previousFuncTab: FunctionTable): FunctionTable {
+export function newFunctionTable(
+    newFunc: FunctionDeclaration,
+    previousFuncTab: FunctionTable,
+): FunctionTable {
     const key = stringifyFuncSignature(newFunc.signature);
     if (newFunc.returnType === null) {
         newFunc.returnType = {kind: "VoidType", location: NullTokenLocation()};
@@ -292,11 +315,11 @@ export function fillUpExpressionTypeInfo(e: Expression, symbols: SymbolTable):
         case "FunctionCall":
             [e, symbols.functab] = fillUpFunctionCallTypeInfo(e, symbols);
             return [e, symbols];
-        case "List":            e = fillUpArrayTypeInfo       (e, symbols); break;
-        case "Number":          e = fillUpSimpleTypeInfo      (e, "Number"); break;
-        case "String":          e = fillUpSimpleTypeInfo      (e, "String"); break;
-        case "Boolean":         e = fillUpSimpleTypeInfo      (e, "Boolean"); break;
-        case "Variable":        e = fillUpVariableTypeInfo    (e, symbols.vartab); break;
+        case "List":     e = fillUpArrayTypeInfo   (e, symbols); break;
+        case "Number":   e = fillUpSimpleTypeInfo  (e, "Number"); break;
+        case "String":   e = fillUpSimpleTypeInfo  (e, "String"); break;
+        case "Boolean":  e = fillUpSimpleTypeInfo  (e, "Boolean"); break;
+        case "Variable": e = fillUpVariableTypeInfo(e, symbols.vartab); break;
         case "ObjectExpression":
             if (e.constructor !== null) {
                 e.returnType = getStruct(e.constructor, symbols.structTab);
