@@ -24,8 +24,7 @@ export function renderError(
     result += boxen(
         labelLineNumbers(
             sourceCode.content,
-            errorDetail.relatedLocation.first_line,
-            chalk.bgRed,
+            errorDetail.relatedLocation,
             3
         ),
         sourceCodeStyle

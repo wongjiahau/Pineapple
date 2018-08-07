@@ -1,11 +1,6 @@
 const toposort = require("toposort");
-import chalk from "chalk";
 import {Declaration} from "./ast";
-import {PineError} from "./errorType";
-import {ErrorMessage} from "./generateErrorMessage";
 import {getIntermediateForm, initialIntermediateForm} from "./getIntermediateForm";
-import {labelLineNumbers} from "./labelLineNumbers";
-import {labelNewlines} from "./labelNewlines";
 import {tpDeclaration} from "./transpile";
 const clear = require("clear");
 
