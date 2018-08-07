@@ -32,12 +32,12 @@ import { ErrorIncorrectTypeGivenForMember } from "./errorType/E0005-IncorrectTyp
 import { ErrorIncorrectTypeGivenForVariable } from "./errorType/E0006-IncorrectTypeGivenForVariable";
 import { ErrorMissingMember } from "./errorType/E0007-ErrorMissingMember";
 import { ErrorNoConformingFunction } from "./errorType/E0008-NoConformingFunction";
-import { ErrorNoStructRedeclare } from "./errorType/E0009-NoStructRedeclare";
+import { ErrorStructRedeclare } from "./errorType/E0009-StructRedeclare";
 import { ErrorUnmatchingReturnType } from "./errorType/E0011-UnmatchingReturnType";
 import { ErrorUsingUndefinedStruct } from "./errorType/E0012-UsingUndefinedStruct";
 import { ErrorUsingUnknownFunction } from "./errorType/E0013-UsingUnknownFunction";
+import { ErrorVariableRedeclare } from "./errorType/E0014-VariableRedeclare";
 import { ErrorDetail, renderError } from "./errorType/errorUtil";
-import { ErrorVariableRedeclare } from "./errorType/ErrorVariableRedeclare";
 import { flattenLinkedNode } from "./getIntermediateForm";
 import { SourceCode } from "./interpreter";
 import { prettyPrint } from "./pine2js";
@@ -95,7 +95,7 @@ export function fillUpTypeInformation(
 
 export function newStructTab(s: StructDeclaration, structTab: StructTable): StructTable {
     if (s.name.repr in structTab) {
-        raise(ErrorNoStructRedeclare(s));
+        raise(ErrorStructRedeclare(s));
         // throw new Error(`${s.name.repr} is already defined.`);
     } else {
         structTab[s.name.repr] = s;

@@ -1,5 +1,5 @@
-import {AtomicToken, FunctionCall} from "../ast";
-import {ErrorDetail} from "./errorUtil";
+import {FunctionCall} from "../ast";
+import {displayFuncSignature, ErrorDetail} from "./errorUtil";
 
 export function ErrorUsingUnknownFunction(relatedFunction: FunctionCall): ErrorDetail {
     const funcname = displayFuncSignature(relatedFunction.signature);
@@ -10,4 +10,3 @@ export function ErrorUsingUnknownFunction(relatedFunction: FunctionCall): ErrorD
         relatedLocation: relatedFunction.signature[0].location
     };
 }
-

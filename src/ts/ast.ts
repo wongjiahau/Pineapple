@@ -26,6 +26,7 @@ export interface StructDeclaration {
     kind: "StructDeclaration";
     name: AtomicToken;
     members: LinkedNode<MemberDefinition>;
+    location: TokenLocation;
 }
 
 export interface MemberDefinition {
@@ -97,7 +98,6 @@ export interface AssignmentStatement {
 export type TypeExpression
     = SimpleType
     | CompoundType
-    | FunctionType
     | GenericType
     | StructDeclaration
     | VoidType
@@ -105,12 +105,14 @@ export type TypeExpression
 
 export interface VoidType {
     kind: "VoidType";
+    location: TokenLocation;
 }
 
 export interface SimpleType {
     kind: "SimpleType";
     name: AtomicToken;
     nullable: boolean;
+    location: TokenLocation;
 }
 
 export interface CompoundType {
@@ -118,18 +120,14 @@ export interface CompoundType {
     name: AtomicToken;
     of: LinkedNode<TypeExpression>;
     nullable: boolean;
+    location: TokenLocation;
 }
 
 export interface GenericType {
     kind: "GenericType";
     placeholder: AtomicToken; // "T" | "T1" | "T2";
     nullable: boolean;
-}
-
-export interface FunctionType {
-    kind: "FunctionType";
-    inputType: TypeExpression[];
-    outputType: TypeExpression;
+    location: TokenLocation;
 }
 
 export type Expression
@@ -141,7 +139,6 @@ export type Expression
     | ObjectExpression // Pineapple Object Notation (PON)
     | ObjectAccess
     | ListExpression // a.k.a. Array
-    | ListAccess
     | AnonymousExpression
     | Lambda
     ;
@@ -156,6 +153,7 @@ export interface AnonymousExpression {
 export interface Lambda {
     kind: "Lambda";
     returnType: TypeExpression;
+    location: TokenLocation;
     // placeholders: //TODO: Complete this
 }
 
@@ -168,13 +166,6 @@ export interface FunctionCall {
     parameters: Expression[];
     returnType: TypeExpression;
     location: TokenLocation;
-}
-
-export interface ListAccess {
-    kind: "ListAccess";
-    subject: Expression;
-    index: Expression;
-    returnType: TypeExpression;
 }
 
 export interface VariableDeclaration {
@@ -195,6 +186,7 @@ export interface ObjectExpression { // NOTE: Object is also Dictionary
     constructor: AtomicToken | null;
     keyValueList: LinkedNode<KeyValue>;
     returnType: StructDeclaration | SimpleType /*aka Dictionary*/;
+    location: TokenLocation;
 }
 
 export interface KeyValue {
@@ -207,6 +199,7 @@ export interface ObjectAccess {
     subject: Expression;
     key: AtomicToken;
     returnType: TypeExpression;
+    location: TokenLocation;
 }
 
 export interface ListExpression {
