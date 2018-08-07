@@ -1,4 +1,4 @@
-import { testError } from "../../testUtil";
+import { testError } from "../../tests/testUtil";
 
 testError("ErrorUsingUndefinedStruct", `
 def .main
