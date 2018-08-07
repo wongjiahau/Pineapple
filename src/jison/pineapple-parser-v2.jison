@@ -154,6 +154,7 @@ const _AnonymousExpression = (location) => ({
  */
 // Ignorable
 \s+         /* skip whitespace */
+\/\/.*      /* skip comment */
 
 // Keywords
 "let"       return 'LET'
@@ -218,16 +219,6 @@ const _AnonymousExpression = (location) => ({
 
 
 // Misc(to be implemented soon)
-"::"                 return '::'
-[0-9]+               return 'TOKEN_ID'
-"DOT"                return 'DOT'
-"UNION_OP"           return 'UNION_OP'
-"INTERSECT_OP"       return 'INTERSECT_OP'
-"IOFUNCTION"         return 'IOFUNCTION'
-"ISNT"               return 'ISNT'
-"IS"                 return 'IS'
-"AND"                return 'AND'
-"OR"                 return 'OR'
 /lex
 
 /* operator associations and precedence */
@@ -238,9 +229,6 @@ const _AnonymousExpression = (location) => ({
 
 %right ASSIGN_OP 
 %left ',' DOT
-%left BINOP2 '+' '-'
-%left UMINUS
-%left '::' TOKEN_ID OPERATOR NUMBER
 
 %start EntryPoint
 
@@ -387,7 +375,7 @@ VariableAtom
 TypeExpression
     : AtomicTypeExpr UNION_OP TypeExpression
     | AtomicTypeExpr INTERSECT_OP TypeExpression
-    | AtomicTypeExpr
+    | AtomicTypeExpr {$$.location = this._$}
     ;
 
 AtomicTypeExpr
@@ -416,7 +404,7 @@ MultilineExpr
     ;
 
 SinglelineExpr
-    : AtomicExpr
+    : AtomicExpr {$$.location = this._$}
     | OperatorFuncCall
     ;
 
@@ -450,12 +438,12 @@ TriFuncCall
         {$$=_FunctionCall("Tri",[$2,$5],[$1,$4,$6],this._$)}
     ;
 
-AtomicExpr
+AtomicExpr 
     : '(' SinglelineExpr ')' {$$=$2}
     // | SinglelineObject /* temporarily disable, unless its use case is justified*/
     | ObjectAccessExpr
     | SinglelineList
-    | AtomicFuncCall
+    | AtomicFuncCall 
     | BooleanAtom
     | StringAtom
     | NumberAtom
@@ -500,7 +488,7 @@ SinglelineObject
     ;
 
 KeyValueList
-    : KeyValue ',' KeyValueList {$$=_LinkedNode($1,$3)}
+    : KeyValue KeyValueList {$$=_LinkedNode($1,$3)}
     | KeyValue                  {$$=_LinkedNode($1,null)}
     ;
 
