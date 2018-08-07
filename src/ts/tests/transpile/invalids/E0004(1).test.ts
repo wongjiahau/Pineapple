@@ -1,11 +1,6 @@
-import { expect } from "chai";
-import { pine2js } from "../../../pine2js";
-import { catchError } from "../../testUtil";
+import { testError } from "../../testUtil";
 
-describe("E0004(1)", () => {
-    it("extra member", () => {
-        const input =
-`
+testError("ErrorExtraMember", `
 def People
     'name String
     'age  Number
@@ -15,8 +10,4 @@ def .main
         'name = "Wong"
         'age  = 88
         'wife = "Jane"
-`;
-        expect(catchError(() => pine2js(input)).name).to.eq("ErrorExtraMember");
-    });
-
-});
+`);

@@ -1,18 +1,9 @@
-import { expect } from "chai";
-import { pine2js } from "../../../pine2js";
-import { catchError } from "../../testUtil";
+import { testError } from "../../testUtil";
 
-describe("E0008(3)", () => {
-    it("generic type checking", () => {
-        const input =
-`
+testError("ErrorNoConformingFunction", `
 def .main
     let x = [1,2,3].append("1")
 
 def (this List{T}).append(that T) -> List{T}
     pass
-`;
-        expect(catchError(() => pine2js(input)).name).to.eq("ErrorNoConformingFunction");
-    });
-
-});
+`);

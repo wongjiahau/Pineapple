@@ -1,11 +1,6 @@
-import { expect } from "chai";
-import { pine2js } from "../../../pine2js";
-import { catchError } from "../../testUtil";
+import { testError } from "../../testUtil";
 
-describe("E0001(1)", () => {
-    it("accessing non-existent member", () => {
-        const input =
-`
+testError("ErrorAccessingInexistentMember", `
 def People
     'name String
     'age  Number
@@ -16,8 +11,4 @@ def .main
         'age  = 99
 
     let y = x'nam
-`;
-        expect(catchError(() => pine2js(input)).name).to.eq("ErrorAccessingInexistentMember");
-    });
-
-});
+`);

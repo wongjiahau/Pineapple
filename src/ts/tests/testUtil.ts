@@ -1,3 +1,6 @@
+import { expect } from "chai";
+import { pine2js } from "../pine2js";
+
 export function assertEquals<T>(actual: T, expected: T) {
     if (actual !== expected) {
         // console.log("Expected result:");
@@ -17,4 +20,13 @@ export function catchError(f: () => void): Error {
     } catch (error) {
         return error;
     }
+}
+
+export function testError(expectedErrorName: string, input: string) {
+    const scriptName = __filename.split(/[\\/]/).pop() as string;
+    describe(scriptName.split(".")[0], () => {
+        it(expectedErrorName, () => {
+            expect(catchError(() => pine2js(input)).name).to.eq(expectedErrorName);
+        });
+    });
 }

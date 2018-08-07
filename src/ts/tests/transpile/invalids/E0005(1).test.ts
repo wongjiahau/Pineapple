@@ -1,11 +1,6 @@
-import { expect } from "chai";
-import { pine2js } from "../../../pine2js";
-import { catchError } from "../../testUtil";
+import { testError } from "../../testUtil";
 
-describe("E0005(1)", () => {
-    it("incorrect member type", () => {
-        const input =
-`
+testError("ErrorIncorrectTypeGivenForMember", `
 def People
     'name String
     'age  Number
@@ -14,9 +9,4 @@ def .main
     let x = People
         'name = "Wong"
         'age  = "eighty"
-`;
-        // 'age member should take Number instead of String
-        expect(catchError(() => pine2js(input)).name).to.eq("ErrorIncorrectTypeGivenForMember");
-    });
-
-});
+`);
