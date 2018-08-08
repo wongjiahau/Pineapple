@@ -8,8 +8,9 @@ export type Declaration
     = FunctionDeclaration
     | StructDeclaration
     | ImportDeclaration
+    | EnumDeclaration
+    // TODO: To be implemented soon
     // | InterfaceDeclaration
-    // | EnumDeclaration
     // | ImplementionDeclaration
     ;
 
@@ -101,7 +102,21 @@ export type TypeExpression
     | GenericType
     | StructDeclaration
     | VoidType
+    | EnumDeclaration
     ;
+
+export interface EnumDeclaration {
+    kind: "EnumDeclaration";
+    name: AtomicToken;
+    enums: LinkedNode<AtomicToken>;
+}
+
+export interface EnumExpression {
+    kind: "EnumExpression";
+    value: AtomicToken;
+    returnType: EnumDeclaration;
+    location: TokenLocation;
+}
 
 export interface VoidType {
     kind: "VoidType";
@@ -134,7 +149,7 @@ export type Expression
     = FunctionCall
     | StringExpression
     | NumberExpression
-    | BooleanExpression
+    | EnumExpression
     | Variable
     | ObjectExpression // Pineapple Object Notation (PON)
     | ObjectAccess
@@ -217,11 +232,6 @@ export interface StringExpression extends AtomicToken {
 
 export interface NumberExpression extends AtomicToken {
     kind: "Number";
-    returnType: TypeExpression;
-}
-
-export interface BooleanExpression extends AtomicToken {
-    kind: "Boolean";
     returnType: TypeExpression;
 }
 

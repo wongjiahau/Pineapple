@@ -1,6 +1,6 @@
 import { Declaration, LinkedNode } from "./ast";
-import { ErrorSyntax } from "./errorType/ErrorSyntax";
-import { fillUpTypeInformation, FunctionTable, raise, StructTable } from "./fillUpTypeInformation";
+import { ErrorSyntax } from "./errorType/E0010-Syntax";
+import { fillUpTypeInformation, FunctionTable, raise, StructTable, SymbolTable } from "./fillUpTypeInformation";
 import { SourceCode } from "./interpreter";
 import { prettyPrint } from "./pine2js";
 import { preprocess } from "./preprocess";
@@ -14,19 +14,15 @@ export function getIntermediateForm(
     try {
         const ast = parser.parse(preprocess(sourceCode.content)) as LinkedNode<Declaration>;
         // prettyPrint(ast, true);
-        const [newAst, newFuncTab, newTypeTree, newStructTab] = fillUpTypeInformation(
+        const [newAst, symbolTable] = fillUpTypeInformation(
             flattenLinkedNode(ast),
-            prevIntermediate.funcTab,
-            prevIntermediate.typeTree,
-            prevIntermediate.structTab,
-            sourceCode
+            sourceCode,
+            prevIntermediate.symbolTable
         );
         return {
-            funcTab: newFuncTab,
-            typeTree: newTypeTree,
-            structTab: newStructTab,
             syntaxTrees: prevIntermediate.syntaxTrees.concat(newAst),
-            importedFiles: prevIntermediate.importedFiles.concat([sourceCode.filename])
+            importedFiles: prevIntermediate.importedFiles.concat([sourceCode.filename]),
+            symbolTable: symbolTable
         };
     } catch (error) {
         if (isSyntaxError(error)) {
@@ -43,18 +39,19 @@ function isSyntaxError(error: any) {
 export function initialIntermediateForm(): IntermediateForm {
     return {
         syntaxTrees: [],
-        funcTab: {},
-        structTab: {},
-        typeTree: initTypeTree(),
+        symbolTable: {
+            funcTab: {},
+            structTab: {},
+            enumTab: {},
+            typeTree: initTypeTree(),
+        },
         importedFiles: []
     };
 }
 
 export interface IntermediateForm {
     syntaxTrees: Declaration[];
-    funcTab: FunctionTable;
-    structTab: StructTable;
-    typeTree: TypeTree;
+    symbolTable: SymbolTable;
     importedFiles: string[];
 }
 

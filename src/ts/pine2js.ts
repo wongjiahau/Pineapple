@@ -13,9 +13,9 @@ export function pine2js(input: string, filename: string= ""): string {
     };
     const intermediateForm = getIntermediateForm(source, initialIntermediateForm());
     let result = "";
-    for (const key in intermediateForm.funcTab) {
-        if (intermediateForm.funcTab.hasOwnProperty(key)) {
-            result += transpile(intermediateForm.funcTab[key]);
+    for (const key in intermediateForm.symbolTable.funcTab) {
+        if (intermediateForm.symbolTable.funcTab.hasOwnProperty(key)) {
+            result += transpile(intermediateForm.symbolTable.funcTab[key]);
         }
     }
     return result;

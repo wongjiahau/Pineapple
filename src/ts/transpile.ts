@@ -7,6 +7,8 @@ import {
     BooleanExpression,
     BranchStatement,
     Declaration,
+    EnumDeclaration,
+    EnumExpression,
     Expression,
     ForStatement,
     FunctionCall,
@@ -47,7 +49,17 @@ export function tpDeclaration(input: Declaration): string {
             return tpImportDeclaration(input);
         case "StructDeclaration":
             return tpStructDeclaration(input);
+        case "EnumDeclaration":
+            return tpEnumDeclaration(input);
     }
+}
+
+export function tpEnumDeclaration(e: EnumDeclaration): string {
+    return `
+/**
+ * enum ${e.name.repr} = ${flattenLinkedNode(e.enums).map((x) => (x.repr)).join(",")}
+*/
+    `;
 }
 
 export function tpStructDeclaration(s: StructDeclaration): string {
@@ -206,11 +218,16 @@ export function tpExpression(e: Expression): string {
         case "Variable":            return "$" + e.repr;
         case "ObjectExpression":    return tpObjectExpression(e);
         case "List":                return tpArrayExpression(e);
-        case "Boolean":             return tpBooleanExpression(e);
         case "ObjectAccess":        return tpObjectAccess(e);
+        case "EnumExpression":      return tpEnumExpression(e);
         default:
             throw new Error(`Cannot handle ${e.kind} yet`);
     }
+}
+
+export function tpEnumExpression(e: EnumExpression): string {
+    return `{$kind: "_Enum${e.returnType.name.repr}", $value: "${e.value.repr}"}`;
+
 }
 
 export function tpObjectAccess(o: ObjectAccess): string {

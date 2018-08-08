@@ -5,17 +5,13 @@ describe("FDBI-002", () => {
     it("double equals", () => {
         const input =
 `
-def (x Any) == (y Any) -> Int
-    <javascript>
-    return $x === $y;
-    </javascript>
+def (x Number) == (y Number) -> Number
+    pass
 `;
         const expectedOutput =
 `
-function _$equal$equal_Any_Any($x,$y){
-// <javascript>
-return $x === $y;
-// </javascript>;
+function _$equal$equal_Number_Number($x,$y){
+$$pass$$();
 }
 `;
         assertEquals(pine2js(input).trim(), expectedOutput.trim());

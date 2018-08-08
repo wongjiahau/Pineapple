@@ -28,13 +28,14 @@ The ${position[relatedArgumentPosition]} parameter of the function:
 
     ${sig}
 
-should be one of the following type:
+should have the type of:
 
-${expectedTypes.map((x) => "    " + stringifyTypeReadable(x)).join("\n")}
+${expectedTypes.map((x) => "    " + stringifyTypeReadable(x)).join(" OR\n")}
 
-But you passed in
+But the expression you provided have the type of:
 
     ${stringifyTypeReadable(relatedParam.returnType)}
 `,
+        hint: `Maybe you are calling the wrong function?`
     };
 }

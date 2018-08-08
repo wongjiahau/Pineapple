@@ -68,7 +68,8 @@ export function includes(tree: TypeTree, t: TypeExpression): boolean {
 
 export function initTypeTree(): TypeTree {
     const anyType        = newSimpleType("Any");
-    const objectType     = newSimpleType("Object");
+    const enumType       = EnumType();
+    const objectType     = ObjectType();
     const dictType       = newSimpleType("Dict");
     const arrayType      = newListType(anyType);
     const numberType     = newSimpleType("Number");
@@ -76,12 +77,21 @@ export function initTypeTree(): TypeTree {
     const dateType       = newSimpleType("Date");
     let tree = newTypeTree(anyType);
     tree = insertChild(numberType, anyType, tree);
+    tree = insertChild(enumType, anyType, tree);
     tree = insertChild(dictType, anyType, tree);
     tree = insertChild(objectType, dictType, tree);
     tree = insertChild(arrayType, anyType, tree);
     tree = insertChild(dateType, anyType, tree);
     tree = insertChild(stringType, arrayType, tree);
     return tree;
+}
+
+export function ObjectType(): SimpleType {
+    return newSimpleType("Object");
+}
+
+export function EnumType(): SimpleType {
+    return newSimpleType("Enum");
 }
 
 export function newSimpleType(name: string): SimpleType {

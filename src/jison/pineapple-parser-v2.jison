@@ -16,6 +16,12 @@ const _FunctionDeclaration = (signature,returnType,parameters,statements,affix) 
     affix,
 });
 
+const _EnumDeclaration = (name, enums) => ({
+    kind: "EnumDeclaration",
+    name,
+    enums,
+})
+
 const _StructDeclaration = (name, members) => ({
     kind: "StructDeclaration",
     name,
@@ -97,10 +103,9 @@ const _FunctionCall = (fix,signature,parameters,location) => ({
     location
 });
 
-const _FunctionType = (inputType, outputType) => ({
-    kind: "FunctionType",
-    inputType,
-    outputType
+const _EnumExpression = (value) => ({
+    kind: "EnumExpression",
+    value
 });
 
 const _ObjectExpr = (constructor, keyValueList) => ({
@@ -204,9 +209,7 @@ const _AnonymousExpression = (location) => ({
 ["].*?["]                                   return 'STRING'
 \<javascript\>(.|[\s\S])*?\<\/javascript\>  return 'JAVASCRIPT'
 \d+([.]\d+)?((e|E)[+-]?\d+)?                return 'NUMBER' 
-"true"                                      return 'TRUE'
-"false"                                     return 'FALSE'
-"nil"                                       return 'NIL'
+[#][a-zA-Z0-9]+                             return 'ENUM'
 
 // Identifiers
 [.]([a-z][a-zA-Z0-9]*)?         return 'FUNCNAME'    
@@ -248,6 +251,16 @@ Declaration
     : StructDeclaration
     | FunctionDeclaration
     | ImportDeclaration
+    | EnumDeclaration
+    ;
+
+EnumDeclaration
+    : DEF TypenameAtom NEWLINE INDENT EnumList DEDENT {$$=_EnumDeclaration($2,$5)}
+    ;
+
+EnumList
+    : EnumAtom NEWLINE EnumList {$$=_LinkedNode($1,$3)}
+    | EnumAtom NEWLINE          {$$=_LinkedNode($1,null)}
     ;
 
 ImportDeclaration
@@ -385,8 +398,6 @@ AtomicTypeExpr
     | TypenameAtom '?'          {$$=_SimpleType($1,true)}
     | GenericAtom               {$$=_GenericType($1, false)}
     | GenericAtom '?'           {$$=_GenericType($1, true)}
-    | '(' TypeExpression '->' TypeExpression ')' {$$=_FunctionType([$2],$4)}
-    | '(' TypeExpression ',' TypeExpression '->' TypeExpression ')' 
     | TypenameAtom '{' TypeExpressionList '}' {$$=_CompoundType($1,$3, false)}
     | TypenameAtom '{' TypeExpressionList '}' '?' {$$=_CompoundType($1,$3, true)}
     ;
@@ -449,6 +460,7 @@ AtomicExpr
     | BooleanAtom
     | StringAtom
     | NumberAtom
+    | EnumAtom {$$=_EnumExpression($1)}
     | VariableAtom
     | AnonymousExpression
     | NIL
@@ -550,6 +562,10 @@ OperatorAtom
 
 TypenameAtom
     : TYPENAME {$$=_Token($1, this._$)}
+    ;
+
+EnumAtom
+    : ENUM {$$=_Token($1, this._$)}
     ;
 
 GenericAtom

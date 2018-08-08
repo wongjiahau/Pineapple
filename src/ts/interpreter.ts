@@ -32,9 +32,9 @@ function loadSource(sources: SourceCode[]): Declaration[] {
         result = getIntermediateForm(sources[i], result);
     }
     let declarations: Declaration[] = [];
-    for (const key in result.funcTab) {
-        if (result.funcTab.hasOwnProperty(key)) {
-            declarations = declarations.concat(result.funcTab[key]);
+    for (const key in result.symbolTable.funcTab) {
+        if (result.symbolTable.funcTab.hasOwnProperty(key)) {
+            declarations = declarations.concat(result.symbolTable.funcTab[key]);
         }
     }
     return declarations;
@@ -56,7 +56,9 @@ export function fullTranspile(source: SourceCode): string {
         sources = [source];
     }
 
-    return loadSource(sources)
+    // use strict is added to improve performance
+    // See https://github.com/petkaantonov/bluebird/wiki/Optimization-killers
+    return "'use strict'\n" + loadSource(sources)
         .map((x) => tpDeclaration(x))
         .join("\n")
         + "\n_main_();";

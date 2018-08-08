@@ -1,17 +1,24 @@
-import {  TypeExpression, VariableDeclaration } from "../ast";
-import { stringifyType } from "../transpile";
-import { ErrorDetail } from "./errorUtil";
+import { Expression, VariableDeclaration } from "../ast";
+import { ErrorDetail, stringifyTypeReadable } from "./errorUtil";
 
 export function ErrorIncorrectTypeGivenForVariable(
     relatedVariable: VariableDeclaration,
-    actualType: TypeExpression
+    relatedExpression: Expression,
 ): ErrorDetail {
     return {
         code: "0006",
         name: "ErrorIncorrectTypeGivenForVariable",
         message:
-        `Variable \`${relatedVariable.variable.repr}\` wanted ` +
-        `${stringifyType(relatedVariable.typeExpected)} type but you gave it ${stringifyType(actualType)} input`,
-        relatedLocation: relatedVariable.variable.location
+`
+
+The variable \`${relatedVariable.variable.repr}\` should have the type of:
+
+    ${stringifyTypeReadable(relatedVariable.typeExpected)}
+
+But the expression you provided have the type of:
+
+    ${stringifyTypeReadable(relatedExpression.returnType)}
+    `,
+        relatedLocation: relatedExpression.location
     };
 }
