@@ -1,4 +1,4 @@
-import {CompoundType, NullTokenLocation, SimpleType, TypeExpression} from "./ast";
+import {CompoundType, EnumDeclaration, NullTokenLocation, SimpleType, TypeExpression} from "./ast";
 import { typeEquals } from "./fillUpTypeInformation";
 
 export interface TypeTree {

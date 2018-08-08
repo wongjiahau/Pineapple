@@ -2,22 +2,32 @@ import { pine2js } from "../../../pine2js";
 import { assertEquals } from "../../testUtil";
 
 describe("ENUM-001", () => {
-    it("declaration", () => {
+    it("boolean/null/undefined literal will be optimized", () => {
         const input =
 `
-def Color
-    \`red
-    \`green
-    \`blue
+def Boolean
+    \`true
+    \`false
+
+def Nil
+    \`nil
+
+def Undefined
+    \`undefined
 
 def .main
-    let x Color = \`green
+    let x = \`true
+    let y = \`false
+    let z = \`nil
+    let a = \`undefined
 `;
-        // no output, because enum is not needed to be declared in JS
         const expectedOutput =
 `
 function _main_(){
-const $x = {$kind: "_EnumColor", $value: "green"};
+const $x = true;
+const $y = false;
+const $z = null;
+const $a = undefined;
 }
 `;
 

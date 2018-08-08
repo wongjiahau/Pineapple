@@ -209,7 +209,7 @@ const _AnonymousExpression = (location) => ({
 ["].*?["]                                   return 'STRING'
 \<javascript\>(.|[\s\S])*?\<\/javascript\>  return 'JAVASCRIPT'
 \d+([.]\d+)?((e|E)[+-]?\d+)?                return 'NUMBER' 
-[#][a-zA-Z0-9]+                             return 'ENUM'
+[`][a-zA-Z0-9]+                             return 'ENUM'
 
 // Identifiers
 [.]([a-z][a-zA-Z0-9]*)?         return 'FUNCNAME'    

@@ -1,3 +1,13 @@
+def Boolean 
+    `true
+    `false
+
+def Nil
+    `nil
+
+def Undefined
+    `undefined
+
 def (this Any) == (that Any) -> Boolean
     <javascript>
     return $this === $that;

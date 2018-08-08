@@ -226,7 +226,13 @@ export function tpExpression(e: Expression): string {
 }
 
 export function tpEnumExpression(e: EnumExpression): string {
-    return `{$kind: "_Enum${e.returnType.name.repr}", $value: "${e.value.repr}"}`;
+    if (e.returnType.name.repr === "Nil") {
+        return `null`;
+    }
+    if (["Boolean", "Nil", "Undefined"].indexOf(e.returnType.name.repr) > -1) {
+        return `${e.value.repr.slice(1)}`;
+    }
+    return `{$kind: "_Enum${e.returnType.name.repr}", $value: "${e.value.repr.slice(1)}"}`;
 
 }
 
