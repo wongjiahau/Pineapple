@@ -5,6 +5,9 @@ describe("@branch-BRA-001", () => {
     it("if", () => {
         const input =
 `
+def Boolean
+    pass
+
 def (this Number) > (that Number) -> Boolean
     pass
 

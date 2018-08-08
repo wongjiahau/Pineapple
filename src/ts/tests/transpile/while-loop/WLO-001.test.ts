@@ -5,6 +5,9 @@ describe("WLO-001", () => {
     it("while loop 1", () => {
         const input =
 `
+def Boolean
+    pass
+
 def (this Number) < (that Number) -> Boolean
     pass
 

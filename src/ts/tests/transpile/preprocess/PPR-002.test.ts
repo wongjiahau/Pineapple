@@ -1,4 +1,3 @@
-import { expect } from "chai";
 import { pine2js } from "../../../pine2js";
 import { assertEquals } from "../../testUtil";
 
@@ -6,12 +5,12 @@ describe("@preprocess-PP-002", () => {
     it("should ignore consequtive newlines", () => {
         const input =
 `
-def (this String).show -> Void
+def (this String).show
     <javascript>
     console.log($this.valueOf());
     </javascript>
 
-def (this String).say -> Void
+def (this String).say
     <javascript>
     console.log($this.valueOf());
     </javascript>

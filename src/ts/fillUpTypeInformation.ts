@@ -79,7 +79,7 @@ export function fillUpTypeInformation(
         switch (currentDecl.kind) {
             case "FunctionDeclaration":
                 const vartab = getVariableTable(currentDecl.parameters);
-                currentDecl.returnType = resolveType(currentDecl.returnType, symbols.typeTree, symbols.structTab);
+                currentDecl.returnType = resolveType(currentDecl.returnType, symbols);
                 const [statements, newSymbols] = fillUp(currentDecl.statements, symbols, vartab);
                 currentDecl.statements = statements;
                 symbols = newSymbols;
@@ -137,6 +137,8 @@ export function resolveType(
                 kind: "VoidType",
                 location: NullTokenLocation()
             };
+        case "GenericType":
+            return t;
         default:
             throw new Error(`${t.kind} can't be resolved yet`); // TODO: implement it
     }

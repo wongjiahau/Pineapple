@@ -5,7 +5,11 @@ import { assertEquals } from "../../testUtil";
 describe("BRA-002", () => {
     it("if elif elif else", () => {
         const input =
-`def (this Number) > (that Number) -> Boolean
+`
+def Boolean
+    pass
+
+def (this Number) > (that Number) -> Boolean
     pass
 
 def .main

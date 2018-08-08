@@ -5,6 +5,9 @@ describe("BRA-003", () => {
     it("if else without elif", () => {
         const input =
 `
+def Boolean
+    pass
+
 def (this Number) > (that Number) -> Boolean
     pass
 

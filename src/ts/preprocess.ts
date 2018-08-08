@@ -7,7 +7,7 @@ export function preprocess(input: string): string {
 
     // let result = input.replace(/(\r\n|\r|\n)+/g, "\n");
     // result += "\n";
-    let result = input;
+    let result = input + "\n";
     result = labelNewlines(result);
     result = smoothify(result);
     result = labelIndentation(result);
