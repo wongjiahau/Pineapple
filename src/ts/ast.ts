@@ -27,8 +27,9 @@ export interface StructDeclaration {
     kind: "StructDeclaration";
     name: AtomicToken;
     members: LinkedNode<MemberDefinition> | null;
-    templates: LinkedNode<GenericType> | null;
+    templates: LinkedNode<TypeExpression> | null;
     location: TokenLocation;
+    nullable: boolean;
 }
 
 export interface MemberDefinition {
@@ -99,7 +100,6 @@ export interface AssignmentStatement {
 
 export type TypeExpression
     = SimpleType
-    | CompoundType
     | GenericType
     | StructDeclaration
     | VoidType
@@ -127,14 +127,6 @@ export interface VoidType {
 export interface SimpleType {
     kind: "SimpleType";
     name: AtomicToken;
-    nullable: boolean;
-    location: TokenLocation;
-}
-
-export interface CompoundType {
-    kind: "CompoundType";
-    container: StructDeclaration;
-    of: LinkedNode<TypeExpression>;
     nullable: boolean;
     location: TokenLocation;
 }

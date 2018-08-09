@@ -5,6 +5,9 @@ describe("FCBIN-003", () => {
     it("generic binary function", () => {
         const input =
 `
+def List{T}
+    pass
+
 def (this List{T}) ++ (that List{T}) -> List{T}
     pass
 

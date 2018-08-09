@@ -23,7 +23,7 @@ export function pine2js(input: string, filename: string= ""): string {
     // source += transpile(intermediateForm.funcTab)
 }
 
-export function prettyPrint(ast: any, removeLocation: boolean): void {
+export function prettyPrint(ast: any, removeLocation: boolean = true): void {
     if (removeLocation) {
         ast = removeTokenLocation(ast);
     }

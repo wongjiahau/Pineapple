@@ -4,7 +4,6 @@
 import {
     AssignmentStatement,
     AtomicToken,
-    BooleanExpression,
     BranchStatement,
     Declaration,
     EnumDeclaration,
@@ -182,12 +181,10 @@ export function stringifyType(t: TypeExpression): string {
     switch (t.kind) {
         case "SimpleType":
             return t.name.repr;
-        case "CompoundType" :
-            return t.container.name.repr + "Of" + flattenLinkedNode(t.of).map((x) => stringifyType(x));
         case "GenericType":
             return `Generic$${t.placeholder.repr}`;
         case "StructDeclaration":
-            return `Struct${t.name.repr}`;
+            return `${t.name.repr}Of${flattenLinkedNode(t.templates).map((x) => stringifyType(x))}` ;
         case "VoidType":
             return `Void`;
         default:
@@ -254,10 +251,6 @@ export function tpStringExpression(s: StringExpression): string {
 
 export function tpNumberExpression(e: NumberExpression): string {
     return `(${e.repr})`;
-}
-
-export function tpBooleanExpression(e: BooleanExpression): string {
-    return e.repr;
 }
 
 export function tpArrayExpression(e: ListExpression): string {

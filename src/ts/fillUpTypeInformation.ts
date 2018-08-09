@@ -1,7 +1,6 @@
 import {
     AtomicToken,
     BranchStatement,
-    CompoundType,
     Declaration,
     EnumDeclaration,
     Expression,
@@ -11,6 +10,7 @@ import {
     KeyValue,
     LinkedNode,
     ListExpression,
+    newAtomicToken,
     newSimpleType,
     NullTokenLocation,
     NumberExpression,
@@ -46,7 +46,7 @@ import { flattenLinkedNode } from "./getIntermediateForm";
 import { SourceCode } from "./interpreter";
 import { prettyPrint } from "./pine2js";
 import { stringifyFuncSignature, stringifyType } from "./transpile";
-import { childOf, EnumType, includes, insertChild, ListType, newListType, ObjectType, TypeTree } from "./typeTree";
+import { childOf, EnumType, includes, insertChild, newListType, ObjectType, TypeTree } from "./typeTree";
 import { find } from "./util";
 
 let CURRENT_SOURCE_CODE: () => SourceCode;
@@ -64,6 +64,11 @@ export function fillUpTypeInformation(
         const currentDecl = decls[i];
         switch (currentDecl.kind) {
             case "FunctionDeclaration":
+                currentDecl.returnType = resolveType(currentDecl.returnType, symbols);
+                for (let j = 0; j < currentDecl.parameters.length; j++) {
+                    currentDecl.parameters[j].typeExpected =
+                        resolveType(currentDecl.parameters[j].typeExpected, symbols);
+                }
                 symbols.funcTab = newFunctionTable(currentDecl, symbols.funcTab);
                 break;
             case "StructDeclaration":
@@ -81,7 +86,6 @@ export function fillUpTypeInformation(
         switch (currentDecl.kind) {
             case "FunctionDeclaration":
                 const vartab = getVariableTable(currentDecl.parameters);
-                currentDecl.returnType = resolveType(currentDecl.returnType, symbols);
                 const [statements, newSymbols] = fillUp(currentDecl.statements, symbols, vartab);
                 currentDecl.statements = statements;
                 symbols = newSymbols;
@@ -141,9 +145,12 @@ export function resolveType(
             };
         case "GenericType":
             return t;
-        case "CompoundType":
-            resolveType(t.container, symbols);
         default:
+            // search struct table
+            const mathchinStruct = findTableEntry(symbols.structTab, t.name.repr);
+            if (mathchinStruct) {
+                return mathchinStruct;
+            }
             throw new Error(`${t.kind} can't be resolved yet`); // TODO: implement it
     }
 }
@@ -583,7 +590,8 @@ function containsGeneric(params: VariableDeclaration[]): boolean {
 function substituteGeneric(actualParams: VariableDeclaration[], matchingParams: Expression[]): VariableDeclaration[] {
     const typeOfFirstParam = matchingParams[0].returnType;
     for (let i = 0; i < actualParams.length; i++) {
-        actualParams[i].typeExpected = substitute(typeOfFirstParam, /*into*/ actualParams[i].typeExpected);
+        actualParams[i].typeExpected =
+            substitute(typeOfFirstParam, /*into*/ actualParams[i].typeExpected);
     }
     return actualParams;
 
@@ -592,14 +600,14 @@ function substituteGeneric(actualParams: VariableDeclaration[], matchingParams: 
 function substitute(src: TypeExpression, /*into*/ dest: TypeExpression): TypeExpression {
     const matchingType = (() => {
         let current = src;
-        while (current.kind === "CompoundType") {
-            current = current.of.current;
+        while (current.kind === "StructDeclaration") {
+            current = current.templates.current;
         }
         return current;
     })();
     switch (dest.kind) {
-        case "CompoundType":
-            dest.of.current = substitute(matchingType, dest.of.current);
+        case "StructDeclaration":
+            dest.templates.current = substitute(matchingType, dest.templates.current);
             break;
         case "GenericType":
             return matchingType;
@@ -631,16 +639,10 @@ export function fillUpElementsType(e: LinkedNode<Expression>, symbols: SymbolTab
     return [e, symbols];
 }
 
-export function getElementsType(a: LinkedNode<Expression>): CompoundType {
+export function getElementsType(a: LinkedNode<Expression>): StructDeclaration {
     const types = flattenLinkedNode(a).map((x) => x.returnType);
     checkIfAllElementTypeAreHomogeneous(types);
-    return {
-        kind: "CompoundType",
-        container: ListType(),
-        of: singleLinkedNode(types[0]),
-        nullable: false,
-        location: NullTokenLocation()
-    };
+    return newListType(types[0]);
 }
 
 export function checkIfAllElementTypeAreHomogeneous(ts: TypeExpression[]): void {
@@ -658,14 +660,13 @@ export function typeEquals(x: TypeExpression, y: TypeExpression): boolean {
             case "SimpleType":
             case "EnumDeclaration":
             case "StructDeclaration":
-                return x.name.repr === (y as SimpleType).name.repr;
-            case "CompoundType":
-                y = y as CompoundType;
-                if (typeEquals(x.container, y.container)) {
+                x = x as StructDeclaration;
+                y = y as StructDeclaration;
+                if (x.name.repr !== y.name.repr) {
                     return false;
                 } else {
-                    const xOfTypes = flattenLinkedNode(x.of);
-                    const yOfTypes = flattenLinkedNode(y.of);
+                    const xOfTypes = flattenLinkedNode(x.templates);
+                    const yOfTypes = flattenLinkedNode(y.templates);
                     for (let i = 0; i < xOfTypes.length; i++) {
                         if (!typeEquals(xOfTypes[i], yOfTypes[i])) {
                             return false;
@@ -673,6 +674,8 @@ export function typeEquals(x: TypeExpression, y: TypeExpression): boolean {
                     }
                     return true;
                 }
+            case "GenericType":
+                return true; // Is this correct?
             default:
                 throw new Error(`Type comparison for ${x.kind} is not implemented yet`);
         }

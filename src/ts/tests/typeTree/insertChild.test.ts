@@ -4,7 +4,6 @@ import {
     findParentOf,
     insertChild,
     newListType,
-    newSimpleType,
     newTypeTree,
     TypeTree
 } from "../../typeTree";

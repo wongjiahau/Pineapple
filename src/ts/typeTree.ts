@@ -1,7 +1,5 @@
 import {
-    CompoundType,
     newAtomicToken,
-    newGenericType,
     newSimpleType,
     NullTokenLocation,
     SimpleType,
@@ -82,7 +80,7 @@ export function initTypeTree(): TypeTree {
     const enumType       = EnumType();
     const objectType     = ObjectType();
     const dictType       = newSimpleType("Dict");
-    const arrayType      = newListType(anyType);
+    const listType       = newListType(anyType);
     const numberType     = newSimpleType("Number");
     const stringType     = newSimpleType("String");
     const dateType       = newSimpleType("Date");
@@ -91,9 +89,9 @@ export function initTypeTree(): TypeTree {
     tree = insertChild(enumType, anyType, tree);
     tree = insertChild(dictType, anyType, tree);
     tree = insertChild(objectType, dictType, tree);
-    tree = insertChild(arrayType, anyType, tree);
+    tree = insertChild(listType, anyType, tree);
     tree = insertChild(dateType, anyType, tree);
-    tree = insertChild(stringType, arrayType, tree);
+    tree = insertChild(stringType, listType, tree);
     return tree;
 }
 
@@ -105,22 +103,13 @@ export function EnumType(): SimpleType {
     return newSimpleType("Enum");
 }
 
-export function ListType(): StructDeclaration {
+export function newListType(of: TypeExpression): StructDeclaration {
     return {
         kind: "StructDeclaration",
         members: null,
         name: newAtomicToken("List"),
         location: NullTokenLocation(),
-        templates: singleLinkedNode(newGenericType("T"))
-    };
-}
-
-export function newListType(arrayOfWhat: TypeExpression): CompoundType {
-    return {
-        container: ListType(),
-        kind: "CompoundType" ,
-        of: singleLinkedNode(arrayOfWhat),
-        nullable: false,
-        location: NullTokenLocation()
+        templates: singleLinkedNode(of),
+        nullable: false
     };
 }

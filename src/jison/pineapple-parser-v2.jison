@@ -22,11 +22,12 @@ const _EnumDeclaration = (name, enums) => ({
     enums,
 })
 
-const _StructDeclaration = (name, members, templates) => ({
+const _StructDeclaration = (name, members, templates, nullable) => ({
     kind: "StructDeclaration",
     name,
     members,
-    templates
+    templates,
+    nullable
 });
 
 const _MemberDefinition = (name, expectedType) => ({
@@ -82,13 +83,6 @@ const _Variable = (repr,location) => ({
 
 
 const _SimpleType = (name, nullable=false) => ({ kind: "SimpleType", name, nullable});
-
-const _CompoundType = (container, typeExpr, nullable) => ({
-    kind: "CompoundType",
-    container,
-    nullable,
-    of: typeExpr,
-});
 
 const _GenericType = (placeholder, nullable) => ({
     kind: "GenericType",
@@ -283,8 +277,8 @@ StructDeclaration
     ;
 
 TemplateList
-    : GenericAtom ',' TemplateList {$$=_LinkedNode($1,$3)}
-    | GenericAtom                  {$$=_LinkedNode($1,null)}
+    : GenericAtom ',' TemplateList {$$=_LinkedNode(_GenericType($1),$3)}
+    | GenericAtom                  {$$=_LinkedNode(_GenericType($1),null)}
     ;
 
 MembernameTypeList
@@ -413,8 +407,8 @@ AtomicTypeExpr
     | TypenameAtom '?'          {$$=_SimpleType($1,true)}
     | GenericAtom               {$$=_GenericType($1, false)}
     | GenericAtom '?'           {$$=_GenericType($1, true)}
-    | TypenameAtom '{' TypeExpressionList '}' {$$=_CompoundType(_SimpleType($1), $3, false)}
-    | TypenameAtom '{' TypeExpressionList '}' '?' {$$=_CompoundType(_SimpleType($1), $3, true)}
+    | TypenameAtom '{' TypeExpressionList '}'       {$$=_StructDeclaration($1,null,$3)}
+    | TypenameAtom '{' TypeExpressionList '}' '?'   {$$=_StructDeclaration($1,null,$3,true)}
     ;
 
 TypeExpressionList
