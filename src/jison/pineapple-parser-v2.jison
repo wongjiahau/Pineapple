@@ -22,10 +22,11 @@ const _EnumDeclaration = (name, enums) => ({
     enums,
 })
 
-const _StructDeclaration = (name, members) => ({
+const _StructDeclaration = (name, members, templates) => ({
     kind: "StructDeclaration",
     name,
-    members
+    members,
+    templates
 });
 
 const _MemberDefinition = (name, expectedType) => ({
@@ -80,11 +81,11 @@ const _Variable = (repr,location) => ({
 });
 
 
-const _SimpleType = (name, nullable) => ({ kind: "SimpleType", name, nullable});
+const _SimpleType = (name, nullable=false) => ({ kind: "SimpleType", name, nullable});
 
-const _CompoundType = (name, typeExpr, nullable) => ({
+const _CompoundType = (container, typeExpr, nullable) => ({
     kind: "CompoundType",
-    name,
+    container,
     nullable,
     of: typeExpr,
 });
@@ -268,8 +269,22 @@ ImportDeclaration
     ;
 
 StructDeclaration
-    : DEF TypenameAtom NEWLINE INDENT MembernameTypeList DEDENT {$$=_StructDeclaration($2,$5)}
-    | DEF TypenameAtom NEWLINE INDENT PASS NEWLINE DEDENT {$$=_StructDeclaration($2,null)}
+    : DEF TypenameAtom NEWLINE INDENT MembernameTypeList DEDENT   
+        {$$=_StructDeclaration($2,$5,null)}
+
+    | DEF TypenameAtom NEWLINE INDENT PASS NEWLINE DEDENT         
+        {$$=_StructDeclaration($2,null,null)}
+
+    | DEF TypenameAtom '{'TemplateList'}' NEWLINE INDENT MembernameTypeList NEWLINE DEDENT 
+        {$$=_StructDeclaration($2,$8,$4)}
+
+    | DEF TypenameAtom '{'TemplateList'}' NEWLINE INDENT PASS NEWLINE DEDENT 
+        {$$=_StructDeclaration($2,null,$4)}
+    ;
+
+TemplateList
+    : GenericAtom ',' TemplateList {$$=_LinkedNode($1,$3)}
+    | GenericAtom                  {$$=_LinkedNode($1,null)}
     ;
 
 MembernameTypeList
@@ -309,7 +324,7 @@ BiFuncDeclaration
     ;
 
 TriFuncDeclaration
-    : VarDecl FuncAtom '(' VarDecl SubFuncAtom  VarDecl ')' '->' TypeExpression Block
+    : VarDecl FuncAtom '(' VarDecl VariableAtom  VarDecl ')' '->' TypeExpression Block
         {$$=_FunctionDeclaration([$2,$5],$9,[$1,$4,$6],$10,"Tri")}
     ;
 
@@ -398,8 +413,8 @@ AtomicTypeExpr
     | TypenameAtom '?'          {$$=_SimpleType($1,true)}
     | GenericAtom               {$$=_GenericType($1, false)}
     | GenericAtom '?'           {$$=_GenericType($1, true)}
-    | TypenameAtom '{' TypeExpressionList '}' {$$=_CompoundType($1,$3, false)}
-    | TypenameAtom '{' TypeExpressionList '}' '?' {$$=_CompoundType($1,$3, true)}
+    | TypenameAtom '{' TypeExpressionList '}' {$$=_CompoundType(_SimpleType($1), $3, false)}
+    | TypenameAtom '{' TypeExpressionList '}' '?' {$$=_CompoundType(_SimpleType($1), $3, true)}
     ;
 
 TypeExpressionList
@@ -447,7 +462,7 @@ BiFuncCall
     ;
 
 TriFuncCall
-    : AtomicExpr FuncAtom '(' SinglelineExpr SubFuncAtom SinglelineExpr ')'  
+    : AtomicExpr FuncAtom '(' SinglelineExpr VariableAtom SinglelineExpr ')'  
         {$$=_FunctionCall("Tri",[$2,$5],[$1,$4,$6],this._$)}
     ;
 

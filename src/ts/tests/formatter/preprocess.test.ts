@@ -18,7 +18,9 @@ hello world
 
 `;
         const result = preprocess(input);
-        expect(input.split("\n").length).to.eq(result.split("\n").length);
+
+        // 2 new lines will be added
+        expect(input.split("\n").length + 2).to.eq(result.split("\n").length);
 
     });
 

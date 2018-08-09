@@ -26,7 +26,8 @@ export interface FunctionDeclaration {
 export interface StructDeclaration {
     kind: "StructDeclaration";
     name: AtomicToken;
-    members: LinkedNode<MemberDefinition>;
+    members: LinkedNode<MemberDefinition> | null;
+    templates: LinkedNode<GenericType> | null;
     location: TokenLocation;
 }
 
@@ -132,7 +133,7 @@ export interface SimpleType {
 
 export interface CompoundType {
     kind: "CompoundType";
-    name: AtomicToken;
+    container: StructDeclaration;
     of: LinkedNode<TypeExpression>;
     nullable: boolean;
     location: TokenLocation;
@@ -257,5 +258,40 @@ export function NullTokenLocation(): TokenLocation {
         first_line: -1,
         last_column: -1,
         last_line: -1,
+    };
+}
+
+export function singleLinkedNode<T>(current: T): LinkedNode<T> {
+    return {
+        current: current,
+        next: null
+    };
+}
+
+export function newGenericType(placeholder: string): GenericType {
+    return {
+        kind: "GenericType",
+        placeholder: newAtomicToken(placeholder),
+        location: NullTokenLocation(),
+        nullable: false
+    };
+}
+
+export function newAtomicToken(repr: string): AtomicToken {
+    return {
+        repr: repr,
+        location: NullTokenLocation()
+    };
+}
+
+export function newSimpleType(name: string): SimpleType {
+    return {
+        kind: "SimpleType",
+        name: {
+            repr: name,
+            location: NullTokenLocation()
+        },
+        nullable: false,
+        location: NullTokenLocation()
     };
 }

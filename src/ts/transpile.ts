@@ -183,13 +183,15 @@ export function stringifyType(t: TypeExpression): string {
         case "SimpleType":
             return t.name.repr;
         case "CompoundType" :
-            return t.name.repr + "Of" + flattenLinkedNode(t.of).map((x) => stringifyType(x)).join("$");
+            return t.container.name.repr + "Of" + flattenLinkedNode(t.of).map((x) => stringifyType(x));
         case "GenericType":
             return `Generic$${t.placeholder.repr}`;
         case "StructDeclaration":
             return `Struct${t.name.repr}`;
         case "VoidType":
             return `Void`;
+        default:
+            throw new Error(`Cant stringify ${t.kind} yet`);
     }
 }
 

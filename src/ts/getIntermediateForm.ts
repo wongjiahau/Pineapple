@@ -55,7 +55,10 @@ export interface IntermediateForm {
     importedFiles: string[];
 }
 
-export function flattenLinkedNode<T>(ast: LinkedNode<T>): T[] {
+export function flattenLinkedNode<T>(ast: LinkedNode<T> | null): T[] {
+    if (ast === null) {
+        return [];
+    }
     const result: T[] = [];
     let next: LinkedNode<T> | null = ast;
     while (next) {

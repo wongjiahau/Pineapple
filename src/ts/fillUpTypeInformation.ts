@@ -11,10 +11,12 @@ import {
     KeyValue,
     LinkedNode,
     ListExpression,
+    newSimpleType,
     NullTokenLocation,
     NumberExpression,
     ReturnStatement,
     SimpleType,
+    singleLinkedNode,
     Statement,
     StringExpression,
     StructDeclaration,
@@ -44,7 +46,7 @@ import { flattenLinkedNode } from "./getIntermediateForm";
 import { SourceCode } from "./interpreter";
 import { prettyPrint } from "./pine2js";
 import { stringifyFuncSignature, stringifyType } from "./transpile";
-import { childOf, EnumType, includes, insertChild, newSimpleType, ObjectType, TypeTree } from "./typeTree";
+import { childOf, EnumType, includes, insertChild, ListType, newListType, ObjectType, TypeTree } from "./typeTree";
 import { find } from "./util";
 
 let CURRENT_SOURCE_CODE: () => SourceCode;
@@ -139,6 +141,8 @@ export function resolveType(
             };
         case "GenericType":
             return t;
+        case "CompoundType":
+            resolveType(t.container, symbols);
         default:
             throw new Error(`${t.kind} can't be resolved yet`); // TODO: implement it
     }
@@ -235,7 +239,7 @@ function updateVariableTable(vtab: VariableTable, variable: Variable): VariableT
     return vtab;
 }
 
-export function raise(errorDetail: ErrorDetail, sourceCode: SourceCode = CURRENT_SOURCE_CODE()) {
+export function raise(errorDetail: ErrorDetail, sourceCode: SourceCode = CURRENT_SOURCE_CODE()): any {
     const e = Error(renderError(sourceCode, errorDetail));
     e.name = errorDetail.name;
     throw e;
@@ -273,9 +277,9 @@ export function fillUp(s: LinkedNode<Statement>, symbols: SymbolTable, vartab: V
             }
             [s.current.expression, symbols] = fillUpExpressionTypeInfo(s.current.expression, symbols, vartab);
             if (!typeEquals(matching.returnType, s.current.expression.returnType)) {
-                errorMessage(
+                throw new Error(
 `The data type of ${matching.repr} should be ${stringifyType(matching.returnType)}, ` +
-`but you assigned it with ${stringifyType(s.current.expression.returnType)}`, matching.location);
+`but you assigned it with ${stringifyType(s.current.expression.returnType)}`);
             } else {
                 s.current.variable.returnType = matching.returnType;
             }
@@ -292,7 +296,7 @@ export function fillUp(s: LinkedNode<Statement>, symbols: SymbolTable, vartab: V
         [s.current, symbols, vartab] = fillUpForStmtTypeInfo(s.current, symbols, vartab);
         break;
     case "WhileStatement":
-        [s.current.test, symbols] = fillUpTestExprTypeInfo(s.current.test, symbols);
+        [s.current.test, symbols] = fillUpTestExprTypeInfo(s.current.test, symbols, vartab);
         [s.current.body, symbols] = fillUp(s.current.body, symbols, vartab);
         break;
     }
@@ -309,7 +313,7 @@ export function fillUpForStmtTypeInfo(f: ForStatement, symbols: SymbolTable, var
         f.iterator.returnType = f.expression.returnType.of.current;
         vartab = updateVariableTable(vartab, f.iterator);
     } else {
-        errorMessage("The expresison type in for statement should be array.", null);
+        throw new Error("The expresison type in for statement should be array.");
     }
     [f.body, symbols] = fillUp(f.body, symbols, vartab);
     return [f, symbols, vartab];
@@ -344,7 +348,7 @@ export function fillUpExpressionTypeInfo(e: Expression, symbols: SymbolTable, va
     case "FunctionCall":
         [e, symbols.funcTab] = fillUpFunctionCallTypeInfo(e, symbols, vartab);
         return [e, symbols];
-    case "List":     e = fillUpArrayTypeInfo   (e, symbols); break;
+    case "List":     e = fillUpArrayTypeInfo   (e, symbols, vartab); break;
     case "Number":   e = fillUpSimpleTypeInfo  (e, "Number"); break;
     case "String":   e = fillUpSimpleTypeInfo  (e, "String"); break;
     case "Variable": e = fillUpVariableTypeInfo(e, vartab); break;
@@ -383,7 +387,7 @@ export function fillUpExpressionTypeInfo(e: Expression, symbols: SymbolTable, va
     return [e, symbols];
 }
 
-export function findMatchingEnumType(value: string, enumTab: EnumTable): TypeExpression {
+export function findMatchingEnumType(value: string, enumTab: EnumTable): EnumDeclaration {
     const matchingEnum: EnumDeclaration[] = [];
     for (const key in enumTab) {
         if (enumTab.hasOwnProperty(key)) {
@@ -445,7 +449,7 @@ export function findMemberType(key: AtomicToken, structDecl: StructDeclaration):
     if (matchingMember.length > 0) {
         return matchingMember[0].expectedType;
     } else {
-        raise(ErrorAccessingInexistentMember(structDecl, key));
+        return raise(ErrorAccessingInexistentMember(structDecl, key));
     }
 }
 export function getStruct(name: AtomicToken, structTab: StructTable): StructDeclaration {
@@ -453,11 +457,11 @@ export function getStruct(name: AtomicToken, structTab: StructTable): StructDecl
     if (result !== undefined) {
         return result;
     } else {
-        raise(ErrorUsingUndefinedStruct(name, structTab));
+        return raise(ErrorUsingUndefinedStruct(name, structTab));
     }
 }
 
-export function fillUpKeyValueListTypeInfo(k: LinkedNode<KeyValue>, symbols: SymbolTable, vartab: VariableTable)
+export function fillUpKeyValueListTypeInfo(k: LinkedNode<KeyValue> | null, symbols: SymbolTable, vartab: VariableTable)
     : [LinkedNode<KeyValue>, SymbolTable] {
     let current: LinkedNode<KeyValue> | null = k;
     while (current !== null) {
@@ -480,15 +484,7 @@ export type SimpleExpression
 export function fillUpSimpleTypeInfo(e: SimpleExpression, name: string): SimpleExpression {
     return {
         ...e,
-        returnType: {
-            kind: "SimpleType",
-            name: {
-                repr: name,
-                location: NullTokenLocation(),
-            },
-            nullable: false,
-            location: NullTokenLocation()
-        }
+        returnType: newSimpleType(name)
     };
 }
 
@@ -615,9 +611,9 @@ function substitute(src: TypeExpression, /*into*/ dest: TypeExpression): TypeExp
     return dest;
 }
 
-export function fillUpArrayTypeInfo(e: ListExpression, symbols: SymbolTable): ListExpression {
+export function fillUpArrayTypeInfo(e: ListExpression, symbols: SymbolTable, vartab: VariableTable): ListExpression {
     if (e.elements !== null) {
-        [e.elements, symbols] = fillUpElementsType(e.elements, symbols);
+        [e.elements, symbols] = fillUpElementsType(e.elements, symbols, vartab);
         e.returnType = getElementsType(e.elements);
     } else {
         throw new Error("Don't know how to handle yet");
@@ -640,14 +636,8 @@ export function getElementsType(a: LinkedNode<Expression>): CompoundType {
     checkIfAllElementTypeAreHomogeneous(types);
     return {
         kind: "CompoundType",
-        name: {
-            repr: "List",
-            location: NullTokenLocation()
-        },
-        of: {
-            current: types[0],
-            next: null
-        },
+        container: ListType(),
+        of: singleLinkedNode(types[0]),
         nullable: false,
         location: NullTokenLocation()
     };
@@ -671,7 +661,7 @@ export function typeEquals(x: TypeExpression, y: TypeExpression): boolean {
                 return x.name.repr === (y as SimpleType).name.repr;
             case "CompoundType":
                 y = y as CompoundType;
-                if (x.name.repr !== y.name.repr) {
+                if (typeEquals(x.container, y.container)) {
                     return false;
                 } else {
                     const xOfTypes = flattenLinkedNode(x.of);

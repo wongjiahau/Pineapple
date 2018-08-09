@@ -11,7 +11,7 @@ def (this List{T}).(that Number) -> T
     return $this[$that]
     </javascript>
 
-def (this List{T}).(start Number : end Number) -> T 
+def (this List{T}).(start Number to end Number) -> T 
     <javascript>
     return $this.slice($start, $end + 1)
     </javascript>

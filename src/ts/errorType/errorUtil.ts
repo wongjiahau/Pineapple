@@ -12,7 +12,7 @@ export interface ErrorDetail  {
 export function stringifyTypeReadable(t: TypeExpression): string {
     switch (t.kind) {
         case "CompoundType":
-            return `${t.name.repr}{${flattenLinkedNode(t.of).map(stringifyTypeReadable).join(",")}}`;
+            return `${t.container.name.repr}{${flattenLinkedNode(t.of).map(stringifyTypeReadable).join(",")}}`;
         case "SimpleType":
             return `${t.name.repr}`;
         case "VoidType":

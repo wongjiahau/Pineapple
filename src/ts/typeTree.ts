@@ -1,4 +1,15 @@
-import {CompoundType, EnumDeclaration, NullTokenLocation, SimpleType, TypeExpression} from "./ast";
+import {
+    CompoundType,
+    newAtomicToken,
+    newGenericType,
+    newSimpleType,
+    NullTokenLocation,
+    SimpleType,
+    singleLinkedNode,
+    StructDeclaration,
+    TypeExpression
+} from "./ast";
+
 import { typeEquals } from "./fillUpTypeInformation";
 
 export interface TypeTree {
@@ -94,29 +105,21 @@ export function EnumType(): SimpleType {
     return newSimpleType("Enum");
 }
 
-export function newSimpleType(name: string): SimpleType {
+export function ListType(): StructDeclaration {
     return {
-        kind: "SimpleType",
-        name: {
-            repr: name,
-            location: NullTokenLocation()
-        },
-        nullable: false,
-        location: NullTokenLocation()
+        kind: "StructDeclaration",
+        members: null,
+        name: newAtomicToken("List"),
+        location: NullTokenLocation(),
+        templates: singleLinkedNode(newGenericType("T"))
     };
 }
 
 export function newListType(arrayOfWhat: TypeExpression): CompoundType {
     return {
-        name: {
-            repr: "List",
-            location: NullTokenLocation()
-        },
+        container: ListType(),
         kind: "CompoundType" ,
-        of: {
-            current: arrayOfWhat,
-            next: null
-        },
+        of: singleLinkedNode(arrayOfWhat),
         nullable: false,
         location: NullTokenLocation()
     };

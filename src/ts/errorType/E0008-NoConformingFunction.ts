@@ -36,6 +36,6 @@ But the expression you provided have the type of:
 
     ${stringifyTypeReadable(relatedParam.returnType)}
 `,
-        hint: `Maybe you are calling the wrong function?`
+        // hint: `Maybe you are calling the wrong function?`
     };
 }
