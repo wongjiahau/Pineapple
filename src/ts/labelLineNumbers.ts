@@ -1,10 +1,11 @@
-import chalk from "chalk";
+import nodeChalk, { Chalk } from "chalk";
 import { TokenLocation } from "./ast";
 
 export function labelLineNumbers(
     input: string,
     location: TokenLocation,
-    range: number = 5
+    range: number = 5,
+    chalk: Chalk = nodeChalk
 ): string {
     let result = "";
     let lines = input.split("\n");

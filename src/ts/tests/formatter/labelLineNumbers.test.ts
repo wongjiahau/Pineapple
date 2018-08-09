@@ -1,26 +1,33 @@
 import { expect } from "chai";
+import { TokenLocation } from "../../ast";
 import { labelLineNumbers } from "../../labelLineNumbers";
+import { assertEquals, mockChalk } from "../testUtil";
 
 describe("label line numbers", () => {
     it("case 1", () => {
         const input =
 `
 def .main
-    print: "Hello world"
-    print: "Bye"
-    print: "Bye"
+    "Hello world".show
+"bye".show
+    "bye".show
 `.trim();
-        const result = labelLineNumbers(input, 3, (x) => x);
+        const location: TokenLocation = {
+                first_line: 3,
+                last_line: 3,
+                first_column: 0,
+                last_column: 5
+        };
+        const result = labelLineNumbers(input, location, 3, mockChalk());
         const expected =
 `
             | 1 | def .main
-            | 2 |     print: "Hello world"
-    ERROR >>| 3 |     print: "Bye"
-            | 4 |     print: "Bye"
-
-`.trim();
-        // console.error(result);
-        expect(result.trim()).to.eq(expected);
+            | 2 |     "Hello world".show
+    ERROR >>| 3 | "bye".show
+            |   | ^^^^^
+            | 4 |     "bye".show
+`;
+        assertEquals(result.trim(), expected.trim());
     });
 
     it("case 2", () => {
@@ -41,7 +48,13 @@ def .main
     print: "13"
     print: "14"
 `.trim();
-        const result = labelLineNumbers(input, 11, (x) => x);
+        const location: TokenLocation = {
+                first_line: 11,
+                last_line: 11,
+                first_column: 4,
+                last_column: 9
+        };
+        const result = labelLineNumbers(input, location, 5, mockChalk());
         const expected =
 `
             |  7 |     print: "7"
@@ -49,13 +62,13 @@ def .main
             |  9 |     print: "9"
             | 10 |     print: "10"
     ERROR >>| 11 |     print: "11"
+            |    |     ^^^^^
             | 12 |     print: "12"
             | 13 |     print: "13"
             | 14 |     print: "14"
 
 `.trim();
-        // console.log(result);
-        expect(result.trim()).to.eq(expected);
+        assertEquals(result, expected);
     });
 
 });
