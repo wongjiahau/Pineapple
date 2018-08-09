@@ -5,12 +5,18 @@ describe("FDMO-003", () => {
     it("function that accepts function", () => {
         const input =
 `
+def List{T}
+    pass
+
+def Func{T1,T2}
+    pass
+
 def (this List{T}).get(func Func{T,Boolean}) -> List{T}
     pass
 `;
         const expectedOutput =
 `
-function _get_ListOfGeneric$T_FuncOfGeneric$T$Boolean($this,$func){
+function _get_ListOfGeneric$T_FuncOfGeneric$T1$Generic$T2($this,$func){
 $$pass$$();
 }
 

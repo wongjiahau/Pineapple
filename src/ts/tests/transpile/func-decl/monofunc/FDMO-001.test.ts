@@ -5,12 +5,12 @@ describe("FDMO-001", () => {
     it("case 1", () => {
         const input =
 `
-def (this List{Int}).show
+def (this String).show
     pass
 `;
         const expectedOutput =
 `
-function _show_ListOfInt($this){
+function _show_String($this){
 $$pass$$();
 }
 `;

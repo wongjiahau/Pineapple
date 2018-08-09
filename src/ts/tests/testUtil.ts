@@ -6,7 +6,8 @@ const jsdiff = require("diff");
 
 export function assertEquals(actual: string, expected: string) {
     if (actual.trim() !== expected.trim()) {
-        const diff = jsdiff.diffChars(actual, expected);
+        const diff = jsdiff.diffLines(actual, expected);
+        // const diff = jsdiff.diffChars(actual, expected);
         const result = diff.map((part: any) => {
             // green for additions, red for deletions
             // grey for common parts
