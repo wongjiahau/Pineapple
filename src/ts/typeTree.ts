@@ -5,7 +5,8 @@ import {
     SimpleType,
     singleLinkedNode,
     StructDeclaration,
-    TypeExpression
+    TypeExpression,
+    VoidType
 } from "./ast";
 
 import { typeEquals } from "./fillUpTypeInformation";
@@ -111,5 +112,12 @@ export function newListType(of: TypeExpression): StructDeclaration {
         location: NullTokenLocation(),
         templates: singleLinkedNode(of),
         nullable: false
+    };
+}
+
+export function VoidType(): VoidType {
+    return {
+        kind: "VoidType",
+        location: NullTokenLocation()
     };
 }

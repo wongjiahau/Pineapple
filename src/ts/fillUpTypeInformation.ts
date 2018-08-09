@@ -46,7 +46,7 @@ import { flattenLinkedNode } from "./getIntermediateForm";
 import { SourceCode } from "./interpreter";
 import { prettyPrint } from "./pine2js";
 import { stringifyFuncSignature, stringifyType } from "./transpile";
-import { childOf, EnumType, includes, insertChild, newListType, ObjectType, TypeTree } from "./typeTree";
+import { childOf, EnumType, includes, insertChild, newListType, ObjectType, TypeTree, VoidType } from "./typeTree";
 import { find } from "./util";
 
 let CURRENT_SOURCE_CODE: () => SourceCode;
@@ -115,9 +115,12 @@ export function findTableEntry<T>(table: TableOf<T>, key: string): T | null {
 }
 
 export function resolveType(
-    t: TypeExpression,
+    t: TypeExpression | null,
     symbols: SymbolTable
 ): TypeExpression {
+    if (t === null) {
+        return VoidType();
+    }
     switch (t.kind) {
         case "SimpleType":
             // check type tree
@@ -125,19 +128,18 @@ export function resolveType(
                 return t;
             }
 
-            // search struct table
-            const mathchingStruct = findTableEntry(symbols.structTab, t.name.repr);
-            if (mathchingStruct) {
-                return mathchingStruct;
-            }
-
             const mathchingEnum = findTableEntry(symbols.enumTab, t.name.repr);
             if (mathchingEnum) {
                 return mathchingEnum;
             }
-
-            // If can't find the type anywhere
-            throw new Error("There is no such type " + t.name.repr);
+        // Fall through to StructDeclaration to search for matching struct
+        case "StructDeclaration":
+            const mathchingStruct = findTableEntry(symbols.structTab, t.name.repr);
+            if (mathchingStruct) {
+                return mathchingStruct;
+            } else {
+                throw new Error("There is no such type " + t.name.repr);
+            }
         case "VoidType":
             return {
                 kind: "VoidType",
@@ -147,10 +149,6 @@ export function resolveType(
             return t;
         default:
             // search struct table
-            const mathchinStruct = findTableEntry(symbols.structTab, t.name.repr);
-            if (mathchinStruct) {
-                return mathchinStruct;
-            }
             throw new Error(`${t.kind} can't be resolved yet`); // TODO: implement it
     }
 }

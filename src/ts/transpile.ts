@@ -154,8 +154,8 @@ export function stringifyFuncSignature(signature: AtomicToken[]): string {
 export function getName(funcSignature: string): string {
     if (/[.][a-z][a-zA-Z]*/.test(funcSignature)) {
         return funcSignature.slice(1);
-    } else if (/[a-z][a-zA-Z]*[:]/.test(funcSignature)) {
-        return funcSignature.slice(0, -1);
+    } else if (/[a-z][a-zA-Z]/.test(funcSignature)) {
+        return funcSignature;
     } else {
         return getOperatorName(funcSignature);
     }
