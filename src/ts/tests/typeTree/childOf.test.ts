@@ -5,7 +5,7 @@ import {
     insertChild,
     newTree
 } from "../../typeTree";
-import { numberComparer } from "./insertChild.test";
+import { numberComparer } from "../testUtil";
 
 describe("childOf", () => {
     it("distance 1", () => {

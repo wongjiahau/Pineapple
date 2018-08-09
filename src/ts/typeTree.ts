@@ -29,17 +29,26 @@ export function insertChild<T>(
     tree: Tree<T>,
     comparer: Comparer<T>
 ): Tree<T> {
-    if (!includes(tree, parent, comparer)) {
-        throw new Error(`${parent} does not exist in the tree`);
-    }
     if (includes(tree, child, comparer)) {
-        throw new Error(`${child} already existed in the tree`);
+        throw new Error(`${child} already exist in tree`);
     }
+    if (!includes(tree, parent, comparer)) {
+        throw new Error(`${parent} does not exist in tree`);
+    }
+    return insert(child, parent, tree, comparer);
+}
+
+function insert<T>(
+    child: T,
+    parent: T,
+    tree: Tree<T>,
+    comparer: Comparer<T>
+): Tree<T> {
     if (comparer(parent, tree.current)) {
         tree.children.push(newTree(child));
     } else {
         for (let i = 0; i < tree.children.length; i++) {
-            tree.children[i] = insertChild(child, parent, tree.children[i], comparer);
+            tree.children[i] = insert(child, parent, tree.children[i], comparer);
         }
     }
     return tree;
@@ -97,6 +106,20 @@ export function includes<T>(
     } else {
         return tree.children.some((x) => includes(x, element, comparer));
     }
+}
+
+export function logTree<T>(tree: Tree<T>, stringifier: (x: T) => string, level = 0): string {
+    let result = "";
+    const padding = (() => {
+        let x = "";
+        for (let i = 0; i < level; i++) {
+            x += " ";
+        }
+        return x;
+    })();
+    result += padding + stringifier(tree.current);
+    result += "\n" + tree.children.map((x) => logTree(x, stringifier, level + 4)).join("");
+    return result;
 }
 
 export function initTypeTree(): Tree<TypeExpression> {

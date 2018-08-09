@@ -111,3 +111,5 @@ export function mockChalk(): any {
 // readonly bgWhiteBright: this;
     return result;
 }
+
+export const numberComparer = (x: number, y: number) => x === y;
