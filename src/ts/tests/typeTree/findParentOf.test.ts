@@ -1,32 +1,27 @@
 import {expect} from "chai";
-import {findParentOf, insertChild, newSimpleType, newTypeTree} from "../../typeTree";
+import { newSimpleType } from "../../ast";
+import {findParentOf, insertChild, newTree} from "../../typeTree";
+import { numberComparer } from "./insertChild.test";
 
 describe("find parent of", () => {
     it("case 1", () => {
-        const objectType = newSimpleType("Object");
-        const numberType = newSimpleType("Number");
-        const initTree = newTypeTree(objectType);
-        const newTree = insertChild(numberType, /*as child of*/ objectType, /*in*/ initTree);
-        const result = findParentOf(numberType, /*in*/ newTree);
-        expect(result).to.deep.eq(objectType);
+        let tree = newTree(1);
+        tree = insertChild(2, /*as child of*/ 1, /*in*/ tree, /*using*/ numberComparer);
+        const result = findParentOf(2, /*in*/ tree, /*using*/ numberComparer);
+        expect(result).to.deep.eq(1);
     });
 
     it("case 2", () => {
-        const objectType = newSimpleType("Object");
-        const nullType = newSimpleType("Null");
-        const initTree = newTypeTree(objectType);
-        const result = findParentOf(nullType, /*in*/ initTree);
+        const tree = newTree(1);
+        const result = findParentOf(1, /*in*/ tree, numberComparer);
         expect(result).to.deep.eq(null);
     });
 
-    it("case 3", () => {
-        const objectType = newSimpleType("Object");
-        const numberType = newSimpleType("Number");
-        const rationalType = newSimpleType("Rational");
-        let tree = newTypeTree(objectType);
-        tree = insertChild(numberType, /*as child of*/ objectType, /*in*/ tree);
-        tree = insertChild(rationalType, /*as child of*/ numberType, /*in*/ tree);
-        const result = findParentOf(rationalType, /*in*/ tree);
-        expect(result).to.deep.eq(numberType);
+    it("multiple child", () => {
+        let tree = newTree(0);
+        tree = insertChild(1, /*as child of*/ 0, /*in*/ tree, numberComparer);
+        tree = insertChild(2, /*as child of*/ 0, /*in*/ tree, numberComparer);
+        const result = findParentOf(1, /*in*/ tree, numberComparer);
+        expect(result).to.deep.eq(0);
     });
 });

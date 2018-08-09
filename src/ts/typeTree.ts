@@ -11,41 +11,54 @@ import {
 
 import { typeEquals } from "./fillUpTypeInformation";
 
-export interface TypeTree {
-    current: TypeExpression;
-    children: TypeTree[];
+export interface Tree<T> {
+    current: T;
+    children: Array<Tree<T>>;
 }
 
-export function newTypeTree(type: TypeExpression): TypeTree {
+export function newTree<T>(value: T): Tree<T> {
     return {
-        current: type,
+        current: value,
         children: []
     };
 }
 
-export function insertChild(child: TypeExpression, parent: TypeExpression, tree: TypeTree): TypeTree {
-    if (typeEquals(parent, tree.current)) {
-        tree.children.push(newTypeTree(child));
+export function insertChild<T>(
+    child: T,
+    parent: T,
+    tree: Tree<T>,
+    comparer: Comparer<T>
+): Tree<T> {
+    if (!includes(tree, parent, comparer)) {
+        throw new Error(`${parent} does not exist in the tree`);
+    }
+    if (includes(tree, child, comparer)) {
+        throw new Error(`${child} already existed in the tree`);
+    }
+    if (comparer(parent, tree.current)) {
+        tree.children.push(newTree(child));
     } else {
         for (let i = 0; i < tree.children.length; i++) {
-            tree.children[i] = insertChild(child, parent, tree.children[i]);
+            tree.children[i] = insertChild(child, parent, tree.children[i], comparer);
         }
     }
     return tree;
 }
 
 // This function return distance of child to parent
-export function childOf(child: TypeExpression, parent: TypeExpression, tree: TypeTree): number | null {
-    if (parent.kind === "SimpleType" && parent.name.repr === "Any") {
-        return 1;
-    }
-    const matchingParent = findParentOf(child, tree);
+export function childOf<T>(
+    child: T,
+    parent: T,
+    tree: Tree<T>,
+    comparer: Comparer<T>
+): number | null {
+    const matchingParent = findParentOf(child, tree, comparer);
     if (matchingParent === null) {
         return null;
-    } else if (typeEquals(matchingParent, parent)) {
+    } else if (comparer(matchingParent, parent)) {
         return 1;
     } else {
-        const score = childOf(matchingParent, parent, tree);
+        const score = childOf(matchingParent, parent, tree, comparer);
         if (score === null) {
             return score;
         } else {
@@ -54,12 +67,18 @@ export function childOf(child: TypeExpression, parent: TypeExpression, tree: Typ
     }
 }
 
-export function findParentOf(child: TypeExpression, /*in*/ tree: TypeTree): TypeExpression | null {
-    if (tree.children.some((x) => typeEquals(x.current, child))) {
+export type Comparer<T> =  (x: T, y: T) => boolean;
+
+export function findParentOf<T>(
+    child: T, /*in*/
+    tree: Tree<T>,
+    comparer: Comparer<T>
+): T | null {
+    if (tree.children.some((x) => comparer(x.current, child))) {
         return tree.current;
     } else {
         for (let i = 0; i < tree.children.length; i++) {
-            const parent = findParentOf(child, tree.children[i]);
+            const parent = findParentOf(child, tree.children[i], comparer);
             if (parent !== null) {
                 return parent;
             }
@@ -68,15 +87,19 @@ export function findParentOf(child: TypeExpression, /*in*/ tree: TypeTree): Type
     }
 }
 
-export function includes(tree: TypeTree, t: TypeExpression): boolean {
-    if (typeEquals(tree.current, t)) {
+export function includes<T>(
+    tree: Tree<T>,
+    element: T,
+    comparer: Comparer<T>
+): boolean {
+    if (comparer(tree.current, element)) {
         return true;
     } else {
-        return tree.children.some((x) => includes(x, t));
+        return tree.children.some((x) => includes(x, element, comparer));
     }
 }
 
-export function initTypeTree(): TypeTree {
+export function initTypeTree(): Tree<TypeExpression> {
     const anyType        = newSimpleType("Any");
     const enumType       = EnumType();
     const objectType     = ObjectType();
@@ -85,26 +108,26 @@ export function initTypeTree(): TypeTree {
     const numberType     = newSimpleType("Number");
     const stringType     = newSimpleType("String");
     const dateType       = newSimpleType("Date");
-    let tree = newTypeTree(anyType);
-    tree = insertChild(numberType, anyType, tree);
-    tree = insertChild(enumType, anyType, tree);
-    tree = insertChild(dictType, anyType, tree);
-    tree = insertChild(objectType, dictType, tree);
-    tree = insertChild(listType, anyType, tree);
-    tree = insertChild(dateType, anyType, tree);
-    tree = insertChild(stringType, listType, tree);
+    let tree = newTree(anyType);
+    tree = insertChild(numberType, anyType, tree, typeEquals);
+    tree = insertChild(enumType, anyType, tree, typeEquals);
+    tree = insertChild(dictType, anyType, tree, typeEquals);
+    tree = insertChild(objectType, dictType, tree, typeEquals);
+    tree = insertChild(listType, anyType, tree, typeEquals);
+    tree = insertChild(dateType, anyType, tree, typeEquals);
+    tree = insertChild(stringType, listType, tree, typeEquals);
     return tree;
 }
 
-export function ObjectType(): SimpleType {
+export function ObjectType(): TypeExpression {
     return newSimpleType("Object");
 }
 
-export function EnumType(): SimpleType {
+export function EnumType(): TypeExpression {
     return newSimpleType("Enum");
 }
 
-export function newListType(of: TypeExpression): StructDeclaration {
+export function newListType(of: TypeExpression): TypeExpression {
     return {
         kind: "StructDeclaration",
         members: null,

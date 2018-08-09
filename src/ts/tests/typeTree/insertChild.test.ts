@@ -1,44 +1,34 @@
 import {expect} from "chai";
-import {prettyPrint} from "../../pine2js";
 import {
     findParentOf,
     insertChild,
-    newListType,
-    newTypeTree,
-    TypeTree
+    newTree
 } from "../../typeTree";
 
+export const numberComparer = (x: number, y: number) => x === y;
 describe("insertChild", () => {
     it("case 1", () => {
-        const objectType = newSimpleType("Object");
-        const arrayType = newListType(objectType);
-        const numberType = newSimpleType("Number");
-        const numberListType = newListType(numberType);
-        let tree = newTypeTree(objectType);
-        tree = insertChild(arrayType, objectType, tree);
-        tree = insertChild(numberListType, arrayType, tree);
-        const parent = findParentOf(numberListType, tree);
-        const expected  = {
-            name: {
-                repr: "List",
-                location: null
-            },
-            kind: "CompoundType",
-            of: {
-                current: {
-                    kind: "SimpleType",
-                    name: {
-                        repr: "Object",
-                        location: null
-                    },
-                    nullable: false
-                },
-                next: null
-            },
-            nullable: false
-        };
+        let tree = newTree(1);
+        tree = insertChild(2, 1, tree, numberComparer);
+        tree = insertChild(3, 2, tree, numberComparer);
+        tree = insertChild(4, 2, tree, numberComparer);
+        tree = insertChild(5, 1, tree, numberComparer);
+        const parent = findParentOf(3, tree, numberComparer);
+        expect(parent).eq(2);
+    });
 
-        expect(parent).deep.eq(expected);
+    it("inserting element as child of unexisting parent", () => {
+        let tree = newTree(1);
+        expect(() => {
+            tree = insertChild(2, /* as child of */ 3, tree, numberComparer);
+        }).to.throw();
+    });
+
+    it("inserting duplicated elements", () => {
+        const tree = newTree(1);
+        expect(() => {
+            insertChild(1, 1, tree, numberComparer);
+        }).to.throw();
     });
 
 });

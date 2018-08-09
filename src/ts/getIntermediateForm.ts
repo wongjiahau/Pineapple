@@ -4,7 +4,7 @@ import { fillUpTypeInformation, FunctionTable, raise, StructTable, SymbolTable }
 import { SourceCode } from "./interpreter";
 import { prettyPrint } from "./pine2js";
 import { preprocess } from "./preprocess";
-import { initTypeTree, TypeTree } from "./typeTree";
+import { initTypeTree, Tree } from "./typeTree";
 const parser     = require("../jison/pineapple-parser-v2");
 
 export function getIntermediateForm(
