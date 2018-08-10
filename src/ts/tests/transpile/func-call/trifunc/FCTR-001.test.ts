@@ -5,11 +5,11 @@ describe("FCTR-001", () => {
     it("case 1", () => {
         const input =
 `
-def (this String).replace(old String with: new String) -> String
+def (this String).replace(old String with new String) -> String
     pass
 
 def .main
-    let x = "1,2,3".replace("," with: ".")
+    let x = "1,2,3".replace("," with ".")
 `;
         const expectedOutput =
 `

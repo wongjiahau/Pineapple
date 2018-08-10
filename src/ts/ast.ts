@@ -110,6 +110,8 @@ export interface EnumDeclaration {
     kind: "EnumDeclaration";
     name: AtomicToken;
     enums: LinkedNode<AtomicToken>;
+    location: TokenLocation;
+    nullable: boolean;
 }
 
 export interface EnumExpression {
@@ -193,7 +195,7 @@ export interface ObjectExpression { // NOTE: Object is also Dictionary
     kind: "ObjectExpression";
     constructor: AtomicToken | null;
     keyValueList: LinkedNode<KeyValue> | null;
-    returnType: StructDeclaration | SimpleType /*aka Dictionary*/;
+    returnType: TypeExpression;
     location: TokenLocation;
 }
 
@@ -276,7 +278,7 @@ export function newAtomicToken(repr: string): AtomicToken {
     };
 }
 
-export function newSimpleType(name: string): SimpleType {
+export function newSimpleType(name: string): TypeExpression {
     return {
         kind: "SimpleType",
         name: {

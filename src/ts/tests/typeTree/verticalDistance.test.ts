@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { hasVerticalRelationship, insertChild, newTree } from "../../typeTree";
+import { insertChild, newTree, verticalDistance } from "../../typeTree";
 
 const stringComparer = (x: string, y: string) => x === y;
 describe("has relationship", () => {
@@ -7,8 +7,9 @@ describe("has relationship", () => {
         let tree = newTree("any");
         tree = insertChild("number", "any", tree, stringComparer);
         tree = insertChild("int", "number", tree, stringComparer);
-        expect(hasVerticalRelationship("int", "number", tree, stringComparer)).to.eq(true);
-        expect(hasVerticalRelationship("number", "int", tree, stringComparer)).to.eq(true);
+        expect(verticalDistance("int", "number", tree, stringComparer)).to.eq(1);
+        expect(verticalDistance("number", "int", tree, stringComparer)).to.eq(1);
+        expect(verticalDistance("number", "number", tree, stringComparer)).to.eq(0);
 
     });
 
@@ -17,8 +18,8 @@ describe("has relationship", () => {
         tree = insertChild("number", "any", tree, stringComparer);
         tree = insertChild("int", "number", tree, stringComparer);
         tree = insertChild("string", "any", tree, stringComparer);
-        expect(hasVerticalRelationship("string", "number", tree, stringComparer)).to.eq(false);
-        expect(hasVerticalRelationship("string", "int", tree, stringComparer)).to.eq(false);
+        expect(verticalDistance("string", "number", tree, stringComparer)).to.eq(null);
+        expect(verticalDistance("string", "int", tree, stringComparer)).to.eq(null);
     });
 
 });

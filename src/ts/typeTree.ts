@@ -108,14 +108,19 @@ export function includes<T>(
     }
 }
 
-export function hasVerticalRelationship<T>(x: T, y: T, tree: Tree<T>, comparer: Comparer<T>): boolean {
-    if (childOf(x, y, tree, comparer)) {
-        return true;
-    } else if (childOf(y, x, tree, comparer)) {
-        return true;
-    } else {
-        return false;
+export function verticalDistance<T>(x: T, y: T, tree: Tree<T>, comparer: Comparer<T>): number | null {
+    if (comparer(x, y)) {
+        return 0;
     }
+    let score = childOf(x, y, tree, comparer);
+    if ( score !== null) {
+        return score;
+    }
+    score = childOf(y, x, tree, comparer);
+    if (score !== null) {
+        return score;
+    }
+    return null;
 }
 
 export function logTree<T>(tree: Tree<T>, stringifier: (x: T) => string, level = 0): string {

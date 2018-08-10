@@ -45,8 +45,8 @@ import { renderError } from "./errorType/renderError";
 import { flattenLinkedNode } from "./getIntermediateForm";
 import { SourceCode } from "./interpreter";
 import { prettyPrint } from "./pine2js";
-import { stringifyFuncSignature, stringifyType } from "./transpile";
-import { childOf, EnumType, includes, insertChild, newListType, ObjectType, TypeTree, VoidType } from "./typeTree";
+import { stringifyFuncSignature, stringifyType, tpFunctionDeclaration } from "./transpile";
+import { childOf, Comparer, EnumType, includes, insertChild, newListType, ObjectType, Tree, verticalDistance, VoidType } from "./typeTree";
 import { find } from "./util";
 
 let CURRENT_SOURCE_CODE: () => SourceCode;
@@ -72,11 +72,11 @@ export function fillUpTypeInformation(
                 symbols.funcTab = newFunctionTable(currentDecl, symbols.funcTab);
                 break;
             case "StructDeclaration":
-                symbols.typeTree = insertChild(currentDecl, ObjectType(), symbols.typeTree);
+                symbols.typeTree = insertChild(currentDecl, ObjectType(), symbols.typeTree, typeEquals);
                 symbols.structTab = newStructTab(currentDecl, symbols.structTab);
                 break;
             case "EnumDeclaration":
-                symbols.typeTree = insertChild(currentDecl, EnumType(), symbols.typeTree);
+                symbols.typeTree = insertChild(currentDecl, EnumType(), symbols.typeTree, typeEquals);
                 symbols.enumTab = newEnumTab(currentDecl, symbols.enumTab);
         }
     }
@@ -124,7 +124,7 @@ export function resolveType(
     switch (t.kind) {
         case "SimpleType":
             // check type tree
-            if (includes(symbols.typeTree, t)) {
+            if (includes(symbols.typeTree, t, typeEquals)) {
                 return t;
             }
 
@@ -222,7 +222,7 @@ export function getVariableTable(variables: VariableDeclaration[]): VariableTabl
 export interface SymbolTable {
     funcTab: FunctionTable;
     structTab: StructTable;
-    typeTree: TypeTree;
+    typeTree: Tree<TypeExpression>;
     enumTab: EnumTable;
 }
 
@@ -268,7 +268,9 @@ export function fillUp(s: LinkedNode<Statement>, symbols: SymbolTable, vartab: V
                 s.current.variable.typeExpected = resolveType(s.current.variable.typeExpected, symbols);
                 [s.current.expression, symbols] = fillUpExpressionTypeInfo(s.current.expression, symbols, vartab);
                 s.current.variable.variable.returnType = s.current.variable.typeExpected;
-                if (!typeEquals(s.current.variable.typeExpected, s.current.expression.returnType)) {
+                const exprType = s.current.expression.returnType;
+                const expectedType = s.current.variable.typeExpected;
+                if (isSubtypeOf(exprType, expectedType, symbols.typeTree, typeEquals)) {
                     raise(ErrorIncorrectTypeGivenForVariable(s.current.variable, s.current.expression));
                 }
             }
@@ -354,14 +356,20 @@ export function fillUpExpressionTypeInfo(e: Expression, symbols: SymbolTable, va
         [e, symbols.funcTab] = fillUpFunctionCallTypeInfo(e, symbols, vartab);
         return [e, symbols];
     case "List":     e = fillUpArrayTypeInfo   (e, symbols, vartab); break;
-    case "Number":   e = fillUpSimpleTypeInfo  (e, "Number"); break;
+    case "Number":
+        if (e.repr.indexOf(".") >= 0) {
+            e = fillUpSimpleTypeInfo(e, "Number");
+        } else {
+            e = fillUpSimpleTypeInfo(e, "Int");
+        }
+        break;
     case "String":   e = fillUpSimpleTypeInfo  (e, "String"); break;
     case "Variable": e = fillUpVariableTypeInfo(e, vartab); break;
     case "ObjectExpression":
         if (e.constructor !== null) {
             e.returnType = getStruct(e.constructor, symbols.structTab);
             [e.keyValueList, symbols] = fillUpKeyValueListTypeInfo(e.keyValueList, symbols, vartab);
-            checkIfKeyValueListConforms(e.keyValueList, e.returnType);
+            checkIfKeyValueListConforms(e.keyValueList, e.returnType, symbols.typeTree);
         } else {
             e.returnType = newSimpleType("Dict");
         }
@@ -410,9 +418,23 @@ export function findMatchingEnumType(value: string, enumTab: EnumTable): EnumDec
     }
 }
 
+/**
+ * Check if x is subtype of y
+ */
+export function isSubtypeOf(
+    x: TypeExpression,
+    y: TypeExpression,
+    tree: Tree<TypeExpression>,
+    comparer: Comparer<TypeExpression>
+
+): boolean {
+    return typeEquals(x, y) || childOf(x, y, tree, comparer) !== null;
+}
+
 export function checkIfKeyValueListConforms(
     keyValues: LinkedNode<KeyValue>,
-    structDecl: StructDeclaration
+    structDecl: StructDeclaration,
+    tree: Tree<TypeExpression>
 ): void {
     const kvs = flattenLinkedNode(keyValues);
     const members = flattenLinkedNode(structDecl.members);
@@ -424,7 +446,9 @@ export function checkIfKeyValueListConforms(
             raise(ErrorExtraMember(kvs[i].memberName, structDecl));
         } else {
             // Check if type are equals to expected
-            if (!typeEquals(matchingMember.expectedType, kvs[i].expression.returnType)) {
+            const exprType = kvs[i].expression.returnType;
+            const expectedType = matchingMember.expectedType;
+            if (!isSubtypeOf(exprType, expectedType, tree, typeEquals)) {
                 raise(ErrorIncorrectTypeGivenForMember(matchingMember.expectedType, kvs[i]));
             }
         }
@@ -501,11 +525,11 @@ export function fillUpFunctionCallTypeInfo(e: FunctionCall, symbols: SymbolTable
     return getFuncSignature(e, symbols.funcTab, symbols.typeTree);
 }
 
-export function getFuncSignature(f: FunctionCall, functab: FunctionTable, typetree: TypeTree)
+export function getFuncSignature(f: FunctionCall, functab: FunctionTable, typetree: Tree<TypeExpression>)
     : [FunctionCall, FunctionTable] {
     const key = stringifyFuncSignature(f.signature);
     if (key in functab) {
-        const matchingFunctions = functab[key];
+        const matchingFunctions = functab[key].filter((x) => x.parameters.length === f.parameters.length);
         const closestFunction = getClosestFunction(f, matchingFunctions, typetree);
         if (closestFunction !== null) {
             // This step is necessary to fix parent type
@@ -528,8 +552,43 @@ export function getFuncSignature(f: FunctionCall, functab: FunctionTable, typetr
 export function getClosestFunction(
     f: FunctionCall,
     matchingFunctions: FunctionDeclaration[],
-    typeTree: TypeTree
+    typeTree: Tree<TypeExpression>
 ): FunctionDeclaration | null {
+    const paramLength = f.parameters.length;
+    // First, find function that have the exact type signature with the calling signature
+    for (let i = 0; i < matchingFunctions.length; i++) {
+        const matchingFunc = matchingFunctions[i];
+        let gotConflict = false;
+        for (let j = 0; j < paramLength; j++) {
+            if (!typeEquals(f.parameters[j].returnType, matchingFunc.parameters[j].typeExpected)) {
+                gotConflict = true;
+            }
+        }
+        if (!gotConflict) {
+            return matchingFunc;
+        }
+    }
+
+    // If can't find exact match, find the possible types of each parameter position
+    const typesOfEachParameterPosition: TypeExpression[][] = [];
+    for (let i = 0; i < paramLength; i++) {
+        typesOfEachParameterPosition.push([]);
+        for (let j = 0; j < matchingFunctions.length; j++) {
+            const currentType = matchingFunctions[j].parameters[i].typeExpected;
+            // if (verticalDistance(currentType, f.parameters[i].returnType, typeTree, typeEquals)) {
+            typesOfEachParameterPosition[i].push(currentType);
+            // }
+        }
+    }
+
+    for (let i = 0; i < paramLength; i++) {
+        const types = typesOfEachParameterPosition[i];
+        if (types.every((x) =>
+           verticalDistance(x, f.parameters[i].returnType, typeTree, typeEquals) === null) {
+            raise(ErrorNoConformingFunction(f, i, f.parameters[i], types));
+        }
+    }
+
     let closestFunction: FunctionDeclaration | null = null;
     let minimumDistance = Number.MAX_VALUE;
     for (let i = 0; i < matchingFunctions.length; i++) {
@@ -540,17 +599,14 @@ export function getClosestFunction(
             currentFunc.returnType = substitute(matchingParams[0].returnType, currentFunc.returnType);
         }
         const [distance, error] = paramTypesConforms(currentFunc.parameters, matchingParams, typeTree);
-        if (error !== null) {
-            raise(ErrorNoConformingFunction(
-                f,
-                error.paramPosition,
-                matchingParams[error.paramPosition],
-                matchingFunctions.map((x) => x.parameters[error.paramPosition].typeExpected),
-            ));
-        } else if (distance < minimumDistance) {
-            closestFunction = currentFunc;
-            minimumDistance = distance;
+        if (error === null) {
+            if (distance < minimumDistance) {
+                closestFunction = currentFunc;
+                minimumDistance = distance;
+            }
         }
+    }
+    if (closestFunction === null) {
     }
     // more than 99 means no matching parent
     return closestFunction || null;
@@ -559,23 +615,19 @@ export function getClosestFunction(
 export function paramTypesConforms(
     expectedParams: VariableDeclaration[],
     actualParams: Expression[],
-    typeTree: TypeTree
+    typeTree: Tree<TypeExpression>
 ): [number, {paramPosition: number /*zero-based*/}|null] {
     let resultScore = 0;
     for (let i = 0; i < expectedParams.length; i++) {
         const expectedType = expectedParams[i].typeExpected;
         const actualType = actualParams[i].returnType;
-        if (typeEquals(expectedType, actualType)) {
-            resultScore += 0;
+        const score = verticalDistance(actualType, expectedType, typeTree, typeEquals);
+        if (score !== null) {
+            resultScore += score;
         } else {
-            const score = childOf(actualType, expectedType, typeTree);
-            if (score !== null) {
-                resultScore += score;
-            } else {
-                 return [99, {
-                    paramPosition: i
-                }];
-            }
+                return [99, {
+                paramPosition: i
+            }];
         }
     }
     return [resultScore, null];
