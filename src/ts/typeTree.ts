@@ -108,6 +108,16 @@ export function includes<T>(
     }
 }
 
+export function hasVerticalRelationship<T>(x: T, y: T, tree: Tree<T>, comparer: Comparer<T>): boolean {
+    if (childOf(x, y, tree, comparer)) {
+        return true;
+    } else if (childOf(y, x, tree, comparer)) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 export function logTree<T>(tree: Tree<T>, stringifier: (x: T) => string, level = 0): string {
     let result = "";
     const padding = (() => {
@@ -129,10 +139,12 @@ export function initTypeTree(): Tree<TypeExpression> {
     const dictType       = newSimpleType("Dict");
     const listType       = newListType(anyType);
     const numberType     = newSimpleType("Number");
+    const integerType    = newSimpleType("Int");
     const stringType     = newSimpleType("String");
     const dateType       = newSimpleType("Date");
     let tree = newTree(anyType);
     tree = insertChild(numberType, anyType, tree, typeEquals);
+    tree = insertChild(integerType, numberType, tree, typeEquals);
     tree = insertChild(enumType, anyType, tree, typeEquals);
     tree = insertChild(dictType, anyType, tree, typeEquals);
     tree = insertChild(objectType, dictType, tree, typeEquals);
