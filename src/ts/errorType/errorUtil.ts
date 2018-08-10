@@ -18,7 +18,7 @@ export function stringifyTypeReadable(t: TypeExpression): string {
         case "GenericType":
             return `${t.placeholder.repr}`;
         case "StructDeclaration":
-            return `${t.name.repr}`;
+            return `${t.name.repr}{${flattenLinkedNode(t.templates).map((x) => stringifyTypeReadable(x)).join(",")}}`;
         case "EnumDeclaration":
             return `${t.name.repr}`;
     }

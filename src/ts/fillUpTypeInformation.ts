@@ -46,7 +46,18 @@ import { flattenLinkedNode } from "./getIntermediateForm";
 import { SourceCode } from "./interpreter";
 import { prettyPrint } from "./pine2js";
 import { stringifyFuncSignature, stringifyType, tpFunctionDeclaration } from "./transpile";
-import { childOf, Comparer, EnumType, includes, insertChild, newListType, ObjectType, Tree, verticalDistance, VoidType } from "./typeTree";
+import {
+    childOf,
+    Comparer,
+    EnumType,
+    includes,
+    insertChild,
+    newListType,
+    ObjectType,
+    Tree,
+    verticalDistance,
+    VoidType
+} from "./typeTree";
 import { find } from "./util";
 
 let CURRENT_SOURCE_CODE: () => SourceCode;
@@ -270,7 +281,7 @@ export function fillUp(s: LinkedNode<Statement>, symbols: SymbolTable, vartab: V
                 s.current.variable.variable.returnType = s.current.variable.typeExpected;
                 const exprType = s.current.expression.returnType;
                 const expectedType = s.current.variable.typeExpected;
-                if (isSubtypeOf(exprType, expectedType, symbols.typeTree, typeEquals)) {
+                if (!isSubtypeOf(exprType, expectedType, symbols.typeTree, typeEquals)) {
                     raise(ErrorIncorrectTypeGivenForVariable(s.current.variable, s.current.expression));
                 }
             }
@@ -569,28 +580,9 @@ export function getClosestFunction(
         }
     }
 
-    // If can't find exact match, find the possible types of each parameter position
-    const typesOfEachParameterPosition: TypeExpression[][] = [];
-    for (let i = 0; i < paramLength; i++) {
-        typesOfEachParameterPosition.push([]);
-        for (let j = 0; j < matchingFunctions.length; j++) {
-            const currentType = matchingFunctions[j].parameters[i].typeExpected;
-            // if (verticalDistance(currentType, f.parameters[i].returnType, typeTree, typeEquals)) {
-            typesOfEachParameterPosition[i].push(currentType);
-            // }
-        }
-    }
-
-    for (let i = 0; i < paramLength; i++) {
-        const types = typesOfEachParameterPosition[i];
-        if (types.every((x) =>
-           verticalDistance(x, f.parameters[i].returnType, typeTree, typeEquals) === null) {
-            raise(ErrorNoConformingFunction(f, i, f.parameters[i], types));
-        }
-    }
-
     let closestFunction: FunctionDeclaration | null = null;
     let minimumDistance = Number.MAX_VALUE;
+    const errors: Array<{paramPosition: number}> = [];
     for (let i = 0; i < matchingFunctions.length; i++) {
         const currentFunc = copy(matchingFunctions[i]);
         const matchingParams = f.parameters;
@@ -604,12 +596,22 @@ export function getClosestFunction(
                 closestFunction = currentFunc;
                 minimumDistance = distance;
             }
+        } else {
+            errors.push(error);
         }
     }
     if (closestFunction === null) {
+        const farthestMatchingParamPosition =
+            errors.sort((x, y) => y.paramPosition - x.paramPosition)[0].paramPosition;
+        return raise(ErrorNoConformingFunction(
+            f,
+            farthestMatchingParamPosition,
+            f.parameters[farthestMatchingParamPosition],
+            matchingFunctions.map((x) => x.parameters[farthestMatchingParamPosition].typeExpected)
+        ));
+    } else {
+        return closestFunction;
     }
-    // more than 99 means no matching parent
-    return closestFunction || null;
 }
 
 export function paramTypesConforms(
