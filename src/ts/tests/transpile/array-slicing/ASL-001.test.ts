@@ -21,13 +21,13 @@ function _$period_to_ListOfGeneric$T_Number_Number($this,$start,$end){
 $$pass$$();
 }
 
-function _$period_to_ListOfNumber_Number_Number($this,$start,$end){
+function _$period_to_ListOfInt_Number_Number($this,$start,$end){
 $$pass$$();
 }
 
 function _main_(){
 const $x = [(1),(2),(3)];
-const $y = _$period_to_ListOfNumber_Number_Number($x,(0),(1));
+const $y = _$period_to_ListOfInt_Number_Number($x,(0),(1));
 }
 
 `.trim();

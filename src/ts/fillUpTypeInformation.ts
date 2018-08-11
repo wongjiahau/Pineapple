@@ -40,9 +40,9 @@ import { ErrorUnmatchingReturnType } from "./errorType/E0011-UnmatchingReturnTyp
 import { ErrorUsingUndefinedStruct } from "./errorType/E0012-UsingUndefinedStruct";
 import { ErrorUsingUnknownFunction } from "./errorType/E0013-UsingUnknownFunction";
 import { ErrorVariableRedeclare } from "./errorType/E0014-VariableRedeclare";
-import { ErrorDetail } from "./errorType/errorUtil";
+import { ErrorDetail, stringifyTypeReadable } from "./errorType/errorUtil";
 import { renderError } from "./errorType/renderError";
-import { flattenLinkedNode } from "./getIntermediateForm";
+import { convertToLinkedNode, flattenLinkedNode } from "./getIntermediateForm";
 import { SourceCode } from "./interpreter";
 import { prettyPrint } from "./pine2js";
 import { stringifyFuncSignature, stringifyType, tpFunctionDeclaration } from "./transpile";
@@ -550,7 +550,10 @@ export function getFuncSignature(f: FunctionCall, functab: FunctionTable, typetr
                    closestFunction.parameters[j].typeExpected;
             }
             f.returnType = closestFunction.returnType;
+
+            // this step is needed for generic substituted function
             functab = newFunctionTable(closestFunction, functab) ;
+
             return [f, functab];
         } else {
             raise(ErrorNoConformingFunction(f, matchingFunctions, CURRENT_SOURCE_CODE()));
@@ -580,15 +583,29 @@ export function getClosestFunction(
         }
     }
 
+    // If can't find exactly matching function, find the closest function
     let closestFunction: FunctionDeclaration | null = null;
     let minimumDistance = Number.MAX_VALUE;
     const errors: Array<{paramPosition: number}> = [];
+    const relatedFuncs: FunctionDeclaration[] = [];
     for (let i = 0; i < matchingFunctions.length; i++) {
         const currentFunc = copy(matchingFunctions[i]);
         const matchingParams = f.parameters;
         if (containsGeneric(currentFunc.parameters)) {
-            currentFunc.parameters = substituteGeneric(currentFunc.parameters, matchingParams);
-            currentFunc.returnType = substitute(matchingParams[0].returnType, currentFunc.returnType);
+            const genericsBinding = extractGenericBinding(currentFunc.parameters, f.parameters);
+            if (genericsBinding !== null) {
+                for (let j = 0; j < currentFunc.parameters.length; j++) {
+                    currentFunc.parameters[j].typeExpected =
+                        substituteGeneric(
+                            currentFunc.parameters[j].typeExpected,
+                            genericsBinding
+                        );
+                }
+                currentFunc.returnType = substituteGeneric(
+                    matchingParams[0].returnType,
+                    genericsBinding
+                );
+            }
         }
         const [distance, error] = paramTypesConforms(currentFunc.parameters, matchingParams, typeTree);
         if (error === null) {
@@ -597,21 +614,65 @@ export function getClosestFunction(
                 minimumDistance = distance;
             }
         } else {
+            relatedFuncs.push(currentFunc);
             errors.push(error);
         }
     }
     if (closestFunction === null) {
         const farthestMatchingParamPosition =
-            errors.sort((x, y) => y.paramPosition - x.paramPosition)[0].paramPosition;
+            errors.sort((x, y) => x.paramPosition - y.paramPosition)[0].paramPosition;
         return raise(ErrorNoConformingFunction(
             f,
             farthestMatchingParamPosition,
             f.parameters[farthestMatchingParamPosition],
-            matchingFunctions.map((x) => x.parameters[farthestMatchingParamPosition].typeExpected)
+            relatedFuncs.map((x) => x.parameters[farthestMatchingParamPosition].typeExpected)
         ));
     } else {
         return closestFunction;
     }
+}
+
+export function extractGenericBinding(
+    genericParams: VariableDeclaration[],
+    actualParams: Expression[]
+): {[templateName: string]: TypeExpression} | null {
+    // reverse is needed, so that the the type of first param can override later types
+    const genericParamss = genericParams.slice().reverse();
+    const actualParamss = actualParams.slice().reverse();
+    let result: TableOf<TypeExpression> = {};
+    if (genericParamss.length !== actualParamss.length) {
+        return null;
+    } else {
+        for (let i = 0; i < genericParamss.length; i++) {
+            result = {
+                ...result,
+                ...extract(genericParamss[i].typeExpected, actualParamss[i].returnType)
+            };
+        }
+        return result;
+    }
+}
+
+function extract(genericType: TypeExpression, actualType: TypeExpression): TableOf<TypeExpression> {
+    let result: TableOf<TypeExpression> = {};
+    switch (genericType.kind) {
+        case "GenericType":
+            result[genericType.placeholder.repr] = actualType;
+            break;
+        case "StructDeclaration":
+            const templates = flattenLinkedNode(genericType.templates);
+            if (actualType.kind === "StructDeclaration") {
+                for (let j = 0; j < templates.length; j++) {
+                    result = {
+                        ...result,
+                        ...extract(templates[j], flattenLinkedNode(actualType.templates)[j])
+                    };
+                }
+            }
+            break;
+        default:  /*no substituion required*/ break;
+    }
+    return result;
 }
 
 export function paramTypesConforms(
@@ -627,9 +688,7 @@ export function paramTypesConforms(
         if (score !== null) {
             resultScore += score;
         } else {
-                return [99, {
-                paramPosition: i
-            }];
+            return [99, {paramPosition: i}];
         }
     }
     return [resultScore, null];
@@ -639,36 +698,21 @@ function containsGeneric(params: VariableDeclaration[]): boolean {
     return params.some((x) => JSON.stringify(x).indexOf("GenericType") > -1);
 }
 
-function substituteGeneric(actualParams: VariableDeclaration[], matchingParams: Expression[]): VariableDeclaration[] {
-    const typeOfFirstParam = matchingParams[0].returnType;
-    for (let i = 0; i < actualParams.length; i++) {
-        actualParams[i].typeExpected =
-            substitute(typeOfFirstParam, /*into*/ actualParams[i].typeExpected);
-    }
-    return actualParams;
-
-}
-
-function substitute(src: TypeExpression, /*into*/ dest: TypeExpression): TypeExpression {
-    const matchingType = (() => {
-        let current = src;
-        while (current.kind === "StructDeclaration") {
-            current = current.templates.current;
-        }
-        return current;
-    })();
-    switch (dest.kind) {
-        case "StructDeclaration":
-            dest.templates.current = substitute(matchingType, dest.templates.current);
-            break;
+function substituteGeneric(
+    genericType: TypeExpression,
+    genericBinding: TableOf<TypeExpression>
+): TypeExpression {
+    switch (genericType.kind) {
         case "GenericType":
-            return matchingType;
-            break;
-        case "SimpleType":
-            // do nothing
-            break;
+            return genericBinding[genericType.placeholder.repr];
+        case "StructDeclaration":
+            const templates = flattenLinkedNode(genericType.templates);
+            for (let i = 0; i < templates.length; i++) {
+                templates[i] = substituteGeneric(templates[i], genericBinding);
+            }
+            genericType.templates = convertToLinkedNode(templates);
     }
-    return dest;
+    return genericType;
 }
 
 export function fillUpArrayTypeInfo(e: ListExpression, symbols: SymbolTable, vartab: VariableTable): ListExpression {
@@ -720,7 +764,7 @@ export function typeEquals(x: TypeExpression, y: TypeExpression): boolean {
                     const xOfTypes = flattenLinkedNode(x.templates);
                     const yOfTypes = flattenLinkedNode(y.templates);
                     for (let i = 0; i < xOfTypes.length; i++) {
-                        if (!typeEquals(xOfTypes[i], yOfTypes[i])) {
+                        if (!typeEquals(xOfTypes[i], yOfTypes[i])) { // TODO: should use subtype of
                             return false;
                         }
                     }

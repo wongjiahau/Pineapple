@@ -6,8 +6,8 @@ const jsdiff = require("diff");
 
 export function assertEquals(actual: string, expected: string) {
     if (actual.trim() !== expected.trim()) {
-        const diff = jsdiff.diffLines(actual, expected);
-        // const diff = jsdiff.diffChars(actual, expected);
+        // const diff = jsdiff.diffLines(actual, expected);
+        const diff = jsdiff.diffChars(actual, expected);
         const result = diff.map((part: any) => {
             // green for additions, red for deletions
             // grey for common parts
@@ -33,10 +33,13 @@ export function catchError(f: () => void): Error {
     }
 }
 
-export function testError(expectedErrorName: string, input: string) {
+export function testError(expectedErrorName: string, input: string, logError = false) {
     const scriptName = __filename.split(/[\\/]/).pop() as string;
     describe(scriptName.split(".")[0], () => {
         it(expectedErrorName, () => {
+            if (logError) {
+                pine2js(input);
+            }
             expect(catchError(() => pine2js(input)).name).to.eq(expectedErrorName);
         });
     });
