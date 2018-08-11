@@ -1,5 +1,6 @@
 import {
     newAtomicToken,
+    newGenericType,
     newSimpleType,
     NullTokenLocation,
     SimpleType,
@@ -61,6 +62,9 @@ export function childOf<T>(
     tree: Tree<T>,
     comparer: Comparer<T>
 ): number | null {
+    if (comparer(child, parent)) {
+        return 0;
+    }
     const matchingParent = findParentOf(child, tree, comparer);
     if (matchingParent === null) {
         return null;
@@ -104,7 +108,12 @@ export function includes<T>(
     if (comparer(tree.current, element)) {
         return true;
     } else {
-        return tree.children.some((x) => includes(x, element, comparer));
+        for (let i = 0; i < tree.children.length; i++) {
+            if (includes(tree.children[i], element, comparer)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
 
@@ -138,25 +147,34 @@ export function logTree<T>(tree: Tree<T>, stringifier: (x: T) => string, level =
 }
 
 export function initTypeTree(): Tree<TypeExpression> {
-    const anyType        = newSimpleType("Any");
-    const enumType       = EnumType();
-    const objectType     = ObjectType();
-    const dictType       = newSimpleType("Dict");
-    const listType       = newListType(anyType);
-    const numberType     = newSimpleType("Number");
-    const integerType    = newSimpleType("Int");
-    const stringType     = newSimpleType("String");
-    const dateType       = newSimpleType("Date");
+    const anyType       = newSimpleType("Any");
+    const enumType      = EnumType();
+    const objectType    = ObjectType();
+    const dictType      = newSimpleType("Dict");
+    const listType      = newListType(newGenericType("T"));
+    const emptyListType = EmptyListType();
+    const numberType    = newSimpleType("Number");
+    const integerType   = newSimpleType("Int");
+    const stringType    = newSimpleType("String");
+    const dateType      = newSimpleType("Date");
+    const inserts = (x: TypeExpression, parent: TypeExpression) => {
+        return insertChild(x, /* as child of */parent, /*in*/ tree, typeEquals);
+    };
     let tree = newTree(anyType);
-    tree = insertChild(numberType, anyType, tree, typeEquals);
-    tree = insertChild(integerType, numberType, tree, typeEquals);
-    tree = insertChild(enumType, anyType, tree, typeEquals);
-    tree = insertChild(dictType, anyType, tree, typeEquals);
-    tree = insertChild(objectType, dictType, tree, typeEquals);
-    tree = insertChild(listType, anyType, tree, typeEquals);
-    tree = insertChild(dateType, anyType, tree, typeEquals);
-    tree = insertChild(stringType, listType, tree, typeEquals);
+    tree     = inserts(numberType,  anyType);
+    tree     = inserts(integerType, numberType);
+    tree     = inserts(enumType,    anyType);
+    tree     = inserts(dictType,    anyType);
+    tree     = inserts(objectType,  dictType);
+    tree     = inserts(listType,    anyType);
+    tree     = inserts(emptyListType,    listType);
+    tree     = inserts(dateType,    anyType);
+    tree     = inserts(stringType,  listType);
     return tree;
+}
+
+export function EmptyListType(): TypeExpression {
+    return newSimpleType("EmptyList");
 }
 
 export function ObjectType(): TypeExpression {

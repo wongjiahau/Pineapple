@@ -2,8 +2,8 @@ import { testError } from "../../tests/testUtil";
 
 testError("ErrorNoConformingFunction", `
 def .main
-    let x = [1,2,3].append("1")
+    let x = (1.0).show
 
-def (this List{T}).append(that T) -> List{T}
+def (this Int).show
     pass
 `);

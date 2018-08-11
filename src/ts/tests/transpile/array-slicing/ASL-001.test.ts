@@ -5,9 +5,6 @@ describe("ASL-001", () => {
     it("case 1", () => {
         const input =
 `
-def List{T}
-    pass
-
 def (this List{T}).(start Number to end Number) -> T
     pass
 

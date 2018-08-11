@@ -5,9 +5,6 @@ describe("FCBIO-006", () => {
     it("generic type specialization", () => {
         const input =
 `
-def List{T}
-    pass
-
 def .main
     let x = [1,2,3].append(1).append(3)
 

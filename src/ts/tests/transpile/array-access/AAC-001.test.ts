@@ -5,9 +5,6 @@ describe("@array-access-AAC-001", () => {
     it("case 1", () => {
         const input =
 `
-def List{T}
-    pass
-
 def (this List{T}).(that Number) -> T
     pass
 

@@ -39,8 +39,9 @@ export function testError(expectedErrorName: string, input: string, logError = f
         it(expectedErrorName, () => {
             if (logError) {
                 pine2js(input);
+            } else {
+                expect(catchError(() => pine2js(input)).name).to.eq(expectedErrorName);
             }
-            expect(catchError(() => pine2js(input)).name).to.eq(expectedErrorName);
         });
     });
 }

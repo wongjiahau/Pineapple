@@ -49,6 +49,7 @@ import { stringifyFuncSignature, stringifyType, tpFunctionDeclaration } from "./
 import {
     childOf,
     Comparer,
+    EmptyListType,
     EnumType,
     includes,
     insertChild,
@@ -134,6 +135,8 @@ export function resolveType(
     }
     switch (t.kind) {
         case "SimpleType":
+        // Fall through to StructDeclaration to search for matching struct
+        case "StructDeclaration":
             // check type tree
             if (includes(symbols.typeTree, t, typeEquals)) {
                 return t;
@@ -143,8 +146,6 @@ export function resolveType(
             if (mathchingEnum) {
                 return mathchingEnum;
             }
-        // Fall through to StructDeclaration to search for matching struct
-        case "StructDeclaration":
             const mathchingStruct = findTableEntry(symbols.structTab, t.name.repr);
             if (mathchingStruct) {
                 return mathchingStruct;
@@ -212,7 +213,10 @@ export function functionEqual(x: FunctionDeclaration, y: FunctionDeclaration): b
         return false;
     } else {
         for (let i = 0; i < x.parameters.length; i++) {
-            if (!typeEquals(x.parameters[i].typeExpected, y.parameters[i].typeExpected)) {
+            if (
+                stringifyTypeReadable(x.parameters[i].typeExpected) !==
+                stringifyTypeReadable(y.parameters[i].typeExpected)
+            ) {
                 return false;
             }
         }
@@ -281,7 +285,7 @@ export function fillUp(s: LinkedNode<Statement>, symbols: SymbolTable, vartab: V
                 s.current.variable.variable.returnType = s.current.variable.typeExpected;
                 const exprType = s.current.expression.returnType;
                 const expectedType = s.current.variable.typeExpected;
-                if (!isSubtypeOf(exprType, expectedType, symbols.typeTree, typeEquals)) {
+                if (childOf(exprType, expectedType, symbols.typeTree, typeEquals) === null) {
                     raise(ErrorIncorrectTypeGivenForVariable(s.current.variable, s.current.expression));
                 }
             }
@@ -327,8 +331,13 @@ export function fillUp(s: LinkedNode<Statement>, symbols: SymbolTable, vartab: V
 export function fillUpForStmtTypeInfo(f: ForStatement, symbols: SymbolTable, vartab: VariableTable):
     [ForStatement, SymbolTable, VariableTable] {
     [f.expression, symbols] = fillUpExpressionTypeInfo(f.expression, symbols, vartab);
-    if (f.expression.returnType.kind === "CompoundType") {
-        f.iterator.returnType = f.expression.returnType.of.current;
+    const exprType = f.expression.returnType;
+    if (exprType.kind === "StructDeclaration" && exprType.name.repr === "List") {
+        if (exprType.templates !== null) {
+            f.iterator.returnType = exprType.templates.current;
+        } else {
+            throw new Error("Something is wrong");
+        }
         vartab = updateVariableTable(vartab, f.iterator);
     } else {
         throw new Error("The expresison type in for statement should be array.");
@@ -366,7 +375,9 @@ export function fillUpExpressionTypeInfo(e: Expression, symbols: SymbolTable, va
     case "FunctionCall":
         [e, symbols.funcTab] = fillUpFunctionCallTypeInfo(e, symbols, vartab);
         return [e, symbols];
-    case "List":     e = fillUpArrayTypeInfo   (e, symbols, vartab); break;
+    case "List":
+        e = fillUpArrayTypeInfo(e, symbols, vartab);
+        break;
     case "Number":
         if (e.repr.indexOf(".") >= 0) {
             e = fillUpSimpleTypeInfo(e, "Number");
@@ -443,7 +454,7 @@ export function isSubtypeOf(
 }
 
 export function checkIfKeyValueListConforms(
-    keyValues: LinkedNode<KeyValue>,
+    keyValues: LinkedNode<KeyValue> | null,
     structDecl: StructDeclaration,
     tree: Tree<TypeExpression>
 ): void {
@@ -502,7 +513,7 @@ export function getStruct(name: AtomicToken, structTab: StructTable): StructDecl
 }
 
 export function fillUpKeyValueListTypeInfo(k: LinkedNode<KeyValue> | null, symbols: SymbolTable, vartab: VariableTable)
-    : [LinkedNode<KeyValue>, SymbolTable] {
+    : [LinkedNode<KeyValue> | null, SymbolTable] {
     let current: LinkedNode<KeyValue> | null = k;
     while (current !== null) {
         [current.current.expression, symbols] = fillUpExpressionTypeInfo(current.current.expression, symbols, vartab);
@@ -542,24 +553,20 @@ export function getFuncSignature(f: FunctionCall, functab: FunctionTable, typetr
     if (key in functab) {
         const matchingFunctions = functab[key].filter((x) => x.parameters.length === f.parameters.length);
         const closestFunction = getClosestFunction(f, matchingFunctions, typetree);
-        if (closestFunction !== null) {
-            // This step is necessary to fix parent type
-            // E.g., changing (Number -> Number) to (Any -> Number)
-            for (let j = 0; j < f.parameters.length; j++) {
-                f.parameters[j].returnType =
-                   closestFunction.parameters[j].typeExpected;
-            }
-            f.returnType = closestFunction.returnType;
-
-            // this step is needed for generic substituted function
-            functab = newFunctionTable(closestFunction, functab) ;
-
-            return [f, functab];
-        } else {
-            raise(ErrorNoConformingFunction(f, matchingFunctions, CURRENT_SOURCE_CODE()));
+        // This step is necessary to fix parent type
+        // E.g., changing (Number -> Number) to (Any -> Number)
+        for (let j = 0; j < f.parameters.length; j++) {
+            f.parameters[j].returnType =
+                closestFunction.parameters[j].typeExpected;
         }
+        f.returnType = closestFunction.returnType;
+
+        // this step is needed for generic substituted function
+        functab = newFunctionTable(closestFunction, functab) ;
+
+        return [f, functab];
     } else {
-        raise(ErrorUsingUnknownFunction(f));
+        return raise(ErrorUsingUnknownFunction(f));
     }
 }
 
@@ -567,14 +574,18 @@ export function getClosestFunction(
     f: FunctionCall,
     matchingFunctions: FunctionDeclaration[],
     typeTree: Tree<TypeExpression>
-): FunctionDeclaration | null {
+): FunctionDeclaration {
     const paramLength = f.parameters.length;
     // First, find function that have the exact type signature with the calling signature
     for (let i = 0; i < matchingFunctions.length; i++) {
         const matchingFunc = matchingFunctions[i];
         let gotConflict = false;
         for (let j = 0; j < paramLength; j++) {
-            if (!typeEquals(f.parameters[j].returnType, matchingFunc.parameters[j].typeExpected)) {
+            if (!typeEquals(
+                f.parameters[j].returnType,
+                matchingFunc.parameters[j].typeExpected,
+                false // Dont ignore generic
+            )) {
                 gotConflict = true;
             }
         }
@@ -684,7 +695,7 @@ export function paramTypesConforms(
     for (let i = 0; i < expectedParams.length; i++) {
         const expectedType = expectedParams[i].typeExpected;
         const actualType = actualParams[i].returnType;
-        const score = verticalDistance(actualType, expectedType, typeTree, typeEquals);
+        const score = childOf(actualType, expectedType, typeTree, typeEquals);
         if (score !== null) {
             resultScore += score;
         } else {
@@ -720,7 +731,7 @@ export function fillUpArrayTypeInfo(e: ListExpression, symbols: SymbolTable, var
         [e.elements, symbols] = fillUpElementsType(e.elements, symbols, vartab);
         e.returnType = getElementsType(e.elements);
     } else {
-        throw new Error("Don't know how to handle yet");
+        e.returnType = EmptyListType();
     }
     return e;
 }
@@ -738,7 +749,7 @@ export function fillUpElementsType(e: LinkedNode<Expression>, symbols: SymbolTab
 export function getElementsType(a: LinkedNode<Expression>): StructDeclaration {
     const types = flattenLinkedNode(a).map((x) => x.returnType);
     checkIfAllElementTypeAreHomogeneous(types);
-    return newListType(types[0]);
+    return newListType(types[0]) as StructDeclaration;
 }
 
 export function checkIfAllElementTypeAreHomogeneous(ts: TypeExpression[]): void {
@@ -748,7 +759,7 @@ export function checkIfAllElementTypeAreHomogeneous(ts: TypeExpression[]): void 
     // TODO: Check if every element is of the same type
 }
 
-export function typeEquals(x: TypeExpression, y: TypeExpression): boolean {
+export function typeEquals(x: TypeExpression, y: TypeExpression, ignoreGeneric = true): boolean {
     if (x.kind !== y.kind) {
         return false;
     } else {
@@ -764,6 +775,14 @@ export function typeEquals(x: TypeExpression, y: TypeExpression): boolean {
                     const xOfTypes = flattenLinkedNode(x.templates);
                     const yOfTypes = flattenLinkedNode(y.templates);
                     for (let i = 0; i < xOfTypes.length; i++) {
+                        if (ignoreGeneric) {
+                            if (xOfTypes[i].kind === "GenericType") {
+                                continue;
+                            }
+                            if (yOfTypes[i].kind === "GenericType") {
+                                continue;
+                            }
+                        }
                         if (!typeEquals(xOfTypes[i], yOfTypes[i])) { // TODO: should use subtype of
                             return false;
                         }
