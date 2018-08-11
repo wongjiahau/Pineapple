@@ -1,7 +1,7 @@
 import { pine2js } from "../../../pine2js";
 import { assertEquals } from "../../testUtil";
 
-describe("CUR-002", () => {
+describe.skip("CUR-002", () => {
     it("case 1", () => {
         const input =
 `

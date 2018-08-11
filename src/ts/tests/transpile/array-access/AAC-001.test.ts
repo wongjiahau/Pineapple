@@ -5,6 +5,9 @@ describe("@array-access-AAC-001", () => {
     it("case 1", () => {
         const input =
 `
+def List{T}
+    pass
+
 def (this List{T}).(that Number) -> T
     pass
 
@@ -18,13 +21,13 @@ function _$period_ListOfGeneric$T_Number($this,$that){
 $$pass$$();
 }
 
-function _$period_ListOfNumber_Number($this,$that){
+function _$period_ListOfInt_Number($this,$that){
 $$pass$$();
 }
 
 function _main_(){
 const $x = [(1),(2),(3)];
-const $y = _$period_ListOfNumber_Number($x,(0));
+const $y = _$period_ListOfInt_Number($x,(0));
 }
 `.trim();
 

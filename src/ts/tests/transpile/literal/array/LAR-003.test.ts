@@ -5,6 +5,9 @@ describe("LAR-003", () => {
     it("empty array", () => {
         const input =
 `
+def List{T}
+    pass
+
 def .main
     let x List{String} = []
     let y List{Number} = []

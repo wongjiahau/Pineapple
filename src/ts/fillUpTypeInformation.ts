@@ -83,8 +83,8 @@ export function fillUpTypeInformation(
                 symbols.funcTab = newFunctionTable(currentDecl, symbols.funcTab);
                 break;
             case "StructDeclaration":
-                symbols.typeTree = insertChild(currentDecl, ObjectType(), symbols.typeTree, typeEquals);
                 symbols.structTab = newStructTab(currentDecl, symbols.structTab);
+                symbols.typeTree = insertChild(currentDecl, ObjectType(), symbols.typeTree, typeEquals);
                 break;
             case "EnumDeclaration":
                 symbols.typeTree = insertChild(currentDecl, EnumType(), symbols.typeTree, typeEquals);
@@ -294,7 +294,7 @@ export function fillUp(s: LinkedNode<Statement>, symbols: SymbolTable, vartab: V
                 raise(ErrorAssigningToImmutableVariable(s.current.variable));
             }
             [s.current.expression, symbols] = fillUpExpressionTypeInfo(s.current.expression, symbols, vartab);
-            if (!typeEquals(matching.returnType, s.current.expression.returnType)) {
+            if (!isSubtypeOf(s.current.expression.returnType, matching.returnType, symbols.typeTree, typeEquals)) {
                 throw new Error(
 `The data type of ${matching.repr} should be ${stringifyType(matching.returnType)}, ` +
 `but you assigned it with ${stringifyType(s.current.expression.returnType)}`);

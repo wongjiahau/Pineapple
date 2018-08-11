@@ -15,8 +15,8 @@ def (this Number) + (that Number) -> Number
     pass
 
 def .main
-    let x mutable = 0
-    while x < 10
+    let x mutable = 0.0
+    while x < 10.0
         x = x + 1
 `;
         const expectedOutput =
@@ -30,8 +30,8 @@ $$pass$$();
 }
 
 function _main_(){
-const $x = (0);
-while(_$lessThan_Number_Number($x,(10))){
+const $x = (0.0);
+while(_$lessThan_Number_Number($x,(10.0))){
     x = _$plus_Number_Number($x,(1))
 }
 ;
