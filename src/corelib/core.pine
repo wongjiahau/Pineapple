@@ -1,6 +1,3 @@
-def List{T}
-    pass
-
 def Boolean 
     `true
     `false

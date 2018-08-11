@@ -30,9 +30,9 @@ $$pass$$();
 }
 
 function _main_(){
-const $x = (0.0);
+let $x = (0.0);
 while(_$lessThan_Number_Number($x,(10.0))){
-    x = _$plus_Number_Number($x,(1))
+    $x = _$plus_Number_Number($x,(1))
 }
 ;
 }

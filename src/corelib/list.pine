@@ -33,3 +33,10 @@ def (this Number)..<(that Number) -> List{Number}
         return [this]
     else
         return [this] ++ ((this + 1)..<that)
+
+def (this List{T}).at(index Int put value T) -> List{T}
+    <javascript>
+    let $temp = $this.slice();
+    $temp[$index] = $value
+    return $temp
+    </javascript>

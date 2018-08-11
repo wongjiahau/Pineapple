@@ -12,8 +12,8 @@ def .main
         const expectedOutput =
 `
 function _main_(){
-const $x = (1);
-x = (2);
+let $x = (1);
+$x = (2);
 }
 `;
         assertEquals(pine2js(input).trim(), expectedOutput.trim());

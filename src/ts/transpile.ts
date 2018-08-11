@@ -196,12 +196,13 @@ export function tpAssignmentStatement(a: AssignmentStatement): string {
     switch (a.variable.kind) {
         case "VariableDeclaration":
             if (a.isDeclaration) {
-                return `const $${a.variable.variable.repr} = ${tpExpression(a.expression)}`;
+                return `${a.variable.isMutable ? "let" : "const"} ` +
+                `$${a.variable.variable.repr} = ${tpExpression(a.expression)}`;
             } else {
                 throw new Error("a.isDeclaration should be true");
             }
         case "Variable":
-            return `${a.variable.repr} = ${tpExpression(a.expression)}`;
+            return `$${a.variable.repr} = ${tpExpression(a.expression)}`;
     }
 }
 
