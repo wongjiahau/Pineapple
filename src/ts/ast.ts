@@ -21,6 +21,7 @@ export interface FunctionDeclaration {
     returnType: TypeExpression;
     parameters: VariableDeclaration[];
     statements: LinkedNode<Statement>;
+    originFile: string;
 }
 
 export interface StructDeclaration {
@@ -30,6 +31,7 @@ export interface StructDeclaration {
     templates: LinkedNode<TypeExpression> | null;
     location: TokenLocation;
     nullable: boolean;
+    originFile: string;
 }
 
 export interface MemberDefinition {
@@ -51,6 +53,7 @@ export type Statement
 export interface ImportDeclaration {
     kind: "ImportDeclaration";
     filename: StringExpression;
+    originFile: string;
 }
 
 export interface PassStatement {
@@ -112,6 +115,7 @@ export interface EnumDeclaration {
     enums: LinkedNode<AtomicToken>;
     location: TokenLocation;
     nullable: boolean;
+    originFile: string;
 }
 
 export interface EnumExpression {

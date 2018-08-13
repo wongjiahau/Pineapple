@@ -16,10 +16,11 @@ const _FunctionDeclaration = (signature,returnType,parameters,statements,affix) 
     affix,
 });
 
-const _EnumDeclaration = (name, enums) => ({
+const _EnumDeclaration = (name, enums, location) => ({
     kind: "EnumDeclaration",
     name,
     enums,
+    location
 })
 
 const _StructDeclaration = (name, members, templates, nullable) => ({
@@ -250,7 +251,7 @@ Declaration
     ;
 
 EnumDeclaration
-    : DEF TypenameAtom NEWLINE INDENT EnumList DEDENT {$$=_EnumDeclaration($2,$5)}
+    : DEF TypenameAtom NEWLINE INDENT EnumList DEDENT {$$=_EnumDeclaration($2,$5,$2.location)}
     ;
 
 EnumList

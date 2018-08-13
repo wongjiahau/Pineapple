@@ -40,6 +40,7 @@ import { ErrorUnmatchingReturnType } from "./errorType/E0011-UnmatchingReturnTyp
 import { ErrorUsingUndefinedStruct } from "./errorType/E0012-UsingUndefinedStruct";
 import { ErrorUsingUnknownFunction } from "./errorType/E0013-UsingUnknownFunction";
 import { ErrorVariableRedeclare } from "./errorType/E0014-VariableRedeclare";
+import { ErrorEnumRedeclare } from "./errorType/E0015-EnumRedeclare";
 import { ErrorDetail, stringifyTypeReadable } from "./errorType/errorUtil";
 import { renderError } from "./errorType/renderError";
 import { convertToLinkedNode, flattenLinkedNode } from "./getIntermediateForm";
@@ -74,6 +75,7 @@ export function fillUpTypeInformation(
     // without needing to adhere to strict top-down or bottom-up structure
     for (let i = 0; i < decls.length; i++) {
         const currentDecl = decls[i];
+        currentDecl.originFile = CURRENT_SOURCE_CODE().filename;
         switch (currentDecl.kind) {
             case "FunctionDeclaration":
                 currentDecl.returnType = resolveType(currentDecl.returnType, symbols);
@@ -88,8 +90,8 @@ export function fillUpTypeInformation(
                 symbols.typeTree = insertChild(currentDecl, ObjectType(), symbols.typeTree, typeEquals);
                 break;
             case "EnumDeclaration":
-                symbols.typeTree = insertChild(currentDecl, EnumType(), symbols.typeTree, typeEquals);
                 symbols.enumTab = newEnumTab(currentDecl, symbols.enumTab);
+                symbols.typeTree = insertChild(currentDecl, EnumType(), symbols.typeTree, typeEquals);
         }
     }
 
@@ -110,7 +112,7 @@ export function fillUpTypeInformation(
 
 export function newEnumTab(e: EnumDeclaration, enumTab: EnumTable): EnumTable {
     if (enumTab[e.name.repr]) {
-        throw new Error(`There is already an enum named ${e.name}`);
+        raise(ErrorEnumRedeclare(e, enumTab[e.name.repr].originFile));
     } else {
         enumTab[e.name.repr] = e;
     }

@@ -18,10 +18,7 @@ const fs = require("fs");
 const {exec} = require("child_process");
 program.args.forEach((arg: string) => {
         try {
-            console.log("Compiling . . .");
             const transpiledCode = fullTranspile(loadFile(arg));
-            console.log("Executing . . .");
-            clear();
             execute(transpiledCode);
         } catch (error) {
             clear();

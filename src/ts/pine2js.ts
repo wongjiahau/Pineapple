@@ -6,7 +6,7 @@ import { initTypeTree } from "./typeTree";
 /**
  * WARNING: The `pine2js` function is meant for unit testing only
  */
-export function pine2js(input: string, filename: string= ""): string {
+export function pine2js(input: string, filename: string= "STDIN"): string {
     const source: SourceCode = {
             filename: filename,
             content: input
