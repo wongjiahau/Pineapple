@@ -41,6 +41,7 @@ import { ErrorUsingUndefinedStruct } from "./errorType/E0012-UsingUndefinedStruc
 import { ErrorUsingUnknownFunction } from "./errorType/E0013-UsingUnknownFunction";
 import { ErrorVariableRedeclare } from "./errorType/E0014-VariableRedeclare";
 import { ErrorEnumRedeclare } from "./errorType/E0015-EnumRedeclare";
+import { ErrorNonVoidExprNotAssignedToVariable } from "./errorType/E0016-NonVoidExprNotAssignedToVariable";
 import { ErrorDetail, stringifyTypeReadable } from "./errorType/errorUtil";
 import { renderError } from "./errorType/renderError";
 import { convertToLinkedNode, flattenLinkedNode } from "./getIntermediateForm";
@@ -318,6 +319,7 @@ export function fillUp(s: LinkedNode<Statement>, symbols: SymbolTable, vartab: V
     case "FunctionCall":
         [s.current, symbols.funcTab] = fillUpFunctionCallTypeInfo(s.current, symbols, vartab);
         if (s.current.returnType.kind !== "VoidType") {
+            raise(ErrorNonVoidExprNotAssignedToVariable(s.current));
             throw new Error("Non void function should be assign to new variable");
         }
         break;

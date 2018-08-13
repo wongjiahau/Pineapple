@@ -13,7 +13,7 @@ export function renderError(
     const hintStyle = {padding: 1, borderColor: "cyan"};
 
     let result = "";
-    result += chalk.bold(`ERROR`) + `(PINE-${(errorDetail.code)}): `;
+    result += chalk.bold(`ERROR`) + `(PINE-${(errorDetail.code)}): \n`;
     result += errorDetail.message;
     result = "\n" + boxen(result, errorMessageStyle) + "\n";
     result += boxen(
