@@ -1,8 +1,9 @@
-import { Expression, VariableDeclaration } from "../ast";
+import { Expression, VariableDeclaration, Variable, TypeExpression } from "../ast";
 import { ErrorDetail, stringifyTypeReadable } from "./errorUtil";
 
 export function ErrorIncorrectTypeGivenForVariable(
-    relatedVariable: VariableDeclaration,
+    relatedVariable: Variable,
+    expectedType: TypeExpression,
     relatedExpression: Expression,
 ): ErrorDetail {
     return {
@@ -11,9 +12,9 @@ export function ErrorIncorrectTypeGivenForVariable(
         message:
 `
 
-The variable \`${relatedVariable.variable.repr}\` should have the type of:
+The variable \`${relatedVariable.repr}\` should have the type of:
 
-    ${stringifyTypeReadable(relatedVariable.typeExpected)}
+    ${stringifyTypeReadable(expectedType)}
 
 But the expression you provided have the type of:
 

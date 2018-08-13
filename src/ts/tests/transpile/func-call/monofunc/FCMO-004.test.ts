@@ -8,7 +8,7 @@ describe("FCMO-004", () => {
 def (this String).capitalize -> String
     pass
 
-def (this String).reverse -> String
+def (this String).reverse
     pass
 
 def .main

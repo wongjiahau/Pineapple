@@ -170,7 +170,6 @@ export function resolveType(
 export function newStructTab(s: StructDeclaration, structTab: StructTable): StructTable {
     if (s.name.repr in structTab) {
         raise(ErrorStructRedeclare(s));
-        // throw new Error(`${s.name.repr} is already defined.`);
     } else {
         structTab[s.name.repr] = s;
     }
@@ -288,22 +287,28 @@ export function fillUp(s: LinkedNode<Statement>, symbols: SymbolTable, vartab: V
                 const exprType = s.current.expression.returnType;
                 const expectedType = s.current.variable.typeExpected;
                 if (childOf(exprType, expectedType, symbols.typeTree, typeEquals) === null) {
-                    raise(ErrorIncorrectTypeGivenForVariable(s.current.variable, s.current.expression));
+                    raise(ErrorIncorrectTypeGivenForVariable(
+                        s.current.variable.variable,
+                        s.current.variable.typeExpected,
+                        s.current.expression
+                    ));
                 }
             }
             s.current.variable.variable.isMutable = s.current.variable.isMutable;
             vartab = updateVariableTable(vartab, s.current.variable.variable);
             break;
         case "Variable":
-            const matching = vartab[s.current.variable.repr];
+            const matching = findVariable(s.current.variable, vartab);
             if (!matching.isMutable) {
                 raise(ErrorAssigningToImmutableVariable(s.current.variable));
             }
             [s.current.expression, symbols] = fillUpExpressionTypeInfo(s.current.expression, symbols, vartab);
             if (!isSubtypeOf(s.current.expression.returnType, matching.returnType, symbols.typeTree, typeEquals)) {
-                throw new Error(
-`The data type of ${matching.repr} should be ${stringifyType(matching.returnType)}, ` +
-`but you assigned it with ${stringifyType(s.current.expression.returnType)}`);
+                raise(ErrorIncorrectTypeGivenForVariable(
+                    s.current.variable,
+                    matching.returnType,
+                    s.current.expression
+                ));
             } else {
                 s.current.variable.returnType = matching.returnType;
             }
@@ -312,6 +317,9 @@ export function fillUp(s: LinkedNode<Statement>, symbols: SymbolTable, vartab: V
         break;
     case "FunctionCall":
         [s.current, symbols.funcTab] = fillUpFunctionCallTypeInfo(s.current, symbols, vartab);
+        if (s.current.returnType.kind !== "VoidType") {
+            throw new Error("Non void function should be assign to new variable");
+        }
         break;
     case "BranchStatement":
         [s.current, symbols] = fillUpBranchTypeInfo(s.current, symbols, vartab);
@@ -328,6 +336,15 @@ export function fillUp(s: LinkedNode<Statement>, symbols: SymbolTable, vartab: V
         [s.next, symbols] = fillUp(s.next, symbols, vartab);
     }
     return [s, symbols];
+}
+
+function findVariable(v: Variable, vartab: VariableTable): Variable {
+    const matching = vartab[v.repr];
+    if (matching === undefined) {
+        throw new Error(`Variable ${v.repr} does not exist.`);
+    } else {
+        return matching;
+    }
 }
 
 export function fillUpForStmtTypeInfo(f: ForStatement, symbols: SymbolTable, vartab: VariableTable):
@@ -524,8 +541,9 @@ export function fillUpKeyValueListTypeInfo(k: LinkedNode<KeyValue> | null, symbo
     return [k, symbols];
 }
 
-export function fillUpVariableTypeInfo(e: Variable, vtab: VariableTable): Variable {
-    e.returnType = vtab[e.repr].returnType;
+export function fillUpVariableTypeInfo(e: Variable, vartab: VariableTable): Variable {
+    const matching = findVariable(e, vartab);
+    e.returnType = matching.returnType;
     return e;
 }
 

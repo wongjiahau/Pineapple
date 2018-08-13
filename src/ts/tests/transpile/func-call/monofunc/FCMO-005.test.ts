@@ -5,7 +5,7 @@ describe("FCMO-005", () => {
     it("generic monofunc", () => {
         const input =
 `
-def (this T).show -> T
+def (this T).show
     pass
 
 def .main
