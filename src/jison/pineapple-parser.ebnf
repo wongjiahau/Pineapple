@@ -77,7 +77,7 @@ Block
 Stmt
     = AssignmentStmt
     | ReturnStmt   
-    | AtomicFuncCall    NEWLINE
+    | FuncCall    NEWLINE
     | OpFuncCall  NEWLINE
     | IfStmt              
     | ForStmt
@@ -137,8 +137,8 @@ AtomicTypeExpr
     ;
 
 MultilineExpr
-    = MultilineObject
-    | MulitilineDictionary
+    = Object
+    | Dictionary
     | MultilineList
     | SinglelineExpr NEWLINE
     ;
@@ -149,11 +149,11 @@ SinglelineExpr
     ;
 
 OpFuncCall
-    = OpFuncCall OpId AtomicExpr {$$=_FuncCall("Bi",[$2],[$1,$3],this._$)}
-    | AtomicExpr OpId AtomicExpr {$$=_FuncCall("Bi",[$2],[$1,$3],this._$)}
+    = OpFuncCall OpId AtomicExpr 
+    | AtomicExpr OpId AtomicExpr 
     ;
 
-AtomicFuncCall
+FuncCall
     = NulliFuncCall
     | MonoFuncCall
     | BiFuncCall
@@ -161,152 +161,70 @@ AtomicFuncCall
     ;
 
 NulliFuncCall
-    = FuncId  {$$=_FuncCall("Nulli",[$1],[],this._$)}
+    = FuncId 
     ;
 
 MonoFuncCall
-    = AtomicExpr FuncId {$$=_FuncCall("Mono",[$2],[$1],this._$)}
+    = AtomicExpr FuncId
     ;
 
 BiFuncCall
     = AtomicExpr FuncId '(' SinglelineExpr ')'  
-        {$$=_FuncCall("Bi",[$2],[$1,$4],this._$)}
     ;
 
 TriFuncCall
     = AtomicExpr FuncId '(' SinglelineExpr VarId SinglelineExpr ')'  
-        {$$=_FuncCall("Tri",[$2,$5],[$1,$4,$6],this._$)}
     ;
 
 AtomicExpr 
     = '(' SinglelineExpr ')' 
     | ObjectAccessExpr
     | SinglelineList
-    | AtomicFuncCall 
-    | BooleanAtom
-    | StringAtom
-    | NumberAtom
-    | EnumAtom {$$=_EnumExpr($1)}
+    | FuncCall 
+    | BooleanLit
+    | StringLit
+    | NumberLit
+    | EnumLit
     | VarId
-    | AnonymousExpr
-    | NIL
+    | 'nil'
     ;
 
 ObjectAccessExpr
-    = AtomicExpr MemberId {$$=_ObjectAccess($1,$2)}
+    = AtomicExpr MemberId 
     ;
 
-MultilineObject
-    = TypeId NEWLINE {$$=_ObjectExpr($1,null)}
-    | TypeId NEWLINE INDENT MultilineObjectKeyValueList DEDENT {$$=_ObjectExpr($1,$4)}
+Object
+    = TypeId NEWLINE 
+    | TypeId NEWLINE INDENT {ObjectKeyValue} DEDENT
     ;
 
-MultilineObjectKeyValueList
-    = MultilineObjectKeyValue MultilineObjectKeyValueList {$$=_LinkedNode($1,$2)}
-    | MultilineObjectKeyValue {$$=_LinkedNode($1,null)}
+ObjectKeyValue
+    = MemberId '=' MultilineExpr
     ;
 
-MultilineObjectKeyValue
-    = MemberId ASSIGN_OP MultilineExpr {$$=_KeyValue($1,$3)}
-    ;
-
-MulitilineDictionary
+Dictionary
     = '{' '}'
-    | NEWLINE INDENT MultilineDictionaryKeyValueList DEDENT {$$=_ObjectExpr(null, $3)}
+    | NEWLINE INDENT {DictionaryKeyValue} DEDENT 
     ;
 
-MultilineDictionaryKeyValueList
-    = MultilineDictionaryKeyValue MultilineDictionaryKeyValueList {$$=_LinkedNode($1,$2)}
-    | MultilineDictionaryKeyValue {$$=_LinkedNode($1,null)}
-    ;
-
-MultilineDictionaryKeyValue
-    = StringAtom ASSIGN_OP MultilineExpr {$$=_KeyValue($1,$3)}
-    ;
-
-SinglelineObject
-    = '{' KeyValueList '}' {$$=_ObjectExpr($2)}
-    ;
-
-KeyValueList
-    = KeyValue KeyValueList {$$=_LinkedNode($1,$3)}
-    | KeyValue                  {$$=_LinkedNode($1,null)}
-    ;
-
-KeyValue 
-    = MemberId ASSIGN_OP SinglelineExpr   {$$=_KeyValue($1,$3)}
-    | StringAtom ASSIGN_OP SinglelineExpr       {$$=_KeyValue($1,$3)}
+DictionaryKeyValue
+    = StringLit '=' MultilineExpr
     ;
 
 SinglelineList
-    = '[' Elements ']'   {$$=_ListExpr($2,this._$)}
-    | '[' ']'            {$$=_ListExpr(null,this._$)}
-    ;
-
-Elements
-    = AtomicExpr ',' Elements  {$$=_LinkedNode($1,$3)}
-    | AtomicExpr {$$=_LinkedNode($1,null)}
+    = '[' [Element [{',' Element}]] ']' 
     ;
 
 MultilineList
-    = NEWLINE INDENT MultilineElements DEDENT {$$=_ListExpr($3,this._$)}
+    = NEWLINE INDENT MultilineElements DEDENT
     ;
 
 MultilineElements
-    = LIST_BULLET SinglelineExpr NEWLINE MultilineElements {$$=_LinkedNode($2,$4)}
-    | LIST_BULLET SinglelineExpr NEWLINE {$$=_LinkedNode($2,null)}
+    = BULLET SinglelineExpr NEWLINE MultilineElements
+    | BULLET SinglelineExpr NEWLINE 
     ;
 
-BooleanAtom
-    = TRUE  {$$=_BooleanExpr($1, this._$)}
-    | FALSE {$$=_BooleanExpr($1, this._$)}
-    ;
-
-StringAtom
-    = STRING {$$=_StringExpr($1, this._$)}
-    ;
-
-NumberAtom
-    = NUMBER {$$=_NumberExpr($1, this._$)}
-    ;
-
-FuncId
-    = FUNCNAME {$$=_Token($1, this._$)}
-    ;
-
-SubFuncId
-    = SUBFUNCNAME {$$=_Token($1, this._$)}
-    ;
-
-MemberId
-    = MemberId {$$=_Token($1, this._$)}
-    ;
-
-OpId    
-    = Op {$$=_Token($1, this._$)}
-    ;
-
-TypeId
-    = TYPENAME {$$=_Token($1, this._$)}
-    ;
-
-EnumAtom
-    = ENUM {$$=_Token($1, this._$)}
-    ;
-
-GenericAtom
-    = GENERICTYPENAME {$$=_Token($1, this._$)}
-    ;
-
-JavascriptCodeSnippet
-    = JAVASCRIPT {$$=_JavascriptCode($1, this._$)}
-    ;
-
-LogicOp
-    = AND {$$=_Token($1, this._$)}
-    | OR  {$$=_Token($1, this._$)}
-    ;
-
-AnonymousExpr
-    = '_' {$$=_AnonymousExpr(this._$)}
+BooleanLit
+    = 'true'
+    | 'false'
     ;
