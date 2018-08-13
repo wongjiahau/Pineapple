@@ -633,7 +633,7 @@ export function getClosestFunction(
                         );
                 }
                 currentFunc.returnType = substituteGeneric(
-                    matchingParams[0].returnType,
+                    currentFunc.returnType,
                     genericsBinding
                 );
             }
