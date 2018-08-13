@@ -44,6 +44,7 @@ import { ErrorEnumRedeclare } from "./errorType/E0015-EnumRedeclare";
 import { ErrorNonVoidExprNotAssignedToVariable } from "./errorType/E0016-NonVoidExprNotAssignedToVariable";
 import { ErrorUsingUndefinedVariable } from "./errorType/E0017-UsingUndefinedVariable";
 import { ErrorAssigningToUndefinedVariable } from "./errorType/E0018-AssigningToUndefinedVariable";
+import { ErrorForExprNotArray } from "./errorType/E0019-ErrorForExprNotArray";
 import { ErrorDetail, stringifyTypeReadable } from "./errorType/errorUtil";
 import { renderError } from "./errorType/renderError";
 import { convertToLinkedNode, flattenLinkedNode } from "./getIntermediateForm";
@@ -366,7 +367,7 @@ export function fillUpForStmtTypeInfo(f: ForStatement, symbols: SymbolTable, var
         }
         vartab = updateVariableTable(vartab, f.iterator);
     } else {
-        throw new Error("The expresison type in for statement should be array.");
+        raise(ErrorForExprNotArray(f.expression));
     }
     [f.body, symbols] = fillUp(f.body, symbols, vartab);
     return [f, symbols, vartab];
