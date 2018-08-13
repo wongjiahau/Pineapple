@@ -1,3 +1,4 @@
+import chalk from "chalk";
 import { AtomicToken, TokenLocation, TypeExpression } from "../ast";
 import { flattenLinkedNode } from "../getIntermediateForm";
 
@@ -34,7 +35,7 @@ export function showSuggestion(suggestions: string[]): string {
     } else if (suggestions.length === 1) {
         return "" +
 `
-Do you mean \`${suggestions[0]}\`?`;
+Do you mean ${suggestions[0]}?`;
     } else {
         return "" +
 `

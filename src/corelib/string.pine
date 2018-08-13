@@ -1,4 +1,4 @@
-def (this String).replace(old String with: new String) -> String
+def (this String).replace(old String with new String) -> String
     <javascript>
     return $this.split($old).join($new);
     </javascript>

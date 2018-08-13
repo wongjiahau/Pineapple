@@ -44,7 +44,8 @@ import { ErrorEnumRedeclare } from "./errorType/E0015-EnumRedeclare";
 import { ErrorNonVoidExprNotAssignedToVariable } from "./errorType/E0016-NonVoidExprNotAssignedToVariable";
 import { ErrorUsingUndefinedVariable } from "./errorType/E0017-UsingUndefinedVariable";
 import { ErrorAssigningToUndefinedVariable } from "./errorType/E0018-AssigningToUndefinedVariable";
-import { ErrorForExprNotArray } from "./errorType/E0019-ErrorForExprNotArray";
+import { ErrorForExprNotArray } from "./errorType/E0019-ForExprNotArray";
+import { ErrorUsingUndefinedEnum } from "./errorType/E0020-UsingUndefinedEnum";
 import { ErrorDetail, stringifyTypeReadable } from "./errorType/errorUtil";
 import { renderError } from "./errorType/renderError";
 import { convertToLinkedNode, flattenLinkedNode } from "./getIntermediateForm";
@@ -441,7 +442,7 @@ export function fillUpExpressionTypeInfo(e: Expression, symbols: SymbolTable, va
         }
         break;
         case "EnumExpression":
-            e.returnType = findMatchingEnumType(e.value.repr, symbols.enumTab);
+            e.returnType = findMatchingEnumType(e.value, symbols.enumTab);
             break;
     default:
         throw new Error(`Unimplemented yet for ${e.kind}`);
@@ -449,17 +450,20 @@ export function fillUpExpressionTypeInfo(e: Expression, symbols: SymbolTable, va
     return [e, symbols];
 }
 
-export function findMatchingEnumType(value: string, enumTab: EnumTable): EnumDeclaration {
+export function findMatchingEnumType(value: AtomicToken, enumTab: EnumTable): EnumDeclaration {
     const matchingEnum: EnumDeclaration[] = [];
+    let allEnums: AtomicToken[] = [];
     for (const key in enumTab) {
         if (enumTab.hasOwnProperty(key)) {
-            if (flattenLinkedNode(enumTab[key].enums).some((x) => x.repr === value)) {
-                matchingEnum.push(enumTab[key]);
+            const e = enumTab[key];
+            allEnums = allEnums.concat(flattenLinkedNode(e.enums));
+            if (flattenLinkedNode(e.enums).some((x) => x.repr === value.repr)) {
+                matchingEnum.push(e);
             }
         }
     }
     if (matchingEnum.length === 0) {
-        throw new Error(`There are no enum that has the value of ${value}`);
+        return raise(ErrorUsingUndefinedEnum(value, allEnums));
     } else if (matchingEnum.length > 1) {
         throw new Error(`There are more than one enum that have the value of ${value}`);
     } else {
