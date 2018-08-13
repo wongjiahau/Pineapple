@@ -42,6 +42,8 @@ import { ErrorUsingUnknownFunction } from "./errorType/E0013-UsingUnknownFunctio
 import { ErrorVariableRedeclare } from "./errorType/E0014-VariableRedeclare";
 import { ErrorEnumRedeclare } from "./errorType/E0015-EnumRedeclare";
 import { ErrorNonVoidExprNotAssignedToVariable } from "./errorType/E0016-NonVoidExprNotAssignedToVariable";
+import { ErrorUsingUndefinedVariable } from "./errorType/E0017-UsingUndefinedVariable";
+import { ErrorAssigningToUndefinedVariable } from "./errorType/E0018-AssigningToUndefinedVariable";
 import { ErrorDetail, stringifyTypeReadable } from "./errorType/errorUtil";
 import { renderError } from "./errorType/renderError";
 import { convertToLinkedNode, flattenLinkedNode } from "./getIntermediateForm";
@@ -299,7 +301,7 @@ export function fillUp(s: LinkedNode<Statement>, symbols: SymbolTable, vartab: V
             vartab = updateVariableTable(vartab, s.current.variable.variable);
             break;
         case "Variable":
-            const matching = findVariable(s.current.variable, vartab);
+            const matching = findVariable(s.current.variable, vartab, true);
             if (!matching.isMutable) {
                 raise(ErrorAssigningToImmutableVariable(s.current.variable));
             }
@@ -320,7 +322,6 @@ export function fillUp(s: LinkedNode<Statement>, symbols: SymbolTable, vartab: V
         [s.current, symbols.funcTab] = fillUpFunctionCallTypeInfo(s.current, symbols, vartab);
         if (s.current.returnType.kind !== "VoidType") {
             raise(ErrorNonVoidExprNotAssignedToVariable(s.current));
-            throw new Error("Non void function should be assign to new variable");
         }
         break;
     case "BranchStatement":
@@ -340,10 +341,14 @@ export function fillUp(s: LinkedNode<Statement>, symbols: SymbolTable, vartab: V
     return [s, symbols];
 }
 
-function findVariable(v: Variable, vartab: VariableTable): Variable {
+function findVariable(v: Variable, vartab: VariableTable, isAssignment: boolean): Variable {
     const matching = vartab[v.repr];
     if (matching === undefined) {
-        throw new Error(`Variable ${v.repr} does not exist.`);
+        if (isAssignment) {
+            return raise(ErrorAssigningToUndefinedVariable(v));
+        } else {
+            return raise(ErrorUsingUndefinedVariable(v, vartab));
+        }
     } else {
         return matching;
     }
@@ -544,7 +549,7 @@ export function fillUpKeyValueListTypeInfo(k: LinkedNode<KeyValue> | null, symbo
 }
 
 export function fillUpVariableTypeInfo(e: Variable, vartab: VariableTable): Variable {
-    const matching = findVariable(e, vartab);
+    const matching = findVariable(e, vartab, false);
     e.returnType = matching.returnType;
     return e;
 }

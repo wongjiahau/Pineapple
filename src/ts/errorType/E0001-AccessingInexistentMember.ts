@@ -1,7 +1,7 @@
 import { AtomicToken, StructDeclaration } from "../ast";
 import { flattenLinkedNode } from "../getIntermediateForm";
 import { findSimilarStrings } from "../util";
-import { ErrorDetail } from "./errorUtil";
+import { ErrorDetail, showSuggestion } from "./errorUtil";
 
 export function ErrorAccessingInexistentMember(
     relatedStruct: StructDeclaration,
@@ -16,10 +16,6 @@ export function ErrorAccessingInexistentMember(
         relatedLocation: inexistentKey.location,
         message:
 `${relatedStruct.name.repr} does not have the member ${inexistentKey.repr}
-
-Do you mean one of the following ?
-
-${similarKeys.map((x) => "  " + x).join("\n")}
-`,
+${showSuggestion(similarKeys)}`,
     };
 }

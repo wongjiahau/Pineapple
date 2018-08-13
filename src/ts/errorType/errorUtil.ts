@@ -27,3 +27,19 @@ export function stringifyTypeReadable(t: TypeExpression): string {
 export function displayFuncSignature(xs: AtomicToken[]): string {
     return xs.map((x) => x.repr).join(" ");
 }
+
+export function showSuggestion(suggestions: string[]): string {
+    if (suggestions.length === 0) {
+        return "";
+    } else if (suggestions.length === 1) {
+        return "" +
+`
+Do you mean \`${suggestions[0]}\`?`;
+    } else {
+        return "" +
+`
+Do you mean one of the following?
+
+${suggestions.map((x) => "    " + x).join("\n")}`;
+    }
+}

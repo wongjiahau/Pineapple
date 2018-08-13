@@ -21,6 +21,10 @@ export function hasDuplicates(array: string[]) {
     return false;
 }
 
+export function values<T>(dict: {[key: string]: T}): T[] {
+    return Object.keys(dict).map((x) => dict[x]);
+}
+
 export function findSimilarStrings(needle: string, haystack: string[]): string[] {
     const result: string[] = [];
     const acceptedDistance = needle.length / 2;
