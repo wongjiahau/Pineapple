@@ -1,6 +1,7 @@
 {
   "name": "src",
   "version": "1.0.0",
+  "gypfile": true,
   "description": "``` npm i -g jison --save ```",
   "main": "pineapple-parser.js",
   "scripts": {
@@ -18,6 +19,7 @@
     "fast-levenshtein": "^2.0.6",
     "jison": "^0.4.18",
     "lex": "^1.7.9",
+    "node-addon-api": "^1.4.0",
     "toposort": "^2.0.2"
   },
   "devDependencies": {

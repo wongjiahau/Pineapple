@@ -1,4 +1,5 @@
 const toposort = require("toposort");
+const vm = require("vm");
 import {Declaration} from "./ast";
 import {getIntermediateForm, initialIntermediateForm} from "./getIntermediateForm";
 import {tpDeclaration} from "./transpile";
@@ -56,31 +57,26 @@ export function fullTranspile(source: SourceCode): string {
         sources = [source];
     }
 
-    // use strict is added to improve performance
-    // See https://github.com/petkaantonov/bluebird/wiki/Optimization-killers
-    return "'use strict'\n" + loadSource(sources)
+    return loadSource(sources)
         .map((x) => tpDeclaration(x))
         .join("\n")
         + "\n_main_();";
 }
 
 function execute(javascriptCode: string): void {
-    // execute the transpiled code using Node.js
-    fs.writeFileSync("__temp__.pine.js", javascriptCode);
-    exec("node __temp__.pine.js", (err: any, stdout: any, stderr: any) => {
-        if (err) {
-            console.log("Error: " + err);
-        } else {
-            console.log(stdout);
-            console.log(stderr);
-        }
-    });
+    // use strict is added to improve performance
+    // See https://github.com/petkaantonov/bluebird/wiki/Optimization-killers
+    let code = `"use strict";`;
+
+    // This step is necessary because `require` is not defined, so we need to pass in the context
+    // Refer https://nodejs.org/api/vm.html#vm_example_running_an_http_server_within_a_vm
+    code += `((require) => {${javascriptCode}})`;
+    vm.runInThisContext(code)(require);
 }
 
 type Dependencies = string[][]; // Example: [["a.pine", "b.pine"]] means "a.pine" depends on "b.pine"
 
 function loadDependency(initSource: SourceCode): Dependencies {
-    // console.log(Object.keys(fs));
     let imports = initSource.content.match(/(\n|^)import[ ]".+"/g) as string[];
     const currentFile = fs.realpathSync(initSource.filename);
     const filepath = currentFile.split("/").slice(0, -1).join("/") + "/";

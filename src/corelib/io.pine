@@ -2,3 +2,13 @@ def (this Any).show
     <javascript>
     console.log($this)
     </javascript>
+
+def .readline -> String
+    <javascript>
+    const x = require("../build/Release/cfunctions.node")
+    return x.readline();
+    </javascript>
+
+def (this String).ask -> String
+    this.show
+    return .readline

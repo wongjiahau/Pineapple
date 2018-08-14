@@ -19,16 +19,18 @@ jison pineapple-parser-v2.jison
 ```
 cd src
 cd './ts/'
-tsc --watch
+./transpile
 ```
 
-## 4. Run the REPL to test the parser
-Make sure you installed `nodemon`.
+## 4. To run the interpreter
+```sh
+cd src/js
+node interpreter.js hi.pine
 ```
-npm i -g nodemon
-```
-Then, 
+Note that `hi.pine` is just a file name.
+
+## 5. How to build C++ binding code?
 ```
 cd src
-nodemon './js/repl.js'
+npm install
 ```

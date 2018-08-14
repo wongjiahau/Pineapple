@@ -30,3 +30,8 @@ def (this Number) < (that Number) -> Boolean
     return $this < $that;
     </javascript>
 
+def (this Number) > (that Number) -> Boolean
+    <javascript>
+    return $this > $that;
+    </javascript>
+
