@@ -20,6 +20,11 @@ def (this Number) / (that Number) -> Number
     return $this / $that;
     </javascript>
 
+def (this Number) % (that Number) -> Number
+    <javascript>
+    return $this % $that;
+    </javascript>
+
 def (this Number) ^ (that Number) -> Number
     <javascript>
     return Math.pow($this, $that);

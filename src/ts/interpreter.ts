@@ -2,7 +2,7 @@ const toposort = require("toposort");
 const vm = require("vm");
 import {Declaration} from "./ast";
 import {getIntermediateForm, initialIntermediateForm} from "./getIntermediateForm";
-import {tpDeclaration} from "./transpile";
+import {tpDeclaration, transpile} from "./transpile";
 const clear = require("clear");
 
 const program = require("commander");
@@ -16,21 +16,38 @@ if (program.log) {
 }
 
 const fs = require("fs");
-const {exec} = require("child_process");
 program.args.forEach((arg: string) => {
-        try {
-            const transpiledCode = fullTranspile(loadFile(arg));
-            execute(transpiledCode);
-        } catch (error) {
-            clear();
-            console.log(error.message);
-        }
-    });
+    try {
+        const sourceCode = loadFile(arg);
+        const dependencies = loadDependency(sourceCode);
+        const sortedDependencies = sortDependency(dependencies);
+        const allCodes = sortedDependencies.map(loadFile);
+        const ir = loadSource(allCodes); // ir means intermediate representation
+        const transpiledCode = ir.map(tpDeclaration).join("\n") + "\n_main_();";
+        execute(transpiledCode);
+    } catch (error) {
+        clear();
+        console.log(error.message);
+    }
+});
 
-function loadSource(sources: SourceCode[]): Declaration[] {
+function sortDependency(dependencies: Dependencies): string[] {
+    // This step is necessary so that
+    // a same file that is depended by multiple files
+    // will not be imported more than once
+    // (if not there will be performance problem)
+
+    // Sort the vertices topologically, to reveal a legal execution order.
+    return toposort(dependencies).reverse();
+}
+
+function loadSource(sources: Array<SourceCode | null>): Declaration[] {
     let result = initialIntermediateForm();
     for (let i = 0; i < sources.length; i++) {
-        result = getIntermediateForm(sources[i], result);
+        const s = sources[i];
+        if (s !== null) {
+            result = getIntermediateForm(s, result);
+        }
     }
     let declarations: Declaration[] = [];
     for (const key in result.symbolTable.funcTab) {
@@ -39,28 +56,6 @@ function loadSource(sources: SourceCode[]): Declaration[] {
         }
     }
     return declarations;
-}
-
-export function fullTranspile(source: SourceCode): string {
-    // Get the dependencies of each file
-    const dependencies = loadDependency(source);
-
-    let sources: SourceCode[] = [];
-    if (dependencies.length > 0) {
-        // Now, sort the vertices topologically, to reveal a legal execution order.
-        const sortedDependencies: string[] = toposort(dependencies).reverse();
-
-        // Transpile the code according to execution order
-        sources = sortedDependencies.map(loadFile);
-    } else {
-        // If no dependecy is found
-        sources = [source];
-    }
-
-    return loadSource(sources)
-        .map((x) => tpDeclaration(x))
-        .join("\n")
-        + "\n_main_();";
 }
 
 function execute(javascriptCode: string): void {
@@ -76,12 +71,19 @@ function execute(javascriptCode: string): void {
 
 type Dependencies = string[][]; // Example: [["a.pine", "b.pine"]] means "a.pine" depends on "b.pine"
 
-function loadDependency(initSource: SourceCode): Dependencies {
+function Nothing(): string {
+    return "";
+}
+
+function loadDependency(initSource: SourceCode | null): Dependencies {
+    if (initSource === null) {
+        return [];
+    }
     let imports = initSource.content.match(/(\n|^)import[ ]".+"/g) as string[];
     const currentFile = fs.realpathSync(initSource.filename);
     const filepath = currentFile.split("/").slice(0, -1).join("/") + "/";
     if (imports === null) {
-        return [];
+        return [[initSource.filename, /*depends on*/ Nothing()]]; // this line is necessary for toposort to work
     } else {
         imports = imports.map((x) => x.match(/".+"/g)[0].slice(1, -1));
         let dependencies: string[][] = [];
@@ -94,7 +96,10 @@ function loadDependency(initSource: SourceCode): Dependencies {
     }
 }
 
-export function loadFile(filename: string): SourceCode {
+export function loadFile(filename: string): SourceCode | null {
+    if (filename === Nothing()) {
+        return null;
+    }
     return {
         content: fs
             .readFileSync(filename)
