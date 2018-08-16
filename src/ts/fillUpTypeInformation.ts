@@ -150,10 +150,13 @@ export function resolveType(
                 return t;
             }
 
+            // check enum table
             const mathchingEnum = findTableEntry(symbols.enumTab, t.name.repr);
             if (mathchingEnum) {
                 return mathchingEnum;
             }
+
+            // check struct table
             const mathchingStruct = findTableEntry(symbols.structTab, t.name.repr);
             if (mathchingStruct) {
                 return mathchingStruct;
@@ -163,7 +166,8 @@ export function resolveType(
         case "VoidType":
             return {
                 kind: "VoidType",
-                location: NullTokenLocation()
+                location: NullTokenLocation(),
+                nullable: false
             };
         case "GenericType":
             return t;
@@ -188,7 +192,7 @@ export function newFunctionTable(
 ): FunctionTable {
     const key = stringifyFuncSignature(newFunc.signature);
     if (newFunc.returnType === null) {
-        newFunc.returnType = {kind: "VoidType", location: NullTokenLocation()};
+        newFunc.returnType = VoidType();
     }
     if (!previousFuncTab[key]) {
         previousFuncTab[key] = [];
@@ -282,8 +286,12 @@ export function fillUp(s: LinkedNode<Statement>, symbols: SymbolTable, vartab: V
         switch (s.current.variable.kind) {
         case "VariableDeclaration":
             [s.current.expression, symbols] = fillUpExpressionTypeInfo(s.current.expression, symbols, vartab);
+            if (isNil(s.current.expression.returnType)
+               && s.current.variable.typeExpected.nullable === false) {
+                throw new Error("Cannot assign null to var");
+            }
             if (s.current.expression.returnType.kind === "VoidType") {
-                raise(ErrorAssigningVoidToVariable(s.current.expression));
+                return raise(ErrorAssigningVoidToVariable(s.current.expression));
             }
             if (s.current.variable.typeExpected === null) {
                 // Inference-typed
@@ -795,6 +803,16 @@ export function checkIfAllElementTypeAreHomogeneous(ts: TypeExpression[]): void 
 }
 
 export function typeEquals(x: TypeExpression, y: TypeExpression, ignoreGeneric = true): boolean {
+    if (x.nullable) {
+        if (isNil(y)) {
+            return true;
+        }
+    }
+    if (y.nullable) {
+        if (isNil(x)) {
+            return true;
+        }
+    }
     if (x.kind !== y.kind) {
         return false;
     } else {
@@ -843,6 +861,10 @@ function getText(sourceCode: SourceCode, range: TokenLocation): string {
     } else {
         return lines.join("\n");
     }
+}
+
+function isNil(t: TypeExpression): boolean {
+    return t.kind === "EnumDeclaration" && t.name.repr === "Nil";
 }
 
 export type SourceCodeExtractor = (x: TokenLocation) => string;

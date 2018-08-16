@@ -128,6 +128,7 @@ export interface EnumExpression {
 export interface VoidType {
     kind: "VoidType";
     location: TokenLocation;
+    nullable: boolean;
 }
 
 export interface SimpleType {

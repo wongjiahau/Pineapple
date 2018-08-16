@@ -189,6 +189,7 @@ export function newListType(of: TypeExpression): TypeExpression {
     return {
         kind: "StructDeclaration",
         members: null,
+        originFile: "<built-in>",
         name: newAtomicToken("List"),
         location: NullTokenLocation(),
         templates: singleLinkedNode(of),
@@ -199,6 +200,7 @@ export function newListType(of: TypeExpression): TypeExpression {
 export function VoidType(): VoidType {
     return {
         kind: "VoidType",
-        location: NullTokenLocation()
+        location: NullTokenLocation(),
+        nullable: false
     };
 }
