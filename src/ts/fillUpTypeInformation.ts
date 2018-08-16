@@ -46,6 +46,7 @@ import { ErrorUsingUndefinedVariable } from "./errorType/E0017-UsingUndefinedVar
 import { ErrorAssigningToUndefinedVariable } from "./errorType/E0018-AssigningToUndefinedVariable";
 import { ErrorForExprNotArray } from "./errorType/E0019-ForExprNotArray";
 import { ErrorUsingUndefinedEnum } from "./errorType/E0020-UsingUndefinedEnum";
+import { ErrorAssigningVoidToVariable } from "./errorType/E0021-AssigningVoidToVariable";
 import { ErrorDetail, stringifyTypeReadable } from "./errorType/errorUtil";
 import { renderError } from "./errorType/renderError";
 import { convertToLinkedNode, flattenLinkedNode } from "./getIntermediateForm";
@@ -280,14 +281,16 @@ export function fillUp(s: LinkedNode<Statement>, symbols: SymbolTable, vartab: V
     case "AssignmentStatement":
         switch (s.current.variable.kind) {
         case "VariableDeclaration":
+            [s.current.expression, symbols] = fillUpExpressionTypeInfo(s.current.expression, symbols, vartab);
+            if (s.current.expression.returnType.kind === "VoidType") {
+                raise(ErrorAssigningVoidToVariable(s.current.expression));
+            }
             if (s.current.variable.typeExpected === null) {
                 // Inference-typed
-                [s.current.expression, symbols] = fillUpExpressionTypeInfo(s.current.expression, symbols, vartab);
                 s.current.variable.variable.returnType = s.current.expression.returnType;
             } else {
                 // Statically-typed
                 s.current.variable.typeExpected = resolveType(s.current.variable.typeExpected, symbols);
-                [s.current.expression, symbols] = fillUpExpressionTypeInfo(s.current.expression, symbols, vartab);
                 s.current.variable.variable.returnType = s.current.variable.typeExpected;
                 const exprType = s.current.expression.returnType;
                 const expectedType = s.current.variable.typeExpected;
