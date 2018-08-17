@@ -67,6 +67,7 @@ import {
     VoidType
 } from "./typeTree";
 import { find } from "./util";
+import { ErrorAssigningNullToUnnullableVariable } from "./errorType/E0022-AssigningNullToUnnullableVariable";
 
 let CURRENT_SOURCE_CODE: () => SourceCode;
 export function fillUpTypeInformation(
@@ -287,8 +288,11 @@ export function fillUp(s: LinkedNode<Statement>, symbols: SymbolTable, vartab: V
         case "VariableDeclaration":
             [s.current.expression, symbols] = fillUpExpressionTypeInfo(s.current.expression, symbols, vartab);
             if (isNil(s.current.expression.returnType)
-               && s.current.variable.typeExpected.nullable === false) {
-                throw new Error("Cannot assign null to var");
+                && s.current.variable.typeExpected.nullable === false) {
+                    raise(ErrorAssigningNullToUnnullableVariable(
+                        s.current.variable,
+                        s.current.expression,
+                    ));
             }
             if (s.current.expression.returnType.kind === "VoidType") {
                 return raise(ErrorAssigningVoidToVariable(s.current.expression));
