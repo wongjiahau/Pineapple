@@ -8,4 +8,4 @@ def Nil
 def .main
     let x Number = \`nil
 `
-, true);
+);

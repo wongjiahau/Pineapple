@@ -47,6 +47,8 @@ import { ErrorAssigningToUndefinedVariable } from "./errorType/E0018-AssigningTo
 import { ErrorForExprNotArray } from "./errorType/E0019-ForExprNotArray";
 import { ErrorUsingUndefinedEnum } from "./errorType/E0020-UsingUndefinedEnum";
 import { ErrorAssigningVoidToVariable } from "./errorType/E0021-AssigningVoidToVariable";
+import { ErrorAssigningNullToUnnullableVariable } from "./errorType/E0022-AssigningNullToUnnullableVariable";
+import { ErrorUsingUndefinedType } from "./errorType/E0023-UsingUndefinedType";
 import { ErrorDetail, stringifyTypeReadable } from "./errorType/errorUtil";
 import { renderError } from "./errorType/renderError";
 import { convertToLinkedNode, flattenLinkedNode } from "./getIntermediateForm";
@@ -58,6 +60,7 @@ import {
     Comparer,
     EmptyListType,
     EnumType,
+    flattenTree,
     includes,
     insertChild,
     newListType,
@@ -66,8 +69,7 @@ import {
     verticalDistance,
     VoidType
 } from "./typeTree";
-import { find } from "./util";
-import { ErrorAssigningNullToUnnullableVariable } from "./errorType/E0022-AssigningNullToUnnullableVariable";
+import { find, values } from "./util";
 
 let CURRENT_SOURCE_CODE: () => SourceCode;
 export function fillUpTypeInformation(
@@ -162,7 +164,11 @@ export function resolveType(
             if (mathchingStruct) {
                 return mathchingStruct;
             } else {
-                throw new Error("There is no such type " + t.name.repr);
+                const allTypes =
+                    flattenTree(symbols.typeTree)
+                    .concat(values(symbols.enumTab))
+                    .concat(values(symbols.structTab));
+                raise(ErrorUsingUndefinedType(t.name, allTypes));
             }
         case "VoidType":
             return {
