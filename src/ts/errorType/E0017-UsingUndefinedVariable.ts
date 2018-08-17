@@ -17,5 +17,11 @@ export function ErrorUsingUndefinedVariable(
 ${showSuggestion(similarVariables)}
 `,
         relatedLocation: v.location,
+        hint:
+`To use a variable, you need to declare it first using the \`let\` keyword.
+
+For example:
+
+        let ${v.repr} = 999`
     };
 }

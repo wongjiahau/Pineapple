@@ -19,7 +19,14 @@ But the ${converter.toWordsOrdinal(elementPosition + 1)} element has type of:
 
     ${stringifyTypeReadable(e.returnType)}
 `,
-        relatedLocation: e.location
+        relatedLocation: e.location,
+        hint:
+`If you want to have a list of elements with different type, you should use Tuple.
+
+For example:
+
+        let myTuple = (1, "2", 3) // No error
+`
 
     };
 }
