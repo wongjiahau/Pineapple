@@ -5,4 +5,4 @@ testError("ErrorUsingUndefinedType",
 def .main
     let x Numbe = 123
 `
-, true);
+);

@@ -293,21 +293,25 @@ export function fillUp(s: LinkedNode<Statement>, symbols: SymbolTable, vartab: V
         switch (s.current.variable.kind) {
         case "VariableDeclaration":
             [s.current.expression, symbols] = fillUpExpressionTypeInfo(s.current.expression, symbols, vartab);
-            if (isNil(s.current.expression.returnType)
-                && s.current.variable.typeExpected.nullable === false) {
-                    raise(ErrorAssigningNullToUnnullableVariable(
-                        s.current.variable,
-                        s.current.expression,
-                    ));
-            }
+
             if (s.current.expression.returnType.kind === "VoidType") {
                 return raise(ErrorAssigningVoidToVariable(s.current.expression));
             }
+
+            // if variable type is inferred (means no type annotation given)
             if (s.current.variable.typeExpected === null) {
-                // Inference-typed
+                s.current.variable.typeExpected = s.current.expression.returnType;
                 s.current.variable.variable.returnType = s.current.expression.returnType;
             } else {
-                // Statically-typed
+                // if the variable is statically-typed
+                // check if variable is nullable
+                if (isNil(s.current.expression.returnType)
+                    && s.current.variable.typeExpected.nullable === false) {
+                        raise(ErrorAssigningNullToUnnullableVariable(
+                            s.current.variable,
+                            s.current.expression,
+                        ));
+                }
                 s.current.variable.typeExpected = resolveType(s.current.variable.typeExpected, symbols);
                 s.current.variable.variable.returnType = s.current.variable.typeExpected;
                 const exprType = s.current.expression.returnType;
@@ -320,6 +324,7 @@ export function fillUp(s: LinkedNode<Statement>, symbols: SymbolTable, vartab: V
                     ));
                 }
             }
+
             s.current.variable.variable.isMutable = s.current.variable.isMutable;
             vartab = updateVariableTable(vartab, s.current.variable.variable);
             break;
