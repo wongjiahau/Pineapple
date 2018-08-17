@@ -22,6 +22,7 @@ import {
     StructDeclaration,
     TestExpression,
     TokenLocation,
+    TupleExpression,
     TypeExpression,
     Variable,
     VariableDeclaration
@@ -65,6 +66,7 @@ import {
     includes,
     insertChild,
     newListType,
+    newTupleType,
     ObjectType,
     Tree,
     verticalDistance,
@@ -294,7 +296,6 @@ export function fillUp(s: LinkedNode<Statement>, symbols: SymbolTable, vartab: V
         switch (s.current.variable.kind) {
         case "VariableDeclaration":
             [s.current.expression, symbols] = fillUpExpressionTypeInfo(s.current.expression, symbols, vartab);
-
             if (s.current.expression.returnType.kind === "VoidType") {
                 return raise(ErrorAssigningVoidToVariable(s.current.expression));
             }
@@ -431,7 +432,10 @@ export function fillUpExpressionTypeInfo(e: Expression, symbols: SymbolTable, va
         [e, symbols.funcTab] = fillUpFunctionCallTypeInfo(e, symbols, vartab);
         return [e, symbols];
     case "List":
-        e = fillUpArrayTypeInfo(e, symbols, vartab);
+        [e, symbols] = fillUpArrayTypeInfo(e, symbols, vartab);
+        break;
+    case "TupleExpression":
+        [e, symbols] = fillUpTupleTypeInfo(e, symbols, vartab);
         break;
     case "Number":
         if (e.repr.indexOf(".") >= 0) {
@@ -475,6 +479,22 @@ export function fillUpExpressionTypeInfo(e: Expression, symbols: SymbolTable, va
         throw new Error(`Unimplemented yet for ${e.kind}`);
     }
     return [e, symbols];
+}
+
+export function fillUpTupleTypeInfo(t: TupleExpression, symbols: SymbolTable, vartab: VariableTable):
+    [TupleExpression, SymbolTable] {
+    [t.elements, symbols] = fillUpElementsType(t.elements, symbols, vartab);
+    t.returnType = getTupleReturnType(t);
+    return [t, symbols];
+}
+
+export function getTupleReturnType(t: TupleExpression): TypeExpression {
+    const types = flattenLinkedNode(t.elements).map((x) => x.returnType);
+    const result: TypeExpression[] = [];
+    for (let i = 0; i < types.length; i++) {
+        result.push(types[i]);
+    }
+    return newTupleType(convertToLinkedNode(result));
 }
 
 export function findMatchingEnumType(value: AtomicToken, enumTab: EnumTable): EnumDeclaration {
@@ -785,14 +805,15 @@ function substituteGeneric(
     return genericType;
 }
 
-export function fillUpArrayTypeInfo(e: ListExpression, symbols: SymbolTable, vartab: VariableTable): ListExpression {
+export function fillUpArrayTypeInfo(e: ListExpression, symbols: SymbolTable, vartab: VariableTable)
+    : [ListExpression, SymbolTable] {
     if (e.elements !== null) {
         [e.elements, symbols] = fillUpElementsType(e.elements, symbols, vartab);
         e.returnType = getElementsType(e.elements);
     } else {
         e.returnType = EmptyListType();
     }
-    return e;
+    return [e, symbols];
 }
 
 export function fillUpElementsType(e: LinkedNode<Expression>, symbols: SymbolTable, vartab: VariableTable):
@@ -816,10 +837,8 @@ export function checkIfAllElementTypeAreHomogeneous(ex: Expression[]): void {
     for (let i = 0; i < ex.length; i++) {
         if (!typeEquals(ex[i].returnType, typeOfFirstElement)) {
             raise(ErrorListElementsArentHomogeneous(ex[i], i, typeOfFirstElement));
-            throw new Error("Every element in an array should have the same type");
         }
     }
-    // TODO: Check if every element is of the same type
 }
 
 export function typeEquals(x: TypeExpression, y: TypeExpression, ignoreGeneric = true): boolean {

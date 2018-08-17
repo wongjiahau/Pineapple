@@ -7,7 +7,8 @@ import {
     singleLinkedNode,
     StructDeclaration,
     TypeExpression,
-    VoidType
+    VoidType,
+    LinkedNode
 } from "./ast";
 
 import { typeEquals } from "./fillUpTypeInformation";
@@ -202,6 +203,18 @@ export function newListType(of: TypeExpression): TypeExpression {
         name: newAtomicToken("List"),
         location: NullTokenLocation(),
         templates: singleLinkedNode(of),
+        nullable: false
+    };
+}
+
+export function newTupleType(of: LinkedNode<TypeExpression> | null): TypeExpression {
+    return {
+        kind: "StructDeclaration",
+        members: null,
+        originFile: "<built-in>",
+        name: newAtomicToken("Tuple"),
+        location: NullTokenLocation(),
+        templates: of,
         nullable: false
     };
 }

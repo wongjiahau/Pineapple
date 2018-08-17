@@ -25,6 +25,7 @@ import {
     StringExpression,
     StructDeclaration,
     TestExpression,
+    TupleExpression,
     TypeExpression,
     VariableDeclaration,
     WhileStatement
@@ -221,9 +222,14 @@ export function tpExpression(e: Expression): string {
         case "List":                return tpArrayExpression(e);
         case "ObjectAccess":        return tpObjectAccess(e);
         case "EnumExpression":      return tpEnumExpression(e);
+        case "TupleExpression":     return tpTupleExpression(e);
         default:
             throw new Error(`Cannot handle ${e.kind} yet`);
     }
+}
+
+export function tpTupleExpression(t: TupleExpression): string {
+    return `[${tpListElements(t.elements)}]`;
 }
 
 export function tpEnumExpression(e: EnumExpression): string {

@@ -127,6 +127,12 @@ const _ListExpression = (elements,location) => ({
     location
 });
 
+const _TupleExpression = (elements, location) => ({
+    kind: "TupleExpression",
+    elements,
+    location
+});
+
 
 const _StringExpression = (repr,location) => ({kind:"String", repr, location});
 
@@ -466,6 +472,7 @@ AtomicExpr
     // | SinglelineObject /* temporarily disable, unless its use case is justified*/
     | ObjectAccessExpr
     | SinglelineList
+    | Tuple
     | AtomicFuncCall 
     | BooleanAtom
     | StringAtom
@@ -474,6 +481,10 @@ AtomicExpr
     | VariableAtom
     | AnonymousExpression
     | NIL
+    ;
+
+Tuple
+    : '(' AtomicExpr ',' Elements ')' {$$=_TupleExpression(_LinkedNode($2,$4),this._$)}
     ;
 
 ObjectAccessExpr

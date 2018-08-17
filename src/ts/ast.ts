@@ -154,9 +154,17 @@ export type Expression
     | ObjectExpression // Pineapple Object Notation (PON)
     | ObjectAccess
     | ListExpression // a.k.a. Array
+    | TupleExpression // a.k.a. Array
     | AnonymousExpression
     | Lambda
     ;
+
+export interface TupleExpression {
+    kind: "TupleExpression";
+    elements: LinkedNode<Expression>;
+    location: TokenLocation;
+    returnType: TypeExpression;
+}
 
 export interface AnonymousExpression {
     kind: "AnonymousExpression";
