@@ -132,6 +132,15 @@ export function verticalDistance<T>(x: T, y: T, tree: Tree<T>, comparer: Compare
     return null;
 }
 
+export function flattenTree<T>(tree: Tree<T>): T[] {
+    let result: T[] = [];
+    result.push(tree.current);
+    for (let i = 0; i < tree.children.length; i++) {
+        result = result.concat(flattenTree(tree.children[i]));
+    }
+    return result;
+}
+
 export function logTree<T>(tree: Tree<T>, stringifier: (x: T) => string, level = 0): string {
     let result = "";
     const padding = (() => {
