@@ -49,6 +49,7 @@ import { ErrorUsingUndefinedEnum } from "./errorType/E0020-UsingUndefinedEnum";
 import { ErrorAssigningVoidToVariable } from "./errorType/E0021-AssigningVoidToVariable";
 import { ErrorAssigningNullToUnnullableVariable } from "./errorType/E0022-AssigningNullToUnnullableVariable";
 import { ErrorUsingUndefinedType } from "./errorType/E0023-UsingUndefinedType";
+import { ErrorListElementsArentHomogeneous } from "./errorType/E0024-ListElementsArentHomogeneous";
 import { ErrorDetail, stringifyTypeReadable } from "./errorType/errorUtil";
 import { renderError } from "./errorType/renderError";
 import { convertToLinkedNode, flattenLinkedNode } from "./getIntermediateForm";
@@ -804,15 +805,19 @@ export function fillUpElementsType(e: LinkedNode<Expression>, symbols: SymbolTab
     return [e, symbols];
 }
 
-export function getElementsType(a: LinkedNode<Expression>): StructDeclaration {
-    const types = flattenLinkedNode(a).map((x) => x.returnType);
-    checkIfAllElementTypeAreHomogeneous(types);
+export function getElementsType(elements: LinkedNode<Expression>): StructDeclaration {
+    checkIfAllElementTypeAreHomogeneous(flattenLinkedNode(elements));
+    const types = flattenLinkedNode(elements).map((x) => x.returnType);
     return newListType(types[0]) as StructDeclaration;
 }
 
-export function checkIfAllElementTypeAreHomogeneous(ts: TypeExpression[]): void {
-    if (ts.some((x) => !typeEquals(x, ts[0]))) {
-        throw new Error("Every element in an array should have the same type");
+export function checkIfAllElementTypeAreHomogeneous(ex: Expression[]): void {
+    const typeOfFirstElement = ex[0].returnType;
+    for (let i = 0; i < ex.length; i++) {
+        if (!typeEquals(ex[i].returnType, typeOfFirstElement)) {
+            raise(ErrorListElementsArentHomogeneous(ex[i], i, typeOfFirstElement));
+            throw new Error("Every element in an array should have the same type");
+        }
     }
     // TODO: Check if every element is of the same type
 }
