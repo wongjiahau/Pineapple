@@ -16,7 +16,7 @@ To make a variable mutable, you have to use the \`mutable\` keyword.
 
 For example:
 
-        let myVar mutable = 123`,
+        let ${relatedVariable.repr} mutable = 123`,
         relatedLocation: relatedVariable.location
     };
 }

@@ -193,6 +193,7 @@ export function stringifyType(t: TypeExpression): string {
 }
 
 export function tpAssignmentStatement(a: AssignmentStatement): string {
+    // TODO: check if the variable is required to be copied or not
     switch (a.variable.kind) {
         case "VariableDeclaration":
             if (a.isDeclaration) {
