@@ -3,7 +3,9 @@
 echo "Transpiling . . ."
 
 if [ -d ../js ]; then
+    echo "Removing js folder"
     cd ../js
+    pwd
     rm **js
     rm -rf ./tests
     cd ../ts
