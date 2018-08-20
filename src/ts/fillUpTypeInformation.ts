@@ -331,7 +331,7 @@ export function fillUp(s: LinkedNode<Statement>, symbols: SymbolTable, vartab: V
                 s.current.variable.variable.returnType = s.current.variable.typeExpected;
                 const exprType = s.current.expression.returnType;
                 const expectedType = s.current.variable.typeExpected;
-                if (childOf(exprType, expectedType, symbols.typeTree, typeEquals) === null) {
+                if (!isSubtypeOf(exprType, expectedType, symbols.typeTree, typeEquals)) {
                     raise(ErrorIncorrectTypeGivenForVariable(
                         s.current.variable.variable,
                         s.current.variable.typeExpected,

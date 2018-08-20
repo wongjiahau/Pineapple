@@ -13,10 +13,9 @@ def (this List{T}).get(func Func{T,Boolean}) -> List{T}
 `;
         const expectedOutput =
 `
-function _get_ListOfGeneric$T_FuncOfGeneric$T$Boolean($this,$func){
+function _get_ListOfGeneric$T_FuncOfGeneric$T1$Generic$T2($this,$func){
 $$pass$$();
 }
-
 `;
         assertEquals(pine2js(input).trim(), expectedOutput.trim());
     });
