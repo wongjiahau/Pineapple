@@ -1,4 +1,5 @@
 import {
+    LinkedNode,
     newAtomicToken,
     newGenericType,
     newSimpleType,
@@ -7,8 +8,7 @@ import {
     singleLinkedNode,
     StructDeclaration,
     TypeExpression,
-    VoidType,
-    LinkedNode
+    VoidType
 } from "./ast";
 
 import { typeEquals } from "./fillUpTypeInformation";
@@ -31,10 +31,10 @@ export function insertChild<T>(
     tree: Tree<T>,
     comparer: Comparer<T>
 ): Tree<T> {
-    if (includes(tree, child, comparer)) {
+    if (findElement(tree, child, comparer)) {
         throw new Error(`${child} already exist in tree`);
     }
-    if (!includes(tree, parent, comparer)) {
+    if (!findElement(tree, parent, comparer)) {
         throw new Error(`${parent} does not exist in tree`);
     }
     return insert(child, parent, tree, comparer);
@@ -101,20 +101,21 @@ export function findParentOf<T>(
     }
 }
 
-export function includes<T>(
+export function findElement<T>(
     tree: Tree<T>,
     element: T,
     comparer: Comparer<T>
-): boolean {
+): T | null {
     if (comparer(tree.current, element)) {
-        return true;
+        return tree.current;
     } else {
         for (let i = 0; i < tree.children.length; i++) {
-            if (includes(tree.children[i], element, comparer)) {
-                return true;
+            const result = findElement(tree.children[i], element, comparer);
+            if (result !== null) {
+                return result;
             }
         }
-        return false;
+        return null;
     }
 }
 
