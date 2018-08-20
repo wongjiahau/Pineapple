@@ -27,6 +27,7 @@ program.args.forEach((arg: string) => {
         execute(transpiledCode);
     } catch (error) {
         clear();
+        // console.log(error);
         console.log(error.message);
     }
 });

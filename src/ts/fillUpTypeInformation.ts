@@ -10,6 +10,7 @@ import {
     KeyValue,
     LinkedNode,
     ListExpression,
+    MemberDefinition,
     newAtomicToken,
     newSimpleType,
     NullTokenLocation,
@@ -62,9 +63,10 @@ import {
     Comparer,
     EmptyListType,
     EnumType,
+    findElement,
     flattenTree,
-    includes,
     insertChild,
+    logTree,
     newListType,
     newTupleType,
     ObjectType,
@@ -99,6 +101,9 @@ export function fillUpTypeInformation(
                 break;
             case "StructDeclaration":
                 symbols.structTab = newStructTab(currentDecl, symbols.structTab);
+                let members = flattenLinkedNode(currentDecl.members);
+                members = members.map((x) => ({...x, expectedType: resolveType(x.expectedType, symbols)}));
+                currentDecl.members = convertToLinkedNode(members);
                 symbols.typeTree = insertChild(currentDecl, ObjectType(), symbols.typeTree, typeEquals);
                 break;
             case "EnumDeclaration":
@@ -152,23 +157,30 @@ export function resolveType(
         // Fall through to StructDeclaration to search for matching struct
         case "StructDeclaration":
             // check type tree
-            if (includes(symbols.typeTree, t, typeEquals)) {
-                return t;
+            let result: TypeExpression;
+            const matchingType = findElement(symbols.typeTree, t, typeEquals);
+            if (matchingType) {
+                result = copy(matchingType);
+                result.nullable = t.nullable;
+                return result;
             }
 
             // check enum table
             const mathchingEnum = findTableEntry(symbols.enumTab, t.name.repr);
             if (mathchingEnum) {
-                return mathchingEnum;
+                result = copy(mathchingEnum);
+                result.nullable = t.nullable;
+                return result;
             }
 
             // check struct table
             const mathchingStruct = findTableEntry(symbols.structTab, t.name.repr);
             if (mathchingStruct) {
-                return mathchingStruct;
+                result = copy(mathchingStruct);
+                result.nullable = t.nullable;
+                return result;
             } else {
-                const allTypes =
-                    flattenTree(symbols.typeTree)
+                const allTypes = flattenTree(symbols.typeTree)
                     .concat(values(symbols.enumTab))
                     .concat(values(symbols.structTab));
                 raise(ErrorUsingUndefinedType(t.name, allTypes));
@@ -182,8 +194,9 @@ export function resolveType(
         case "GenericType":
             return t;
         default:
+            console.log(t.name.repr);
             // search struct table
-            throw new Error(`${t.kind} can't be resolved yet`); // TODO: implement it
+            throw new Error(`${t.kind} cant be resolved yet`); // TODO: implement it
     }
 }
 
@@ -450,7 +463,7 @@ export function fillUpExpressionTypeInfo(e: Expression, symbols: SymbolTable, va
         if (e.constructor !== null) {
             e.returnType = getStruct(e.constructor, symbols.structTab);
             [e.keyValueList, symbols] = fillUpKeyValueListTypeInfo(e.keyValueList, symbols, vartab);
-            checkIfKeyValueListConforms(e.keyValueList, e.returnType, symbols.typeTree);
+            checkIfKeyValueListConforms(e.keyValueList, e.returnType, symbols);
         } else {
             e.returnType = newSimpleType("Dict");
         }
@@ -528,13 +541,19 @@ export function isSubtypeOf(
     comparer: Comparer<TypeExpression>
 
 ): boolean {
-    return typeEquals(x, y) || childOf(x, y, tree, comparer) !== null;
+    if (x.nullable && y.kind === "EnumDeclaration" && y.name.repr === "Nil") {
+        return true;
+    } else if (y.nullable && x.kind === "EnumDeclaration" && x.name.repr === "Nil") {
+        return true;
+    } else {
+        return typeEquals(x, y) || childOf(x, y, tree, comparer) !== null;
+    }
 }
 
 export function checkIfKeyValueListConforms(
     keyValues: LinkedNode<KeyValue> | null,
     structDecl: StructDeclaration,
-    tree: Tree<TypeExpression>
+    symbols: SymbolTable
 ): void {
     const kvs = flattenLinkedNode(keyValues);
     const members = flattenLinkedNode(structDecl.members);
@@ -547,8 +566,8 @@ export function checkIfKeyValueListConforms(
         } else {
             // Check if type are equals to expected
             const exprType = kvs[i].expression.returnType;
-            const expectedType = matchingMember.expectedType;
-            if (!isSubtypeOf(exprType, expectedType, tree, typeEquals)) {
+            const expectedType = resolveType(matchingMember.expectedType, symbols);
+            if (!isSubtypeOf(exprType, expectedType, symbols.typeTree, typeEquals)) {
                 raise(ErrorIncorrectTypeGivenForMember(matchingMember.expectedType, kvs[i]));
             }
         }
@@ -842,22 +861,13 @@ export function checkIfAllElementTypeAreHomogeneous(ex: Expression[]): void {
 }
 
 export function typeEquals(x: TypeExpression, y: TypeExpression, ignoreGeneric = true): boolean {
-    if (x.nullable) {
-        if (isNil(y)) {
-            return true;
-        }
-    }
-    if (y.nullable) {
-        if (isNil(x)) {
-            return true;
-        }
-    }
     if (x.kind !== y.kind) {
         return false;
     } else {
         switch (x.kind) {
             case "SimpleType":
             case "EnumDeclaration":
+                return x.name.repr === (y as SimpleType).name.repr;
             case "StructDeclaration":
                 x = x as StructDeclaration;
                 y = y as StructDeclaration;

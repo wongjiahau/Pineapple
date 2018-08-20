@@ -24,9 +24,15 @@ def .newPeople -> People
 function _newPeople_(){
 return {
 $kind: "People",
-name : "John"
+name : "John",
+friend : {
+$kind: "People",
+name : "Jane",
+friend : null
+}
 };
 }
+
 `;
         assertEquals(pine2js(input).trim(), expectedOutput.trim());
     });
