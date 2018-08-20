@@ -31,10 +31,10 @@ export function insertChild<T>(
     tree: Tree<T>,
     comparer: Comparer<T>
 ): Tree<T> {
-    if (findElement(tree, child, comparer)) {
+    if (findElement(tree, child, comparer) !== null) {
         throw new Error(`${child} already exist in tree`);
     }
-    if (!findElement(tree, parent, comparer)) {
+    if (findElement(tree, parent, comparer) === null) {
         throw new Error(`${parent} does not exist in tree`);
     }
     return insert(child, parent, tree, comparer);

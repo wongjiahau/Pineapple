@@ -1,4 +1,12 @@
 def (this String).replace(old String with new String) -> String
+    return this.splitBy(old).joinBy(new)
+
+def (this String).splitBy(that String) -> String
     <javascript>
-    return $this.split($old).join($new);
+    return $this.split($that);
+    </javascript>
+
+def (this String).joinBy(that String) -> String
+    <javascript>
+    return $this.join($that)
     </javascript>

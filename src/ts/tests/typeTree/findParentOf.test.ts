@@ -1,6 +1,6 @@
 import {expect} from "chai";
 import { newSimpleType } from "../../ast";
-import {findParentOf, insertChild, newTree} from "../../typeTree";
+import {findParentOf, insertChild, logTree, newTree} from "../../typeTree";
 import { numberComparer } from "../testUtil";
 
 describe("find parent of", () => {
