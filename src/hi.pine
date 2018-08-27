@@ -1,2 +1,4 @@
 def .main
     "Hello world".show
+    let x = 1 + 1
+    x.show

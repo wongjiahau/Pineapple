@@ -1,2 +1,4 @@
-./ts
+ts/
+jison/
+src/
 *.sh

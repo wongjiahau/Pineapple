@@ -1,11 +1,11 @@
 #!/bin/bash
 
-
 # this function is called when Ctrl-C is sent
 function cleanup ()
 {
-    echo "Removing dist folder . . ."
-    rm -rf dist
+    echo "Git ignoring dist folder again . . ."
+    sed -i "s/#dist/dist/g" .gitignore
+    echo "Done cleanup."
 }
  
 
@@ -13,6 +13,8 @@ function cleanup ()
 # when signal 2 (SIGINT) is received
 trap "cleanup" 2
 
+# Unignore dist folder, because it needs to be published
+sed -i "s/dist/#dist/g" .gitignore
 
 echo "Testing if this package can be install properly . . ."
 
@@ -25,15 +27,12 @@ else
 fi
 
 
-echo "Generating dist folder which contains the transpiled Javascript"
-cd ts
-tsc --outDir ../dist
-cd ..
-
-cleanup()
+echo "Generating dist folder which contains the transpiled Javascript . . ."
+./build.sh 0
 
 echo "Publish package . . ."
 npm publish
 
+cleanup
 
 echo "Done."
