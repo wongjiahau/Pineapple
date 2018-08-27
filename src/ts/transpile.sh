@@ -4,11 +4,7 @@ echo "Transpiling . . ."
 
 if [ -d ../js ]; then
     echo "Removing js folder"
-    cd ../js
-    pwd
-    rm **js
-    rm -rf ./tests
-    cd ../ts
+    rm -rf ..js
 fi
 
 # If passed in 0, don't launch watch mode

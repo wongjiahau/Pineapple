@@ -36,8 +36,7 @@ jison pineapple-parser-v2.jison
 
 ## 3. Run the typescript transipler 
 ```
-cd src
-cd './ts/'
+cd src/ts
 ./transpile
 ```
 
