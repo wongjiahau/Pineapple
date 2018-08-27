@@ -30,17 +30,20 @@ npm i -g typescript --save
 
 ## 2. Generate the parser
 ```
-cd ./src/jison
-jison pineapple-parser-v2.jison
+./genparser.sh
 ```
 
 ## 3. Run the typescript transipler 
 ```
-cd src/ts
-./transpile
+./build.sh
 ```
 
-## 4. To run the interpreter
+## 4. How to run test?
+```
+./test.sh
+```
+
+## 5. To run the interpreter
 ```sh
 cd src/js
 node interpreter.js hi.pine
@@ -48,14 +51,14 @@ node interpreter.js hi.pine
 
 Note that `hi.pine` is just a file name.
 
-## 5. How to run test?
-```
-cd src
-jest --watch
-```
 
 ## 6. How to build C++ binding code?
 ```
 cd src
 npm install
+```
+
+## 7. How to publish this package?
+```
+./publish
 ```

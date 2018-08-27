@@ -7,6 +7,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "url": "https://github.com/wongjiahau/Pineapple",
   "author": "Wong Jia Hau",
   "license": "Apache 2.0",
   "dependencies": {
