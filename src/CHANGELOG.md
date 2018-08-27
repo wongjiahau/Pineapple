@@ -1,7 +1,8 @@
 # Changelog
 
 ## 0.0.3
-Still trying to fix the problem of v0.0.2, hopefully it works.
+Fix the problem of v0.0.2.
+See https://github.com/npm/npm/issues/17268
 
 ## 0.0.2
 Trying to fix the problem : Cannot create build folder.

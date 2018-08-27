@@ -30,7 +30,7 @@
     "diff": "^3.5.0"
   },
   "bin": {
-      "pine": "./bin/pine.js"
+    "pine": "./bin/pine.js"
   },
   "preferGlobal": true
 }

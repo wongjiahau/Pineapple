@@ -25,6 +25,7 @@ if [ $? -eq 0 ]; then
     echo "OK!"
 else
     echo "Error: Test installation failed."
+    cleanup
     exit -1
 fi
 
