@@ -18,8 +18,7 @@ if (program.log) {
 const fs = require("fs");
 program.args.forEach((arg: string) => {
     try {
-        const sourceCode = loadFile(arg);
-        const dependencies = loadDependency(sourceCode);
+        const dependencies = loadPreludeScript(arg).concat(loadDependency(loadFile(arg)));
         const sortedDependencies = sortDependency(dependencies);
         const allCodes = sortedDependencies.map(loadFile);
         const ir = loadSource(allCodes); // ir means intermediate representation
@@ -31,6 +30,16 @@ program.args.forEach((arg: string) => {
         console.log(error.message);
     }
 });
+
+function loadPreludeScript(currentFile: string): Dependencies {
+    let dependencies: Dependencies = [];
+    fs.readdirSync("./corelib/").forEach((filename: string) => {
+        const libFile = fs.realpathSync("./corelib/" + filename);
+        dependencies.push([currentFile, /*depends on*/ libFile]);
+        dependencies = dependencies.concat(loadDependency(loadFile(libFile)));
+    });
+    return dependencies;
+}
 
 function sortDependency(dependencies: Dependencies): string[] {
     // This step is necessary so that
@@ -83,11 +92,14 @@ function loadDependency(initSource: SourceCode | null): Dependencies {
     let imports = initSource.content.match(/(\n|^)import[ ]".+"/g) as string[];
     const currentFile = fs.realpathSync(initSource.filename);
     const filepath = currentFile.split("/").slice(0, -1).join("/") + "/";
+    let dependencies: string[][] = [];
+
     if (imports === null) {
-        return [[initSource.filename, /*depends on*/ Nothing()]]; // this line is necessary for toposort to work
+        dependencies.push([initSource.filename, /*depends on*/ Nothing()]);
+        return dependencies;
     } else {
         imports = imports.map((x) => x.match(/".+"/g)[0].slice(1, -1));
-        let dependencies: string[][] = [];
+        // import user-defined scripts
         for (let i = 0; i < imports.length; i++) {
             const importedFile = fs.realpathSync(filepath + imports[i]);
             dependencies.push([currentFile, /*depends on*/ importedFile]);

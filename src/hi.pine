@@ -1,6 +1,2 @@
-import "corelib/core.pine"
-import "corelib/io.pine"
-import "corelib/string.pine"
-
 def .main
     "Hello world".show
