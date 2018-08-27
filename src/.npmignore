@@ -1,6 +1,5 @@
 ts/
 js/
-jison/
 src/
 dist/tests/
 *.sh

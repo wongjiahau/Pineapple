@@ -1,6 +1,6 @@
 {
   "name": "pineapple-alpha",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "gypfile": true,
   "description": "```The interpreter of Pineapple```",
   "main": "./js/interpreter.js",

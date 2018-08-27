@@ -1,7 +1,7 @@
 # Pineapple Language
 ## 1. How to install?
 ```
-npm install --global pineapple-alpha
+sudo npm install -g pineapple-alpha --unsafe-perm=true
 ```
 
 ## 2. How to use?
