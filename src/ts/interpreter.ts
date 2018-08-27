@@ -33,8 +33,9 @@ program.args.forEach((arg: string) => {
 
 function loadPreludeScript(currentFile: string): Dependencies {
     let dependencies: Dependencies = [];
-    fs.readdirSync("./corelib/").forEach((filename: string) => {
-        const libFile = fs.realpathSync("./corelib/" + filename);
+    const PRELUDE_DIR = "./pinelib/prelude/";
+    fs.readdirSync(PRELUDE_DIR).forEach((filename: string) => {
+        const libFile = fs.realpathSync(PRELUDE_DIR + filename);
         dependencies.push([currentFile, /*depends on*/ libFile]);
         dependencies = dependencies.concat(loadDependency(loadFile(libFile)));
     });
