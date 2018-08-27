@@ -29,6 +29,7 @@
     "diff": "^3.5.0"
   },
   "bin": {
-      "pine": "./"
-  }
+      "pine": "./bin/pine.js"
+  },
+  "preferGlobal": true
 }
