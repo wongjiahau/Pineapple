@@ -4,5 +4,5 @@ nav:
     - About: about.md
     - Features:
         - Basic Functions: features/BasicFunctions.md
-        - Advance Functions: features/404.md
+        - Advance Functions: features/AdvanceFunctions.md
 theme: readthedocs
