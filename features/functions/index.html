@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  <link rel="shortcut icon" href="../../img/favicon.ico">
+  <title>Functions - Pineapple Doc</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Functions";
+    var mkdocs_page_input_path = "features/functions.md";
+    var mkdocs_page_url = null;
+  </script>
+  
+  <script src="../../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href="../.." class="icon icon-home"> Pineapple Doc</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	<ul class="current">
+	  
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../..">Home</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../../about/">About</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Features</span>
+    <ul class="subnav">
+                <li class=" current">
+                    
+    <a class="current" href="./">Functions</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l3"><a href="#functions">Functions</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l4" href="#notes">Notes</a></li>
+        
+            <li><a class="toctree-l4" href="#nullifunc-0-param">Nullifunc (0 param)</a></li>
+        
+            <li><a class="toctree-l4" href="#monofunc-1-param">Monofunc (1 param)</a></li>
+        
+            <li><a class="toctree-l4" href="#bifunc-2-params">Bifunc (2 params)</a></li>
+        
+        </ul>
+    
+
+    </ul>
+                </li>
+    </ul>
+	    </li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../..">Pineapple Doc</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../..">Docs</a> &raquo;</li>
+    
+      
+        
+          <li>Features &raquo;</li>
+        
+      
+    
+    <li>Functions</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="functions">Functions</h1>
+<p>All functions in Pineapple are postfix-oriented, meaning that the function names comes after parameter.  </p>
+<p>In general, there are 5 kinds of functions: <i>Nullifunc, Monofunc, Bifunc, Trifunc and Polyfunc. </i></p>
+<h2 id="notes">Notes</h2>
+<p>Before you continue reading, you should know the following rules:</p>
+<ul>
+<li>Function name are always started with a dot. There are no exceptions.<ul>
+<li>For example, <code>.show</code></li>
+</ul>
+</li>
+<li>You cannot separate the parameters using comma.</li>
+<li>Every function definition must start with a <code>def</code> keyword.</li>
+<li>By convention, parameters names are usually <code>this</code>, <code>that</code> or <code>the</code>. </li>
+</ul>
+<p>Now, you can enjoy the following docs.</p>
+<hr>
+
+<h2 id="nullifunc-0-param">Nullifunc (0 param)</h2>
+<p>Nullifunc is a function that do not need any parameters, for example:</p>
+<pre><code class="scala">// Here's how you define a nullifunc
+def .pi -&gt; Number
+    return 3.142
+
+// Here's how you call a nullifunc
+let x = .pi
+</code></pre>
+
+<hr>
+
+<h2 id="monofunc-1-param">Monofunc (1 param)</h2>
+<p>Monofunc is a function that takes only 1 parameter.<br />
+Note that the parameter must be at front. For example:</p>
+<pre><code class="scala">// here's how you declare a monofunc
+def (this Number).square -&gt; Number
+    return this * this
+
+// here's how you call a monofunc
+let x = 99.square
+</code></pre>
+
+<p>Notes: <code>this</code> is not a keyword, it is just a variable name!</p>
+<hr>
+
+<h2 id="bifunc-2-params">Bifunc (2 params)</h2>
+<p>Bifunc is a function that takes 2 params.<br />
+Since you cannot separate params with comma, the only way is to put the name in the middle.<br />
+For example,</p>
+<pre><code class="scala">// here's how you define a bifunc
+def (this Number).plus(that Number) -&gt; Number
+    return this + that
+</code></pre>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="../../about/" class="btn btn-neutral" title="About"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+        <span><a href="../../about/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+    </span>
+</div>
+    <script>var base_url = '../..';</script>
+    <script src="../../js/theme.js" defer></script>
+      <script src="../../search/main.js" defer></script>
+
+</body>
+</html>
