@@ -8,7 +8,7 @@
   
   
   <link rel="shortcut icon" href="../../img/favicon.ico">
-  <title>Functions - Pineapple Doc</title>
+  <title>Struct - Pineapple Doc</title>
   <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   <link rel="stylesheet" href="../../css/theme.css" type="text/css" />
@@ -17,8 +17,8 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "Functions";
-    var mkdocs_page_input_path = "features/functions.md";
+    var mkdocs_page_name = "Struct";
+    var mkdocs_page_input_path = "features/Struct.md";
     var mkdocs_page_url = null;
   </script>
   
@@ -62,27 +62,13 @@
 		
     <span class="caption-text">Features</span>
     <ul class="subnav">
-                <li class=" current">
+                <li class="">
                     
-    <a class="current" href="./">Functions</a>
-    <ul class="subnav">
-            
-    <li class="toctree-l3"><a href="#functions">Functions</a></li>
-    
-        <ul>
-        
-            <li><a class="toctree-l4" href="#notes">Notes</a></li>
-        
-            <li><a class="toctree-l4" href="#nullifunc-0-param">Nullifunc (0 param)</a></li>
-        
-            <li><a class="toctree-l4" href="#monofunc-1-param">Monofunc (1 param)</a></li>
-        
-            <li><a class="toctree-l4" href="#bifunc-2-params">Bifunc (2 params)</a></li>
-        
-        </ul>
-    
-
-    </ul>
+    <a class="" href="../BasicFunctions/">Basic Functions</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../404/">Advance Functions</a>
                 </li>
     </ul>
 	    </li>
@@ -108,12 +94,8 @@
     <li><a href="../..">Docs</a> &raquo;</li>
     
       
-        
-          <li>Features &raquo;</li>
-        
-      
     
-    <li>Functions</li>
+    <li>Struct</li>
     <li class="wy-breadcrumbs-aside">
       
     </li>
@@ -123,68 +105,11 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="functions">Functions</h1>
-<p>All functions in Pineapple are postfix-oriented, meaning that the function names comes after parameter.  </p>
-<p>In general, there are 5 kinds of functions: <i>Nullifunc, Monofunc, Bifunc, Trifunc and Polyfunc. </i></p>
-<h2 id="notes">Notes</h2>
-<p>Before you continue reading, you should know the following rules:</p>
-<ul>
-<li>Function name are always started with a dot. There are no exceptions.<ul>
-<li>For example, <code>.show</code></li>
-</ul>
-</li>
-<li>You cannot separate the parameters using comma.</li>
-<li>Every function definition must start with a <code>def</code> keyword.</li>
-<li>By convention, parameters names are usually <code>this</code>, <code>that</code> or <code>the</code>. </li>
-</ul>
-<p>Now, you can enjoy the following docs.</p>
-<hr>
-
-<h2 id="nullifunc-0-param">Nullifunc (0 param)</h2>
-<p>Nullifunc is a function that do not need any parameters, for example:</p>
-<pre><code class="scala">// Here's how you define a nullifunc
-def .pi -&gt; Number
-    return 3.142
-
-// Here's how you call a nullifunc
-let x = .pi
-</code></pre>
-
-<hr>
-
-<h2 id="monofunc-1-param">Monofunc (1 param)</h2>
-<p>Monofunc is a function that takes only 1 parameter.<br />
-Note that the parameter must be at front. For example:</p>
-<pre><code class="scala">// here's how you declare a monofunc
-def (this Number).square -&gt; Number
-    return this * this
-
-// here's how you call a monofunc
-let x = 99.square
-</code></pre>
-
-<p>Notes: <code>this</code> is not a keyword, it is just a variable name!</p>
-<hr>
-
-<h2 id="bifunc-2-params">Bifunc (2 params)</h2>
-<p>Bifunc is a function that takes 2 params.<br />
-Since you cannot separate params with comma, the only way is to put the name in the middle.<br />
-For example,</p>
-<pre><code class="scala">// here's how you define a bifunc
-def (this Number).plus(that Number) -&gt; Number
-    return this + that
-</code></pre>
+                
               
             </div>
           </div>
           <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-      
-        <a href="../../about/" class="btn btn-neutral" title="About"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-      
-    </div>
   
 
   <hr/>
@@ -207,8 +132,6 @@ def (this Number).plus(that Number) -&gt; Number
   <div class="rst-versions" role="note" style="cursor: pointer">
     <span class="rst-current-version" data-toggle="rst-current-version">
       
-      
-        <span><a href="../../about/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
     </span>

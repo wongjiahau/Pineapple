@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  <link rel="shortcut icon" href="../../img/favicon.ico">
+  <title>Basic Functions - Pineapple Doc</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Basic Functions";
+    var mkdocs_page_input_path = "features/BasicFunctions.md";
+    var mkdocs_page_url = null;
+  </script>
+  
+  <script src="../../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href="../.." class="icon icon-home"> Pineapple Doc</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	<ul class="current">
+	  
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../..">Home</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../../about/">About</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Features</span>
+    <ul class="subnav">
+                <li class=" current">
+                    
+    <a class="current" href="./">Basic Functions</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l3"><a href="#functions">Functions</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l4" href="#notes">Notes</a></li>
+        
+            <li><a class="toctree-l4" href="#nullifunc-0-param">Nullifunc (0 param)</a></li>
+        
+            <li><a class="toctree-l4" href="#monofunc-1-param">Monofunc (1 param)</a></li>
+        
+            <li><a class="toctree-l4" href="#bifunc-2-params">Bifunc (2 params)</a></li>
+        
+            <li><a class="toctree-l4" href="#user-defined-operators">User-defined operators</a></li>
+        
+            <li><a class="toctree-l4" href="#trifunc-3-params">Trifunc (3 params)</a></li>
+        
+            <li><a class="toctree-l4" href="#polyfunc-4-or-more-params">Polyfunc (4 or more params)</a></li>
+        
+            <li><a class="toctree-l4" href="#tips">Tips</a></li>
+        
+            <li><a class="toctree-l4" href="#whats-the-difference-of-pineapple-function-with-named-parameters">What's the difference of Pineapple function with named parameters?</a></li>
+        
+        </ul>
+    
+
+    </ul>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../404/">Advance Functions</a>
+                </li>
+    </ul>
+	    </li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../..">Pineapple Doc</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../..">Docs</a> &raquo;</li>
+    
+      
+        
+          <li>Features &raquo;</li>
+        
+      
+    
+    <li>Basic Functions</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="functions">Functions</h1>
+<p>All functions in Pineapple are postfix-oriented, meaning that the function names comes after parameter.  </p>
+<p>In general, there are 4 kinds of functions: <i>Nullifunc, Monofunc, Bifunc, Trifunc and Quadfunc. </i></p>
+<h2 id="notes">Notes</h2>
+<p>Before you continue reading, you should know the following rules:</p>
+<ul>
+<li>Function name are always started with a dot. There are no exceptions.<ul>
+<li>For example, <code>.show</code></li>
+<li>Not only that, <code>.</code> is also a valid function name!</li>
+</ul>
+</li>
+<li>You cannot separate the parameters using comma.</li>
+<li>Every function definition must start with a <code>def</code> keyword.</li>
+<li>By convention, parameters names are usually <code>this</code>, <code>that</code> or <code>the</code>. </li>
+</ul>
+<p>Now, you can enjoy the following docs.</p>
+<hr>
+
+<h2 id="nullifunc-0-param">Nullifunc (0 param)</h2>
+<p>Nullifunc is a function that do not need any parameters, for example:</p>
+<pre><code class="scala">// Here's how you define a nullifunc
+def .pi -&gt; Number
+    return 3.142
+
+// Here's how you call a nullifunc
+let x = .pi
+</code></pre>
+
+<p><code>-&gt; Number</code> means that the <code>.pi</code> function will return a <code>Number</code> type.</p>
+<hr>
+
+<h2 id="monofunc-1-param">Monofunc (1 param)</h2>
+<p>Monofunc is a function that takes only 1 parameter.<br />
+Note that the parameter must be at front. For example:</p>
+<pre><code class="scala">// here's how you declare a monofunc
+def (this Number).square -&gt; Number
+    return this * this
+
+// here's how you call a monofunc
+let x = 99.square
+
+// you can chain it!
+let y = 2.square.square.square
+</code></pre>
+
+<p>Notes: <code>this</code> is not a keyword, it is just a variable name!</p>
+<hr>
+
+<h2 id="bifunc-2-params">Bifunc (2 params)</h2>
+<p>Bifunc is a function that takes 2 params.<br />
+Since you cannot separate params with comma, the only way is to put the name in the middle.<br />
+For example,</p>
+<pre><code class="scala">// here's how you define a bifunc
+def (this Number).plus(that Number) -&gt; Number
+    return this + that
+
+// here's how you call a bifunc
+let x = 99.plus(99).plus(22)
+</code></pre>
+
+<h2 id="user-defined-operators">User-defined operators</h2>
+<p>In Pineapple, Bifunc is a special type of function, because you can use symbols as the function name. For example,</p>
+<pre><code class="scala">// Here's how you define a operator bifunc
+def (this List{Number}) + (that List{Number}) -&gt; List{Number}
+    let result mutable List{Number} = []
+    for i in this
+        result = result.append(this.(i) + that.(i))
+    return result
+
+// Here's how you call it
+let x = [1,2,3] + [4,5,6]
+</code></pre>
+
+<hr>
+
+<h2 id="trifunc-3-params">Trifunc (3 params)</h2>
+<p>Trifunc is a function that takes 3 params.
+As mentioned before, you cannot separate params with comma.<br />
+So, you should separate them with an identifier.<br />
+For example,</p>
+<pre><code class="scala">// Here's how you define a trifunc
+def (this String).replace(old String with new String) -&gt; String
+    pass
+
+// Here's how you call a trifunc
+let x = &quot;Hello world&quot;.replace(&quot;world&quot; with &quot;baby&quot;)
+</code></pre>
+
+<p>Note that <code>with</code> is not a keyword, it is a <strong>sub-function-identifier</strong>, it means that you can use any word you like as long as it is a single alphabetical word without spaces!  </p>
+<p>Just to make it clear, let see another trifunc example:</p>
+<pre><code class="scala">// Defining a trifunc
+def (this Socket).send(message String to portNumber Integer)
+    pass
+
+// Here's how you use it
+mySocket.send(&quot;Hello world&quot; to 8080)
+</code></pre>
+
+<p>In this case, <code>to</code> is the <strong>sub-function-identifier</strong>.  </p>
+<h3 id="why">Why?</h3>
+<p>Pineapple enforces this rules so that every function can be understood better.<br />
+Compare the following functions:</p>
+<pre><code class="js">// Javascript
+replace(&quot;Hello&quot;, &quot;el&quot;, &quot;lo&quot;) // Hmm, is it replacing &quot;el&quot; or &quot;lo&quot; ?
+</code></pre>
+
+<pre><code class="js">// Pineapple
+&quot;Hello&quot;.replace(&quot;el&quot; with &quot;lo&quot;) // I am very sure it is replacing &quot;el&quot; with &quot;lo&quot;!
+</code></pre>
+
+<p>There are at least 2 advantages with it:<br />
+- First, you don't need to write too much documentation about your function, as the name already tells the meaning<br />
+- Secondly, when others read your code, they can understand faster</p>
+<hr>
+
+<h2 id="polyfunc-4-or-more-params">Polyfunc (4 or more params)</h2>
+<p>Polyfunc is a function that takes 4 or more params.<br />
+It is similar as Trifunc, but it needs 2 or more <strong>sub-function-identifier</strong>.<br />
+For example,</p>
+<pre><code class="scala">// Here's how you define a Polyfunc with 4 parameters
+def (this String).replace(startIndex Int to endIndex Int with new String) -&gt; string
+    pass
+
+// Here's how you call it
+let x = &quot;Hello world&quot;.replace(0 to 4 with &quot;Hi&quot;)
+</code></pre>
+
+<hr>
+
+<h2 id="tips">Tips</h2>
+<p>Sometimes, your function might require a lot of parameters.<br />
+In such case, defining functions like this would be dreadful.<br />
+So, you should pack those parameters into a single structure.<br />
+For example,</p>
+<pre><code>def RequestParam
+    'url    String
+    'method String
+    'body   String
+    'schema String
+
+def (this Server).send(that RequestParam)
+    pass
+</code></pre>
+
+<p>Example of usage:</p>
+<pre><code class="js">let param = RequestParam
+    'url    = &quot;192.168.0.0/api/people&quot;
+    'method = &quot;POST&quot;
+    'body   = `{&quot;name&quot;: &quot;Johnny&quot;, &quot;age&quot;: 999}`
+    'schema = &quot;FREE&quot;
+
+myServer.send(param)
+</code></pre>
+
+<hr>
+
+<h2 id="whats-the-difference-of-pineapple-function-with-named-parameters">What's the difference of Pineapple function with named parameters?</h2>
+<p>Look at the following example to understand the difference.</p>
+<pre><code class="python"># Python
+replace(target=&quot;Hello world&quot;, old=&quot;lo&quot;, new=&quot;wo&quot;)
+</code></pre>
+
+<pre><code class="scala">// Pineapple
+&quot;Hello world&quot;.replace(&quot;lo&quot; with &quot;wo&quot;)
+</code></pre>
+
+<p>Obviously, the Pineapple's version is much more clearer than Python's version.<br />
+Moreover, it is also shorter!</p>
+<p>Actually, the Pineapple's way of defining function is also known as <strong>mixfix</strong> function, and that's how it is different from <strong>named parameters</strong>.</p>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../404/" class="btn btn-neutral float-right" title="Advance Functions">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../../about/" class="btn btn-neutral" title="About"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+        <span><a href="../../about/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../404/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script>var base_url = '../..';</script>
+    <script src="../../js/theme.js" defer></script>
+      <script src="../../search/main.js" defer></script>
+
+</body>
+</html>
