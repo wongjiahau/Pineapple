@@ -3,5 +3,6 @@ nav:
     - Home: index.md
     - About: about.md
     - Features:
-        - Functions: features/functions.md
+        - Basic Functions: features/BasicFunctions.md
+        - Advance Functions: features/404.md
 theme: readthedocs
