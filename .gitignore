@@ -1,5 +1,6 @@
 dist
 build
+site
 **/node_modules/**
 pineapple-parser.js
 pineapple-parser-v2.js
