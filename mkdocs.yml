@@ -1,8 +1,9 @@
 site_name: Pineapple Doc
 nav:
     - Home: index.md
-    - About: about.md
     - Features:
         - Basic Functions: features/BasicFunctions.md
         - Advance Functions: features/AdvanceFunctions.md
+    - About: about.md
+    - License: license.md
 theme: readthedocs

@@ -1,4 +1,4 @@
-# Welcome to MkDocs
+# The Pineapple Language
 
 For full documentation visit [mkdocs.org](https://mkdocs.org).
 
