@@ -2,4 +2,6 @@ site_name: Pineapple Doc
 nav:
     - Home: index.md
     - About: about.md
+    - Features:
+        - Functions: features/functions.md
 theme: readthedocs
