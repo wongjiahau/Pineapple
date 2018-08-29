@@ -52,3 +52,4 @@ Accessing data:
 let acquaintance = john'friend'friend
 ```
 
+## Generic struct
