@@ -6,11 +6,11 @@ describe("LOB-005", () => {
         const input =
 `
 def People
-    'name String
+    :name String
 
 def .newPeople -> People
     return People
-        'name = "John"
+        :name = "John"
 `;
         const expectedOutput =
 `

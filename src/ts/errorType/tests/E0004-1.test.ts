@@ -2,12 +2,12 @@ import { testError } from "../../tests/testUtil";
 
 testError("ErrorExtraMember", `
 def People
-    'name String
-    'age  Number
+    :name String
+    :age  Number
 
 def .main
     let x = People
-        'name = "Wong"
-        'age  = 88
-        'wife = "Jane"
+        :name = "Wong"
+        :age  = 88
+        :wife = "Jane"
 `);

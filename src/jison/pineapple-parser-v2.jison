@@ -215,11 +215,10 @@ const _AnonymousExpression = (location) => ({
 
 // Identifiers
 [.]([a-z][a-zA-Z0-9]*)?         return 'FUNCNAME'    
-([a-z][a-zA-Z0-9]*)?[:]         return 'SUBFUNCNAME'    
 [T][12]?                        return 'GENERICTYPENAME'
 [A-Z][a-zA-Z0-9]*               return 'TYPENAME'
 [a-z][a-zA-Z]*                  return 'VARNAME'
-['][a-z][a-zA-Z0-9]*            return 'MEMBERNAME'
+[:][a-z][a-zA-Z0-9]*            return 'MEMBERNAME'
 [-!$%^&*_+|~=`\[\]:";'<>?,.\/]+ return 'OPERATOR'
 
 
@@ -567,10 +566,6 @@ NumberAtom
 
 FuncAtom
     : FUNCNAME {$$=_Token($1, this._$)}
-    ;
-
-SubFuncAtom
-    : SUBFUNCNAME {$$=_Token($1, this._$)}
     ;
 
 MembernameAtom

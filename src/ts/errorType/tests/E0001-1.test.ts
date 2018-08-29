@@ -2,13 +2,13 @@ import { testError } from "../../tests/testUtil";
 
 testError("ErrorAccessingInexistentMember", `
 def People
-    'name String
-    'age  Number
+    :name String
+    :age  Number
 
 def .main
     let x = People
-        'name = "Wong"
-        'age  = 99
+        :name = "Wong"
+        :age  = 99
 
-    let y = x'nam
+    let y = x:nam
 `);

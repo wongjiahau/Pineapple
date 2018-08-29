@@ -1,4 +1,3 @@
-import { expect } from "chai";
 import { pine2js } from "../../../../pine2js";
 import { assertEquals } from "../../../testUtil";
 
@@ -7,13 +6,13 @@ describe("LOB-003", () => {
         const input =
 `
 def People
-    'name   String
-    'age    Number
+    :name   String
+    :age    Number
 
 def .main
     let people = People
-        'name  = "john"
-        'age   = 123
+        :name  = "john"
+        :age   = 123
 `;
         const expectedOutput =
 `
