@@ -7,3 +7,5 @@ def .main
     'bye'.show
 ```
 Note that the indentation is necessary.
+
+Also, by default, Prelude library will be loaded.

@@ -6,8 +6,6 @@ The definitions are:
 
 - Struct definition  
 
-- Enumeration definition  
-
 - Import definition
 
 - Constants definition
@@ -17,6 +15,8 @@ The definitions are:
 - Trait declaration definition
 
 - Trait implementation definition
+
+- Enumeration definition  
 
 
 For example:
@@ -30,13 +30,6 @@ def .main
 def People
     :name String
     :age  Number
-
-// enumeration definition
-def Color
-    `red
-    `green
-    `blue
-    `yellow
 
 // import definition
 import "./myFunctions.pine"
@@ -60,4 +53,12 @@ def Equatable{Color}
             this.(0) == that.(0) and \
             this.(1) == that.(1) and \
             this.(2) == that.(2)
+
+// enumeration definition
+def Color
+    `red
+    `green
+    `blue
+    `yellow
+
 ```
