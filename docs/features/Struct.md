@@ -53,3 +53,22 @@ let acquaintance = john:friend:friend
 ```
 
 ## Generic struct
+You can also create generic structure in Pineapple, this feature is important when you need to create custom data structures.  
+
+Generic struct can help you to prevent some silly type error.
+
+For example:
+```js
+// here's how you declare a generic struct
+def Node{T}
+    :current T
+    :next    Node{T}?
+
+// here's how you use it
+def .main
+    let x = Node{Int}
+        :current = 10
+        :next    = Node{Int}
+            :current = 20
+            :next = `nil
+```

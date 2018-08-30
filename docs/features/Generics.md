@@ -1,1 +1,2 @@
 # Generics
+## Generic specialization

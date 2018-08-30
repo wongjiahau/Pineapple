@@ -31,6 +31,10 @@ def (this List{Number}) + (that List{Number}) -> List{Number}
 ```
 
 <hr>
+## Generic functions
+
+
+<hr>
 ## Javascript binding
 Since Pineapple is a function that compiles to Javascript, you can easily use Javascript functions within Pineapple.
 

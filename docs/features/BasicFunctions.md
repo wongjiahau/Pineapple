@@ -1,13 +1,13 @@
 # Functions
 All functions in Pineapple are postfix-oriented, meaning that the function names comes after parameter.  
 
-In general, there are 4 kinds of functions: <i>Nullifunc, Monofunc, Bifunc, Trifunc and Quadfunc. </i>
+In general, there are 5 kinds of functions: <i>Nullifunc, Monofunc, Bifunc, Trifunc and Polyfunc. </i>
 
 ## Notes
 Before you continue reading, you should know the following rules:
 
 - Function name are always started with a dot. There are no exceptions.
-    - For example, `.show`
+    - For example: `.show` 
     - Not only that, `.` is also a valid function name!
 - You cannot separate the parameters using comma.
 - Every function definition must start with a `def` keyword.
@@ -65,14 +65,12 @@ In Pineapple, Bifunc is a special type of function, because you can use symbols 
 ```scala
 // Here's how you define a operator bifunc
 def (this List{Number}) + (that List{Number}) -> List{Number}
-    let result mutable List{Number} = []
-    for i in this
-        result = result.append(this.(i) + that.(i))
-    return result
+    pass
 
 // Here's how you call it
 let x = [1,2,3] + [4,5,6]
 ```
+Note that `pass` means that the implementation of the function is temporarily passed. You can think of it as throwing `NotImplementedException`.
 
 <hr>
 ## Trifunc (3 params)
@@ -140,10 +138,10 @@ So, you should pack those parameters into a single structure.
 For example,
 ```
 def RequestParam
-    'url    String
-    'method String
-    'body   String
-    'schema String
+    :url    String
+    :method String
+    :body   String
+    :schema String
 
 def (this Server).send(that RequestParam)
     pass
@@ -151,10 +149,10 @@ def (this Server).send(that RequestParam)
 Example of usage:
 ```js
 let param = RequestParam
-    'url    = "192.168.0.0/api/people"
-    'method = "POST"
-    'body   = `{"name": "Johnny", "age": 999}`
-    'schema = "FREE"
+    :url    = "192.168.0.0/api/people"
+    :method = "POST"
+    :body   = '{"name": "Johnny", "age": 999}'
+    :schema = "FREE"
 
 myServer.send(param)
 ```
