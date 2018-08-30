@@ -1,23 +1,33 @@
 # Functions
 All functions in Pineapple are postfix-oriented, meaning that the function names comes after parameter.  
 
-In general, there are 5 kinds of functions: <i>Nullifunc, Monofunc, Bifunc, Trifunc and Polyfunc. </i>
+In general, there are 5 kinds of functions: 
+
+| Name | Meaning |
+|--|--|  
+|Nullifunc|Function that don't take any parameters.|
+|Monofunc|Function that only 1 parameters.|
+|Bifunc|Function that only 2 parameters.|
+|Trifunc|Function that only 3 parameters.|
+|Polyfunc|Function that 4 or more parameters.|
 
 ## Notes
 Before you continue reading, you should know the following rules:
 
 - Function name are always started with a dot. There are no exceptions.
+
     - For example: `.show` 
+
     - Not only that, `.` is also a valid function name!
+
 - You cannot separate the parameters using comma.
+
 - Every function definition must start with a `def` keyword.
+
 - By convention, parameters names are usually `this`, `that` or `the`. 
 
-Now, you can enjoy the following docs.
-
-
 <hr>
-## Nullifunc (0 param)
+## Nullifunc (0 parameter)
 Nullifunc is a function that do not need any parameters, for example:
 ```scala
 // Here's how you define a nullifunc
@@ -30,7 +40,7 @@ let x = .pi
 `-> Number` means that the `.pi` function will return a `Number` type.
 
 <hr>
-## Monofunc (1 param)
+## Monofunc (1 parameter)
 Monofunc is a function that takes only 1 parameter.  
 Note that the parameter must be at front. For example:
 ```scala
@@ -47,9 +57,9 @@ let y = 2.square.square.square
 Notes: `this` is not a keyword, it is just a variable name!
 
 <hr>
-## Bifunc (2 params)
-Bifunc is a function that takes 2 params.  
-Since you cannot separate params with comma, the only way is to put the name in the middle.  
+## Bifunc (2 parameters)
+Bifunc is a function that takes 2 parameters.  
+Since you cannot separate parameters with comma, the only way is to put the name in the middle.  
 For example,
 ```scala
 // here's how you define a bifunc
@@ -73,9 +83,9 @@ let x = [1,2,3] + [4,5,6]
 Note that `pass` means that the implementation of the function is temporarily passed. You can think of it as throwing `NotImplementedException`.
 
 <hr>
-## Trifunc (3 params)
-Trifunc is a function that takes 3 params.
-As mentioned before, you cannot separate params with comma.  
+## Trifunc (3 parameters)
+Trifunc is a function that takes 3 parameters.
+As mentioned before, you cannot separate parameters with comma.  
 So, you should separate them with an identifier.  
 For example,
 ```scala
@@ -118,8 +128,8 @@ There are at least 2 advantages with it:
 - Secondly, when others read your code, they can understand faster
 
 <hr>
-## Polyfunc (4 or more params)
-Polyfunc is a function that takes 4 or more params.  
+## Polyfunc (4 or more parameters)
+Polyfunc is a function that takes 4 or more parameters.  
 It is similar as Trifunc, but it needs 2 or more **sub-function-identifier**.  
 For example,
 ```scala
