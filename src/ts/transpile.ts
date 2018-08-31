@@ -183,9 +183,9 @@ export function stringifyType(t: TypeExpression): string {
         case "SimpleType":
             return t.name.repr;
         case "GenericType":
-            return `Generic$${t.placeholder.repr}`;
+            return `Generic$${t.name.repr}`;
         case "StructDeclaration":
-            return `${t.name.repr}Of${flattenLinkedNode(t.templates).map((x) => stringifyType(x)).join("$")}` ;
+            return `${t.name.repr}Of${flattenLinkedNode(t.genericList).map((x) => stringifyType(x)).join("$")}` ;
         case "VoidType":
             return `Void`;
         default:

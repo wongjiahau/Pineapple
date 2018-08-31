@@ -28,7 +28,7 @@ export interface StructDeclaration {
     kind: "StructDeclaration";
     name: AtomicToken;
     members: LinkedNode<MemberDefinition> | null;
-    templates: LinkedNode<TypeExpression> | null;
+    genericList: LinkedNode<GenericType> | null;
     location: TokenLocation;
     nullable: boolean;
     originFile: string;
@@ -140,7 +140,7 @@ export interface SimpleType {
 
 export interface GenericType {
     kind: "GenericType";
-    placeholder: AtomicToken; // "T" | "T1" | "T2";
+    name: AtomicToken; // "T" | "T1" | "T2";
     nullable: boolean;
     location: TokenLocation;
 }
@@ -278,7 +278,7 @@ export function singleLinkedNode<T>(current: T): LinkedNode<T> {
 export function newGenericType(placeholder: string): GenericType {
     return {
         kind: "GenericType",
-        placeholder: newAtomicToken(placeholder),
+        name: newAtomicToken(placeholder),
         location: NullTokenLocation(),
         nullable: false
     };

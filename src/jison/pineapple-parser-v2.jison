@@ -23,11 +23,11 @@ const _EnumDeclaration = (name, enums, location) => ({
     location
 })
 
-const _StructDeclaration = (name, members, templates, nullable) => ({
+const _StructDeclaration = (name, members, genericList, nullable) => ({
     kind: "StructDeclaration",
     name,
     members,
-    templates,
+    genericList,
     nullable
 });
 
@@ -85,9 +85,9 @@ const _Variable = (repr,location) => ({
 
 const _SimpleType = (name, nullable=false) => ({ kind: "SimpleType", name, nullable});
 
-const _GenericType = (placeholder, nullable) => ({
+const _GenericType = (name, nullable) => ({
     kind: "GenericType",
-    placeholder, // "T" | "T1" | "T2",
+    name, // "T" | "T1" | "T2",
     nullable
 });
 
@@ -275,15 +275,15 @@ StructDeclaration
     | DEF TypenameAtom NEWLINE INDENT PASS NEWLINE DEDENT         
         {$$=_StructDeclaration($2,null,null)}
 
-    | DEF TypenameAtom '{'TemplateList'}' NEWLINE INDENT MembernameTypeList DEDENT 
+    | DEF TypenameAtom '{'GenericList'}' NEWLINE INDENT MembernameTypeList DEDENT 
         {$$=_StructDeclaration($2,$8,$4)}
 
-    | DEF TypenameAtom '{'TemplateList'}' NEWLINE INDENT PASS NEWLINE DEDENT 
+    | DEF TypenameAtom '{'GenericList'}' NEWLINE INDENT PASS NEWLINE DEDENT 
         {$$=_StructDeclaration($2,null,$4)}
     ;
 
-TemplateList
-    : GenericAtom ',' TemplateList {$$=_LinkedNode(_GenericType($1),$3)}
+GenericList
+    : GenericAtom ',' GenericList {$$=_LinkedNode(_GenericType($1),$3)}
     | GenericAtom                  {$$=_LinkedNode(_GenericType($1),null)}
     ;
 

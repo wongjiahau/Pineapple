@@ -203,7 +203,7 @@ export function newListType(of: TypeExpression): TypeExpression {
         originFile: "<built-in>",
         name: newAtomicToken("List"),
         location: NullTokenLocation(),
-        templates: singleLinkedNode(of),
+        genericList: singleLinkedNode(of),
         nullable: false
     };
 }
@@ -215,7 +215,7 @@ export function newTupleType(of: LinkedNode<TypeExpression> | null): TypeExpress
         originFile: "<built-in>",
         name: newAtomicToken("Tuple"),
         location: NullTokenLocation(),
-        templates: of,
+        genericList: of,
         nullable: false
     };
 }

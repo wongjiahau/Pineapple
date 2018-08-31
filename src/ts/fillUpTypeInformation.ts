@@ -7,6 +7,7 @@ import {
     ForStatement,
     FunctionCall,
     FunctionDeclaration,
+    GenericType,
     KeyValue,
     LinkedNode,
     ListExpression,
@@ -52,6 +53,7 @@ import { ErrorAssigningVoidToVariable } from "./errorType/E0021-AssigningVoidToV
 import { ErrorAssigningNullToUnnullableVariable } from "./errorType/E0022-AssigningNullToUnnullableVariable";
 import { ErrorUsingUndefinedType } from "./errorType/E0023-UsingUndefinedType";
 import { ErrorListElementsArentHomogeneous } from "./errorType/E0024-ListElementsArentHomogeneous";
+import { ErrorUsingUndefinedGenericName } from "./errorType/E0025-UsingUndefinedGenericName";
 import { ErrorDetail, stringifyTypeReadable } from "./errorType/errorUtil";
 import { renderError } from "./errorType/renderError";
 import { convertToLinkedNode, flattenLinkedNode } from "./getIntermediateForm";
@@ -101,10 +103,8 @@ export function fillUpTypeInformation(
                 break;
             case "StructDeclaration":
                 symbols.structTab = newStructTab(currentDecl, symbols.structTab);
-                let members = flattenLinkedNode(currentDecl.members);
-                members = members.map((x) => ({...x, expectedType: resolveType(x.expectedType, symbols)}));
-                currentDecl.members = convertToLinkedNode(members);
-                symbols.typeTree = insertChild(currentDecl, ObjectType(), symbols.typeTree, typeEquals);
+                const validatedStruct = validateStruct(currentDecl, symbols);
+                symbols.typeTree = insertChild(validatedStruct, ObjectType(), symbols.typeTree, typeEquals);
                 break;
             case "EnumDeclaration":
                 symbols.enumTab = newEnumTab(currentDecl, symbols.enumTab);
@@ -125,6 +125,40 @@ export function fillUpTypeInformation(
         }
     }
     return [decls, symbols];
+}
+
+export function validateStruct(s: StructDeclaration, symbols: SymbolTable): StructDeclaration {
+    const generics = flattenLinkedNode(s.genericList).map((x) => x.name.repr);
+    validateMembers(generics, s.members);
+    let members = flattenLinkedNode(s.members);
+    members = members.map((x) => ({...x, expectedType: resolveType(x.expectedType, symbols)}));
+    s.members = convertToLinkedNode(members);
+    return s;
+}
+
+function validateMembers(
+    generics: string[],
+    memberList: LinkedNode<MemberDefinition> | null
+) {
+    const members = flattenLinkedNode(memberList);
+    for (let i = 0; i < members.length; i++) {
+        const m = members[i];
+        if (m.expectedType.kind === "GenericType") {
+            if (generics.indexOf(m.expectedType.name.repr) < 0) {
+                raise(ErrorUsingUndefinedGenericName(m.expectedType.name, generics));
+            }
+        }
+        if (m.expectedType.kind === "StructDeclaration") {
+            if (m.expectedType.genericList !== null) {
+                const gs = flattenLinkedNode(m.expectedType.genericList);
+                for (let j = 0; j < gs.length; j++) {
+                    if (generics.indexOf(gs[j].name.repr) < 0) {
+                        raise(ErrorUsingUndefinedGenericName(gs[j].name, generics));
+                    }
+                }
+            }
+        }
+    }
 }
 
 export function newEnumTab(e: EnumDeclaration, enumTab: EnumTable): EnumTable {
@@ -402,8 +436,8 @@ export function fillUpForStmtTypeInfo(f: ForStatement, symbols: SymbolTable, var
     [f.expression, symbols] = fillUpExpressionTypeInfo(f.expression, symbols, vartab);
     const exprType = f.expression.returnType;
     if (exprType.kind === "StructDeclaration" && exprType.name.repr === "List") {
-        if (exprType.templates !== null) {
-            f.iterator.returnType = exprType.templates.current;
+        if (exprType.genericList !== null) {
+            f.iterator.returnType = exprType.genericList.current;
         } else {
             throw new Error("Something is wrong");
         }
@@ -766,15 +800,15 @@ function extract(genericType: TypeExpression, actualType: TypeExpression): Table
     let result: TableOf<TypeExpression> = {};
     switch (genericType.kind) {
         case "GenericType":
-            result[genericType.placeholder.repr] = actualType;
+            result[genericType.name.repr] = actualType;
             break;
         case "StructDeclaration":
-            const templates = flattenLinkedNode(genericType.templates);
+            const templates = flattenLinkedNode(genericType.genericList);
             if (actualType.kind === "StructDeclaration") {
                 for (let j = 0; j < templates.length; j++) {
                     result = {
                         ...result,
-                        ...extract(templates[j], flattenLinkedNode(actualType.templates)[j])
+                        ...extract(templates[j], flattenLinkedNode(actualType.genericList)[j])
                     };
                 }
             }
@@ -813,13 +847,13 @@ function substituteGeneric(
 ): TypeExpression {
     switch (genericType.kind) {
         case "GenericType":
-            return genericBinding[genericType.placeholder.repr];
+            return genericBinding[genericType.name.repr];
         case "StructDeclaration":
-            const templates = flattenLinkedNode(genericType.templates);
+            const templates = flattenLinkedNode(genericType.genericList);
             for (let i = 0; i < templates.length; i++) {
                 templates[i] = substituteGeneric(templates[i], genericBinding);
             }
-            genericType.templates = convertToLinkedNode(templates);
+            genericType.genericList = convertToLinkedNode(templates);
     }
     return genericType;
 }
@@ -874,8 +908,8 @@ export function typeEquals(x: TypeExpression, y: TypeExpression, ignoreGeneric =
                 if (x.name.repr !== y.name.repr) {
                     return false;
                 } else {
-                    const xOfTypes = flattenLinkedNode(x.templates);
-                    const yOfTypes = flattenLinkedNode(y.templates);
+                    const xOfTypes = flattenLinkedNode(x.genericList);
+                    const yOfTypes = flattenLinkedNode(y.genericList);
                     for (let i = 0; i < xOfTypes.length; i++) {
                         if (ignoreGeneric) {
                             if (xOfTypes[i].kind === "GenericType") {

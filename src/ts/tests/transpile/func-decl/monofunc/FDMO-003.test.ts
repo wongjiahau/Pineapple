@@ -8,7 +8,7 @@ describe("FDMO-003", () => {
 def Func{T1,T2}
     pass
 
-def (this List{T}).get(func Func{T,Boolean}) -> List{T}
+def (this List{T}).get(func Func{T,Bool}) -> List{T}
     pass
 `;
         const expectedOutput =

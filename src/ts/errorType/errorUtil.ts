@@ -16,9 +16,9 @@ export function stringifyTypeReadable(t: TypeExpression): string {
         case "VoidType":
             return "`Void`";
         case "GenericType":
-            return `${t.placeholder.repr}`;
+            return `${t.name.repr}`;
         case "StructDeclaration":
-            return `${t.name.repr}{${flattenLinkedNode(t.templates).map((x) => stringifyTypeReadable(x)).join(",")}}`;
+            return `${t.name.repr}{${flattenLinkedNode(t.genericList).map((x) => stringifyTypeReadable(x)).join(",")}}`;
         case "EnumDeclaration":
             return `${t.name.repr}`;
     }
@@ -34,7 +34,7 @@ export function showSuggestion(suggestions: string[]): string {
     } else if (suggestions.length === 1) {
         return "" +
 `
-Do you mean ${suggestions[0]}?`;
+Do you mean ${suggestions[0]} ?`;
     } else {
         return "" +
 `
