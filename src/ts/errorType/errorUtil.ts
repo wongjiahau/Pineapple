@@ -1,4 +1,3 @@
-import chalk from "chalk";
 import { AtomicToken, TokenLocation, TypeExpression } from "../ast";
 import { flattenLinkedNode } from "../getIntermediateForm";
 

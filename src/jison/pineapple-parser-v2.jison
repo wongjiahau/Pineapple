@@ -275,7 +275,7 @@ StructDeclaration
     | DEF TypenameAtom NEWLINE INDENT PASS NEWLINE DEDENT         
         {$$=_StructDeclaration($2,null,null)}
 
-    | DEF TypenameAtom '{'TemplateList'}' NEWLINE INDENT MembernameTypeList NEWLINE DEDENT 
+    | DEF TypenameAtom '{'TemplateList'}' NEWLINE INDENT MembernameTypeList DEDENT 
         {$$=_StructDeclaration($2,$8,$4)}
 
     | DEF TypenameAtom '{'TemplateList'}' NEWLINE INDENT PASS NEWLINE DEDENT 

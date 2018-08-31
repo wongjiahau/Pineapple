@@ -34,14 +34,26 @@ export function catchError(f: () => void): Error {
 }
 
 export function testError(expectedErrorName: string, input: string, logError = false) {
-    const scriptName = __filename.split(/[\\/]/).pop() as string;
-    describe(scriptName.split(".")[0], () => {
+    describe("", () => {
         it(expectedErrorName, () => {
             if (logError) {
                 pine2js(input);
             } else {
                 expect(catchError(() => pine2js(input)).name).to.eq(expectedErrorName);
             }
+        });
+    });
+}
+
+function extractFilename(filename: string) {
+    return (filename.split(/[\\/]/).pop() as string).split(".")[0];
+
+}
+
+export function testTranspile(description: string, input: string, expectedOutput: string) {
+    describe("", () => {
+        it(description, () => {
+            assertEquals(pine2js(input).trim(), expectedOutput.trim());
         });
     });
 }
