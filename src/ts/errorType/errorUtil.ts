@@ -15,7 +15,7 @@ export function stringifyTypeReadable(t: TypeExpression): string {
             return `${t.name.repr}`;
         case "VoidType":
             return "`Void`";
-        case "GenericType":
+        case "GenericTypename":
             return `${t.name.repr}`;
         case "StructDeclaration":
             return `${t.name.repr}{${flattenLinkedNode(t.genericList).map((x) => stringifyTypeReadable(x)).join(",")}}`;

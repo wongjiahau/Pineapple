@@ -182,7 +182,7 @@ export function stringifyType(t: TypeExpression): string {
     switch (t.kind) {
         case "SimpleType":
             return t.name.repr;
-        case "GenericType":
+        case "GenericTypename":
             return `Generic$${t.name.repr}`;
         case "StructDeclaration":
             return `${t.name.repr}Of${flattenLinkedNode(t.genericList).map((x) => stringifyType(x)).join("$")}` ;

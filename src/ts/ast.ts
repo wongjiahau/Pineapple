@@ -28,7 +28,7 @@ export interface StructDeclaration {
     kind: "StructDeclaration";
     name: AtomicToken;
     members: LinkedNode<MemberDefinition> | null;
-    genericList: LinkedNode<GenericType> | null;
+    genericList: LinkedNode<TypeExpression> | null;
     location: TokenLocation;
     nullable: boolean;
     originFile: string;
@@ -103,7 +103,7 @@ export interface AssignmentStatement {
 
 export type TypeExpression
     = SimpleType
-    | GenericType
+    | GenericTypename
     | StructDeclaration
     | VoidType
     | EnumDeclaration
@@ -138,8 +138,8 @@ export interface SimpleType {
     location: TokenLocation;
 }
 
-export interface GenericType {
-    kind: "GenericType";
+export interface GenericTypename {
+    kind: "GenericTypename";
     name: AtomicToken; // "T" | "T1" | "T2";
     nullable: boolean;
     location: TokenLocation;
@@ -275,9 +275,9 @@ export function singleLinkedNode<T>(current: T): LinkedNode<T> {
     };
 }
 
-export function newGenericType(placeholder: string): GenericType {
+export function newGenericType(placeholder: string): GenericTypename {
     return {
-        kind: "GenericType",
+        kind: "GenericTypename",
         name: newAtomicToken(placeholder),
         location: NullTokenLocation(),
         nullable: false

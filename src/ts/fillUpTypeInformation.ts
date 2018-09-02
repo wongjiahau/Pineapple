@@ -7,7 +7,7 @@ import {
     ForStatement,
     FunctionCall,
     FunctionDeclaration,
-    GenericType,
+    GenericTypename,
     KeyValue,
     LinkedNode,
     ListExpression,
@@ -143,7 +143,7 @@ function validateMembers(
     const members = flattenLinkedNode(memberList);
     for (let i = 0; i < members.length; i++) {
         const m = members[i];
-        if (m.expectedType.kind === "GenericType") {
+        if (m.expectedType.kind === "GenericTypename") {
             if (generics.indexOf(m.expectedType.name.repr) < 0) {
                 raise(ErrorUsingUndefinedGenericName(m.expectedType.name, generics));
             }
@@ -152,8 +152,11 @@ function validateMembers(
             if (m.expectedType.genericList !== null) {
                 const gs = flattenLinkedNode(m.expectedType.genericList);
                 for (let j = 0; j < gs.length; j++) {
-                    if (generics.indexOf(gs[j].name.repr) < 0) {
-                        raise(ErrorUsingUndefinedGenericName(gs[j].name, generics));
+                    const g = gs[j];
+                    if (g.kind === "GenericTypename") {
+                        if (generics.indexOf(g.name.repr) < 0) {
+                            raise(ErrorUsingUndefinedGenericName(g.name, generics));
+                        }
                     }
                 }
             }
@@ -225,7 +228,7 @@ export function resolveType(
                 location: NullTokenLocation(),
                 nullable: false
             };
-        case "GenericType":
+        case "GenericTypename":
             return t;
         default:
             console.log(t.name.repr);
@@ -799,7 +802,7 @@ export function extractGenericBinding(
 function extract(genericType: TypeExpression, actualType: TypeExpression): TableOf<TypeExpression> {
     let result: TableOf<TypeExpression> = {};
     switch (genericType.kind) {
-        case "GenericType":
+        case "GenericTypename":
             result[genericType.name.repr] = actualType;
             break;
         case "StructDeclaration":
@@ -838,7 +841,7 @@ export function paramTypesConforms(
 }
 
 function containsGeneric(params: VariableDeclaration[]): boolean {
-    return params.some((x) => JSON.stringify(x).indexOf("GenericType") > -1);
+    return params.some((x) => JSON.stringify(x).indexOf("GenericTypename") > -1);
 }
 
 function substituteGeneric(
@@ -846,7 +849,7 @@ function substituteGeneric(
     genericBinding: TableOf<TypeExpression>
 ): TypeExpression {
     switch (genericType.kind) {
-        case "GenericType":
+        case "GenericTypename":
             return genericBinding[genericType.name.repr];
         case "StructDeclaration":
             const templates = flattenLinkedNode(genericType.genericList);
@@ -912,10 +915,10 @@ export function typeEquals(x: TypeExpression, y: TypeExpression, ignoreGeneric =
                     const yOfTypes = flattenLinkedNode(y.genericList);
                     for (let i = 0; i < xOfTypes.length; i++) {
                         if (ignoreGeneric) {
-                            if (xOfTypes[i].kind === "GenericType") {
+                            if (xOfTypes[i].kind === "GenericTypename") {
                                 continue;
                             }
-                            if (yOfTypes[i].kind === "GenericType") {
+                            if (yOfTypes[i].kind === "GenericTypename") {
                                 continue;
                             }
                         }
@@ -925,7 +928,7 @@ export function typeEquals(x: TypeExpression, y: TypeExpression, ignoreGeneric =
                     }
                     return true;
                 }
-            case "GenericType":
+            case "GenericTypename":
                 return true; // Is this correct?
             default:
                 throw new Error(`Type comparison for ${x.kind} is not implemented yet`);

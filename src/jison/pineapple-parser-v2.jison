@@ -86,7 +86,7 @@ const _Variable = (repr,location) => ({
 const _SimpleType = (name, nullable=false) => ({ kind: "SimpleType", name, nullable});
 
 const _GenericType = (name, nullable) => ({
-    kind: "GenericType",
+    kind: "GenericTypename",
     name, // "T" | "T1" | "T2",
     nullable
 });
@@ -221,8 +221,6 @@ const _AnonymousExpression = (location) => ({
 [:][a-z][a-zA-Z0-9]*            return 'MEMBERNAME'
 [-!$%^&*_+|~=`\[\]:";'<>?,.\/]+ return 'OPERATOR'
 
-
-// Misc(to be implemented soon)
 /lex
 
 /* operator associations and precedence */
