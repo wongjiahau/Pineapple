@@ -1,31 +1,33 @@
 import {
     AtomicToken,
     BranchStatement,
+    BuiltinType,
     Declaration,
     EnumDeclaration,
     Expression,
     ForStatement,
     FunctionCall,
     FunctionDeclaration,
+    GenericList,
     GenericTypename,
     KeyValue,
     LinkedNode,
     ListExpression,
     MemberDefinition,
     newAtomicToken,
-    newSimpleType,
     NullTokenLocation,
     NumberExpression,
     ReturnStatement,
-    SimpleType,
     singleLinkedNode,
     Statement,
     StringExpression,
     StructDeclaration,
+    StructType,
     TestExpression,
     TokenLocation,
     TupleExpression,
     TypeExpression,
+    UnresolvedType,
     Variable,
     VariableDeclaration
 } from "./ast";
@@ -69,7 +71,9 @@ import {
     flattenTree,
     insertChild,
     logTree,
+    newBuiltinType,
     newListType,
+    newStructType,
     newTupleType,
     ObjectType,
     Tree,
@@ -104,7 +108,8 @@ export function fillUpTypeInformation(
             case "StructDeclaration":
                 symbols.structTab = newStructTab(currentDecl, symbols.structTab);
                 const validatedStruct = validateStruct(currentDecl, symbols);
-                symbols.typeTree = insertChild(validatedStruct, ObjectType(), symbols.typeTree, typeEquals);
+                symbols.typeTree = insertChild<TypeExpression>
+                    (newStructType(validatedStruct), ObjectType(), symbols.typeTree, typeEquals);
                 break;
             case "EnumDeclaration":
                 symbols.enumTab = newEnumTab(currentDecl, symbols.enumTab);
@@ -190,15 +195,14 @@ export function resolveType(
         return VoidType();
     }
     switch (t.kind) {
-        case "SimpleType":
-        // Fall through to StructDeclaration to search for matching struct
-        case "StructDeclaration":
+        case "UnresolvedType":
             // check type tree
             let result: TypeExpression;
             const matchingType = findElement(symbols.typeTree, t, typeEquals);
             if (matchingType) {
                 result = copy(matchingType);
                 result.nullable = t.nullable;
+                console.log(result);
                 return result;
             }
 
@@ -222,6 +226,7 @@ export function resolveType(
                     .concat(values(symbols.structTab));
                 raise(ErrorUsingUndefinedType(t.name, allTypes));
             }
+            break;
         case "VoidType":
             return {
                 kind: "VoidType",
@@ -502,7 +507,7 @@ export function fillUpExpressionTypeInfo(e: Expression, symbols: SymbolTable, va
             [e.keyValueList, symbols] = fillUpKeyValueListTypeInfo(e.keyValueList, symbols, vartab);
             checkIfKeyValueListConforms(e.keyValueList, e.returnType, symbols);
         } else {
-            e.returnType = newSimpleType("Dict");
+            e.returnType = newBuiltinType("Dict");
         }
         break;
     case "ObjectAccess":
@@ -511,7 +516,7 @@ export function fillUpExpressionTypeInfo(e: Expression, symbols: SymbolTable, va
         case "StructDeclaration":
             e.returnType = findMemberType( e.key, e.subject.returnType);
             break;
-        case "SimpleType":
+        case "UnresolvedType":
             if (e.subject.returnType.name.repr === "Dict") {
                 throw new Error("Unimplemented yet");
             } else {
@@ -670,7 +675,7 @@ export type SimpleExpression
 export function fillUpSimpleTypeInfo(e: SimpleExpression, name: string): SimpleExpression {
     return {
         ...e,
-        returnType: newSimpleType(name)
+        returnType: newBuiltinType(name)
     };
 }
 
@@ -897,37 +902,37 @@ export function checkIfAllElementTypeAreHomogeneous(ex: Expression[]): void {
     }
 }
 
+export function genericsEqual(x: GenericList, y: GenericList): boolean {
+    const genericsOfX = flattenLinkedNode(x);
+    const genericsOfY = flattenLinkedNode(y);
+    if (genericsOfX.length !== genericsOfY.length) {
+        return false;
+    }
+    for (let i = 0; i < genericsOfX.length; i++) {
+        if (!typeEquals(genericsOfX[i], genericsOfY[i])) { // TODO: should use subtype of
+            return false;
+        }
+    }
+    return true;
+}
+
 export function typeEquals(x: TypeExpression, y: TypeExpression, ignoreGeneric = true): boolean {
     if (x.kind !== y.kind) {
         return false;
     } else {
         switch (x.kind) {
-            case "SimpleType":
+            case "UnresolvedType":
+                throw new Error(`${x.name.repr} is still unresolved.`);
             case "EnumDeclaration":
-                return x.name.repr === (y as SimpleType).name.repr;
-            case "StructDeclaration":
-                x = x as StructDeclaration;
-                y = y as StructDeclaration;
-                if (x.name.repr !== y.name.repr) {
-                    return false;
-                } else {
-                    const xOfTypes = flattenLinkedNode(x.genericList);
-                    const yOfTypes = flattenLinkedNode(y.genericList);
-                    for (let i = 0; i < xOfTypes.length; i++) {
-                        if (ignoreGeneric) {
-                            if (xOfTypes[i].kind === "GenericTypename") {
-                                continue;
-                            }
-                            if (yOfTypes[i].kind === "GenericTypename") {
-                                continue;
-                            }
-                        }
-                        if (!typeEquals(xOfTypes[i], yOfTypes[i])) { // TODO: should use subtype of
-                            return false;
-                        }
-                    }
-                    return true;
-                }
+                return x.name.repr === (y as UnresolvedType).name.repr;
+            case "BuiltinType":
+                y = y as BuiltinType;
+                return x.name === y.name &&
+                    genericsEqual(x.genericList, y.genericList);
+            case "StructType":
+                y = y as StructType;
+                return x.reference.name.repr !== y.reference.name.repr &&
+                    genericsEqual(x.genericList, y.genericList);
             case "GenericTypename":
                 return true; // Is this correct?
             default:

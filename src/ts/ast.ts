@@ -4,6 +4,8 @@ export interface LinkedNode<T> {
     next: LinkedNode<T> | null;
 }
 
+export type GenericList = LinkedNode<TypeExpression> | null;
+
 export type Declaration
     = FunctionDeclaration
     | StructDeclaration
@@ -28,9 +30,8 @@ export interface StructDeclaration {
     kind: "StructDeclaration";
     name: AtomicToken;
     members: LinkedNode<MemberDefinition> | null;
-    genericList: LinkedNode<TypeExpression> | null;
+    genericList: GenericList;
     location: TokenLocation;
-    nullable: boolean;
     originFile: string;
 }
 
@@ -102,12 +103,27 @@ export interface AssignmentStatement {
 }
 
 export type TypeExpression
-    = SimpleType
-    | GenericTypename
-    | StructDeclaration
+    = UnresolvedType       // e.g. String or List{Number}
+    | GenericTypename  // e.g. T, T1 or T2
     | VoidType
     | EnumDeclaration
+    | StructType
+    | BuiltinType
     ;
+
+export interface BuiltinType {
+    kind: "BuiltinType";
+    name: string;
+    genericList: GenericList;
+    nullable: boolean;
+}
+
+export interface StructType {
+    kind: "StructType";
+    reference: StructDeclaration;
+    nullable: boolean;
+    genericList: GenericList;
+}
 
 export interface EnumDeclaration {
     kind: "EnumDeclaration";
@@ -127,15 +143,17 @@ export interface EnumExpression {
 
 export interface VoidType {
     kind: "VoidType";
+    name: AtomicToken;
     location: TokenLocation;
     nullable: boolean;
 }
 
-export interface SimpleType {
-    kind: "SimpleType";
+export interface UnresolvedType {
+    kind: "UnresolvedType";
     name: AtomicToken;
     nullable: boolean;
     location: TokenLocation;
+    genericList: LinkedNode<UnresolvedType | GenericTypename> | null;
 }
 
 export interface GenericTypename {
@@ -275,7 +293,7 @@ export function singleLinkedNode<T>(current: T): LinkedNode<T> {
     };
 }
 
-export function newGenericType(placeholder: string): GenericTypename {
+export function newGenericTypename(placeholder: string): GenericTypename {
     return {
         kind: "GenericTypename",
         name: newAtomicToken(placeholder),
@@ -287,18 +305,6 @@ export function newGenericType(placeholder: string): GenericTypename {
 export function newAtomicToken(repr: string): AtomicToken {
     return {
         repr: repr,
-        location: NullTokenLocation()
-    };
-}
-
-export function newSimpleType(name: string): TypeExpression {
-    return {
-        kind: "SimpleType",
-        name: {
-            repr: name,
-            location: NullTokenLocation()
-        },
-        nullable: false,
         location: NullTokenLocation()
     };
 }

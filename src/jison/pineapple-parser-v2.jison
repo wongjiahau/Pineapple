@@ -83,9 +83,14 @@ const _Variable = (repr,location) => ({
 });
 
 
-const _SimpleType = (name, nullable=false) => ({ kind: "SimpleType", name, nullable});
+const _UnresolvedType = (name, genericList, nullable) => ({ 
+    kind: "UnresolvedType", 
+    name, 
+    genericList,
+    nullable
+});
 
-const _GenericType = (name, nullable) => ({
+const _GenericTypename = (name, nullable) => ({
     kind: "GenericTypename",
     name, // "T" | "T1" | "T2",
     nullable
@@ -281,8 +286,8 @@ StructDeclaration
     ;
 
 GenericList
-    : GenericAtom ',' GenericList {$$=_LinkedNode(_GenericType($1),$3)}
-    | GenericAtom                  {$$=_LinkedNode(_GenericType($1),null)}
+    : GenericAtom ',' GenericList {$$=_LinkedNode(_GenericTypename($1),$3)}
+    | GenericAtom                  {$$=_LinkedNode(_GenericTypename($1),null)}
     ;
 
 MembernameTypeList
@@ -407,17 +412,17 @@ TypeExpression
     ;
 
 AtomicTypeExpr
-    : TypenameAtom              {$$=_SimpleType($1,false)}
-    | TypenameAtom '?'          {$$=_SimpleType($1,true)}
-    | GenericAtom               {$$=_GenericType($1, false)}
-    | GenericAtom '?'           {$$=_GenericType($1, true)}
-    | TypenameAtom '{' TypeExpressionList '}'       {$$=_StructDeclaration($1,null,$3)}
-    | TypenameAtom '{' TypeExpressionList '}' '?'   {$$=_StructDeclaration($1,null,$3,true)}
+    : GenericAtom               {$$=_GenericTypename($1, false)}
+    | GenericAtom '?'           {$$=_GenericTypename($1, true)}
+    | TypenameAtom              {$$=_UnresolvedType($1,null,false)}
+    | TypenameAtom '?'          {$$=_UnresolvedType($1,null,true)}
+    | TypenameAtom '{' TypeExprList '}'       {$$=_UnresolvedType($1,$3,false)}
+    | TypenameAtom '{' TypeExprList '}' '?'   {$$=_UnresolvedType($1,$3,true)}
     ;
 
-TypeExpressionList
-    : TypeExpression ',' TypeExpressionList {$$=_LinkedNode($1,$3)}
-    | TypeExpression {$$=_LinkedNode($1,null)}
+TypeExprList
+    : AtomicTypeExpr ',' TypeExprList {$$=_LinkedNode($1,$3)}
+    | AtomicTypeExpr {$$=_LinkedNode($1,null)}
     ;
 
 

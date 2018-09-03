@@ -180,7 +180,7 @@ export function getOperatorName(op: string): string {
 
 export function stringifyType(t: TypeExpression): string {
     switch (t.kind) {
-        case "SimpleType":
+        case "UnresolvedType":
             return t.name.repr;
         case "GenericTypename":
             return `Generic$${t.name.repr}`;

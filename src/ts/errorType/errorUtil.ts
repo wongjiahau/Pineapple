@@ -11,7 +11,7 @@ export interface ErrorDetail  {
 
 export function stringifyTypeReadable(t: TypeExpression): string {
     switch (t.kind) {
-        case "SimpleType":
+        case "UnresolvedType":
             return `${t.name.repr}`;
         case "VoidType":
             return "`Void`";

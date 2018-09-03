@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import { newSimpleType } from "../../ast";
+import { newBuiltinType } from "../../ast";
 import {findParentOf, insertChild, logTree, newTree} from "../../typeTree";
 import { numberComparer } from "../testUtil";
 
