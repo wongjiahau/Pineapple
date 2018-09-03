@@ -13,9 +13,9 @@ def People
 ```
 `People` is the struct name, while `:name` and `:salary` is the field name.
 
-To create new data from your struct, you have to do it like this:
+To create new data from your struct, you have to use the `new` keyword:
 ```
-let john = People
+let john = new People
     :name = "John"
     :salary = 999
 ```
@@ -25,8 +25,7 @@ To access the field data:
 ```
 let x = john:name
 ```
-
-
+<hr>
 ## Recursive struct
 You can also create recursive struct which contain fields that points to itself.  
 
@@ -38,19 +37,20 @@ def People
 ```
 
 And here:s how you create new data from it:
-```
-let john = People
+```js
+let john = new People
     :name = "Marry"
-    :friend = People
+    :friend = new People
         :name = "Jane"
-        :friend = People
+        :friend = new People
             :name = "Lee"
             :friend = `nil
 ```
 Accessing data:
-```
+```js
 let acquaintance = john:friend:friend
 ```
+<hr>
 
 ## Generic struct
 You can also create generic structure in Pineapple, this feature is important when you need to create custom data structures.  
@@ -66,9 +66,7 @@ def Node{T}
 
 // here's how you use it
 def .main
-    let x = Node{Int}
-        :current = 10
-        :next    = Node{Int}
-            :current = 20
-            :next = `nil
+    let x = new Node{Integer}
+        :current = "10" // Error, should be Integer, not String
+        :next    = `nil
 ```
