@@ -45,8 +45,7 @@ npm i -g typescript --save
 
 ## 5. To run the interpreter
 ```sh
-cd src/js
-node interpreter.js hi.pine
+./src/bin/pine.js hi.pine
 ```
 
 Note that `hi.pine` is just a file name.

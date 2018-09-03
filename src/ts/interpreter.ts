@@ -99,7 +99,14 @@ function loadDependency(initSource: SourceCode | null): Dependencies {
         dependencies.push([initSource.filename, /*depends on*/ Nothing()]);
         return dependencies;
     } else {
-        imports = imports.map((x) => x.match(/".+"/g)[0].slice(1, -1));
+        imports = imports.map((x) => {
+            const stringWithinQuotes = x.match(/".+"/g);
+            if (stringWithinQuotes === null) {
+                throw new Error(`Cannot extract filename from ${x}`);
+            } else {
+                return stringWithinQuotes[0].slice(1, -1);
+            }
+        });
         // import user-defined scripts
         for (let i = 0; i < imports.length; i++) {
             const importedFile = fs.realpathSync(filepath + imports[i]);
