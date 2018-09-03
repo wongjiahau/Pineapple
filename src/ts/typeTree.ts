@@ -1,4 +1,5 @@
 import {
+    GenericList,
     LinkedNode,
     newAtomicToken,
     newGenericTypename,
@@ -159,7 +160,7 @@ export function logTree<T>(tree: Tree<T>, stringifier: (x: T) => string, level =
 export function initTypeTree(): Tree<TypeExpression> {
     const anyType       = newBuiltinType("Any");
     const enumType      = EnumType();
-    const objectType    = ObjectType();
+    const structType    = BaseStructType();
     const dictType      = newBuiltinType("Dict");
     const listType      = newListType(newGenericTypename("T"));
     const emptyListType = EmptyListType();
@@ -175,7 +176,7 @@ export function initTypeTree(): Tree<TypeExpression> {
     tree     = inserts(integerType, numberType);
     tree     = inserts(enumType,    anyType);
     tree     = inserts(dictType,    anyType);
-    tree     = inserts(objectType,  dictType);
+    tree     = inserts(structType,  dictType);
     tree     = inserts(listType,    anyType);
     tree     = inserts(emptyListType,    listType);
     tree     = inserts(dateType,    anyType);
@@ -187,8 +188,8 @@ export function EmptyListType(): TypeExpression {
     return newBuiltinType("EmptyList");
 }
 
-export function ObjectType(): TypeExpression {
-    return newBuiltinType("Object");
+export function BaseStructType(): TypeExpression {
+    return newBuiltinType("Struct");
 }
 
 export function EnumType(): TypeExpression {
@@ -222,12 +223,12 @@ export function VoidType(): VoidType {
     };
 }
 
-export function newStructType(s: StructDeclaration): StructType {
+export function newStructType(s: StructDeclaration, genericList: GenericList): StructType {
     return {
         kind: "StructType",
         reference: s,
         nullable: false,
-        genericList: null
+        genericList: genericList
     };
 }
 

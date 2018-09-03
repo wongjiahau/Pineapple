@@ -2,7 +2,7 @@ import { pine2js } from "../../../../pine2js";
 import { assertEquals } from "../../../testUtil";
 
 describe("FDMO-003", () => {
-    it("function that accepts function", () => {
+    it.skip("function that accepts function", () => {
         const input =
 `
 def Func{T1,T2}

@@ -4,5 +4,4 @@ testError("ErrorUsingUndefinedType",
 `
 def Node{T}
     :current Node{XX{T}}
-`
-);
+`);
