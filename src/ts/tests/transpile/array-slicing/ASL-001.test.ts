@@ -5,7 +5,7 @@ describe("ASL-001", () => {
     it("case 1", () => {
         const input =
 `
-def (this List{T}).(start Number to end Number) -> T
+def (this List{T}).(start Integer to end Integer) -> T
     pass
 
 def .main
@@ -14,17 +14,17 @@ def .main
 `;
         const expectedOutput =
 `
-function _$period_to_ListOfGeneric$T_Number_Number($this,$start,$end){
+function _$period_to_ListOfGeneric$T_Integer_Integer($this,$start,$end){
 $$pass$$();
 }
 
-function _$period_to_ListOfInt_Number_Number($this,$start,$end){
+function _$period_to_ListOfInteger_Integer_Integer($this,$start,$end){
 $$pass$$();
 }
 
 function _main_(){
 const $x = [(1),(2),(3)];
-const $y = _$period_to_ListOfInt_Number_Number($x,(0),(1));
+const $y = _$period_to_ListOfInteger_Integer_Integer($x,(0),(1));
 }
 
 `.trim();

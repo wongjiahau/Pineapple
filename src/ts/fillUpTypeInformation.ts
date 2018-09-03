@@ -127,39 +127,45 @@ export function fillUpTypeInformation(
 
 export function validateStruct(s: StructDeclaration, symbols: SymbolTable): StructDeclaration {
     const generics = flattenLinkedNode(s.genericList).map((x) => x.name.repr);
-    validateMembers(generics, s.members);
-    let members = flattenLinkedNode(s.members);
-    members = members.map((x) => ({...x, expectedType: resolveType(x.expectedType, symbols)}));
-    s.members = convertToLinkedNode(members);
+    s.members = validateMembers(generics, s.members, symbols);
     return s;
 }
 
 function validateMembers(
     generics: string[],
-    memberList: LinkedNode<MemberDefinition> | null
-) {
+    memberList: LinkedNode<MemberDefinition> | null,
+    symbols: SymbolTable
+): LinkedNode<MemberDefinition> | null {
     const members = flattenLinkedNode(memberList);
     for (let i = 0; i < members.length; i++) {
         const m = members[i];
-        if (m.expectedType.kind === "GenericTypename") {
-            if (generics.indexOf(m.expectedType.name.repr) < 0) {
-                raise(ErrorUsingUndefinedGenericName(m.expectedType.name, generics));
-            }
-        }
-        if (m.expectedType.kind === "UnresolvedType") {
-            if (m.expectedType.genericList !== null) {
-                const gs = flattenLinkedNode(m.expectedType.genericList);
-                for (let j = 0; j < gs.length; j++) {
-                    const g = gs[j];
-                    if (g.kind === "GenericTypename") {
-                        if (generics.indexOf(g.name.repr) < 0) {
-                            raise(ErrorUsingUndefinedGenericName(g.name, generics));
+        m.expectedType = resolveType(m.expectedType, symbols);
+        switch (m.expectedType.kind) {
+            case "GenericTypename":
+                if (generics.indexOf(m.expectedType.name.repr) < 0) {
+                    raise(ErrorUsingUndefinedGenericName(m.expectedType.name, generics));
+                }
+                break;
+
+            case "BuiltinType":
+            case "StructType":
+                if (m.expectedType.genericList !== null) {
+                    const gs = flattenLinkedNode(m.expectedType.genericList);
+                    for (let j = 0; j < gs.length; j++) {
+                        const g = gs[j];
+                        if (g.kind === "GenericTypename") {
+                            if (generics.indexOf(g.name.repr) < 0) {
+                                raise(ErrorUsingUndefinedGenericName(g.name, generics));
+                            }
+                        } else {
+                            // TODO: Fix test E0023-3
                         }
                     }
                 }
-            }
+                break;
         }
     }
+    return convertToLinkedNode(members);
 }
 
 export function newEnumTab(e: EnumDeclaration, enumTab: EnumTable): EnumTable {
@@ -487,7 +493,7 @@ export function fillUpExpressionTypeInfo(e: Expression, symbols: SymbolTable, va
         if (e.repr.indexOf(".") >= 0) {
             e = fillUpSimpleTypeInfo(e, "Number");
         } else {
-            e = fillUpSimpleTypeInfo(e, "Int");
+            e = fillUpSimpleTypeInfo(e, "Integer");
         }
         break;
     case "String":   e = fillUpSimpleTypeInfo  (e, "String"); break;
@@ -664,7 +670,10 @@ export type SimpleExpression
     | StringExpression
     ;
 
-export function fillUpSimpleTypeInfo(e: SimpleExpression, name: string): SimpleExpression {
+export function fillUpSimpleTypeInfo(
+    e: SimpleExpression,
+    name: "Number" | "Integer" | "String"
+): SimpleExpression {
     return {
         ...e,
         returnType: newBuiltinType(name)
@@ -801,13 +810,17 @@ function extract(genericType: TypeExpression, actualType: TypeExpression): Table
         case "GenericTypename":
             result[genericType.name.repr] = actualType;
             break;
+        case "BuiltinType":
         case "StructType":
-            const templates = flattenLinkedNode(genericType.genericList);
-            if (actualType.kind === "StructType") {
-                for (let j = 0; j < templates.length; j++) {
+            const generics = flattenLinkedNode(genericType.genericList);
+            if (actualType.kind === "UnresolvedType") {
+                throw new Error(`${actualType} is not resolved yet`);
+            }
+            if (actualType.kind === "StructType" || actualType.kind === "BuiltinType") {
+                for (let j = 0; j < generics.length; j++) {
                     result = {
                         ...result,
-                        ...extract(templates[j], flattenLinkedNode(actualType.genericList)[j])
+                        ...extract(generics[j], flattenLinkedNode(actualType.genericList)[j])
                     };
                 }
             }
@@ -841,20 +854,21 @@ function containsGeneric(params: VariableDeclaration[]): boolean {
 }
 
 function substituteGeneric(
-    genericType: TypeExpression,
+    unsubstitutedType: TypeExpression,
     genericBinding: TableOf<TypeExpression>
 ): TypeExpression {
-    switch (genericType.kind) {
+    switch (unsubstitutedType.kind) {
         case "GenericTypename":
-            return genericBinding[genericType.name.repr];
+            return genericBinding[unsubstitutedType.name.repr];
+        case "BuiltinType":
         case "StructType":
-            const templates = flattenLinkedNode(genericType.genericList);
-            for (let i = 0; i < templates.length; i++) {
-                templates[i] = substituteGeneric(templates[i], genericBinding);
+            const generics = flattenLinkedNode(unsubstitutedType.genericList);
+            for (let i = 0; i < generics.length; i++) {
+                generics[i] = substituteGeneric(generics[i], genericBinding);
             }
-            genericType.genericList = convertToLinkedNode(templates);
+            unsubstitutedType.genericList = convertToLinkedNode(generics);
     }
-    return genericType;
+    return unsubstitutedType;
 }
 
 export function fillUpArrayTypeInfo(e: ListExpression, symbols: SymbolTable, vartab: VariableTable)

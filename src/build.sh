@@ -6,11 +6,15 @@ if [ -d js ]; then
     rm -rf js
 fi
 
-echo "Transpiling . . ."
 cd ts
 # If passed in 0, don't launch watch mode
 if [ "$1" -eq 0 ]; then
+    echo "Running TSLint to check for bad code . . ."
+    tslint --project .
+
+    echo "Transpiling . . ."
     tsc
 else
+    echo "Transpiling in watch mode . . ."
     tsc --watch
 fi

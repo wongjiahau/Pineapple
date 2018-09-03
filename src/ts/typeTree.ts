@@ -164,7 +164,7 @@ export function initTypeTree(): Tree<TypeExpression> {
     const listType      = newListType(newGenericTypename("T"));
     const emptyListType = EmptyListType();
     const numberType    = newBuiltinType("Number");
-    const integerType   = newBuiltinType("Int");
+    const integerType   = newBuiltinType("Integer");
     const stringType    = newBuiltinType("String");
     const dateType      = newBuiltinType("Date");
     const inserts = (x: TypeExpression, parent: TypeExpression) => {

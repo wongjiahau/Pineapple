@@ -20,13 +20,19 @@ pine hello.pine
 # How to get started (For developers)
 ## 1.1 You need to install `jison` parser generator.
 ```
-npm i -g jison --save
+npm i -g jison
 ```
 
 ## 1.2 You also need `tsc`, Typescript Compiler
 ```
-npm i -g typescript --save
+npm i -g typescript
 ```
+
+## 1.3 Also, TSLint
+```
+npm i -g tslint 
+```
+
 
 ## 2. Generate the parser
 ```
@@ -37,6 +43,17 @@ npm i -g typescript --save
 ```
 ./build.sh
 ```
+To run the transpiler without watching file changes, and also TSLint check:
+```
+./build.sh 0
+```
+
+## 3.1 How to run TSLint
+```
+cd src/ts
+tslint --project ./ --fix
+```
+The command above will run TSLint on the `src/ts` folder, and also fix any fixable warnings.
 
 ## 4. How to run test?
 ```
