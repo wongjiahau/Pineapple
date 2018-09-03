@@ -1,4 +1,4 @@
-import { AtomicToken, KeyValue, StructDeclaration } from "../ast";
+import { AtomicToken, StructDeclaration } from "../ast";
 import { ErrorDetail } from "./errorUtil";
 
 export function ErrorExtraMember(

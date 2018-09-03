@@ -1,4 +1,4 @@
-import { AtomicToken, EnumDeclaration } from "../ast";
+import { AtomicToken } from "../ast";
 import { findSimilarStrings } from "../util";
 import { ErrorDetail, showSuggestion } from "./errorUtil";
 

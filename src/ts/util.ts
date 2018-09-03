@@ -1,3 +1,4 @@
+// @ts-ignore
 import levenshtein from "fast-levenshtein";
 
 export function find<T1, T2>(needle: T1, haystack: T2[], comparer: (x: T1, y: T2) => boolean): T2 | null {

@@ -1,7 +1,6 @@
 import {expect} from "chai";
 import {
     childOf,
-    findParentOf,
     insertChild,
     newTree
 } from "../../typeTree";

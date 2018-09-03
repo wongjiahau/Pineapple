@@ -1,7 +1,6 @@
-import { getIntermediateForm, initialIntermediateForm, IntermediateForm } from "./getIntermediateForm";
+import { getIntermediateForm, initialIntermediateForm } from "./getIntermediateForm";
 import { SourceCode } from "./interpreter";
 import { transpile } from "./transpile";
-import { initTypeTree } from "./typeTree";
 
 /**
  * WARNING: The `pine2js` function is meant for unit testing only

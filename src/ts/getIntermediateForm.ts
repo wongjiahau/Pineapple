@@ -1,10 +1,9 @@
 import { Declaration, LinkedNode } from "./ast";
 import { ErrorSyntax } from "./errorType/E0010-Syntax";
-import { fillUpTypeInformation, FunctionTable, raise, StructTable, SymbolTable } from "./fillUpTypeInformation";
+import { fillUpTypeInformation, raise, SymbolTable } from "./fillUpTypeInformation";
 import { SourceCode } from "./interpreter";
-import { prettyPrint } from "./pine2js";
 import { preprocess } from "./preprocess";
-import { initTypeTree, Tree } from "./typeTree";
+import { initTypeTree } from "./typeTree";
 const parser     = require("../jison/pineapple-parser-v2");
 
 export function getIntermediateForm(

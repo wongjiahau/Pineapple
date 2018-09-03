@@ -1,4 +1,3 @@
-import { expect } from "chai";
 import { TokenLocation } from "../../ast";
 import { labelLineNumbers } from "../../labelLineNumbers";
 import { assertEquals, mockChalk } from "../testUtil";

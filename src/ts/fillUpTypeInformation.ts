@@ -25,7 +25,6 @@ import {
     TokenLocation,
     TupleExpression,
     TypeExpression,
-    UnresolvedType,
     Variable,
     VariableDeclaration
 } from "./ast";
@@ -66,7 +65,6 @@ import {
     EnumType,
     findElement,
     insertChild,
-    logTree,
     newBuiltinType,
     newListType,
     newStructType,
@@ -227,6 +225,7 @@ export function resolveType(
             };
         case "GenericTypename":
         case "BuiltinType":
+        case "StructType":
         return t;
         default:
             // search struct table
@@ -802,9 +801,9 @@ function extract(genericType: TypeExpression, actualType: TypeExpression): Table
         case "GenericTypename":
             result[genericType.name.repr] = actualType;
             break;
-        case "StructDeclaration":
+        case "StructType":
             const templates = flattenLinkedNode(genericType.genericList);
-            if (actualType.kind === "StructDeclaration") {
+            if (actualType.kind === "StructType") {
                 for (let j = 0; j < templates.length; j++) {
                     result = {
                         ...result,
@@ -848,7 +847,7 @@ function substituteGeneric(
     switch (genericType.kind) {
         case "GenericTypename":
             return genericBinding[genericType.name.repr];
-        case "StructDeclaration":
+        case "StructType":
             const templates = flattenLinkedNode(genericType.genericList);
             for (let i = 0; i < templates.length; i++) {
                 templates[i] = substituteGeneric(templates[i], genericBinding);
@@ -928,7 +927,7 @@ export function typeEquals(x: TypeExpression, y: TypeExpression): boolean {
     } else {
         switch (x.kind) {
             case "EnumDeclaration":
-                return x.name.repr === (y as UnresolvedType).name.repr;
+                return x.name.repr === (y as EnumDeclaration).name.repr;
             case "BuiltinType":
                 y = y as BuiltinType;
                 return x.name === y.name &&

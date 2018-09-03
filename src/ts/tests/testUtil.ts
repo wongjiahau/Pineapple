@@ -1,5 +1,7 @@
 import { expect } from "chai";
 require("colors");
+
+// @ts-ignore
 import { mocha } from "mocha";
 import { pine2js } from "../pine2js";
 const jsdiff = require("diff");
@@ -43,11 +45,6 @@ export function testError(expectedErrorName: string, input: string, logError = f
             }
         });
     });
-}
-
-function extractFilename(filename: string) {
-    return (filename.split(/[\\/]/).pop() as string).split(".")[0];
-
 }
 
 export function testTranspile(description: string, input: string, expectedOutput: string) {

@@ -1,4 +1,4 @@
-import { Expression, VariableDeclaration, Variable, TypeExpression } from "../ast";
+import { Expression, TypeExpression, Variable } from "../ast";
 import { ErrorDetail, stringifyTypeReadable } from "./errorUtil";
 
 export function ErrorIncorrectTypeGivenForVariable(

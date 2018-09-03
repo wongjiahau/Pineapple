@@ -10,6 +10,7 @@ export function smoothify(input: string): string {
         if (/^\s*@NEWLINE\s*$/.test(lines[i])) {
             result += currentIndentation + "\n";
         } else {
+            // @ts-ignore
             currentIndentation = lines[i].match(/^\s*/g)[0];
             result += lines[i] + "\n";
         }

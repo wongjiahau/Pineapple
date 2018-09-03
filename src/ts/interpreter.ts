@@ -2,7 +2,7 @@ const toposort = require("toposort");
 const vm = require("vm");
 import {Declaration} from "./ast";
 import {getIntermediateForm, initialIntermediateForm} from "./getIntermediateForm";
-import {tpDeclaration, transpile} from "./transpile";
+import {tpDeclaration} from "./transpile";
 const clear = require("clear");
 
 const program = require("commander");

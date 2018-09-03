@@ -7,7 +7,6 @@ import {
     StructDeclaration,
     StructType,
     TypeExpression,
-    UnresolvedType,
     VoidType
 } from "./ast";
 
@@ -216,9 +215,10 @@ export function newTupleType(of: LinkedNode<TypeExpression> | null): TypeExpress
 
 export function VoidType(): VoidType {
     return {
+        name: newAtomicToken("Void"),
         kind: "VoidType",
         location: NullTokenLocation(),
-        nullable: false
+        nullable: false,
     };
 }
 
@@ -226,7 +226,8 @@ export function newStructType(s: StructDeclaration): StructType {
     return {
         kind: "StructType",
         reference: s,
-        nullable: false
+        nullable: false,
+        genericList: null
     };
 }
 
