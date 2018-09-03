@@ -86,15 +86,23 @@ export function fillUpTypeInformation(decls: Declaration[], sourceCode: SourceCo
         currentDecl.originFile = CURRENT_SOURCE_CODE().filename;
         switch (currentDecl.kind) {
             case "FunctionDeclaration":
-                currentDecl.returnType = resolveType(currentDecl.returnType, symbols);
                 for (let j = 0; j < currentDecl.parameters.length; j++) {
                     currentDecl.parameters[j].typeExpected = resolveType(currentDecl.parameters[j].typeExpected, symbols);
                 }
+                currentDecl.returnType = resolveType(currentDecl.returnType, symbols);
                 symbols.funcTab = newFunctionTable(currentDecl, symbols.funcTab);
                 break;
             case "StructDeclaration":
-                symbols.structTab = newStructTab(currentDecl, symbols.structTab);
-                const validatedStruct = validateStruct(currentDecl, symbols);
+                const tempSymbols = copy(symbols);
+                tempSymbols.typeTree = insertChild<TypeExpression> (
+                    newStructType(currentDecl, currentDecl.genericList),
+                    BaseStructType(),
+                    tempSymbols.typeTree,
+                    typeEquals
+                );
+
+                const validatedStruct = validateStruct(currentDecl, tempSymbols);
+                symbols.structTab = newStructTab(validatedStruct, symbols.structTab);
                 symbols.typeTree = insertChild<TypeExpression> (
                     newStructType(validatedStruct, validatedStruct.genericList),
                     BaseStructType(),
@@ -211,28 +219,15 @@ export function resolveType(t: TypeExpression | null, symbols: SymbolTable): Typ
     switch (t.kind) {
         case "UnresolvedType":
             // check type tree
-            let result:
-            TypeExpression;
+            let result: TypeExpression;
             const matchingType = findElement(symbols.typeTree, t, comparerForUnresolvedType);
             if (matchingType) {
                 result = copy(matchingType);
                 result.nullable = t.nullable;
-                return result;
-            }
-
-            // check enum table
-            const matchingEnum = findTableEntry(symbols.enumTab, t.name.repr);
-            if (matchingEnum) {
-                result = copy(matchingEnum);
-                result.nullable = t.nullable;
-                return result;
-            }
-
-            // check struct table
-            const matchingStruct = findTableEntry(symbols.structTab, t.name.repr);
-            if (matchingStruct) {
-                result = newStructType(copy(matchingStruct), t.genericList);
-                result.nullable = t.nullable;
+                if("genericList" in result) {
+                    result.genericList = t.genericList;
+                    result.genericList = resolveGenericsType(result.genericList, symbols);
+                }
                 return result;
             } else {
                 raise(ErrorUsingUndefinedType(t.name, symbols));
@@ -647,12 +642,17 @@ export function findMemberType(key: AtomicToken, structDecl: StructDeclaration):
         return raise(ErrorAccessingInexistentMember(structDecl, key));
     }
 }
-export function getStruct(name: AtomicToken, structTab: StructTable): StructDeclaration {
-    const result = structTab[name.repr];
-    if (result !== undefined) {
-        return result;
-    } else {
-        return raise(ErrorUsingUndefinedStruct(name, structTab));
+export function getStruct(t: TypeExpression, structTab: StructTable): StructDeclaration {
+    switch(t.kind) {
+        case "UnresolvedType":
+            const result = structTab[t.name.repr];
+            if (result !== undefined) {
+                return result;
+            } else {
+                return raise(ErrorUsingUndefinedStruct(t.name, structTab));
+            }
+        default:
+            throw new Error(`Cannot get struct for ${stringifyTypeReadable(t)}`)
     }
 }
 
@@ -924,10 +924,10 @@ export function resolveGenericsType(genericList: GenericList, symbols: SymbolTab
 
 export function typeEquals(x: TypeExpression, y: TypeExpression): boolean {
     if (x.kind === "UnresolvedType") {
-        throw new Error(`${stringifyTypeReadable(x)} is not resolved yet.`);
+        throw new Error(`${stringifyTypeReadable(x)} at ${x.location} is not resolved yet.`);
     }
     if (y.kind === "UnresolvedType") {
-        throw new Error(`${stringifyTypeReadable(y)} is not resolved yet.`);
+        throw new Error(`${stringifyTypeReadable(y)} at ${y.location} is not resolved yet.`);
     }
     if (x.kind !== y.kind) {
         return false;

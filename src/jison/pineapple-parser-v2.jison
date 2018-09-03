@@ -181,6 +181,7 @@ const _AnonymousExpression = (location) => ({
 "mutable"   return 'MUTABLE'
 "pass"      return 'PASS'
 "import"    return 'IMPORT'
+"new"       return 'NEW'
 
 // Inivisible token
 "@NEWLINE"       %{
@@ -200,17 +201,17 @@ const _AnonymousExpression = (location) => ({
 
 // Built-in symbols
 "_"     return '_'
-","     return ','
-"->"    return '->'
-"="     return 'ASSIGN_OP'
-"("     return '(' 
-")"     return ')'
-"["     return '['
-"]"     return ']'
-"{"     return '{'
-"}"     return '}'
+","     return 'Comma'
+"->"    return 'Arrow'
+"="     return 'EqualSign'
+"("     return 'LeftParenthesis'
+")"     return 'RightParenthesis'
+"["     return 'LeftSquareBracket'
+"]"     return 'RightSquareBracket'
+"{"     return 'LeftCurlyBracket'
+"}"     return 'RightCurlyBracket'
 "o"     return 'LIST_BULLET'
-"?"     return '?'
+"?"     return 'QuestionMark'
 
 // Literals
 ["].*?["]                                   return 'STRING'
@@ -234,8 +235,8 @@ const _AnonymousExpression = (location) => ({
 // Note: 
 // _$ means yyloc
 
-%right ASSIGN_OP 
-%left ',' DOT
+%right EqualSign 
+%left Comma DOT
 
 %start EntryPoint
 
@@ -278,15 +279,15 @@ StructDeclaration
     | DEF TypenameAtom NEWLINE INDENT PASS NEWLINE DEDENT         
         {$$=_StructDeclaration($2,null,null)}
 
-    | DEF TypenameAtom '{'GenericList'}' NEWLINE INDENT MembernameTypeList DEDENT 
+    | DEF TypenameAtom LeftCurlyBracket GenericList RightCurlyBracket NEWLINE INDENT MembernameTypeList DEDENT   
         {$$=_StructDeclaration($2,$8,$4)}
 
-    | DEF TypenameAtom '{'GenericList'}' NEWLINE INDENT PASS NEWLINE DEDENT 
+    | DEF TypenameAtom LeftCurlyBracket GenericList RightCurlyBracket NEWLINE INDENT PASS NEWLINE DEDENT 
         {$$=_StructDeclaration($2,null,$4)}
     ;
 
 GenericList
-    : GenericAtom ',' GenericList {$$=_LinkedNode(_GenericTypename($1),$3)}
+    : GenericAtom Comma GenericList {$$=_LinkedNode(_GenericTypename($1),$3)}
     | GenericAtom                  {$$=_LinkedNode(_GenericTypename($1),null)}
     ;
 
@@ -307,27 +308,27 @@ FunctionDeclaration
     ;
 
 NulliFuncDeclaration
-    : FuncAtom '->' TypeExpression Block 
+    : FuncAtom Arrow TypeExpression Block 
         {$$=_FunctionDeclaration([$1],$3,[],$4,"Nulli")}
     | FuncAtom Block {$$=_FunctionDeclaration([$1],null,[],$2,"Nulli")}
     ;
 
 MonoFuncDeclaration
-    : VarDecl FuncAtom '->' TypeExpression Block 
+    : VarDecl FuncAtom Arrow TypeExpression Block 
         {$$=_FunctionDeclaration([$2],$4,[$1],$5,"Mono")}
     | VarDecl FuncAtom Block 
         {$$=_FunctionDeclaration([$2],null,[$1],$3,"Mono")}
     ;
 
 BiFuncDeclaration
-    : VarDecl FuncAtom VarDecl '->' TypeExpression Block 
+    : VarDecl FuncAtom VarDecl Arrow TypeExpression Block 
         {$$=_FunctionDeclaration([$2],$5,[$1,$3],$6,"Bi")}
-    | VarDecl OperatorAtom VarDecl '->' TypeExpression Block
+    | VarDecl OperatorAtom VarDecl Arrow TypeExpression Block
         {$$=_FunctionDeclaration([$2],$5,[$1,$3],$6,"Bi")}
     ;
 
 TriFuncDeclaration
-    : VarDecl FuncAtom '(' VarDecl VariableAtom  VarDecl ')' '->' TypeExpression Block
+    : VarDecl FuncAtom LeftParenthesis VarDecl VariableAtom  VarDecl RightParenthesis Arrow TypeExpression Block
         {$$=_FunctionDeclaration([$2,$5],$9,[$1,$4,$6],$10,"Tri")}
     ;
 
@@ -388,8 +389,8 @@ Test
     ;
 
 AssignmentStatement
-    : LET VarDecl ASSIGN_OP MultilineExpr         {$$=_AssignmentStatement($2,true,$4)}
-    | VariableAtom ASSIGN_OP MultilineExpr        {$$=_AssignmentStatement($1,false,$3)}
+    : LET VarDecl EqualSign MultilineExpr         {$$=_AssignmentStatement($2,true,$4)}
+    | VariableAtom EqualSign MultilineExpr        {$$=_AssignmentStatement($1,false,$3)}
     ;
 
 VarDecl /* Variable declaration */
@@ -397,8 +398,8 @@ VarDecl /* Variable declaration */
     | VariableAtom MUTABLE                  {$$=_VariableDeclaration($1,null,true)}
     | VariableAtom TypeExpression           {$$=_VariableDeclaration($1,$2)}
     | VariableAtom TypeExpression MUTABLE   {$$=_VariableDeclaration($1,$2,true)}
-    | '(' VariableAtom ')'                  {$$=_VariableDeclaration($2,null)}
-    | '(' VariableAtom TypeExpression ')'   {$$=_VariableDeclaration($2,$3)}
+    | LeftParenthesis VariableAtom RightParenthesis                  {$$=_VariableDeclaration($2,null)}
+    | LeftParenthesis VariableAtom TypeExpression RightParenthesis   {$$=_VariableDeclaration($2,$3)}
     ;
 
 VariableAtom
@@ -413,15 +414,17 @@ TypeExpression
 
 AtomicTypeExpr
     : GenericAtom               {$$=_GenericTypename($1, false)}
-    | GenericAtom '?'           {$$=_GenericTypename($1, true)}
+    | GenericAtom QuestionMark  {$$=_GenericTypename($1, true)}
     | TypenameAtom              {$$=_UnresolvedType($1,null,false)}
-    | TypenameAtom '?'          {$$=_UnresolvedType($1,null,true)}
-    | TypenameAtom '{' TypeExprList '}'       {$$=_UnresolvedType($1,$3,false)}
-    | TypenameAtom '{' TypeExprList '}' '?'   {$$=_UnresolvedType($1,$3,true)}
+    | TypenameAtom QuestionMark {$$=_UnresolvedType($1,null,true)}
+    | TypenameAtom LeftCurlyBracket TypeExprList RightCurlyBracket       
+        {$$=_UnresolvedType($1,$3,false)}
+    | TypenameAtom LeftCurlyBracket TypeExprList RightCurlyBracket QuestionMark   
+        {$$=_UnresolvedType($1,$3,true)}
     ;
 
 TypeExprList
-    : AtomicTypeExpr ',' TypeExprList {$$=_LinkedNode($1,$3)}
+    : AtomicTypeExpr Comma TypeExprList {$$=_LinkedNode($1,$3)}
     | AtomicTypeExpr {$$=_LinkedNode($1,null)}
     ;
 
@@ -460,17 +463,17 @@ MonoFuncCall
     ;
 
 BiFuncCall
-    : AtomicExpr FuncAtom '(' SinglelineExpr ')'  
+    : AtomicExpr FuncAtom LeftParenthesis SinglelineExpr RightParenthesis  
         {$$=_FunctionCall("Bi",[$2],[$1,$4],this._$)}
     ;
 
 TriFuncCall
-    : AtomicExpr FuncAtom '(' SinglelineExpr VariableAtom SinglelineExpr ')'  
+    : AtomicExpr FuncAtom LeftParenthesis SinglelineExpr VariableAtom SinglelineExpr RightParenthesis  
         {$$=_FunctionCall("Tri",[$2,$5],[$1,$4,$6],this._$)}
     ;
 
 AtomicExpr 
-    : '(' SinglelineExpr ')' {$$=$2}
+    : LeftParenthesis SinglelineExpr RightParenthesis {$$=$2}
     // | SinglelineObject /* temporarily disable, unless its use case is justified*/
     | ObjectAccessExpr
     | SinglelineList
@@ -486,7 +489,7 @@ AtomicExpr
     ;
 
 Tuple
-    : '(' AtomicExpr ',' Elements ')' {$$=_TupleExpression(_LinkedNode($2,$4),this._$)}
+    : LeftParenthesis AtomicExpr Comma Elements RightParenthesis {$$=_TupleExpression(_LinkedNode($2,$4),this._$)}
     ;
 
 ObjectAccessExpr
@@ -494,8 +497,13 @@ ObjectAccessExpr
     ;
 
 MultilineObject
-    : TypenameAtom NEWLINE {$$=_ObjectExpr($1,null)}
-    | TypenameAtom NEWLINE INDENT MultilineObjectKeyValueList DEDENT {$$=_ObjectExpr($1,$4)}
+    : Constructor NEWLINE {$$=_ObjectExpr($1,null)}
+    | Constructor NEWLINE INDENT MultilineObjectKeyValueList DEDENT {$$=_ObjectExpr($1,$4)}
+    ;
+
+Constructor 
+    : NEW AtomicTypeExpr {$$=$2}
+    | NEW AtomicTypeExpr {$$=$2}
     ;
 
 MultilineObjectKeyValueList
@@ -504,11 +512,11 @@ MultilineObjectKeyValueList
     ;
 
 MultilineObjectKeyValue
-    : MembernameAtom ASSIGN_OP MultilineExpr {$$=_KeyValue($1,$3)}
+    : MembernameAtom EqualSign MultilineExpr {$$=_KeyValue($1,$3)}
     ;
 
 MulitilineDictionary
-    : '{' '}'
+    : LeftCurlyBracket RightCurlyBracket
     | NEWLINE INDENT MultilineDictionaryKeyValueList DEDENT {$$=_ObjectExpr(null, $3)}
     ;
 
@@ -518,11 +526,11 @@ MultilineDictionaryKeyValueList
     ;
 
 MultilineDictionaryKeyValue
-    : StringAtom ASSIGN_OP MultilineExpr {$$=_KeyValue($1,$3)}
+    : StringAtom EqualSign MultilineExpr {$$=_KeyValue($1,$3)}
     ;
 
 SinglelineObject
-    : '{' KeyValueList '}' {$$=_ObjectExpr($2)}
+    : LeftCurlyBracket KeyValueList RightCurlyBracket {$$=_ObjectExpr($2)}
     ;
 
 KeyValueList
@@ -531,17 +539,17 @@ KeyValueList
     ;
 
 KeyValue 
-    : MembernameAtom ASSIGN_OP SinglelineExpr   {$$=_KeyValue($1,$3)}
-    | StringAtom ASSIGN_OP SinglelineExpr       {$$=_KeyValue($1,$3)}
+    : MembernameAtom EqualSign SinglelineExpr   {$$=_KeyValue($1,$3)}
+    | StringAtom EqualSign SinglelineExpr       {$$=_KeyValue($1,$3)}
     ;
 
 SinglelineList
-    : '[' Elements ']'   {$$=_ListExpression($2,this._$)}
-    | '[' ']'            {$$=_ListExpression(null,this._$)}
+    : LeftSquareBracket Elements RightSquareBracket   {$$=_ListExpression($2,this._$)}
+    | LeftSquareBracket RightSquareBracket            {$$=_ListExpression(null,this._$)}
     ;
 
 Elements
-    : AtomicExpr ',' Elements  {$$=_LinkedNode($1,$3)}
+    : AtomicExpr Comma Elements  {$$=_LinkedNode($1,$3)}
     | AtomicExpr {$$=_LinkedNode($1,null)}
     ;
 

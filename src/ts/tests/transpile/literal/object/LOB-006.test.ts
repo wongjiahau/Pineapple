@@ -13,9 +13,9 @@ def People
     :friend People?
 
 def .newPeople -> People
-    return People
+    return new People
         :name = "John"
-        :friend = People
+        :friend = new People
             :name = "Jane"
             :friend = \`nil
 `;

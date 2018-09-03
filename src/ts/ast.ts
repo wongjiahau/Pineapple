@@ -224,7 +224,7 @@ export interface Variable extends AtomicToken {
 
 export interface ObjectExpression { // NOTE: Object is also Dictionary
     kind: "ObjectExpression";
-    constructor: AtomicToken | null;
+    constructor: TypeExpression;
     keyValueList: LinkedNode<KeyValue> | null;
     returnType: TypeExpression;
     location: TokenLocation;

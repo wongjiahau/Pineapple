@@ -1,4 +1,3 @@
-import chalk from "chalk";
 import { TokenLocation } from "../ast";
 import { ErrorDetail } from "./errorUtil";
 
@@ -14,7 +13,7 @@ export function ErrorSyntax(errorHash: ParserErrorDetail): ErrorDetail {
     return {
         code: "0010",
         name: "ErrorSyntax",
-        message: `Unexpected ${errorHash.token} ${chalk.underline(errorHash.text)}`,
+        message: `${errorHash.token} \`${errorHash.text}\` shouldn't appear after the marked text.`,
         relatedLocation: errorHash.loc
     };
 }

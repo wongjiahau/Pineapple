@@ -9,7 +9,7 @@ def People
     pass
 
 def .main
-    let x = People
+    let x = new People
     let y = 6
 `;
         const expectedOutput =

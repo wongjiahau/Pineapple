@@ -28,13 +28,13 @@ def (this List{T}).append(that T) -> List{T}
 def (this List{T}).prepend(that T) -> List{T}
     return [that] ++ this
 
-def (this Number)..<(that Number) -> List{Number}
+def (this Integer) ..< (that Integer) -> List{Integer}
     if this == (that - 1)
         return [this]
     else
-        return [this] ++ ((this + 1)..<that)
+        return [this] ++ ((this + 1) ..< that)
 
-def (this List{T}).at(index Int put value T) -> List{T}
+def (this List{T}).at(index Integer put value T) -> List{T}
     <javascript>
     $this[$index] = $value
     return $this

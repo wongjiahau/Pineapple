@@ -5,7 +5,7 @@ describe("FCTR-001", () => {
     it("case 1", () => {
         const input =
 `
-def (this String).replace(old String with new String) -> String
+def (this String).replace(old String with that String) -> String
     pass
 
 def .main
@@ -13,7 +13,7 @@ def .main
 `;
         const expectedOutput =
 `
-function _replace_with_String_String_String($this,$old,$new){
+function _replace_with_String_String_String($this,$old,$that){
 $$pass$$();
 }
 

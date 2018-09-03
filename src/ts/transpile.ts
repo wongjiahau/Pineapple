@@ -28,7 +28,8 @@ import {
     TupleExpression,
     TypeExpression,
     VariableDeclaration,
-    WhileStatement
+    WhileStatement,
+    BuiltinType
 } from "./ast";
 import { flattenLinkedNode } from "./getIntermediateForm";
 
@@ -278,7 +279,7 @@ export function tpListElements(e: LinkedNode<Expression>): string {
 
 export function tpObjectExpression(e: ObjectExpression): string {
     return `{
-${e.constructor !== null ? `$kind: "${e.constructor.repr}",` : ""}
+${e.constructor !== null ? `$kind: "${stringifyType(e.constructor)}",` : ""}
 ${tpKeyValueList(e.keyValueList)}
 }`;
 }
