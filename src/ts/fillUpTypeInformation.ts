@@ -192,6 +192,8 @@ export function resolveType(
 ): TypeExpression {
     if (t === null) {
         return VoidType();
+    } else if(t.kind !== "UnresolvedType" && t.kind !== "GenericTypename") {
+        throw new Error(`${stringifyTypeReadable(t)} had been resolved before`);
     }
     switch (t.kind) {
         case "UnresolvedType":
@@ -606,7 +608,7 @@ export function checkIfKeyValueListConforms(
         } else {
             // Check if type are equals to expected
             const exprType = kvs[i].expression.returnType;
-            const expectedType = resolveType(matchingMember.expectedType, symbols);
+            const expectedType = matchingMember.expectedType;
             if (!isSubtypeOf(exprType, expectedType, symbols.typeTree, typeEquals)) {
                 raise(ErrorIncorrectTypeGivenForMember(matchingMember.expectedType, kvs[i]));
             }
@@ -928,11 +930,11 @@ export function typeEquals(x: TypeExpression, y: TypeExpression): boolean {
     if (x.kind === "UnresolvedType") {
         switch (y.kind) {
             case "BuiltinType":
-                return x.name.repr === y.name;
+                return x.name.repr === y.name && genericsEqual(x.genericList, y.genericList);
             case "EnumDeclaration":
                 return x.name.repr === y.name.repr;
             case "StructType":
-                return x.name.repr === y.reference.name.repr;
+                return x.name.repr === y.reference.name.repr && genericsEqual(x.genericList, y.reference.genericList)
             default:
                 throw new Error(`Not implmented yet for ${y.kind}`);
         }
@@ -948,7 +950,7 @@ export function typeEquals(x: TypeExpression, y: TypeExpression): boolean {
                     genericsEqual(x.genericList, y.genericList);
             case "StructType":
                 y = y as StructType;
-                return x.reference.name.repr !== y.reference.name.repr &&
+                return x.reference.name.repr === y.reference.name.repr &&
                     genericsEqual(x.genericList, y.genericList);
             case "GenericTypename":
                 return true; // Is this correct?

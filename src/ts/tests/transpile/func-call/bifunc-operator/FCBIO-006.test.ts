@@ -14,14 +14,14 @@ def (this List{T}).append(that T) -> List{T}
         const expectedOutput =
 `
 function _main_(){
-const $x = _append_ListOfInt_Int(_append_ListOfInt_Int([(1),(2),(3)],(1)),(3));
+const $x = _append_ListOfInteger_Integer(_append_ListOfInteger_Integer([(1),(2),(3)],(1)),(3));
 }
 
 function _append_ListOfGeneric$T_Generic$T($this,$that){
 $$pass$$();
 }
 
-function _append_ListOfInt_Int($this,$that){
+function _append_ListOfInteger_Integer($this,$that){
 $$pass$$();
 }
 `;

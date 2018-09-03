@@ -8,7 +8,7 @@ describe("FDBI-003", () => {
 def (this Number) + (that Number) -> Number
     pass
 
-def (this Int) + (that Int) -> Int
+def (this Integer) + (that Integer) -> Integer
     pass
 
 def .main
@@ -22,13 +22,13 @@ function _$plus_Number_Number($this,$that){
 $$pass$$();
 }
 
-function _$plus_Int_Int($this,$that){
+function _$plus_Integer_Integer($this,$that){
 $$pass$$();
 }
 
 function _main_(){
 const $x = _$plus_Number_Number((1),(2.0));
-const $y = _$plus_Int_Int((1),(2));
+const $y = _$plus_Integer_Integer((1),(2));
 }
 
 `;

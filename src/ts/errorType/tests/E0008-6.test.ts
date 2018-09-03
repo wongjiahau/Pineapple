@@ -4,6 +4,6 @@ testError("ErrorNoConformingFunction", `
 def .main
     let x = (1.0).show
 
-def (this Int).show
+def (this Integer).show
     pass
 `);
