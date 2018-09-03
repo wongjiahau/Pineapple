@@ -1,12 +1,19 @@
-import { AtomicToken, TypeExpression } from "../ast";
-import { findSimilarStrings } from "../util";
+import { AtomicToken } from "../ast";
+import { SymbolTable } from "../fillUpTypeInformation";
+import { flattenTree } from "../typeTree";
+import { findSimilarStrings, values } from "../util";
 import { ErrorDetail, showSuggestion, stringifyTypeReadable } from "./errorUtil";
 
 export function ErrorUsingUndefinedType(
     relatedType: AtomicToken,
-    allTypes: TypeExpression[]
+    symbols: SymbolTable
 ): ErrorDetail {
-    const similarTypes = findSimilarStrings(relatedType.repr, allTypes.map((x) => stringifyTypeReadable(x)));
+    const allTypes = flattenTree(symbols.typeTree)
+        .concat(values(symbols.enumTab)).map(stringifyTypeReadable)
+        .concat(values(symbols.structTab).map((x) => x.name.repr));
+
+    const similarTypes = findSimilarStrings(relatedType.repr, allTypes);
+
     return {
         code: "0023",
         name: "ErrorUsingUndefinedType",

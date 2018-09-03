@@ -184,8 +184,11 @@ export function stringifyType(t: TypeExpression): string {
             return t.name.repr;
         case "GenericTypename":
             return `Generic$${t.name.repr}`;
-        case "StructDeclaration":
-            return `${t.name.repr}Of${flattenLinkedNode(t.genericList).map((x) => stringifyType(x)).join("$")}` ;
+        case "BuiltinType":
+        case "StructType":
+            const genericsName = flattenLinkedNode(t.genericList).map((x) => stringifyType(x)).join("$");
+            const typename = t.kind === "BuiltinType" ? t.name : t.reference.name.repr;
+            return `${typename}${genericsName.length > 0 ? "Of" + genericsName : ""}` ;
         case "VoidType":
             return `Void`;
         default:

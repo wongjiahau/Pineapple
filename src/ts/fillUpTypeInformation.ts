@@ -9,7 +9,6 @@ import {
     FunctionCall,
     FunctionDeclaration,
     GenericList,
-    GenericTypename,
     KeyValue,
     LinkedNode,
     ListExpression,
@@ -18,7 +17,6 @@ import {
     NullTokenLocation,
     NumberExpression,
     ReturnStatement,
-    singleLinkedNode,
     Statement,
     StringExpression,
     StructDeclaration,
@@ -60,15 +58,13 @@ import { ErrorDetail, stringifyTypeReadable } from "./errorType/errorUtil";
 import { renderError } from "./errorType/renderError";
 import { convertToLinkedNode, flattenLinkedNode } from "./getIntermediateForm";
 import { SourceCode } from "./interpreter";
-import { prettyPrint } from "./pine2js";
-import { stringifyFuncSignature, stringifyType, tpFunctionDeclaration } from "./transpile";
+import { stringifyFuncSignature } from "./transpile";
 import {
     childOf,
     Comparer,
     EmptyListType,
     EnumType,
     findElement,
-    flattenTree,
     insertChild,
     logTree,
     newBuiltinType,
@@ -77,10 +73,9 @@ import {
     newTupleType,
     ObjectType,
     Tree,
-    verticalDistance,
     VoidType
 } from "./typeTree";
-import { find, values } from "./util";
+import { find } from "./util";
 
 let CURRENT_SOURCE_CODE: () => SourceCode;
 export function fillUpTypeInformation(
@@ -153,7 +148,7 @@ function validateMembers(
                 raise(ErrorUsingUndefinedGenericName(m.expectedType.name, generics));
             }
         }
-        if (m.expectedType.kind === "StructDeclaration") {
+        if (m.expectedType.kind === "UnresolvedType") {
             if (m.expectedType.genericList !== null) {
                 const gs = flattenLinkedNode(m.expectedType.genericList);
                 for (let j = 0; j < gs.length; j++) {
@@ -202,7 +197,6 @@ export function resolveType(
             if (matchingType) {
                 result = copy(matchingType);
                 result.nullable = t.nullable;
-                console.log(result);
                 return result;
             }
 
@@ -217,26 +211,24 @@ export function resolveType(
             // check struct table
             const mathchingStruct = findTableEntry(symbols.structTab, t.name.repr);
             if (mathchingStruct) {
-                result = copy(mathchingStruct);
+                result = newStructType(copy(mathchingStruct));
                 result.nullable = t.nullable;
                 return result;
             } else {
-                const allTypes = flattenTree(symbols.typeTree)
-                    .concat(values(symbols.enumTab))
-                    .concat(values(symbols.structTab));
-                raise(ErrorUsingUndefinedType(t.name, allTypes));
+                raise(ErrorUsingUndefinedType(t.name, symbols));
             }
             break;
         case "VoidType":
             return {
                 kind: "VoidType",
+                name: newAtomicToken("Void"),
                 location: NullTokenLocation(),
                 nullable: false
             };
         case "GenericTypename":
-            return t;
+        case "BuiltinType":
+        return t;
         default:
-            console.log(t.name.repr);
             // search struct table
             throw new Error(`${t.kind} cant be resolved yet`); // TODO: implement it
     }
@@ -443,7 +435,7 @@ export function fillUpForStmtTypeInfo(f: ForStatement, symbols: SymbolTable, var
     [ForStatement, SymbolTable, VariableTable] {
     [f.expression, symbols] = fillUpExpressionTypeInfo(f.expression, symbols, vartab);
     const exprType = f.expression.returnType;
-    if (exprType.kind === "StructDeclaration" && exprType.name.repr === "List") {
+    if (exprType.kind === "BuiltinType" && exprType.name === "List") {
         if (exprType.genericList !== null) {
             f.iterator.returnType = exprType.genericList.current;
         } else {
@@ -503,18 +495,19 @@ export function fillUpExpressionTypeInfo(e: Expression, symbols: SymbolTable, va
     case "Variable": e = fillUpVariableTypeInfo(e, vartab); break;
     case "ObjectExpression":
         if (e.constructor !== null) {
-            e.returnType = getStruct(e.constructor, symbols.structTab);
+            e.returnType = newStructType(getStruct(e.constructor, symbols.structTab));
             [e.keyValueList, symbols] = fillUpKeyValueListTypeInfo(e.keyValueList, symbols, vartab);
-            checkIfKeyValueListConforms(e.keyValueList, e.returnType, symbols);
+            checkIfKeyValueListConforms(e.keyValueList, e.returnType.reference, symbols);
         } else {
             e.returnType = newBuiltinType("Dict");
         }
         break;
     case "ObjectAccess":
         [e.subject, symbols] = fillUpExpressionTypeInfo(e.subject, symbols, vartab);
-        switch (e.subject.returnType.kind) {
-        case "StructDeclaration":
-            e.returnType = findMemberType( e.key, e.subject.returnType);
+        const subjectReturnType = e.subject.returnType;
+        switch (subjectReturnType.kind) {
+        case "StructType":
+            e.returnType = findMemberType( e.key, subjectReturnType.reference);
             break;
         case "UnresolvedType":
             if (e.subject.returnType.name.repr === "Dict") {
@@ -723,8 +716,7 @@ export function getClosestFunction(
         for (let j = 0; j < paramLength; j++) {
             if (!typeEquals(
                 f.parameters[j].returnType,
-                matchingFunc.parameters[j].typeExpected,
-                false // Dont ignore generic
+                matchingFunc.parameters[j].typeExpected // Dont ignore generic
             )) {
                 gotConflict = true;
             }
@@ -887,10 +879,10 @@ export function fillUpElementsType(e: LinkedNode<Expression>, symbols: SymbolTab
     return [e, symbols];
 }
 
-export function getElementsType(elements: LinkedNode<Expression>): StructDeclaration {
+export function getElementsType(elements: LinkedNode<Expression>): BuiltinType {
     checkIfAllElementTypeAreHomogeneous(flattenLinkedNode(elements));
     const types = flattenLinkedNode(elements).map((x) => x.returnType);
-    return newListType(types[0]) as StructDeclaration;
+    return newListType(types[0]) as BuiltinType;
 }
 
 export function checkIfAllElementTypeAreHomogeneous(ex: Expression[]): void {
@@ -916,13 +908,25 @@ export function genericsEqual(x: GenericList, y: GenericList): boolean {
     return true;
 }
 
-export function typeEquals(x: TypeExpression, y: TypeExpression, ignoreGeneric = true): boolean {
-    if (x.kind !== y.kind) {
+export function typeEquals(x: TypeExpression, y: TypeExpression): boolean {
+    if (y.kind === "UnresolvedType") {
+        [x, y] = [y, x]; // swap x with y
+    }
+    if (x.kind === "UnresolvedType") {
+        switch (y.kind) {
+            case "BuiltinType":
+                return x.name.repr === y.name;
+            case "EnumDeclaration":
+                return x.name.repr === y.name.repr;
+            case "StructType":
+                return x.name.repr === y.reference.name.repr;
+            default:
+                throw new Error(`Not implmented yet for ${y.kind}`);
+        }
+    } else if (x.kind !== y.kind) {
         return false;
     } else {
         switch (x.kind) {
-            case "UnresolvedType":
-                throw new Error(`${x.name.repr} is still unresolved.`);
             case "EnumDeclaration":
                 return x.name.repr === (y as UnresolvedType).name.repr;
             case "BuiltinType":
@@ -943,15 +947,6 @@ export function typeEquals(x: TypeExpression, y: TypeExpression, ignoreGeneric =
 
 function copy<T>(x: T): T {
     return JSON.parse(JSON.stringify(x));
-}
-
-function getText(sourceCode: SourceCode, range: TokenLocation): string {
-    const lines = sourceCode.content.split("\n").slice(range.first_line - 1, range.last_line);
-    if (lines.length === 1) {
-        return lines[0].slice(range.first_column - 1, range.last_column);
-    } else {
-        return lines.join("\n");
-    }
 }
 
 function isNil(t: TypeExpression): boolean {

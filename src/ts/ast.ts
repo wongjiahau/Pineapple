@@ -30,7 +30,7 @@ export interface StructDeclaration {
     kind: "StructDeclaration";
     name: AtomicToken;
     members: LinkedNode<MemberDefinition> | null;
-    genericList: GenericList;
+    genericList: LinkedNode<GenericTypename>;
     location: TokenLocation;
     originFile: string;
 }
