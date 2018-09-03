@@ -221,7 +221,7 @@ const _AnonymousExpression = (location) => ({
 
 // Identifiers
 [.]([a-z][a-zA-Z0-9]*)?         return 'FUNCNAME'    
-[T][12]?                        return 'GENERICTYPENAME'
+\b[T][12]?\b                    return 'GENERICTYPENAME'
 [A-Z][a-zA-Z0-9]*               return 'TYPENAME'
 [a-z][a-zA-Z]*                  return 'VARNAME'
 [:][a-z][a-zA-Z0-9]*            return 'MEMBERNAME'
@@ -503,7 +503,6 @@ MultilineObject
 
 Constructor 
     : NEW AtomicTypeExpr {$$=$2}
-    | NEW AtomicTypeExpr {$$=$2}
     ;
 
 MultilineObjectKeyValueList

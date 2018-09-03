@@ -104,7 +104,11 @@ export interface AssignmentStatement {
 
 export type TypeExpression
     = UnresolvedType       // e.g. String or List{Number}
-    | GenericTypename  // e.g. T, T1 or T2
+    | ResolvedType
+    ;
+
+export type ResolvedType
+    = GenericTypename  // e.g. T, T1 or T2
     | VoidType
     | EnumDeclaration
     | StructType

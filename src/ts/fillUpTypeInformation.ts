@@ -25,7 +25,8 @@ import {
     TypeExpression,
     UnresolvedType,
     Variable,
-    VariableDeclaration
+    VariableDeclaration,
+    ResolvedType
 } from "./ast";
 
 import {ErrorAccessingInexistentMember} from "./errorType/E0001-AccessingInexistentMember";
@@ -511,9 +512,17 @@ export function fillUpExpressionTypeInfo(e: Expression, symbols: SymbolTable, va
             break;
         case "ObjectExpression":
             if (e.constructor !== null) {
-                e.returnType = newStructType(getStruct(e.constructor, symbols.structTab), null);
+                e.constructor = resolveType(e.constructor, symbols);
+                if(e.constructor.kind !== "StructType") {
+                    throw new Error(`${stringifyTypeReadable(e.constructor)} is neither struct nor builtin.`)
+                }
+                e.returnType = newStructType(e.constructor.reference, e.constructor.genericList);
                 [e.keyValueList, symbols] = fillUpKeyValueListTypeInfo(e.keyValueList, symbols, vartab);
-                checkIfKeyValueListConforms(e.keyValueList, e.returnType.reference, symbols);
+                checkIfKeyValueListConforms(
+                    e.keyValueList, 
+                    substituteStructGeneric(e.constructor, e.constructor.reference), 
+                    symbols
+                );
             } else {
                 e.returnType = newBuiltinType("Dict");
             }
@@ -543,6 +552,32 @@ export function fillUpExpressionTypeInfo(e: Expression, symbols: SymbolTable, va
             throw new Error(`Unimplemented yet for ${e.kind}`);
     }
     return [e, symbols];
+}
+
+export function extractGenericList(t: TypeExpression): GenericList {
+    switch(t.kind) {
+        case "BuiltinType":
+        case "StructType":
+            return t.genericList;
+        default:
+            return null;
+    }
+}
+
+export function substituteStructGeneric(t: StructType, s: StructDeclaration): StructDeclaration {
+    const instantiatedGenerics = flattenLinkedNode(t.genericList);
+    const originalGenerics = flattenLinkedNode(s.genericList);
+    const genericBinding: TableOf<TypeExpression> = {};
+    for (let i = 0; i < originalGenerics.length; i++) {
+        genericBinding[originalGenerics[i].name.repr] = instantiatedGenerics[i];
+    }
+    const members = flattenLinkedNode(copy(s.members));
+    for (let i = 0; i < members.length; i++) {
+        members[i].expectedType = substituteGeneric(members[i].expectedType, genericBinding);
+    }
+    const result = copy(s);
+    result.members = convertToLinkedNode(members);
+    return result;
 }
 
 export function fillUpTupleTypeInfo(t: TupleExpression, symbols: SymbolTable, vartab: VariableTable): [TupleExpression, SymbolTable] {
@@ -594,7 +629,11 @@ export function isSubtypeOf(x: TypeExpression, y: TypeExpression, tree: Tree < T
     }
 }
 
-export function checkIfKeyValueListConforms(keyValues: LinkedNode < KeyValue > | null, structDecl: StructDeclaration, symbols: SymbolTable): void {
+export function checkIfKeyValueListConforms(
+    keyValues: LinkedNode < KeyValue > | null, 
+    structDecl: StructDeclaration, 
+    symbols: SymbolTable
+): void {
     const kvs = flattenLinkedNode(keyValues);
     const members = flattenLinkedNode(structDecl.members);
 
@@ -640,19 +679,6 @@ export function findMemberType(key: AtomicToken, structDecl: StructDeclaration):
         return matchingMember[0].expectedType;
     } else {
         return raise(ErrorAccessingInexistentMember(structDecl, key));
-    }
-}
-export function getStruct(t: TypeExpression, structTab: StructTable): StructDeclaration {
-    switch(t.kind) {
-        case "UnresolvedType":
-            const result = structTab[t.name.repr];
-            if (result !== undefined) {
-                return result;
-            } else {
-                return raise(ErrorUsingUndefinedStruct(t.name, structTab));
-            }
-        default:
-            throw new Error(`Cannot get struct for ${stringifyTypeReadable(t)}`)
     }
 }
 
