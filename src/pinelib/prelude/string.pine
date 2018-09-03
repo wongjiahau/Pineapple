@@ -1,5 +1,5 @@
-def (this String).replace(old String with new String) -> String
-    return this.splitBy(old).joinBy(new)
+def (this String).replace(old String with that String) -> String
+    return this.splitBy(old).joinBy(that)
 
 def (this String).splitBy(that String) -> String
     <javascript>

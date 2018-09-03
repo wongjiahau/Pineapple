@@ -125,7 +125,7 @@ export function loadFile(filename: string): SourceCode | null {
         content: fs
             .readFileSync(filename)
             .toString(),
-        filename: filename
+        filename: fs.realpathSync(filename)
     };
 }
 

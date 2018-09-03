@@ -12,8 +12,3 @@ def .readline -> String
 def (this String).ask -> String
     this.show
     return .readline
-
-def T BinaryTree
-    :current    T 
-    :left       T BinaryTree 
-    :right      T BinaryTree

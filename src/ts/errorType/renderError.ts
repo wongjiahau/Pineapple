@@ -8,6 +8,7 @@ export function renderError(
     sourceCode: SourceCode,
     errorDetail: ErrorDetail,
 ): string {
+    console.log(sourceCode.filename);
     const errorMessageStyle = {borderStyle: "double", padding: 1, borderColor: "red"};
     const sourceCodeStyle = {padding: 1, borderColor: "grey"};
     const hintStyle = {padding: 1, borderColor: "cyan"};
@@ -28,11 +29,21 @@ export function renderError(
         result += "\n" + boxen(chalk.bold("HINT:") + "\n\n" + errorDetail.hint, hintStyle);
     }
     // tslint:disable-next-line:max-line-length
-    result += `\nThe error is located at ${chalk.underline(sourceCode.filename)} at line ${errorDetail.relatedLocation.first_line}.`;
+    const filename = chalk.underline(extractFilename(sourceCode.filename));
+    const pathname = chalk.underline(extractPathname(sourceCode.filename));
+    result += `\nThe error is located at ${filename} from ${pathname} at line ${errorDetail.relatedLocation.first_line}.`;
 
     return result
         .split("\n")
         .map((x) => "  " + x)
         .join("\n") + "\n";
 
+}
+
+export function extractFilename(path: string): string {
+    return path.split("/").slice(-1)[0];
+}
+
+export function extractPathname(path: string): string {
+    return path.split("/").slice(0, -1).join("/");
 }

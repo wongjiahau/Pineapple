@@ -17,6 +17,6 @@ export function ErrorIncorrectTypeGivenForMember(
 But the given expression has type of:
 
     ${stringifyTypeReadable(relatedKeyValue.expression.returnType)}`,
-        relatedLocation: relatedKeyValue.memberName.location
+        relatedLocation: relatedKeyValue.expression.location
     };
 }
