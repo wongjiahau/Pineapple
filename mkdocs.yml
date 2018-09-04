@@ -1,2 +1,47 @@
-site_name: Pineapple Doc
-theme: readthedocs
+# Project information
+site_name: Pineapple Documentation
+site_description: 'The documentation of Pineapple language'
+site_url: 'https://wongjiahau.github.io/Pineapple/'
+site_author: 'Wong Jia Hau'
+
+# Repository
+repo_name: 'wongjiahau/Pineapple'
+repo_url: 'https://github.com/wongjiahau/Pineapple'
+
+# Copyright
+copyright: 'Copyright &copy; 2018 Wong Jia Hau'
+
+# Configuration
+theme: 
+  name: 'material'
+  palette: 
+    primary: 'deep orange'
+    accent: 'blue'
+  font:
+    text: 'Noto Sans'
+  logo:
+    icon: 'book'
+extra:
+  disqus: 'Pineapple'
+markdown_extensions:
+  - admonition
+  - codehilite:
+      guess_lang: false
+  - toc:
+      permalink: true
+  - pymdownx.arithmatex
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
+  - pymdownx.critic
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_generator: !!python/name:pymdownx.emoji.to_svg
+  - pymdownx.inlinehilite
+  - pymdownx.magiclink
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.superfences
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
