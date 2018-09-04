@@ -8,7 +8,8 @@ import {
     StructDeclaration,
     StructType,
     TypeExpression,
-    VoidType
+    VoidType,
+    BuiltinTypename
 } from "./ast";
 
 import { typeEquals } from "./fillUpTypeInformation";
@@ -161,9 +162,8 @@ export function initTypeTree(): Tree<TypeExpression> {
     const anyType       = newBuiltinType("Any");
     const enumType      = EnumType();
     const structType    = BaseStructType();
-    const dictType      = newBuiltinType("Dict");
+    const tableType     = newBuiltinType("Table");
     const listType      = newListType(newGenericTypename("T"));
-    const emptyListType = EmptyListType();
     const numberType    = newBuiltinType("Number");
     const integerType   = newBuiltinType("Integer");
     const stringType    = newBuiltinType("String");
@@ -175,17 +175,12 @@ export function initTypeTree(): Tree<TypeExpression> {
     tree     = inserts(numberType,  anyType);
     tree     = inserts(integerType, numberType);
     tree     = inserts(enumType,    anyType);
-    tree     = inserts(dictType,    anyType);
-    tree     = inserts(structType,  dictType);
+    tree     = inserts(tableType,    anyType);
+    tree     = inserts(structType,  tableType);
     tree     = inserts(listType,    anyType);
-    tree     = inserts(emptyListType,    listType);
     tree     = inserts(dateType,    anyType);
     tree     = inserts(stringType,  listType);
     return tree;
-}
-
-export function EmptyListType(): TypeExpression {
-    return newBuiltinType("EmptyList");
 }
 
 export function BaseStructType(): TypeExpression {
@@ -232,7 +227,7 @@ export function newStructType(s: StructDeclaration, genericList: GenericList): S
     };
 }
 
-export function newBuiltinType(name: string): TypeExpression {
+export function newBuiltinType(name: BuiltinTypename): TypeExpression {
     return {
         kind: "BuiltinType",
         name: name,

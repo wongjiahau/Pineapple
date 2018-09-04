@@ -407,9 +407,7 @@ VariableAtom
     ;
 
 TypeExpression
-    : AtomicTypeExpr UNION_OP TypeExpression
-    | AtomicTypeExpr INTERSECT_OP TypeExpression
-    | AtomicTypeExpr {$$.location = this._$}
+    : AtomicTypeExpr {$$.location = this._$}
     ;
 
 AtomicTypeExpr
@@ -544,7 +542,6 @@ KeyValue
 
 SinglelineList
     : LeftSquareBracket Elements RightSquareBracket   {$$=_ListExpression($2,this._$)}
-    | LeftSquareBracket RightSquareBracket            {$$=_ListExpression(null,this._$)}
     ;
 
 Elements

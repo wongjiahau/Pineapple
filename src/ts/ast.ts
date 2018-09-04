@@ -117,10 +117,22 @@ export type ResolvedType
 
 export interface BuiltinType {
     kind: "BuiltinType";
-    name: string;
+    name: BuiltinTypename
     genericList: GenericList;
     nullable: boolean;
 }
+export type BuiltinTypename 
+    = "Any"
+    | "Number" 
+    | "Integer" 
+    | "String" 
+    | "Date"
+    | "List" 
+    | "Table" 
+    | "Struct"
+    | "Tuple"
+    | "Enum"
+    ;
 
 export interface StructType {
     kind: "StructType";
@@ -252,6 +264,15 @@ export interface ListExpression {
     elements: LinkedNode<Expression> | null;
     location: TokenLocation;
     returnType: TypeExpression;
+}
+
+export function EmptyList(location: TokenLocation, returnType: TypeExpression): ListExpression {
+    return {
+        kind: "List",
+        elements: null,
+        location: location,
+        returnType: returnType
+    };
 }
 
 export interface StringExpression extends AtomicToken {

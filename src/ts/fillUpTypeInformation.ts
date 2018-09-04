@@ -26,7 +26,8 @@ import {
     UnresolvedType,
     Variable,
     VariableDeclaration,
-    ResolvedType
+    ResolvedType,
+    EmptyList
 } from "./ast";
 
 import {ErrorAccessingInexistentMember} from "./errorType/E0001-AccessingInexistentMember";
@@ -515,18 +516,28 @@ export function fillUpExpressionTypeInfo(e: Expression, symbols: SymbolTable, va
         case "ObjectExpression":
             if (e.constructor !== null) {
                 e.constructor = resolveType(e.constructor, symbols);
-                if(e.constructor.kind !== "StructType") {
+                if(e.constructor.kind === "StructType") {
+                    e.returnType = newStructType(e.constructor.reference, e.constructor.genericList);
+                    [e.keyValueList, symbols] = fillUpKeyValueListTypeInfo(e.keyValueList, symbols, vartab);
+                    checkIfKeyValueListConforms(
+                        e.keyValueList, 
+                        substituteStructGeneric(e.constructor, e.constructor.reference), 
+                        symbols
+                    );
+                } else if(e.constructor.kind === "BuiltinType") {
+                    if(e.constructor.name === "List") {
+                        if(e.keyValueList === null) {
+                            e = EmptyList(e.location, e.constructor);
+                        } else {
+                            throw new Error("List type shouldn't have key value");
+                        }
+                    }
+                }
+                else {
                     throw new Error(`${stringifyTypeReadable(e.constructor)} is neither struct nor builtin.`)
                 }
-                e.returnType = newStructType(e.constructor.reference, e.constructor.genericList);
-                [e.keyValueList, symbols] = fillUpKeyValueListTypeInfo(e.keyValueList, symbols, vartab);
-                checkIfKeyValueListConforms(
-                    e.keyValueList, 
-                    substituteStructGeneric(e.constructor, e.constructor.reference), 
-                    symbols
-                );
             } else {
-                e.returnType = newBuiltinType("Dict");
+                e.returnType = newBuiltinType("Table");
             }
             break;
         case "ObjectAccess":

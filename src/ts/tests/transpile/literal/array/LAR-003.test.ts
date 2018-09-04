@@ -6,7 +6,7 @@ describe("LAR-003", () => {
         const input =
 `
 def .main
-    let x List{String} = []
+    let x = new List{String}
 `;
         const expectedOutput =
 `
