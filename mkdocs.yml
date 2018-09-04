@@ -19,6 +19,7 @@ theme:
     accent: 'blue'
   font:
     text: 'Noto Sans'
+    code: 'Roboto Mono'
   logo:
     icon: 'book'
 extra:

@@ -15,14 +15,19 @@ For example:
 ```py
 if he.isCrazy
     you.callAmbulance
+
 elif he.isInDanger
     you.goHelp(he)
+
 else
     you.doNothing
 ```
-Note that every test expression must be Boolean type.  
+!!! note "Note"
+    Every test expression must have type of Boolean.
 
-Remember that `.isCrazy` and other similar construct are just [functions](BasicFunctions.md).
+!!! tip "Tips"
+    `.isCrazy` and other similar construct are just [functions](BasicFunctions.md).
+
 <hr>
 
 ## Test expression chaining
@@ -47,20 +52,20 @@ elif not current.isLunchTime
     "Continue working . . .".show
 ```
 
-#### Note
-`not` operator have higher precedence than `or` and `and`.  
-For example, the following code:
-```py
-if not he.isFine and he.isEating
-    ...
-```
+!!! note "Note"
+    `not` operator have higher precedence than `or` and `and`.  
+    For example, the following code: 
+    ``` 
+    if not he.isFine and he.isEating
+    ```
 
-Is same as:
+    Is same as:
 
-```py
-if (not he.isFine) and he.isEating
-    ...
-```
+    ```py
+    if (not he.isFine) and he.isEating
+        ...
+    ```
+
 
 
 

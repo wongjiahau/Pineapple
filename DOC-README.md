@@ -9,6 +9,7 @@ This documentation is generated using [MKDocs](https://www.mkdocs.org/).
 
 1. Install Python 3.6
 2. Install MKDoc 
+3. Install [MKDoc Material](https://squidfunk.github.io/mkdocs-material/extensions/admonition/) 
 
 ```sh
 pip install mkdocs
