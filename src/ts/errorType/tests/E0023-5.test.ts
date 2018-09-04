@@ -1,6 +1,8 @@
 import { testError } from "../../tests/testUtil";
 
-testError("ErrorUsingUndefinedStruct", `
+testError("ErrorUsingUndefinedType", `
+def Peopl
+    pass 
 def .main
     let x = new People
         :name = "Wong"

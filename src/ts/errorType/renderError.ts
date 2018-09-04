@@ -8,7 +8,6 @@ export function renderError(
     sourceCode: SourceCode,
     errorDetail: ErrorDetail,
 ): string {
-    console.log(sourceCode.filename);
     const errorMessageStyle = {borderStyle: "double", padding: 1, borderColor: "red"};
     const sourceCodeStyle = {padding: 1, borderColor: "grey"};
     const hintStyle = {padding: 1, borderColor: "cyan"};

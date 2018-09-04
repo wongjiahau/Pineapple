@@ -8,12 +8,8 @@ export function ErrorUsingUndefinedType(
     relatedType: AtomicToken,
     symbols: SymbolTable
 ): ErrorDetail {
-    const allTypes = flattenTree(symbols.typeTree)
-        .concat(values(symbols.enumTab)).map(stringifyTypeReadable)
-        .concat(values(symbols.structTab).map((x) => x.name.repr));
-
+    const allTypes = flattenTree(symbols.typeTree).map(stringifyTypeReadable);
     const similarTypes = findSimilarStrings(relatedType.repr, allTypes);
-
     return {
         code: "0023",
         name: "ErrorUsingUndefinedType",

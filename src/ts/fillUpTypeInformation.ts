@@ -39,7 +39,6 @@ import {ErrorMissingMember} from "./errorType/E0007-ErrorMissingMember";
 import {ErrorNoConformingFunction} from "./errorType/E0008-NoConformingFunction";
 import {ErrorStructRedeclare} from "./errorType/E0009-StructRedeclare";
 import {ErrorUnmatchingReturnType} from "./errorType/E0011-UnmatchingReturnType";
-import {ErrorUsingUndefinedStruct} from "./errorType/E0012-UsingUndefinedStruct";
 import {ErrorUsingUnknownFunction} from "./errorType/E0013-UsingUnknownFunction";
 import {ErrorVariableRedeclare} from "./errorType/E0014-VariableRedeclare";
 import {ErrorEnumRedeclare} from "./errorType/E0015-EnumRedeclare";
@@ -94,6 +93,9 @@ export function fillUpTypeInformation(decls: Declaration[], sourceCode: SourceCo
                 symbols.funcTab = newFunctionTable(currentDecl, symbols.funcTab);
                 break;
             case "StructDeclaration":
+                // check if the struct is declared already or not
+                newStructTab(currentDecl, copy(symbols.structTab));
+
                 const tempSymbols = copy(symbols);
                 tempSymbols.typeTree = insertChild<TypeExpression> (
                     newStructType(currentDecl, currentDecl.genericList),
