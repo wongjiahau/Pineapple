@@ -18,7 +18,11 @@ if (program.log) {
 const fs = require("fs");
 program.args.forEach((arg: string) => {
     try {
-        const dependencies = loadPreludeScript(arg).concat(loadDependency(loadFile(arg)));
+        const file = loadFile(arg);
+        if(file === null) {
+            throw new Error(`Cannot open file ${arg}`);
+        }
+        const dependencies = loadPreludeScript(file.filename).concat(loadDependency(file));
         const sortedDependencies = sortDependency(dependencies);
         const allCodes = sortedDependencies.map(loadFile);
         const ir = loadSource(allCodes); // ir means intermediate representation

@@ -1,7 +1,24 @@
 def .main
-    "Hello world".show
-    let x = 1 + 1
-    let ans = "What is your name?".ask
-    ans.show
-    let y = 123
-    y.123
+    let p = new People
+        :name = "Wong"
+        :age  = 25
+    
+    let q = new People
+        :name = "Johnny"
+        :age  = 99
+
+    if p.isBetterThan(q) or p.isOld
+        "p is old man".show
+    else
+        "p is not old".show
+
+def People
+    :name String
+    :age  Integer
+
+
+def (this People).isOld -> Boolean
+    return this:age > 20
+
+def (this People).isBetterThan(that People) -> Boolean
+    return this:name.length > that:name.length

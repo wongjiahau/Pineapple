@@ -196,7 +196,8 @@ export function newListType(of: TypeExpression): TypeExpression {
         kind: "BuiltinType",
         name: "List",
         genericList: singleLinkedNode(of),
-        nullable: false
+        nullable: false,
+        location: NullTokenLocation()
     };
 }
 
@@ -205,7 +206,8 @@ export function newTupleType(of: LinkedNode<TypeExpression> | null): TypeExpress
         kind: "BuiltinType",
         name: "Tuple",
         genericList: of,
-        nullable: false
+        nullable: false,
+        location: NullTokenLocation()
     };
 }
 
@@ -223,7 +225,8 @@ export function newStructType(s: StructDeclaration, genericList: GenericList): S
         kind: "StructType",
         reference: s,
         nullable: false,
-        genericList: genericList
+        genericList: genericList,
+        location: s.location
     };
 }
 
@@ -232,6 +235,7 @@ export function newBuiltinType(name: BuiltinTypename): TypeExpression {
         kind: "BuiltinType",
         name: name,
         nullable: false,
-        genericList: null
+        genericList: null,
+        location: NullTokenLocation()
     };
 }

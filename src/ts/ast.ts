@@ -83,7 +83,7 @@ export interface BranchStatement {
 
 export interface TestExpression {
     kind: "TestExpression";
-    current: FunctionCall;
+    current: Expression;
     negated: boolean;
     chainOperator: AtomicToken;
     next: TestExpression;
@@ -120,6 +120,7 @@ export interface BuiltinType {
     name: BuiltinTypename
     genericList: GenericList;
     nullable: boolean;
+    location: TokenLocation;
 }
 export type BuiltinTypename 
     = "Any"
@@ -139,6 +140,7 @@ export interface StructType {
     reference: StructDeclaration;
     nullable: boolean;
     genericList: GenericList;
+    location: TokenLocation;
 }
 
 export interface EnumDeclaration {

@@ -175,6 +175,8 @@ const _AnonymousExpression = (location) => ({
 "if"        return 'IF'
 "elif"      return 'ELIF'
 "else"      return 'ELSE'
+"or"        return 'OR'
+"and"       return 'AND'
 "for"       return 'FOR' 
 "in"        return 'IN'
 "while"     return 'WHILE'

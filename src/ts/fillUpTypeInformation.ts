@@ -74,6 +74,8 @@ import {
     VoidType
 } from "./typeTree";
 import {find} from "./util";
+import { ErrorConditionIsNotBoolean } from "./errorType/E0012-ConditionIsNotBoolean";
+import { prettyPrint } from "./pine2js";
 
 let CURRENT_SOURCE_CODE: () => SourceCode;
 export function fillUpTypeInformation(decls: Declaration[], sourceCode: SourceCode, symbols: SymbolTable): [Declaration[], SymbolTable] {
@@ -469,13 +471,25 @@ export function fillUpForStmtTypeInfo(f: ForStatement, symbols: SymbolTable, var
 }
 
 export function fillUpTestExprTypeInfo(t: TestExpression, symbols: SymbolTable, vartab: VariableTable): [TestExpression, SymbolTable] {
-    [t.current, symbols.funcTab] = fillUpFunctionCallTypeInfo(t.current, symbols, vartab);
+    [t.current, symbols] = fillUpExpressionTypeInfo(t.current, symbols, vartab);
+    assertReturnTypeIsBoolean(t.current);
     let next = t.next;
     while (next !== null) {
-        [next.current, symbols.funcTab] = fillUpFunctionCallTypeInfo(next.current, symbols, vartab);
+        [next.current, symbols] = fillUpExpressionTypeInfo(next.current, symbols, vartab);
+        assertReturnTypeIsBoolean(next.current);
         next = next.next;
     }
     return [t, symbols];
+}
+
+export function assertReturnTypeIsBoolean(e: Expression) {
+    const type = e.returnType;
+    if((type.kind === "EnumDeclaration" && type.name.repr === "Boolean") || 
+        (type.kind === "StructType" && type.reference.name.repr === "Boolean")) {
+        // ok
+    } else {
+        raise(ErrorConditionIsNotBoolean(e));
+    }
 }
 
 export function fillUpBranchTypeInfo(b: BranchStatement, symbols: SymbolTable, vartab: VariableTable): [BranchStatement, SymbolTable] {
