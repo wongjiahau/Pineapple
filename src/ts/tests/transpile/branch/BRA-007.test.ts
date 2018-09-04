@@ -1,36 +1,25 @@
 import { pine2js } from "../../../pine2js";
 import { assertEquals } from "../../testUtil";
 
-describe("BRA-003", () => {
-    it("if else without elif", () => {
+describe("BRA-004", () => {
+    it("precedence should follows left to right", () => {
         const input =
 `
 def Boolean
-    pass
-
-def (this Number) > (that Number) -> Boolean
-    pass
+    \`true
+    \`false
 
 def .main
-    if 5 > 6
+    if \`true or \`false and \`true 
         return "ok"
-    else
-        return "no"
 `;
         const expectedOutput =
 `
-function _$greaterThan_Number_Number($this,$that){
-$$pass$$();
-}
-
 function _main_(){
-if((_$greaterThan_Number_Number((5),(6)))){
+if((((true) || false) && true)){
 return "ok"
-}else {
-return "no"
 };
 }
-
 `.trim();
 
         const result = pine2js(input).trim();

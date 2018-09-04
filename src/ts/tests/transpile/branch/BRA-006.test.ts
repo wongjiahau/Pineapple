@@ -1,8 +1,8 @@
 import { pine2js } from "../../../pine2js";
 import { assertEquals } from "../../testUtil";
 
-describe("BRA-003", () => {
-    it("if else without elif", () => {
+describe("BRA-004", () => {
+    it("not operator", () => {
         const input =
 `
 def Boolean
@@ -12,10 +12,8 @@ def (this Number) > (that Number) -> Boolean
     pass
 
 def .main
-    if 5 > 6
+    if not 5 > 6
         return "ok"
-    else
-        return "no"
 `;
         const expectedOutput =
 `
@@ -24,13 +22,10 @@ $$pass$$();
 }
 
 function _main_(){
-if((_$greaterThan_Number_Number((5),(6)))){
+if((!_$greaterThan_Number_Number((5),(6)))){
 return "ok"
-}else {
-return "no"
 };
 }
-
 `.trim();
 
         const result = pine2js(input).trim();

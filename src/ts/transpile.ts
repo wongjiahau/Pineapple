@@ -127,15 +127,30 @@ ${tpStatement(b.body)}
     }
 }
 
-export function tpTestExpression(t: TestExpression): string {
+export function tpTestExpression(t: TestExpression, isFirst = true): string {
     if (t === null) {
         return "";
     }
-    return `${t.negated ? "!" : ""}`
-        + `${tpFunctionCall(t.current)}`
-        + `${t.chainOperator || ""}`
-        + `${tpTestExpression(t.next)}`
+    let precedingLeftParenthesis = "";
+    if(isFirst) {
+        precedingLeftParenthesis = flattenLinkedNode(t).map(() => "(").join("");
+    }
+    return precedingLeftParenthesis
+        + (t.negated ? "!" : "")
+        + tpExpression(t.current) + ")"
+        + (t.chainOperator ? tpChainOperator(t.chainOperator) : "")
+        + tpTestExpression(t.next, false)
         ;
+    
+    function tpChainOperator(a: AtomicToken): string {
+        if(a.repr === "or") {
+            return " || ";
+        } else if(a.repr === "and") {
+            return " && ";
+        } else {
+            throw new Error(`Unknown logical operator ${a.repr}, this should be the problem of parser`);
+        }
+    }
 }
 
 export function tpReturnStatement(r: ReturnStatement): string {

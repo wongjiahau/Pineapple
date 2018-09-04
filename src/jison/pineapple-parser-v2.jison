@@ -177,6 +177,7 @@ const _AnonymousExpression = (location) => ({
 "else"      return 'ELSE'
 "or"        return 'OR'
 "and"       return 'AND'
+"not"       return 'NOT'
 "for"       return 'FOR' 
 "in"        return 'IN'
 "while"     return 'WHILE'
@@ -384,10 +385,10 @@ ElseStatement
     ;
     
 Test
-    : SinglelineExpr                                  {$$=_TestExpression($1,false,null,null)}
-    | SinglelineExpr LogicOperatorAtom Test           {$$=_TestExpression($1,false,$2,$3)}
-    | NotAtom SinglelineExpr                          {$$=_TestExpression($1,true,null,null)}
-    | NotAtom SinglelineExpr LogicOperatorAtom Test   {$$=_TestExpression($1,true,$2,$3)}
+    : SinglelineExpr                              {$$=_TestExpression($1,false,null,null)}
+    | SinglelineExpr LogicOperatorAtom Test       {$$=_TestExpression($1,false,$2,$3)}
+    | NOT SinglelineExpr                          {$$=_TestExpression($2,true,null,null)}
+    | NOT SinglelineExpr LogicOperatorAtom Test   {$$=_TestExpression($2,true,$3,$4)}
     ;
 
 AssignmentStatement
