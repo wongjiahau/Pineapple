@@ -5,6 +5,6 @@ def Node{T}
     :children List{T}
 
 def .main
-    let x = new Node{Number}
+    let x = Node{Number}
         :children = "hi"
 `);

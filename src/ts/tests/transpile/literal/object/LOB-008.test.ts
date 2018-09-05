@@ -9,7 +9,7 @@ def Tree{T}
     :children List{T}
 
 def .main
-    let x = new Tree{Integer}
+    let x = Tree{Integer}
         :children = [1,2,3]
 `;
         const expectedOutput =

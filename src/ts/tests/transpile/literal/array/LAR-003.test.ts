@@ -6,7 +6,7 @@ describe("LAR-003", () => {
         const input =
 `
 def .main
-    let x = new List{String}
+    let x = List{String}
 `;
         const expectedOutput =
 `
@@ -27,6 +27,6 @@ class ArrayOfString extends Array {
     }
 }
 
-let xs = new ArrayOfString([1,2,3])
+let xs = ArrayOfString([1,2,3])
 
 */

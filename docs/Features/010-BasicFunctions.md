@@ -103,7 +103,7 @@ So, you should separate them with an identifier.
 For example,
 ```pine
 // Here's how you define a trifunc
-def (this String).replace(old String with that String) -> String
+def (this String).replace(old String with new String) -> String
     pass
 
 // Here's how you call a trifunc
@@ -151,7 +151,7 @@ It is similar as Trifunc, but it needs 2 or more *sub function identifiers*.
 For example,
 ```pine
 // Here's how you define a Polyfunc with 4 parameters
-def (this String).replace(startIndex Integer to endIndex Integer with that String) -> String
+def (this String).replace(startIndex Integer to endIndex Integer with new String) -> String
     pass
 
 // Here's how you call it

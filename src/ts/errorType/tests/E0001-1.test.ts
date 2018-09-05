@@ -6,7 +6,7 @@ def People
     :age  Number
 
 def .main
-    let x = new People
+    let x = People
         :name = "Wong"
         :age  = 99
 

@@ -5,7 +5,7 @@ def People
     :name String
 
 def .main
-    let x = new People
+    let x = People
         :name = "123"
         :name = "123"
 `);

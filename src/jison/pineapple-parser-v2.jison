@@ -184,7 +184,6 @@ const _AnonymousExpression = (location) => ({
 "mutable"   return 'MUTABLE'
 "pass"      return 'PASS'
 "import"    return 'IMPORT'
-"new"       return 'NEW'
 
 // Inivisible token
 "@NEWLINE"       %{
@@ -503,7 +502,7 @@ MultilineObject
     ;
 
 Constructor 
-    : NEW AtomicTypeExpr {$$=$2}
+    : AtomicTypeExpr
     ;
 
 MultilineObjectKeyValueList

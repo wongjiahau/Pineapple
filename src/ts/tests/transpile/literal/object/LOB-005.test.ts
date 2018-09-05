@@ -9,7 +9,7 @@ def People
     :name String
 
 def .newPeople -> People
-    return new People
+    return People
         :name = "John"
 `;
         const expectedOutput =

@@ -5,6 +5,6 @@ def Node{T}
     :current T
 
 def .main
-    let x = new Node{Number}
+    let x = Node{Number}
         :current = "hi"
 `);
