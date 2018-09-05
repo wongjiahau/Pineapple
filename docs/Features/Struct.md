@@ -1,4 +1,7 @@
 # Struct
+
+## Introduction
+
 Struct type is a collection of fields, it allows you to give more meaning to your data. In layman terms, you can imagine struct as mould.
 
 To create a structure in Pineapple, you have to use the `def` keyword.  
@@ -7,6 +10,7 @@ To create a structure in Pineapple, you have to use the `def` keyword.
     In Pineapple, every field name must starts with the colon `:` symbol.
 
 For example,
+
 ```pine
 def People
     :name   String
@@ -23,14 +27,19 @@ let john = People
     :name = "John"
     :salary = 999
 ```
+
 Note that the indentation for each field is necessary.
 
 To access the field data:
+
 ```pine
 let x = john:name
 ```
+
 <hr>
+
 ## Recursive struct
+
 You can also create recursive struct which contain fields that points to itself.  
 
 For example:

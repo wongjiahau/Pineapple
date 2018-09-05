@@ -1,12 +1,12 @@
 def Boolean 
-    `true
-    `false
+    #true
+    #false
 
 def Nil
-    `nil
+    #nil
 
 def Undefined
-    `undefined
+    #undefined
 
 def (this Any) == (that Any) -> Boolean
     <javascript>

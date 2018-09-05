@@ -1,18 +1,20 @@
 # Control Flow Statements
 Basically, you can control the flow of your Pineapple code with any of the following:
 
-- `if` , `elif` and `else`
+- `#!pine if` , `#!pine elif` and `#!pine else`
 
-- `for` loop
+- `#!pine for` loop
 
-- `while` loop
+- `#!pine while` loop
 
-- `break` , `continue` or `return`
+- `#!pine break` , `#!pine continue` or `#!pine return`
 
 ## If-elif-else statements
+
 Similar to Python, all you need is indentation (tab), you don't need those curly brackets.
 For example:
-```py
+
+```pine
 if he.isCrazy
     you.callAmbulance
 
@@ -22,26 +24,28 @@ elif he.isInDanger
 else
     you.doNothing
 ```
+
 !!! note "Note"
     Every test expression must have type of Boolean.
 
 !!! tip "Tips"
-    `.isCrazy` and other similar construct are just [functions](./010-BasicFunctions.md).
+    `#!pine .isCrazy` and other similar construct are just [functions](./010-BasicFunctions.md).
 
 <hr>
 
 ## Test expression chaining
+
 Sometimes, a single test expression is not enough to express what you really wanted.  In such situation, you can use the following logical operators:
 
-- `and`
+- `#!pine and`
 
-- `or`
+- `#!pine or`
 
-- `not`
+- `#!pine not`
 
 For example:
 
-```py
+```pine
 if he.isYoung and he.isNaughty
     "He is a kid".show
 
@@ -52,16 +56,16 @@ elif not current.isLunchTime
     "Continue working . . .".show
 ```
 
-!!! note "Note"
-    `not` operator have higher precedence than `or` and `and`.  
+!!! info "Note"
+    `#!pine not` operator have higher precedence than `#!pine or` and `#!pine and`.  
     For example, the following code: 
-    ``` 
+    ```pine
     if not he.isFine and he.isEating
     ```
 
     Is same as:
 
-    ```py
+    ```pine
     if (not he.isFine) and he.isEating
         ...
     ```
@@ -75,7 +79,8 @@ elif not current.isLunchTime
 
 For statements is used to iterate over a list.  
 For example:
-```py
+
+```pine
 for x in [1,2,3,4]
     x.show
 ```
@@ -85,7 +90,8 @@ for x in [1,2,3,4]
 ## While loop
 
 While loop is use to loop some code until certain condition is met.
-```py
+
+```pine
 while not file.atEOF
     file.readline.show
 ```

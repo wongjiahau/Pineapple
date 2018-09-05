@@ -51,18 +51,27 @@ x = 1 // No error
 
 ## Default non-nullablility
 
-By default, you cannot assign ``nil` to a mutable variable.
-```
+By default, you cannot assign `#!pine #nil` to a mutable variable.
+
+```pine
 let x mutable = 0
-x = `nil // Error
-```
-If you want to assign ``nil` to a variable, you need to declare it explicitly by using Nullable types.
-```
-let x Int? mutable = 0
-x = `nil // No error
+x = #nil // Error
 ```
 
+!!! question "What is nil?"
+    Nil is actually same as null, just that *nil* is easier to type, so *nil* is adapted in Pineapple.
+
+If you want to assign `#!pine #nil` to a variable, you need to declare it explicitly by using nilable types (which is to add a question mark behind the type name).
+
+```pine
+let x Int? mutable = 0
+x = #nil // No error
+```
+
+<hr>
+
 ## Pass by value
+
 When you try to assign the value of one variable to another variable, the value is copied, instead of copying its reference.  
 
 For example,
@@ -77,7 +86,9 @@ newJohn:name = "Johnny Bravo"
 
 john:name.show // Still "John"
 ```
-This feature is to prevent programmer from facing crazy bugs caused by pass-by-reference.
+
+!!! question "Why?"
+    This feature is to prevent programmer from facing crazy bugs caused by pass-by-reference.
 
 <hr>
 
