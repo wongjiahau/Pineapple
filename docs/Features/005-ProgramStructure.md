@@ -1,22 +1,27 @@
-# Structure of Pineapple program
-Basically, all Pineapple program are lists of definitions.  
+# Program structure
+
+Basically, all Pineapple program are just ==lists of definitions==.  
+
 The definitions are:  
 
-- Function definition  
+* [x] Function definition  
 
-- Struct definition  
+* [x] Struct definition  
 
-- Import definition
+* [x] Import definition
 
-- Constants definition
+* [ ] Constants definition
 
-- Type aliases definition
+* [ ] Type aliases definition
 
-- Trait declaration definition
+* [ ] Trait declaration definition
 
-- Trait implementation definition
+* [ ] Trait implementation definition
 
-- Enumeration definition  
+* [x] Enumeration definition  
+
+!!! warning 
+    Those features that are not ticked means that they are not implemented yet.
 
 For example:
 

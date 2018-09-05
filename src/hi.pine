@@ -9,8 +9,8 @@ def .main
 
     if not p.isOld and q.isOld
         "p is not old man".show
-    elif p.isBetterThan(q)
-        "p is old".show
+    else
+        "yo".show
 
 def People
     :name String
@@ -19,6 +19,3 @@ def People
 
 def (this People).isOld -> Boolean
     return this:age > 20
-
-def (this People).isBetterThan(that People) -> Boolean
-    return this:name.length > that:name.length

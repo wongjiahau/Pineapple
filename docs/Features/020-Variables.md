@@ -1,10 +1,22 @@
 # Variables
 
-To create a variable, you need to use the `let` keyword:
+To create a variable, you need to use the `#!pine let` keyword:
 
 ```pine
 let myVariable = "Hello World!"
 ```
+
+!!! info "Note"
+    Every variable in Pineapple must start with ==lowercase letter== and cannot contain any spaces.  
+    The following are invalid variable names:
+
+    ```pine
+    let Message = "Yo" // Invalid, cannot start with uppercase letter
+
+    let my name = "Wong" // Invalid, cannot contain spaces
+    ```
+
+---
 
 ## Type inference
 
