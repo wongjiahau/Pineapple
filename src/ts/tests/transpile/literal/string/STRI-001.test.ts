@@ -1,6 +1,6 @@
 import { testTranspile } from "../../../testUtil";
 
-testTranspile("string literal",
+testTranspile("string interpolation",
 `
 def .main
     let message1 = "baby"
@@ -8,6 +8,7 @@ def .main
     let z = "Hello $(message1) baby $(message2) world" 
 `,
 `
+
 function _main_(){
 const $message1 = "baby";
 const $message2 = "123";

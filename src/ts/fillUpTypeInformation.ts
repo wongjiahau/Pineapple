@@ -29,7 +29,8 @@ import {
     ResolvedType,
     EmptyList,
     BuiltinTypename,
-    StringInterpolationExpression
+    StringInterpolationExpression,
+    newStringExpression
 } from "./ast";
 
 import {ErrorAccessingInexistentMember} from "./errorType/E0001-AccessingInexistentMember";
@@ -590,50 +591,48 @@ export function resolveExpressionInterpolation(
     symbols: SymbolTable,
     vartab: VariableTable
 ): [StringInterpolationExpression | StringExpression, SymbolTable] {
-    const repr = s.repr;
+    const str = s.repr;
     const regex = /[$][(].*?[)]/g;
-    const matches: Array<RegExpExecArray | null> = [];
-    let match = regex.exec(repr);
 
     // if no interpolated expressions is found
-    if(!match) {
+    if(!regex.test(str)) {
         return [s, symbols];
     }
-
-    // capture interpolated expressions
-    matches.push(match);
-    while((match = regex.exec(repr)) != null) {
-        matches.push(match)
-    }
-
-
     const result: StringInterpolationExpression = {
         kind: "StringInterpolationExpression",
         returnType: newBuiltinType("String"),
         location: s.location,
         expressions: []
     };
-    // resolve interpolated expressions
+    let current = "";
     let previousIndex = 0;
-    for (let i = 0; i < matches.length; i++) {
-        const m = matches[i];
-        if(m !== null) {
-            let expr = parser.parse(m[0].slice(2, -1)) as Expression;
-            [expr, symbols] = fillUpExpressionTypeInfo(expr, symbols, vartab);
-            if(isStringType(expr.returnType)) {
-                const str = copy(s);
-                str.repr = str.repr.slice(previousIndex, m.index + 1);
-                result.expressions.push(str);
-                result.expressions.push(expr);
-                previousIndex = m.index + m[0].length - 1;
+    let numberOfClosingBracketRequired = 0;
+    for (let i = 1; i < str.length; i++) {  // starts from 1 skip quotes
+        if((i === str.length - 1) || (str[i] === "$" && str[i + 1] === "(")) {
+            const location = copy(s.location);
+            location.last_column = s.location.first_column + i;
+            location.first_column = previousIndex;
+            result.expressions.push(newStringExpression(`"${current}"`, location));
+            current = "";
+            i++;
+        } else if (str[i] === "(" && str[i - 1] !== "$") {
+            numberOfClosingBracketRequired++;
+        } else if (str[i] === ")") {
+            if (numberOfClosingBracketRequired > 0) {
+                numberOfClosingBracketRequired --;
             } else {
-                throw new Error("Should be string type");
+                let expr = parser.parse(current) as Expression;
+                [expr, symbols] = fillUpExpressionTypeInfo(expr, symbols, vartab);
+                result.expressions.push(expr);
+                current = "";
             }
+        } else {
+            current += str[i];
         }
     }
-    const str = copy(s);
-    str.repr = str.repr.slice(previousIndex);
-    result.expressions.push(str);
+    if(numberOfClosingBracketRequired > 0) {
+        throw new Error(`Missing ${numberOfClosingBracketRequired} closing brackets`);
+    }
     return [result, symbols];
 }
 

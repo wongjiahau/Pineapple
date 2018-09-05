@@ -1,3 +1,5 @@
+import { newBuiltinType } from "./typeTree";
+
 // Abstract Syntax Tree Node Interfaces
 export interface LinkedNode<T> {
     current: T;
@@ -289,6 +291,15 @@ export interface StringExpression extends AtomicToken {
     kind: "String";
     repr: string;
     returnType: TypeExpression;
+}
+
+export function newStringExpression(repr: string, location: TokenLocation): StringExpression {
+    return {
+        kind: "String",
+        repr: repr,
+        returnType: newBuiltinType("String"),
+        location: location
+    };
 }
 
 export interface NumberExpression extends AtomicToken {

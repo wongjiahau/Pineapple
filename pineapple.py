@@ -73,21 +73,21 @@ class PineappleLexer(RegexLexer):
             (r'(\.\d+|[0-9]+\.[0-9]*)([eE][-+]?[0-9]+)?', Keyword.Constant), # Float
             (r'([A-Z][a-zA-Z0-9]*)\b', Name.Builtin),
             (r'([a-z][a-zA-Z0-9]*)\b', Name.Other), # variable
-            (r'"(\\\\|\\"|[^"])*"', String.Double),
-            (r"'(\\\\|\\'|[^'])*'", String.Single),
-            (r'`', String.Backtick, 'interp'),
+            # (r'"(\\\\|\\"|[^"])*"', String.Double),
+            # (r"'(\\\\|\\'|[^'])*'", String.Single),
+            (r'"', String.Backtick, 'interp'), # String interpolation
         ],
         'interp': [
-            # (r'`', String.Backtick, '#pop'),
+            (r'"', String.Backtick, '#pop'),
             (r'\\\\', String.Backtick),
-            (r'\\`', String.Backtick),
-            (r'\$\{', String.Interpol, 'interp-inside'),
+            (r'\\"', String.Backtick),
+            (r'\$\(', String.Interpol, 'interp-inside'),
             (r'\$', String.Backtick),
-            (r'[^`\\$]+', String.Backtick),
+            (r'[^"\\$]+', String.Backtick),
         ],
         'interp-inside': [
             # TODO: should this include single-line comments and allow nesting strings?
-            (r'\}', String.Interpol, '#pop'),
+            (r'\)', String.Interpol, '#pop'),
             include('root'),
         ],
         # (\\\\|\\`|[^`])*`', String.Backtick),

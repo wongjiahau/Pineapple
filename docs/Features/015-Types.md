@@ -80,6 +80,16 @@ In Pineapple, strings are enquoted using double quotes.
 let message = "Hello world"
 ```
 
+You can also interpolate expressions into string using `$()`. 
+
+```pine
+let fruit = "Pineapple"
+
+let message = "I like to eat $(fruit) every $(3 + 2) days"
+
+message.show // I like to eat Pineapple 5 days
+```
+
 --- 
 
 ## List

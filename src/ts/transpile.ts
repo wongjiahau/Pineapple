@@ -278,6 +278,9 @@ ${s.repr.replace(/(<javascript>|<\/javascript>|@.+)/g, "").trim()}
 // </javascript>`;
 }
 export function tpStringExpression(s: StringExpression): string {
+    if(s.repr[0] !== '"' || s.repr[s.repr.length - 1] !== '"') {
+        throw new Error(`String repr should be enclosed by quotes, but it was ${s.repr}`);
+    }
     return `"${s.repr.slice(1, -1)}"`;
 }
 

@@ -22,3 +22,8 @@ def (this String).toInteger -> Integer
     <javascript>
     return parseInteger($this);
     </javascript>
+
+def (this Any).toString -> String
+    <javascript>
+    return $this.toString();
+    </javascript>
