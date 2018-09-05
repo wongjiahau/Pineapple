@@ -18,10 +18,9 @@ The definitions are:
 
 - Enumeration definition  
 
-
 For example:
 
-```js
+```pine
 // function definition
 def .main
     "Hello world".show
