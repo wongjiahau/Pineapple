@@ -10,7 +10,13 @@
       <meta name="viewport" content="width=device-width,initial-scale=1">
       <meta http-equiv="x-ua-compatible" content="ie=edge">
       
+        <meta name="description" content="The documentation of Pineapple language">
       
+      
+        <link rel="canonical" href="https://wongjiahau.github.io/Pineapple/Features/ControlFlowStatements/">
+      
+      
+        <meta name="author" content="Wong Jia Hau">
       
       
         <meta name="lang:clipboard.copy" content="Copy to clipboard">
@@ -36,7 +42,7 @@
     
     
       
-        <title>Variables - Pineapple Documentation</title>
+        <title>Control Flow Statements - Pineapple Documentation</title>
       
     
     
@@ -56,8 +62,8 @@
     
       
         <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+Sans:300,400,400i,700|">
-        <style>body,input{font-family:"Noto Sans","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"","Courier New",Courier,monospace}</style>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+Sans:300,400,400i,700|Roboto+Mono">
+        <style>body,input{font-family:"Noto Sans","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
       
     
     <link rel="stylesheet" href="../../assets/fonts/material-icons.css">
@@ -98,7 +104,7 @@
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
     <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
     
-      <a href="../../#variables" tabindex="1" class="md-skip">
+      <a href="../../#control-flow-statements" tabindex="1" class="md-skip">
         Skip to content
       </a>
     
@@ -107,7 +113,7 @@
   <nav class="md-header-nav md-grid">
     <div class="md-flex">
       <div class="md-flex__cell md-flex__cell--shrink">
-        <a href="../.." title="Pineapple Documentation" class="md-header-nav__button md-logo">
+        <a href="https://wongjiahau.github.io/Pineapple/" title="Pineapple Documentation" class="md-header-nav__button md-logo">
           
             <i class="md-icon">book</i>
           
@@ -124,7 +130,7 @@
                 Pineapple Documentation
               </span>
               <span class="md-header-nav__topic">
-                Variables
+                Control Flow Statements
               </span>
             
           
@@ -203,7 +209,7 @@
                   <div class="md-sidebar__inner">
                     <nav class="md-nav md-nav--primary" data-md-level="0">
   <label class="md-nav__title md-nav__title--site" for="__drawer">
-    <a href="../.." title="Pineapple Documentation" class="md-nav__button md-logo">
+    <a href="https://wongjiahau.github.io/Pineapple/" title="Pineapple Documentation" class="md-nav__button md-logo">
       
         <i class="md-icon">book</i>
       
@@ -253,8 +259,8 @@
 
 
   <li class="md-nav__item">
-    <a href="../../about/" title="About" class="md-nav__link">
-      About
+    <a href="../../001-motivation/" title="Motivation" class="md-nav__link">
+      Motivation
     </a>
   </li>
 
@@ -265,8 +271,20 @@
 
 
   <li class="md-nav__item">
-    <a href="../../installation/" title="Download Pineapple" class="md-nav__link">
+    <a href="../../005-installation/" title="Download Pineapple" class="md-nav__link">
       Download Pineapple
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../../999-about/" title="About" class="md-nav__link">
+      About
     </a>
   </li>
 
@@ -292,17 +310,53 @@
 
   <li class="md-nav__item md-nav__item--active md-nav__item--nested">
     
-      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-5" type="checkbox" id="nav-5" checked>
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-6" type="checkbox" id="nav-6" checked>
     
-    <label class="md-nav__link" for="nav-5">
+    <label class="md-nav__link" for="nav-6">
       Features
     </label>
     <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
-      <label class="md-nav__title" for="nav-5">
+      <label class="md-nav__title" for="nav-6">
         Features
       </label>
       <ul class="md-nav__list" data-md-scrollfix>
         
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../001-BasicProgram/" title="A Basic Pineapple Program" class="md-nav__link">
+      A Basic Pineapple Program
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../005-ProgramStructure/" title="Structure of Pineapple program" class="md-nav__link">
+      Structure of Pineapple program
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../010-BasicFunctions/" title="Functions" class="md-nav__link">
+      Functions
+    </a>
+  </li>
+
         
           
           
@@ -320,35 +374,69 @@
           
           
 
-
-  <li class="md-nav__item">
-    <a href="../BasicFunctions/" title="Functions" class="md-nav__link">
-      Functions
-    </a>
-  </li>
-
-        
-          
-          
-          
+  
 
 
-  <li class="md-nav__item">
-    <a href="../BasicProgram/" title="A Basic Pineapple Program" class="md-nav__link">
-      A Basic Pineapple Program
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="../ControlFlowStatements/" title="Control Flow Statements" class="md-nav__link">
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+      
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        Control Flow Statements
+      </label>
+    
+    <a href="./" title="Control Flow Statements" class="md-nav__link md-nav__link--active">
       Control Flow Statements
     </a>
+    
+      
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#test-expression-chaining" title="Test expression chaining" class="md-nav__link">
+    Test expression chaining
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#for-statements" title="For statements" class="md-nav__link">
+    For statements
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#while-loop" title="While loop" class="md-nav__link">
+    While loop
+  </a>
+  
+</li>
+      
+      
+      
+      
+      
+        <li class="md-nav__item">
+          <a href="#__comments" title="Comments" class="md-nav__link md-nav__link--active">
+            Comments
+          </a>
+        </li>
+      
+    </ul>
+  
+</nav>
+    
   </li>
 
         
@@ -372,18 +460,6 @@
   <li class="md-nav__item">
     <a href="../Modules/" title="Modules" class="md-nav__link">
       Modules
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="../ProgramStructure/" title="Structure of Pineapple program" class="md-nav__link">
-      Structure of Pineapple program
     </a>
   </li>
 
@@ -440,89 +516,11 @@
           
           
 
-  
 
-
-  <li class="md-nav__item md-nav__item--active">
-    
-    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-    
-      
-    
-    
-      <label class="md-nav__link md-nav__link--active" for="__toc">
-        Variables
-      </label>
-    
-    <a href="./" title="Variables" class="md-nav__link md-nav__link--active">
+  <li class="md-nav__item">
+    <a href="../Variables/" title="Variables" class="md-nav__link">
       Variables
     </a>
-    
-      
-<nav class="md-nav md-nav--secondary">
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">Table of contents</label>
-    <ul class="md-nav__list" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#type-inference" title="Type inference" class="md-nav__link">
-    Type inference
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#default-immutability" title="Default immutability" class="md-nav__link">
-    Default immutability
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#default-non-nullablility" title="Default non-nullablility" class="md-nav__link">
-    Default non-nullablility
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#pass-by-value" title="Pass by value" class="md-nav__link">
-    Pass by value
-  </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#optimization-implementing" title="Optimization (implementing)" class="md-nav__link">
-    Optimization (implementing)
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-      
-      
-      
-      
-        <li class="md-nav__item">
-          <a href="#__comments" title="Comments" class="md-nav__link md-nav__link--active">
-            Comments
-          </a>
-        </li>
-      
-    </ul>
-  
-</nav>
-    
   </li>
 
         
@@ -552,43 +550,23 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#type-inference" title="Type inference" class="md-nav__link">
-    Type inference
+  <a href="#test-expression-chaining" title="Test expression chaining" class="md-nav__link">
+    Test expression chaining
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#default-immutability" title="Default immutability" class="md-nav__link">
-    Default immutability
+  <a href="#for-statements" title="For statements" class="md-nav__link">
+    For statements
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#default-non-nullablility" title="Default non-nullablility" class="md-nav__link">
-    Default non-nullablility
+  <a href="#while-loop" title="While loop" class="md-nav__link">
+    While loop
   </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#pass-by-value" title="Pass by value" class="md-nav__link">
-    Pass by value
-  </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#optimization-implementing" title="Optimization (implementing)" class="md-nav__link">
-    Optimization (implementing)
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -614,68 +592,85 @@
             <article class="md-content__inner md-typeset">
               
                 
-                  <a href="https://github.com/wongjiahau/Pineapple/edit/master/docs/features/Variables.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
+                  <a href="https://github.com/wongjiahau/Pineapple/edit/master/docs/Features/ControlFlowStatements.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
                 
                 
-                <h1 id="variables">Variables</h1>
-<p>To create a variable, you need to use the <code>let</code> keyword:
-<div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">myVariable</span> <span class="o">=</span> <span class="s2">&quot;Hello World!&quot;</span>
+                <h1 id="control-flow-statements">Control Flow Statements<a class="headerlink" href="#control-flow-statements" title="Permanent link">&para;</a></h1>
+<p>Basically, you can control the flow of your Pineapple code with any of the following:</p>
+<ul>
+<li>
+<p><code>if</code> , <code>elif</code> and <code>else</code></p>
+</li>
+<li>
+<p><code>for</code> loop</p>
+</li>
+<li>
+<p><code>while</code> loop</p>
+</li>
+<li>
+<p><code>break</code> , <code>continue</code> or <code>return</code></p>
+</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Every test expression must have type of Boolean.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tips</p>
+<p><code>.isCrazy</code> and other similar construct are just <a href="BasicFunctions.md">functions</a>.</p>
+</div>
+<hr>
+
+<h2 id="test-expression-chaining">Test expression chaining<a class="headerlink" href="#test-expression-chaining" title="Permanent link">&para;</a></h2>
+<p>Sometimes, a single test expression is not enough to express what you really wanted.  In such situation, you can use the following logical operators:</p>
+<ul>
+<li>
+<p><code>and</code></p>
+</li>
+<li>
+<p><code>or</code></p>
+</li>
+<li>
+<p><code>not</code></p>
+</li>
+</ul>
+<p>For example:</p>
+<div class="codehilite"><pre><span></span><span class="k">if</span> <span class="n">he</span><span class="o">.</span><span class="n">isYoung</span> <span class="ow">and</span> <span class="n">he</span><span class="o">.</span><span class="n">isNaughty</span>
+    <span class="s2">&quot;He is a kid&quot;</span><span class="o">.</span><span class="n">show</span>
+
+<span class="k">elif</span> <span class="n">sky</span><span class="o">.</span><span class="n">isBlue</span> <span class="ow">or</span> <span class="n">air</span><span class="o">.</span><span class="n">isFresh</span>
+    <span class="s2">&quot;I am happy!&quot;</span><span class="o">.</span><span class="n">show</span>
+
+<span class="k">elif</span> <span class="ow">not</span> <span class="n">current</span><span class="o">.</span><span class="n">isLunchTime</span>
+    <span class="s2">&quot;Continue working . . .&quot;</span><span class="o">.</span><span class="n">show</span>
+</pre></div>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code>not</code> operator have higher precedence than <code>or</code> and <code>and</code>.<br />
+For example, the following code: 
+<div class="codehilite"><pre><span></span>if not he.isFine and he.isEating
 </pre></div></p>
-<h2 id="type-inference">Type inference</h2>
-<p>The type of each variables are resolved automatically by the Pineapple compiler, so you don't need to provide any type annotation.<br />
+<p>Is same as:</p>
+<div class="codehilite"><pre><span></span><span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">he</span><span class="o">.</span><span class="n">isFine</span><span class="p">)</span> <span class="ow">and</span> <span class="n">he</span><span class="o">.</span><span class="n">isEating</span>
+    <span class="o">...</span>
+</pre></div>
+
+</div>
+<hr>
+
+<h2 id="for-statements">For statements<a class="headerlink" href="#for-statements" title="Permanent link">&para;</a></h2>
+<p>For statements is used to iterate over a list.<br />
 For example:
-<div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="s2">&quot;yo&quot;</span>    <span class="c1">// x has type of String</span>
-<span class="kd">let</span> <span class="nx">y</span> <span class="o">=</span> <span class="mi">0</span>       <span class="c1">// y has type of Int</span>
-<span class="kd">let</span> <span class="nx">z</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span> <span class="c1">// z has type of List{Int}</span>
-</pre></div>
-Although unnessecary, it is also possible to annotate variables with type manually:
-<div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">x</span> <span class="nb">String</span> <span class="o">=</span> <span class="s2">&quot;yo&quot;</span>
+<div class="codehilite"><pre><span></span><span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span>
+    <span class="n">x</span><span class="o">.</span><span class="n">show</span>
 </pre></div></p>
-<h2 id="default-immutability">Default immutability</h2>
-<p>By default, all variables in Pineapple are immutable, it means that you cannot assign a new value to it after you declare it.
-<div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">count</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="nx">count</span> <span class="o">=</span> <span class="mi">1</span> <span class="c1">// Error</span>
-</pre></div></p>
-<p>If you wish to make a variable mutable (aka. change-able), you need to use the <code>mutable</code> keyword.
-<div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">x</span> <span class="nx">mutable</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="nx">x</span> <span class="o">=</span> <span class="mi">1</span> <span class="c1">// No error</span>
-</pre></div>
-This feature is implemented on purpose to discourage programmers from mutating variables all the time.<br />
-So, instead of creating one variables and change it all the time, <strong>you should create as many variables as you want</strong>!</p>
-<h2 id="default-non-nullablility">Default non-nullablility</h2>
-<p>By default, you cannot assign <code>nil` to a mutable variable.
-wzxhzdk:5
-If you want to assign</code>nil` to a variable, you need to declare it explicitly by using Nullable types.
-<div class="highlight"><pre><span></span>let x Int? mutable = 0
-x = `nil // No error
-</pre></div></p>
-<h2 id="pass-by-value">Pass by value</h2>
-<p>When you try to assign the value of one variable to another variable, the value is copied, instead of copying its reference.  </p>
-<p>For example,
-<div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">john</span> <span class="o">=</span> <span class="nx">People</span>
-    <span class="s1">&#39;name = &quot;John&quot;</span>
-<span class="s1">    &#39;</span><span class="nx">age</span>  <span class="o">=</span> <span class="mi">99</span>
+<hr>
 
-<span class="kd">let</span> <span class="nx">newJohn</span> <span class="o">=</span> <span class="nx">john</span>
-
-<span class="nx">newJohn</span><span class="s1">&#39;name = &quot;Johnny Bravo&quot;</span>
-
-<span class="s1">john&#39;</span><span class="nx">name</span><span class="p">.</span><span class="nx">show</span> <span class="c1">// Still &quot;John&quot;</span>
-</pre></div>
-This feature is to prevent programmer from facing crazy bugs caused by pass-by-reference.</p>
-<h3 id="optimization-implementing">Optimization (implementing)</h3>
-<p>Of course, pass-by-value is expensive, thus it might slows down the program performance.<br />
-Fortunately, the Pineapple compiler will use pass-by-reference whenever possible.  </p>
-<p>For example:
-<div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="mi">10</span>
-<span class="kd">let</span> <span class="nx">y</span> <span class="o">=</span> <span class="nx">x</span> <span class="c1">// x&#39;s value is pass-by-reference since it is not used afterwards</span>
-<span class="nx">y</span><span class="p">.</span><span class="nx">show</span>
-</pre></div></p>
-<p>Another example:
-<div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="mi">10</span>
-<span class="kd">let</span> <span class="nx">y</span> <span class="o">=</span> <span class="nx">x</span> <span class="c1">// x&#39;s value is pass-by-value, since it is still in used after this line</span>
-<span class="nx">x</span><span class="p">.</span><span class="nx">show</span>
-<span class="nx">y</span><span class="p">.</span><span class="nx">show</span>
+<h2 id="while-loop">While loop<a class="headerlink" href="#while-loop" title="Permanent link">&para;</a></h2>
+<p>While loop is use to loop some code until certain condition is met.
+<div class="codehilite"><pre><span></span><span class="k">while</span> <span class="ow">not</span> <span class="nb">file</span><span class="o">.</span><span class="n">atEOF</span>
+    <span class="nb">file</span><span class="o">.</span><span class="n">readline</span><span class="o">.</span><span class="n">show</span>
 </pre></div></p>
                 
                   
@@ -689,13 +684,13 @@ Fortunately, the Pineapple compiler will use pass-by-reference whenever possible
   <div id="disqus_thread"></div>
   <script>
     var disqus_config = function () {
-      this.page.url = "None";
+      this.page.url = "https://wongjiahau.github.io/Pineapple/Features/ControlFlowStatements/";
       this.page.identifier =
-        "None";
+        "Features/ControlFlowStatements/";
     };
     (function() {
       var d = document, s = d.createElement("script");
-      s.src = "//wongjiahau.disqus.com/embed.js";
+      s.src = "//Pineapple.disqus.com/embed.js";
       s.setAttribute("data-timestamp", +new Date());
       (d.head || d.body).appendChild(s);
     })();
@@ -713,7 +708,7 @@ Fortunately, the Pineapple compiler will use pass-by-reference whenever possible
     <div class="md-footer-nav">
       <nav class="md-footer-nav__inner md-grid">
         
-          <a href="../Types/" title="Built-in types" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+          <a href="../AdvanceFunctions/" title="Advance functions" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
             <div class="md-flex__cell md-flex__cell--shrink">
               <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
             </div>
@@ -722,11 +717,25 @@ Fortunately, the Pineapple compiler will use pass-by-reference whenever possible
                 <span class="md-footer-nav__direction">
                   Previous
                 </span>
-                Built-in types
+                Advance functions
               </span>
             </div>
           </a>
         
+        
+          <a href="../Generics/" title="Generics" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                Generics
+              </span>
+            </div>
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
+            </div>
+          </a>
         
       </nav>
     </div>
@@ -734,6 +743,10 @@ Fortunately, the Pineapple compiler will use pass-by-reference whenever possible
   <div class="md-footer-meta md-typeset">
     <div class="md-footer-meta__inner md-grid">
       <div class="md-footer-copyright">
+        
+          <div class="md-footer-copyright__highlight">
+            Copyright &copy; 2018 Wong Jia Hau
+          </div>
         
         powered by
         <a href="https://www.mkdocs.org">MkDocs</a>
