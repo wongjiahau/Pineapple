@@ -25,13 +25,15 @@ export function getIntermediateForm(
         };
     } catch (error) {
         if (isSyntaxError(error)) {
+
+            // this part is needed to inject the sourceCode
             raise(ErrorSyntax(error.hash), sourceCode);
         }
         throw error; // Will be caught by interpreter.ts
     }
 }
 
-function isSyntaxError(error: any) {
+export function isSyntaxError(error: any) {
     return error.hash !== undefined;
 }
 

@@ -1,6 +1,6 @@
 def .main
     let result = "What is your name?".ask
-    "Your name is $(result) am $(12 + 99) right?".show
+    "Your name is $(result) am $((12 + 99)) right?".show
     let p = People
         :name = "Wong"
         :age  = 25

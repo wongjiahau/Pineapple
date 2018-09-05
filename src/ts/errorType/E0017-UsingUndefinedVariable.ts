@@ -13,9 +13,8 @@ export function ErrorUsingUndefinedVariable(
         code: "0017",
         name: "ErrorUsingUndefinedVariable",
         message:
-`You cannot use the variable \`${v.repr}\` as it does not exist.
-${showSuggestion(similarVariables)}
-`,
+`You cannot use the variable \`${v.repr}\` as it does not exist. 
+${showSuggestion(similarVariables)}`.trim(),
         relatedLocation: v.location,
         hint:
 `To use a variable, you need to declare it first using the \`let\` keyword.

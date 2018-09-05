@@ -58,7 +58,7 @@ import {ErrorListElementsArentHomogeneous} from "./errorType/E0024-ListElementsA
 import {ErrorUsingUndefinedGenericName} from "./errorType/E0025-UsingUndefinedGenericName";
 import {ErrorDetail, stringifyTypeReadable} from "./errorType/errorUtil";
 import {renderError} from "./errorType/renderError";
-import {convertToLinkedNode, flattenLinkedNode} from "./getIntermediateForm";
+import {convertToLinkedNode, flattenLinkedNode, isSyntaxError} from "./getIntermediateForm";
 import {SourceCode} from "./interpreter";
 import {stringifyFuncSignature} from "./transpile";
 import {
@@ -78,6 +78,7 @@ import {
 import {find} from "./util";
 import { ErrorConditionIsNotBoolean } from "./errorType/E0012-ConditionIsNotBoolean";
 import { prettyPrint } from "./pine2js";
+import { ParserErrorDetail, ErrorSyntax } from "./errorType/E0010-Syntax";
 
 const parser     = require("../jison/pineapple-parser-v2");
 
@@ -615,16 +616,24 @@ export function resolveExpressionInterpolation(
             result.expressions.push(newStringExpression(`"${current}"`, location));
             current = "";
             i++;
+            previousIndex = i + 1;
         } else if (str[i] === "(" && str[i - 1] !== "$") {
             numberOfClosingBracketRequired++;
+            current += str[i];
         } else if (str[i] === ")") {
             if (numberOfClosingBracketRequired > 0) {
                 numberOfClosingBracketRequired --;
+                current += str[i];
             } else {
-                let expr = parser.parse(current) as Expression;
+                const repr = pad(current, s.location.first_line - 1, s.location.first_column + previousIndex);
+                let expr = parser.parse(repr) as Expression;
                 [expr, symbols] = fillUpExpressionTypeInfo(expr, symbols, vartab);
-                result.expressions.push(expr);
-                current = "";
+                if(isStringType(expr.returnType)) {
+                    result.expressions.push(expr);
+                    current = "";
+                } else {
+                    throw new Error("Should be string type");
+                }
             }
         } else {
             current += str[i];
@@ -634,6 +643,18 @@ export function resolveExpressionInterpolation(
         throw new Error(`Missing ${numberOfClosingBracketRequired} closing brackets`);
     }
     return [result, symbols];
+}
+
+function pad(s: string, topPad: number, leftPad: number): string {
+    let result = "";
+    for (let i = 0; i < topPad; i++) {
+        result += "\n";
+    }
+    for (let i = 0; i < leftPad; i++) {
+        result += " ";
+    }
+    result += s;
+    return result;
 }
 
 export function isStringType(r: TypeExpression): boolean {

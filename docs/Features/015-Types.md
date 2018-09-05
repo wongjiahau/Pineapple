@@ -85,11 +85,22 @@ You can also interpolate expressions into string using `$()`.
 ```pine
 let fruit = "Pineapple"
 
-let message = "I like to eat $(fruit) every $(3 + 2) days"
+let message = "I like to eat $(fruit) every $((3 + 2).toString) days"
 
 message.show // I like to eat Pineapple 5 days
 ```
 
+!!! info "Note"
+    Every interpolated expression must have type of String, if not the Pineapple compiler will complain about it.  
+
+    For example,
+    
+    ```pine
+    let x = 23.4
+    let message = "My number is $(x)" // Error, `x` should be String, but it is Number
+    ```
+
+    To prevent such problem, you have to use the `#!pine .toString` function.
 --- 
 
 ## List
