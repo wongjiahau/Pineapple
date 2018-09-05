@@ -1,11 +1,13 @@
 # A Basic Pineapple Program
 Every Pineapple program is executed via the `.main` method.  
 For example,
-```js
+```py
 def .main
     'hello world'.show
     'bye'.show
 ```
-Note that the indentation is necessary.
+
+!!! info "Note"
+    Indentation(tab) is necessary.
 
 Also, by default, Prelude library will be loaded.

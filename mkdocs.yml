@@ -26,6 +26,7 @@ extra:
   disqus: 'Pineapple'
 markdown_extensions:
   - admonition
+  - footnotes
   - codehilite:
       guess_lang: false
   - toc:
