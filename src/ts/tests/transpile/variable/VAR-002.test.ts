@@ -6,10 +6,10 @@ describe("VAR-001", () => {
         const input =
 `
 def Nil
-    \`nil
+    #nil
 
 def .main
-    let x Number? = \`nil
+    let x Number? = #nil
 `;
         const expectedOutput =
 `

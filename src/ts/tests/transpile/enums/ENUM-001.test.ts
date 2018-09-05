@@ -6,12 +6,12 @@ describe("ENUM-001", () => {
         const input =
 `
 def Color
-    \`red
-    \`green
-    \`blue
+    #red
+    #green
+    #blue
 
 def .main
-    let x Color = \`green
+    let x Color = #green
 `;
         // no output, because enum is not needed to be declared in JS
         const expectedOutput =

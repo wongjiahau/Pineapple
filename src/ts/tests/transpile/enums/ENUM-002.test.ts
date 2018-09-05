@@ -6,20 +6,20 @@ describe("ENUM-001", () => {
         const input =
 `
 def Boolean
-    \`true
-    \`false
+    #true
+    #false
 
 def Nil
-    \`nil
+    #nil
 
 def Undefined
-    \`undefined
+    #undefined
 
 def .main
-    let x = \`true
-    let y = \`false
-    let z = \`nil
-    let a = \`undefined
+    let x = #true
+    let y = #false
+    let z = #nil
+    let a = #undefined
 `;
         const expectedOutput =
 `

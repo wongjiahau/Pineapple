@@ -1,31 +1,44 @@
 # Variables
+
 To create a variable, you need to use the `let` keyword:
-```js
+
+```pine
 let myVariable = "Hello World!"
 ```
 
 ## Type inference
+
 The type of each variables are resolved automatically by the Pineapple compiler, so you don't need to provide any type annotation.  
 For example:
-```js
+
+```pine
 let x = "yo"    // x has type of String
-let y = 0       // y has type of Int
-let z = [1,2,3] // z has type of List{Int}
+let y = 0       // y has type of Integer
+let z = [1,2,3] // z has type of List{Integer}
 ```
+
 Although unnessecary, it is also possible to annotate variables with type manually:
-```js
+
+```pine
 let x String = "yo"
 ```
-
+<hr>
 
 ## Default immutability
-By default, all variables in Pineapple are immutable, it means that you cannot assign a new value to it after you declare it.
-```js
+
+By default, ==all variables in Pineapple are immutable==, it means that you cannot assign a new value to it after you declare it.
+
+```pine
 let count = 0
 count = 1 // Error
 ```
 
-If you wish to make a variable mutable (aka. change-able), you need to use the `mutable` keyword.
+!!! info "Info"
+    *Mutable* means *changeable*.  
+    *Immutable* means *not changeable*.
+
+If you wish to make a variable mutable, you need to use the `mutable` keyword.
+
 ```js
 let x mutable = 0
 x = 1 // No error
@@ -33,9 +46,11 @@ x = 1 // No error
 
 !!! tip
     This feature is implemented on purpose to discourage programmers from mutating variables all the time.  
-    So, instead of creating one variables and change it all the time, **you should create as many variables as you want**!
+    So, instead of creating one variables and change it all the time, ==create as many variables as you want!==
+
 
 ## Default non-nullablility
+
 By default, you cannot assign ``nil` to a mutable variable.
 ```
 let x mutable = 0

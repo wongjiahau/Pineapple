@@ -6,11 +6,11 @@ describe("BRA-004", () => {
         const input =
 `
 def Boolean
-    \`true
-    \`false
+    #true
+    #false
 
 def .main
-    if \`true or \`false and \`true 
+    if #true or #false and #true 
         return "ok"
 `;
         const expectedOutput =

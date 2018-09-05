@@ -6,7 +6,7 @@ describe("LOB-006", () => {
         const input =
 `
 def Nil
-    \`nil
+    #nil
 
 def People
     :name   String
@@ -17,7 +17,7 @@ def .newPeople -> People
         :name = "John"
         :friend = People
             :name = "Jane"
-            :friend = \`nil
+            :friend = #nil
 `;
         const expectedOutput =
 `

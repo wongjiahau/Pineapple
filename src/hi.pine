@@ -1,15 +1,15 @@
 def .main
-    let p = new People
+    let p = People
         :name = "Wong"
         :age  = 25
     
-    let q = new People
+    let q = People
         :name = "Johnny"
         :age  = 25
 
     if not p.isOld and q.isOld
         "p is not old man".show
-    else
+    elif p.isBetterThan(q)
         "p is old".show
 
 def People
@@ -19,3 +19,6 @@ def People
 
 def (this People).isOld -> Boolean
     return this:age > 20
+
+def (this People).isBetterThan(that People) -> Boolean
+    return this:name.length > that:name.length

@@ -55,9 +55,9 @@ def Equatable{Color}
 
 // enumeration definition
 def Color
-    `red
-    `green
-    `blue
-    `yellow
+    #red
+    #green
+    #blue
+    #yellow
 
 ```

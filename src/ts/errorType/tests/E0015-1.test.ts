@@ -2,8 +2,8 @@ import { testError } from "../../tests/testUtil";
 
 testError("ErrorEnumRedeclare", `
 def Color
-    \`red
+    #red
 
 def Color
-    \`red
+    #red
 `);
