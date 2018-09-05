@@ -27,7 +27,9 @@ import {
     Variable,
     VariableDeclaration,
     ResolvedType,
-    EmptyList
+    EmptyList,
+    BuiltinTypename,
+    StringInterpolationExpression
 } from "./ast";
 
 import {ErrorAccessingInexistentMember} from "./errorType/E0001-AccessingInexistentMember";
@@ -62,7 +64,6 @@ import {
     BaseStructType,
     childOf,
     Comparer,
-    EmptyListType,
     EnumType,
     findElement,
     insertChild,
@@ -76,6 +77,8 @@ import {
 import {find} from "./util";
 import { ErrorConditionIsNotBoolean } from "./errorType/E0012-ConditionIsNotBoolean";
 import { prettyPrint } from "./pine2js";
+
+const parser     = require("../jison/pineapple-parser-v2");
 
 let CURRENT_SOURCE_CODE: () => SourceCode;
 export function fillUpTypeInformation(decls: Declaration[], sourceCode: SourceCode, symbols: SymbolTable): [Declaration[], SymbolTable] {
@@ -522,7 +525,8 @@ export function fillUpExpressionTypeInfo(e: Expression, symbols: SymbolTable, va
             }
             break;
         case "String":
-            e = fillUpSimpleTypeInfo(e, "String");
+            e = fillUpSimpleTypeInfo(e, "String") as StringExpression;
+            [e, symbols] = resolveExpressionInterpolation(e, symbols, vartab);
             break;
         case "Variable":
             e = fillUpVariableTypeInfo(e, vartab);
@@ -579,6 +583,62 @@ export function fillUpExpressionTypeInfo(e: Expression, symbols: SymbolTable, va
             throw new Error(`Unimplemented yet for ${e.kind}`);
     }
     return [e, symbols];
+}
+
+export function resolveExpressionInterpolation(
+    s: StringExpression, 
+    symbols: SymbolTable,
+    vartab: VariableTable
+): [StringInterpolationExpression | StringExpression, SymbolTable] {
+    const repr = s.repr;
+    const regex = /[$][(].*?[)]/g;
+    const matches: Array<RegExpExecArray | null> = [];
+    let match = regex.exec(repr);
+
+    // if no interpolated expressions is found
+    if(!match) {
+        return [s, symbols];
+    }
+
+    // capture interpolated expressions
+    matches.push(match);
+    while((match = regex.exec(repr)) != null) {
+        matches.push(match)
+    }
+
+
+    const result: StringInterpolationExpression = {
+        kind: "StringInterpolationExpression",
+        returnType: newBuiltinType("String"),
+        location: s.location,
+        expressions: []
+    };
+    // resolve interpolated expressions
+    let previousIndex = 0;
+    for (let i = 0; i < matches.length; i++) {
+        const m = matches[i];
+        if(m !== null) {
+            let expr = parser.parse(m[0].slice(2, -1)) as Expression;
+            [expr, symbols] = fillUpExpressionTypeInfo(expr, symbols, vartab);
+            if(isStringType(expr.returnType)) {
+                const str = copy(s);
+                str.repr = str.repr.slice(previousIndex, m.index + 1);
+                result.expressions.push(str);
+                result.expressions.push(expr);
+                previousIndex = m.index + m[0].length - 1;
+            } else {
+                throw new Error("Should be string type");
+            }
+        }
+    }
+    const str = copy(s);
+    str.repr = str.repr.slice(previousIndex);
+    result.expressions.push(str);
+    return [result, symbols];
+}
+
+export function isStringType(r: TypeExpression): boolean {
+    return r.kind === "BuiltinType" && r.name === "String";
 }
 
 export function extractGenericList(t: TypeExpression): GenericList {
@@ -729,7 +789,7 @@ export function fillUpVariableTypeInfo(e: Variable, vartab: VariableTable): Vari
 
 export type SimpleExpression = NumberExpression | StringExpression;
 
-export function fillUpSimpleTypeInfo(e: SimpleExpression, name: "Number" | "Integer" | "String"): SimpleExpression {
+export function fillUpSimpleTypeInfo(e: SimpleExpression, name: BuiltinTypename): SimpleExpression {
     return {
         ...e,
         returnType: newBuiltinType(name)
@@ -920,7 +980,7 @@ export function fillUpArrayTypeInfo(e: ListExpression, symbols: SymbolTable, var
         [e.elements, symbols] = fillUpElementsType(e.elements, symbols, vartab);
         e.returnType = getElementsType(e.elements);
     } else {
-        e.returnType = EmptyListType();
+        throw new Error("impossible")
     }
     return [e, symbols];
 }

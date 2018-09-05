@@ -29,7 +29,8 @@ import {
     TypeExpression,
     VariableDeclaration,
     WhileStatement,
-    BuiltinType
+    BuiltinType,
+    StringInterpolationExpression
 } from "./ast";
 import { flattenLinkedNode } from "./getIntermediateForm";
 
@@ -242,9 +243,13 @@ export function tpExpression(e: Expression): string {
         case "ObjectAccess":        return tpObjectAccess(e);
         case "EnumExpression":      return tpEnumExpression(e);
         case "TupleExpression":     return tpTupleExpression(e);
-        default:
+        case "StringInterpolationExpression": return tpStringInterpolationExpression(e); default:
             throw new Error(`Cannot handle ${e.kind} yet`);
     }
+}
+
+export function tpStringInterpolationExpression(s: StringInterpolationExpression): strinng {
+    return s.expressions.map(tpExpression).join(" + ");
 }
 
 export function tpTupleExpression(t: TupleExpression): string {

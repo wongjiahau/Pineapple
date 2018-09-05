@@ -225,7 +225,7 @@ const _AnonymousExpression = (location) => ({
 [.]([a-z][a-zA-Z0-9]*)?         return 'FUNCNAME'    
 \b[T][12]?\b                    return 'GENERICTYPENAME'
 [A-Z][a-zA-Z0-9]*               return 'TYPENAME'
-[a-z][a-zA-Z]*                  return 'VARNAME'
+[a-z][a-zA-Z0-9]*               return 'VARNAME'
 [:][a-z][a-zA-Z0-9]*            return 'MEMBERNAME'
 [-!$%^&*_+|~=`\[\]:";'<>?,.\/]+ return 'OPERATOR'
 
@@ -246,6 +246,7 @@ const _AnonymousExpression = (location) => ({
 
 EntryPoint
     : DeclarationList EOF {return $1}
+    | SinglelineExpr {return $1} // This is for String Interpolation only, not for other uses. Maybe REPL can use this
     ;
 
 DeclarationList

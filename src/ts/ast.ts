@@ -189,11 +189,19 @@ export type Expression
     | Variable
     | ObjectExpression // Pineapple Object Notation (PON)
     | ObjectAccess
-    | ListExpression // a.k.a. Array
-    | TupleExpression // a.k.a. Array
+    | ListExpression // a.k.a. Array. To store elements of same type
+    | TupleExpression // to store element of different type
     | AnonymousExpression
     | Lambda
+    | StringInterpolationExpression
     ;
+
+export interface StringInterpolationExpression {
+    kind: "StringInterpolationExpression";
+    expressions: Expression[];
+    location: TokenLocation;
+    returnType: TypeExpression;
+}
 
 export interface TupleExpression {
     kind: "TupleExpression";
