@@ -373,6 +373,30 @@
 
 
   <li class="md-nav__item">
+    <a href="../015-Types/" title="Built-in types" class="md-nav__link">
+      Built-in types
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../020-Variables/" title="Variables" class="md-nav__link">
+      Variables
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
     <a href="../AdvanceFunctions/" title="Advance functions" class="md-nav__link">
       Advance functions
     </a>
@@ -451,30 +475,6 @@
   </li>
 
         
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="../Types/" title="Built-in types" class="md-nav__link">
-      Built-in types
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="../Variables/" title="Variables" class="md-nav__link">
-      Variables
-    </a>
-  </li>
-
-        
       </ul>
     </nav>
   </li>
@@ -541,43 +541,43 @@ The definitions are:  </p>
 </ul>
 <p>For example:</p>
 <div class="codehilite"><pre><span></span><span class="c1">// function definition</span>
-<span class="nx">def</span> <span class="p">.</span><span class="nx">main</span>
-    <span class="s2">&quot;Hello world&quot;</span><span class="p">.</span><span class="nx">show</span>
+<span class="kd">def</span> <span class="mi">.main</span>
+    <span class="s2">&quot;Hello world&quot;</span><span class="mi">.show</span>
 
 <span class="c1">// struct definition</span>
-<span class="nx">def</span> <span class="nx">People</span>
+<span class="kd">def</span> <span class="nb">People</span>
     <span class="o">:</span><span class="nx">name</span> <span class="nb">String</span>
     <span class="o">:</span><span class="nx">age</span>  <span class="nb">Number</span>
 
 <span class="c1">// import definition</span>
-<span class="kr">import</span> <span class="s2">&quot;./myFunctions.pine&quot;</span>
+<span class="kd">import</span> <span class="s2">&quot;./myFunctions.pine&quot;</span>
 
 <span class="c1">// constants definition</span>
-<span class="nx">def</span> <span class="nx">pi</span> <span class="o">=</span> <span class="mf">3.142</span>
+<span class="kd">def</span> <span class="nx">pi</span> <span class="o">=</span> <span class="kc">3</span><span class="mi">.</span><span class="kc">142</span>
 
 <span class="c1">// type aliases definition</span>
-<span class="nx">def</span> <span class="nx">Color</span> <span class="o">=</span> <span class="nx">Tuple</span><span class="p">{</span><span class="nx">Int</span><span class="p">,</span><span class="nx">Int</span><span class="p">,</span><span class="nx">Int</span><span class="p">}</span>
+<span class="kd">def</span> <span class="nb">Color</span> <span class="o">=</span> <span class="nb">Tuple</span><span class="p">{</span><span class="nb">Int</span><span class="p">,</span><span class="nb">Int</span><span class="p">,</span><span class="nb">Int</span><span class="p">}</span>
 
 <span class="c1">// trait declaration definition</span>
-<span class="nx">def</span> <span class="nx">Equatable</span><span class="p">{</span><span class="nx">T</span><span class="p">}</span>
-    <span class="nx">def</span> <span class="p">(</span><span class="k">this</span> <span class="nx">T</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="nx">that</span> <span class="nx">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nx">Bool</span>
-    <span class="nx">def</span> <span class="p">(</span><span class="k">this</span> <span class="nx">T</span><span class="p">)</span> <span class="o">!=</span> <span class="p">(</span><span class="nx">that</span> <span class="nx">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nx">Bool</span>
-        <span class="k">return</span> <span class="nx">not</span> <span class="k">this</span> <span class="o">==</span> <span class="nx">that</span>
+<span class="kd">def</span> <span class="nb">Equatable</span><span class="p">{</span><span class="nb">T</span><span class="p">}</span>
+    <span class="kd">def</span> <span class="p">(</span><span class="nx">this</span> <span class="nb">T</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="nx">that</span> <span class="nb">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">Bool</span>
+    <span class="kd">def</span> <span class="p">(</span><span class="nx">this</span> <span class="nb">T</span><span class="p">)</span> <span class="o">!=</span> <span class="p">(</span><span class="nx">that</span> <span class="nb">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">Bool</span>
+        <span class="k">return</span> <span class="kr">not</span> <span class="nx">this</span> <span class="o">==</span> <span class="nx">that</span>
 
 <span class="c1">// trait implementation definition</span>
-<span class="nx">def</span> <span class="nx">Equatable</span><span class="p">{</span><span class="nx">Color</span><span class="p">}</span>
-    <span class="nx">def</span> <span class="p">(</span><span class="k">this</span> <span class="nx">Color</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="nx">that</span> <span class="nx">Color</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nx">Bool</span>
+<span class="kd">def</span> <span class="nb">Equatable</span><span class="p">{</span><span class="nb">Color</span><span class="p">}</span>
+    <span class="kd">def</span> <span class="p">(</span><span class="nx">this</span> <span class="nb">Color</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="nx">that</span> <span class="nb">Color</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">Bool</span>
         <span class="k">return</span> <span class="o">\</span>
-            <span class="k">this</span><span class="p">.(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="nx">that</span><span class="p">.(</span><span class="mi">0</span><span class="p">)</span> <span class="nx">and</span> <span class="o">\</span>
-            <span class="k">this</span><span class="p">.(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="nx">that</span><span class="p">.(</span><span class="mi">1</span><span class="p">)</span> <span class="nx">and</span> <span class="o">\</span>
-            <span class="k">this</span><span class="p">.(</span><span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="nx">that</span><span class="p">.(</span><span class="mi">2</span><span class="p">)</span>
+            <span class="nx">this</span><span class="mi">.</span><span class="p">(</span><span class="kc">0</span><span class="p">)</span> <span class="o">==</span> <span class="nx">that</span><span class="mi">.</span><span class="p">(</span><span class="kc">0</span><span class="p">)</span> <span class="kr">and</span> <span class="o">\</span>
+            <span class="nx">this</span><span class="mi">.</span><span class="p">(</span><span class="kc">1</span><span class="p">)</span> <span class="o">==</span> <span class="nx">that</span><span class="mi">.</span><span class="p">(</span><span class="kc">1</span><span class="p">)</span> <span class="kr">and</span> <span class="o">\</span>
+            <span class="nx">this</span><span class="mi">.</span><span class="p">(</span><span class="kc">2</span><span class="p">)</span> <span class="o">==</span> <span class="nx">that</span><span class="mi">.</span><span class="p">(</span><span class="kc">2</span><span class="p">)</span>
 
 <span class="c1">// enumeration definition</span>
-<span class="nx">def</span> <span class="nx">Color</span>
-    <span class="sb">`red</span>
-<span class="sb">    `</span><span class="nx">green</span>
-    <span class="sb">`blue</span>
-<span class="sb">    `</span><span class="nx">yellow</span>
+<span class="kd">def</span> <span class="nb">Color</span>
+    <span class="kc">`red</span>
+    <span class="kc">`green</span>
+    <span class="kc">`blue</span>
+    <span class="kc">`yellow</span>
 </pre></div>
                 
                   
