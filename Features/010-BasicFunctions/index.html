@@ -340,8 +340,8 @@
 
 
   <li class="md-nav__item">
-    <a href="../005-ProgramStructure/" title="Structure of Pineapple program" class="md-nav__link">
-      Structure of Pineapple program
+    <a href="../005-ProgramStructure/" title="Program structure" class="md-nav__link">
+      Program structure
     </a>
   </li>
 
@@ -481,8 +481,8 @@
 
 
   <li class="md-nav__item">
-    <a href="../AdvanceFunctions/" title="Advance functions" class="md-nav__link">
-      Advance functions
+    <a href="../025-ControlFlowStatements/" title="Control Flow Statements" class="md-nav__link">
+      Control Flow Statements
     </a>
   </li>
 
@@ -493,8 +493,8 @@
 
 
   <li class="md-nav__item">
-    <a href="../ControlFlowStatements/" title="Control Flow Statements" class="md-nav__link">
-      Control Flow Statements
+    <a href="../AdvanceFunctions/" title="Advance functions" class="md-nav__link">
+      Advance functions
     </a>
   </li>
 
@@ -729,11 +729,11 @@
 <h2 id="nullifunc-0-parameter">Nullifunc (0 parameter)<a class="headerlink" href="#nullifunc-0-parameter" title="Permanent link">&para;</a></h2>
 <p>Nullifunc is a function that do not need any parameters, for example:
 <div class="codehilite"><pre><span></span><span class="c1">// Here&#39;s how you define a nullifunc</span>
-<span class="kd">def</span> <span class="mi">.pi</span> <span class="o">-&gt;</span> <span class="nb">Number</span>
+<span class="kd">def</span> <span class="p">.</span><span class="nx">pi</span> <span class="o">-&gt;</span> <span class="nb">Number</span>
     <span class="k">return</span> <span class="kc">3</span><span class="mi">.</span><span class="kc">142</span>
 
 <span class="c1">// Here&#39;s how you call a nullifunc</span>
-<span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="mi">.pi</span>
+<span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="p">.</span><span class="nx">pi</span>
 </pre></div></p>
 <div class="admonition info">
 <p class="admonition-title">Note</p>
@@ -745,7 +745,7 @@
 <p>Monofunc is a function that takes only 1 parameter.<br />
 Note that the parameter must be at front. For example:
 <div class="codehilite"><pre><span></span><span class="c1">// here&#39;s how you declare a monofunc</span>
-<span class="kd">def</span> <span class="p">(</span><span class="nx">this</span> <span class="nb">Number</span><span class="p">)</span><span class="mi">.square</span> <span class="o">-&gt;</span> <span class="nb">Number</span>
+<span class="kd">def</span> <span class="p">(</span><span class="nx">this</span> <span class="nb">Number</span><span class="p">).</span><span class="nx">square</span> <span class="o">-&gt;</span> <span class="nb">Number</span>
     <span class="k">return</span> <span class="nx">this</span> <span class="o">*</span> <span class="nx">this</span>
 
 <span class="c1">// here&#39;s how you call a monofunc</span>
@@ -765,11 +765,11 @@ Note that the parameter must be at front. For example:
 Since you cannot separate parameters with comma, the only way is to put the name in the middle.</p>
 <p>For example:</p>
 <div class="codehilite"><pre><span></span><span class="c1">// here&#39;s how you define a bifunc</span>
-<span class="kd">def</span> <span class="p">(</span><span class="nx">this</span> <span class="nb">Number</span><span class="p">)</span><span class="mi">.plus</span><span class="p">(</span><span class="nx">that</span> <span class="nb">Number</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">Number</span>
+<span class="kd">def</span> <span class="p">(</span><span class="nx">this</span> <span class="nb">Number</span><span class="p">).</span><span class="nx">plus</span><span class="p">(</span><span class="nx">that</span> <span class="nb">Number</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">Number</span>
     <span class="k">return</span> <span class="nx">this</span> <span class="o">+</span> <span class="nx">that</span>
 
 <span class="c1">// here&#39;s how you call a bifunc</span>
-<span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="kc">99</span><span class="mi">.plus</span><span class="p">(</span><span class="kc">99</span><span class="p">)</span><span class="mi">.plus</span><span class="p">(</span><span class="kc">22</span><span class="p">)</span>
+<span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="kc">99</span><span class="mi">.plus</span><span class="p">(</span><span class="kc">99</span><span class="p">).</span><span class="nx">plus</span><span class="p">(</span><span class="kc">22</span><span class="p">)</span>
 </pre></div>
 
 <h2 id="user-defined-operators">User-defined operators<a class="headerlink" href="#user-defined-operators" title="Permanent link">&para;</a></h2>
@@ -794,11 +794,11 @@ As mentioned before, you cannot separate parameters with comma.<br />
 So, you should separate them with an identifier.<br />
 For example,
 <div class="codehilite"><pre><span></span><span class="c1">// Here&#39;s how you define a trifunc</span>
-<span class="kd">def</span> <span class="p">(</span><span class="nx">this</span> <span class="nb">String</span><span class="p">)</span><span class="mi">.replac</span><span class="nx">e</span><span class="p">(</span><span class="nx">old</span> <span class="nb">String</span> <span class="nx">with</span> <span class="k">new</span> <span class="nb">String</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">String</span>
+<span class="kd">def</span> <span class="p">(</span><span class="nx">this</span> <span class="nb">String</span><span class="p">).</span><span class="nx">replace</span><span class="p">(</span><span class="nx">old</span> <span class="nb">String</span> <span class="nx">with</span> <span class="k">new</span> <span class="nb">String</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">String</span>
     <span class="kd">pass</span>
 
 <span class="c1">// Here&#39;s how you call a trifunc</span>
-<span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="s2">&quot;Hello world&quot;</span><span class="mi">.replac</span><span class="nx">e</span><span class="p">(</span><span class="s2">&quot;world&quot;</span> <span class="nx">with</span> <span class="s2">&quot;baby&quot;</span><span class="p">)</span>
+<span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="s2">&quot;Hello world&quot;</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="s2">&quot;world&quot;</span> <span class="nx">with</span> <span class="s2">&quot;baby&quot;</span><span class="p">)</span>
 </pre></div></p>
 <div class="admonition info">
 <p class="admonition-title">Note</p>
@@ -806,7 +806,7 @@ For example,
 </div>
 <p>Just to make it clear, let see another Trifunc example:
 <div class="codehilite"><pre><span></span><span class="c1">// Defining a trifunc</span>
-<span class="kd">def</span> <span class="p">(</span><span class="nx">this</span> <span class="nb">Socket</span><span class="p">)</span><span class="mi">.send</span><span class="p">(</span><span class="nx">message</span> <span class="nb">String</span> <span class="nx">to</span> <span class="nx">portNumber</span> <span class="nb">Integer</span><span class="p">)</span>
+<span class="kd">def</span> <span class="p">(</span><span class="nx">this</span> <span class="nb">Socket</span><span class="p">).</span><span class="nx">send</span><span class="p">(</span><span class="nx">message</span> <span class="nb">String</span> <span class="nx">to</span> <span class="nx">portNumber</span> <span class="nb">Integer</span><span class="p">)</span>
     <span class="kd">pass</span>
 
 <span class="c1">// Here&#39;s how you use it</span>
@@ -822,7 +822,7 @@ Compare the following functions:</p>
 </pre></div>
 
 <div class="codehilite"><pre><span></span><span class="c1">// Pineapple</span>
-<span class="s2">&quot;Hello&quot;</span><span class="mi">.replac</span><span class="nx">e</span><span class="p">(</span><span class="s2">&quot;el&quot;</span> <span class="nx">with</span> <span class="s2">&quot;lo&quot;</span><span class="p">)</span> <span class="c1">// I am very sure it is replacing &quot;el&quot; with &quot;lo&quot;!</span>
+<span class="s2">&quot;Hello&quot;</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="s2">&quot;el&quot;</span> <span class="nx">with</span> <span class="s2">&quot;lo&quot;</span><span class="p">)</span> <span class="c1">// I am very sure it is replacing &quot;el&quot; with &quot;lo&quot;!</span>
 </pre></div>
 
 <p>There are at least 2 advantages with it:  </p>
@@ -842,11 +842,11 @@ Compare the following functions:</p>
 It is similar as Trifunc, but it needs 2 or more <em>sub function identifiers</em>.<br />
 For example,
 <div class="codehilite"><pre><span></span><span class="c1">// Here&#39;s how you define a Polyfunc with 4 parameters</span>
-<span class="kd">def</span> <span class="p">(</span><span class="nx">this</span> <span class="nb">String</span><span class="p">)</span><span class="mi">.replac</span><span class="nx">e</span><span class="p">(</span><span class="nx">startIndex</span> <span class="nb">Integer</span> <span class="nx">to</span> <span class="nx">endIndex</span> <span class="nb">Integer</span> <span class="nx">with</span> <span class="k">new</span> <span class="nb">String</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">String</span>
+<span class="kd">def</span> <span class="p">(</span><span class="nx">this</span> <span class="nb">String</span><span class="p">).</span><span class="nx">replace</span><span class="p">(</span><span class="nx">startIndex</span> <span class="nb">Integer</span> <span class="nx">to</span> <span class="nx">endIndex</span> <span class="nb">Integer</span> <span class="nx">with</span> <span class="k">new</span> <span class="nb">String</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">String</span>
     <span class="kd">pass</span>
 
 <span class="c1">// Here&#39;s how you call it</span>
-<span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="s2">&quot;Hello world&quot;</span><span class="mi">.replac</span><span class="nx">e</span><span class="p">(</span><span class="kc">0</span> <span class="nx">to</span> <span class="kc">4</span> <span class="nx">with</span> <span class="s2">&quot;Hi&quot;</span><span class="p">)</span>
+<span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="s2">&quot;Hello world&quot;</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="kc">0</span> <span class="nx">to</span> <span class="kc">4</span> <span class="nx">with</span> <span class="s2">&quot;Hi&quot;</span><span class="p">)</span>
 </pre></div>
 <hr></p>
 <div class="admonition tip">
@@ -861,7 +861,7 @@ For example,
     <span class="o">:</span><span class="nx">body</span>   <span class="nb">String</span>
     <span class="o">:</span><span class="nx">schema</span> <span class="nb">String</span>
 
-<span class="kd">def</span> <span class="p">(</span><span class="nx">this</span> <span class="nb">Server</span><span class="p">)</span><span class="mi">.send</span><span class="p">(</span><span class="nx">that</span> <span class="nb">RequestParam</span><span class="p">)</span>
+<span class="kd">def</span> <span class="p">(</span><span class="nx">this</span> <span class="nb">Server</span><span class="p">).</span><span class="nx">send</span><span class="p">(</span><span class="nx">that</span> <span class="nb">RequestParam</span><span class="p">)</span>
     <span class="kd">pass</span>
 </pre></div>
 Example of usage:
@@ -882,7 +882,7 @@ Example of usage:
 <span class="n">replace</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="s2">&quot;Hello world&quot;</span><span class="p">,</span> <span class="n">old</span><span class="o">=</span><span class="s2">&quot;lo&quot;</span><span class="p">,</span> <span class="n">new</span><span class="o">=</span><span class="s2">&quot;wo&quot;</span><span class="p">)</span>
 </pre></div>
 <div class="codehilite"><pre><span></span><span class="c1">// Pineapple</span>
-<span class="s2">&quot;Hello world&quot;</span><span class="mi">.replac</span><span class="nx">e</span><span class="p">(</span><span class="s2">&quot;lo&quot;</span> <span class="nx">with</span> <span class="s2">&quot;wo&quot;</span><span class="p">)</span>
+<span class="s2">&quot;Hello world&quot;</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="s2">&quot;lo&quot;</span> <span class="nx">with</span> <span class="s2">&quot;wo&quot;</span><span class="p">)</span>
 </pre></div>
 Obviously, the Pineapple's version is much more clearer than Python's version.<br />
 Moreover, it is also shorter!</p>
@@ -923,7 +923,7 @@ Moreover, it is also shorter!</p>
     <div class="md-footer-nav">
       <nav class="md-footer-nav__inner md-grid">
         
-          <a href="../005-ProgramStructure/" title="Structure of Pineapple program" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+          <a href="../005-ProgramStructure/" title="Program structure" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
             <div class="md-flex__cell md-flex__cell--shrink">
               <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
             </div>
@@ -932,7 +932,7 @@ Moreover, it is also shorter!</p>
                 <span class="md-footer-nav__direction">
                   Previous
                 </span>
-                Structure of Pineapple program
+                Program structure
               </span>
             </div>
           </a>

@@ -13,7 +13,7 @@
         <meta name="description" content="The documentation of Pineapple language">
       
       
-        <link rel="canonical" href="https://wongjiahau.github.io/Pineapple/Features/ControlFlowStatements/">
+        <link rel="canonical" href="https://wongjiahau.github.io/Pineapple/Features/025-ControlFlowStatements/">
       
       
         <meta name="author" content="Wong Jia Hau">
@@ -340,8 +340,8 @@
 
 
   <li class="md-nav__item">
-    <a href="../005-ProgramStructure/" title="Structure of Pineapple program" class="md-nav__link">
-      Structure of Pineapple program
+    <a href="../005-ProgramStructure/" title="Program structure" class="md-nav__link">
+      Program structure
     </a>
   </li>
 
@@ -386,18 +386,6 @@
           
           
 
-
-  <li class="md-nav__item">
-    <a href="../AdvanceFunctions/" title="Advance functions" class="md-nav__link">
-      Advance functions
-    </a>
-  </li>
-
-        
-          
-          
-          
-
   
 
 
@@ -425,6 +413,13 @@
   
     <label class="md-nav__title" for="__toc">Table of contents</label>
     <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#if-elif-else-statements" title="If-elif-else statements" class="md-nav__link">
+    If-elif-else statements
+  </a>
+  
+</li>
       
         <li class="md-nav__item">
   <a href="#test-expression-chaining" title="Test expression chaining" class="md-nav__link">
@@ -461,6 +456,18 @@
   
 </nav>
     
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../AdvanceFunctions/" title="Advance functions" class="md-nav__link">
+      Advance functions
+    </a>
   </li>
 
         
@@ -550,6 +557,13 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#if-elif-else-statements" title="If-elif-else statements" class="md-nav__link">
+    If-elif-else statements
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#test-expression-chaining" title="Test expression chaining" class="md-nav__link">
     Test expression chaining
   </a>
@@ -592,32 +606,45 @@
             <article class="md-content__inner md-typeset">
               
                 
-                  <a href="https://github.com/wongjiahau/Pineapple/edit/master/docs/Features/ControlFlowStatements.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
+                  <a href="https://github.com/wongjiahau/Pineapple/edit/master/docs/Features/025-ControlFlowStatements.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
                 
                 
                 <h1 id="control-flow-statements">Control Flow Statements<a class="headerlink" href="#control-flow-statements" title="Permanent link">&para;</a></h1>
 <p>Basically, you can control the flow of your Pineapple code with any of the following:</p>
 <ul>
 <li>
-<p><code>if</code> , <code>elif</code> and <code>else</code></p>
+<p><code class="codehilite"><span class="k">if</span></code> , <code class="codehilite"><span class="k">elif</span></code> and <code class="codehilite"><span class="k">else</span></code></p>
 </li>
 <li>
-<p><code>for</code> loop</p>
+<p><code class="codehilite"><span class="k">for</span></code> loop</p>
 </li>
 <li>
-<p><code>while</code> loop</p>
+<p><code class="codehilite"><span class="k">while</span></code> loop</p>
 </li>
 <li>
-<p><code>break</code> , <code>continue</code> or <code>return</code></p>
+<p><code class="codehilite"><span class="k">break</span></code> , <code class="codehilite"><span class="k">continue</span></code> or <code class="codehilite"><span class="k">return</span></code></p>
 </li>
 </ul>
+<h2 id="if-elif-else-statements">If-elif-else statements<a class="headerlink" href="#if-elif-else-statements" title="Permanent link">&para;</a></h2>
+<p>Similar to Python, all you need is indentation (tab), you don't need those curly brackets.
+For example:</p>
+<div class="codehilite"><pre><span></span><span class="k">if</span> <span class="nx">he</span><span class="mi">.isCraz</span><span class="nx">y</span>
+    <span class="nx">you</span><span class="mi">.callAmbulanc</span><span class="nx">e</span>
+
+<span class="k">elif</span> <span class="nx">he</span><span class="mi">.isInDanger</span>
+    <span class="nx">you</span><span class="mi">.goHelp</span><span class="p">(</span><span class="nx">he</span><span class="p">)</span>
+
+<span class="k">else</span>
+    <span class="nx">you</span><span class="mi">.doNothin</span><span class="nx">g</span>
+</pre></div>
+
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Every test expression must have type of Boolean.</p>
 </div>
 <div class="admonition tip">
 <p class="admonition-title">Tips</p>
-<p><code>.isCrazy</code> and other similar construct are just <a href="../010-BasicFunctions/">functions</a>.</p>
+<p><code class="codehilite"><span class="p">.</span><span class="nx">isCrazy</span></code> and other similar construct are just <a href="../010-BasicFunctions/">functions</a>.</p>
 </div>
 <hr>
 
@@ -625,35 +652,35 @@
 <p>Sometimes, a single test expression is not enough to express what you really wanted.  In such situation, you can use the following logical operators:</p>
 <ul>
 <li>
-<p><code>and</code></p>
+<p><code class="codehilite"><span class="kr">and</span></code></p>
 </li>
 <li>
-<p><code>or</code></p>
+<p><code class="codehilite"><span class="kr">or</span></code></p>
 </li>
 <li>
-<p><code>not</code></p>
+<p><code class="codehilite"><span class="kr">not</span></code></p>
 </li>
 </ul>
 <p>For example:</p>
-<div class="codehilite"><pre><span></span><span class="k">if</span> <span class="n">he</span><span class="o">.</span><span class="n">isYoung</span> <span class="ow">and</span> <span class="n">he</span><span class="o">.</span><span class="n">isNaughty</span>
-    <span class="s2">&quot;He is a kid&quot;</span><span class="o">.</span><span class="n">show</span>
+<div class="codehilite"><pre><span></span><span class="k">if</span> <span class="nx">he</span><span class="mi">.isYoun</span><span class="nx">g</span> <span class="kr">and</span> <span class="nx">he</span><span class="mi">.isNaught</span><span class="nx">y</span>
+    <span class="s2">&quot;He is a kid&quot;</span><span class="p">.</span><span class="nx">show</span>
 
-<span class="k">elif</span> <span class="n">sky</span><span class="o">.</span><span class="n">isBlue</span> <span class="ow">or</span> <span class="n">air</span><span class="o">.</span><span class="n">isFresh</span>
-    <span class="s2">&quot;I am happy!&quot;</span><span class="o">.</span><span class="n">show</span>
+<span class="k">elif</span> <span class="nx">sky</span><span class="mi">.isBlue</span> <span class="kr">or</span> <span class="nx">air</span><span class="mi">.isFres</span><span class="nx">h</span>
+    <span class="s2">&quot;I am happy!&quot;</span><span class="p">.</span><span class="nx">show</span>
 
-<span class="k">elif</span> <span class="ow">not</span> <span class="n">current</span><span class="o">.</span><span class="n">isLunchTime</span>
-    <span class="s2">&quot;Continue working . . .&quot;</span><span class="o">.</span><span class="n">show</span>
+<span class="k">elif</span> <span class="kr">not</span> <span class="nx">current</span><span class="mi">.isLunchTim</span><span class="nx">e</span>
+    <span class="s2">&quot;Continue working . . .&quot;</span><span class="p">.</span><span class="nx">show</span>
 </pre></div>
 
-<div class="admonition note">
+<div class="admonition info">
 <p class="admonition-title">Note</p>
-<p><code>not</code> operator have higher precedence than <code>or</code> and <code>and</code>.<br />
+<p><code class="codehilite"><span class="kr">not</span></code> operator have higher precedence than <code class="codehilite"><span class="kr">or</span></code> and <code class="codehilite"><span class="kr">and</span></code>.<br />
 For example, the following code: 
-<div class="codehilite"><pre><span></span>if not he.isFine and he.isEating
+<div class="codehilite"><pre><span></span><span class="k">if</span> <span class="kr">not</span> <span class="nx">he</span><span class="mi">.isFine</span> <span class="kr">and</span> <span class="nx">he</span><span class="mi">.isEating</span>
 </pre></div></p>
 <p>Is same as:</p>
-<div class="codehilite"><pre><span></span><span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">he</span><span class="o">.</span><span class="n">isFine</span><span class="p">)</span> <span class="ow">and</span> <span class="n">he</span><span class="o">.</span><span class="n">isEating</span>
-    <span class="o">...</span>
+<div class="codehilite"><pre><span></span><span class="k">if</span> <span class="p">(</span><span class="kr">not</span> <span class="nx">he</span><span class="mi">.isFine</span><span class="p">)</span> <span class="kr">and</span> <span class="nx">he</span><span class="mi">.isEating</span>
+    <span class="p">...</span>
 </pre></div>
 
 </div>
@@ -661,17 +688,18 @@ For example, the following code:
 
 <h2 id="for-statements">For statements<a class="headerlink" href="#for-statements" title="Permanent link">&para;</a></h2>
 <p>For statements is used to iterate over a list.<br />
-For example:
-<div class="codehilite"><pre><span></span><span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span>
-    <span class="n">x</span><span class="o">.</span><span class="n">show</span>
-</pre></div></p>
+For example:</p>
+<div class="codehilite"><pre><span></span><span class="k">for</span> <span class="nx">x</span> <span class="k">in</span> <span class="p">[</span><span class="kc">1</span><span class="p">,</span><span class="kc">2</span><span class="p">,</span><span class="kc">3</span><span class="p">,</span><span class="kc">4</span><span class="p">]</span>
+    <span class="nx">x</span><span class="mi">.show</span>
+</pre></div>
+
 <hr>
 
 <h2 id="while-loop">While loop<a class="headerlink" href="#while-loop" title="Permanent link">&para;</a></h2>
-<p>While loop is use to loop some code until certain condition is met.
-<div class="codehilite"><pre><span></span><span class="k">while</span> <span class="ow">not</span> <span class="nb">file</span><span class="o">.</span><span class="n">atEOF</span>
-    <span class="nb">file</span><span class="o">.</span><span class="n">readline</span><span class="o">.</span><span class="n">show</span>
-</pre></div></p>
+<p>While loop is use to loop some code until certain condition is met.</p>
+<div class="codehilite"><pre><span></span><span class="k">while</span> <span class="kr">not</span> <span class="nx">file</span><span class="mi">.atEO</span><span class="nb">F</span>
+    <span class="nx">file</span><span class="mi">.readline.show</span>
+</pre></div>
                 
                   
                 
@@ -684,9 +712,9 @@ For example:
   <div id="disqus_thread"></div>
   <script>
     var disqus_config = function () {
-      this.page.url = "https://wongjiahau.github.io/Pineapple/Features/ControlFlowStatements/";
+      this.page.url = "https://wongjiahau.github.io/Pineapple/Features/025-ControlFlowStatements/";
       this.page.identifier =
-        "Features/ControlFlowStatements/";
+        "Features/025-ControlFlowStatements/";
     };
     (function() {
       var d = document, s = d.createElement("script");
@@ -708,7 +736,7 @@ For example:
     <div class="md-footer-nav">
       <nav class="md-footer-nav__inner md-grid">
         
-          <a href="../AdvanceFunctions/" title="Advance functions" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+          <a href="../020-Variables/" title="Variables" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
             <div class="md-flex__cell md-flex__cell--shrink">
               <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
             </div>
@@ -717,19 +745,19 @@ For example:
                 <span class="md-footer-nav__direction">
                   Previous
                 </span>
-                Advance functions
+                Variables
               </span>
             </div>
           </a>
         
         
-          <a href="../Generics/" title="Generics" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+          <a href="../AdvanceFunctions/" title="Advance functions" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
             <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
               <span class="md-flex__ellipsis">
                 <span class="md-footer-nav__direction">
                   Next
                 </span>
-                Generics
+                Advance functions
               </span>
             </div>
             <div class="md-flex__cell md-flex__cell--shrink">

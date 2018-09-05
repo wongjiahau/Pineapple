@@ -340,8 +340,8 @@
 
 
   <li class="md-nav__item">
-    <a href="../005-ProgramStructure/" title="Structure of Pineapple program" class="md-nav__link">
-      Structure of Pineapple program
+    <a href="../005-ProgramStructure/" title="Program structure" class="md-nav__link">
+      Program structure
     </a>
   </li>
 
@@ -466,8 +466,8 @@
 
 
   <li class="md-nav__item">
-    <a href="../AdvanceFunctions/" title="Advance functions" class="md-nav__link">
-      Advance functions
+    <a href="../025-ControlFlowStatements/" title="Control Flow Statements" class="md-nav__link">
+      Control Flow Statements
     </a>
   </li>
 
@@ -478,8 +478,8 @@
 
 
   <li class="md-nav__item">
-    <a href="../ControlFlowStatements/" title="Control Flow Statements" class="md-nav__link">
-      Control Flow Statements
+    <a href="../AdvanceFunctions/" title="Advance functions" class="md-nav__link">
+      Advance functions
     </a>
   </li>
 
@@ -636,40 +636,71 @@
                 
                 
                 <h1 id="variables">Variables<a class="headerlink" href="#variables" title="Permanent link">&para;</a></h1>
-<p>To create a variable, you need to use the <code>let</code> keyword:
+<p>To create a variable, you need to use the <code class="codehilite"><span class="kd">let</span></code> keyword:</p>
 <div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">myVariable</span> <span class="o">=</span> <span class="s2">&quot;Hello World!&quot;</span>
-</pre></div></p>
+</pre></div>
+
+<div class="admonition info">
+<p class="admonition-title">Note</p>
+<p>Every variable in Pineapple must start with <mark>lowercase letter</mark> and cannot contain any spaces.<br />
+The following are invalid variable names:</p>
+<div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nb">Message</span> <span class="o">=</span> <span class="s2">&quot;Yo&quot;</span> <span class="c1">// Invalid, cannot start with uppercase letter</span>
+
+<span class="kd">let</span> <span class="nx">my</span> <span class="nx">name</span> <span class="o">=</span> <span class="s2">&quot;Wong&quot;</span> <span class="c1">// Invalid, cannot contain spaces</span>
+</pre></div>
+
+</div>
+<hr />
 <h2 id="type-inference">Type inference<a class="headerlink" href="#type-inference" title="Permanent link">&para;</a></h2>
 <p>The type of each variables are resolved automatically by the Pineapple compiler, so you don't need to provide any type annotation.<br />
-For example:
+For example:</p>
 <div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="s2">&quot;yo&quot;</span>    <span class="c1">// x has type of String</span>
-<span class="kd">let</span> <span class="nx">y</span> <span class="o">=</span> <span class="mi">0</span>       <span class="c1">// y has type of Int</span>
-<span class="kd">let</span> <span class="nx">z</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span> <span class="c1">// z has type of List{Int}</span>
+<span class="kd">let</span> <span class="nx">y</span> <span class="o">=</span> <span class="kc">0</span>       <span class="c1">// y has type of Integer</span>
+<span class="kd">let</span> <span class="nx">z</span> <span class="o">=</span> <span class="p">[</span><span class="kc">1</span><span class="p">,</span><span class="kc">2</span><span class="p">,</span><span class="kc">3</span><span class="p">]</span> <span class="c1">// z has type of List{Integer}</span>
 </pre></div>
-Although unnessecary, it is also possible to annotate variables with type manually:
-<div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">x</span> <span class="nb">String</span> <span class="o">=</span> <span class="s2">&quot;yo&quot;</span>
-</pre></div></p>
+
+<p>Although unnessecary, it is also possible to annotate variables with type manually:</p>
+<p><div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">x</span> <span class="nb">String</span> <span class="o">=</span> <span class="s2">&quot;yo&quot;</span>
+</pre></div>
+<hr></p>
 <h2 id="default-immutability">Default immutability<a class="headerlink" href="#default-immutability" title="Permanent link">&para;</a></h2>
-<p>By default, all variables in Pineapple are immutable, it means that you cannot assign a new value to it after you declare it.
-<div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">count</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="nx">count</span> <span class="o">=</span> <span class="mi">1</span> <span class="c1">// Error</span>
-</pre></div></p>
-<p>If you wish to make a variable mutable (aka. change-able), you need to use the <code>mutable</code> keyword.
+<p>By default, <mark>all variables in Pineapple are immutable</mark>, it means that you cannot assign a new value to it after you declare it.</p>
+<div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">count</span> <span class="o">=</span> <span class="kc">0</span>
+<span class="nx">count</span> <span class="o">=</span> <span class="kc">1</span> <span class="c1">// Error</span>
+</pre></div>
+
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p><em>Mutable</em> means <em>changeable</em>.<br />
+<em>Immutable</em> means <em>not changeable</em>.</p>
+</div>
+<p>If you wish to make a variable mutable, you need to use the <code>mutable</code> keyword.</p>
 <div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">x</span> <span class="nx">mutable</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="nx">x</span> <span class="o">=</span> <span class="mi">1</span> <span class="c1">// No error</span>
-</pre></div></p>
+</pre></div>
+
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
 <p>This feature is implemented on purpose to discourage programmers from mutating variables all the time.<br />
-So, instead of creating one variables and change it all the time, <strong>you should create as many variables as you want</strong>!</p>
+So, instead of creating one variables and change it all the time, <mark>create as many variables as you want!</mark></p>
 </div>
 <h2 id="default-non-nullablility">Default non-nullablility<a class="headerlink" href="#default-non-nullablility" title="Permanent link">&para;</a></h2>
-<p>By default, you cannot assign <code>nil` to a mutable variable.
-wzxhzdk:5
-If you want to assign</code>nil` to a variable, you need to declare it explicitly by using Nullable types.
-<div class="codehilite"><pre><span></span>let x Int? mutable = 0
-x = `nil // No error
-</pre></div></p>
+<p>By default, you cannot assign <code class="codehilite"><span class="kc">#nil</span></code> to a mutable variable.</p>
+<div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">x</span> <span class="k">mutable</span> <span class="o">=</span> <span class="kc">0</span>
+<span class="nx">x</span> <span class="o">=</span> <span class="kc">#nil</span> <span class="c1">// Error</span>
+</pre></div>
+
+<div class="admonition question">
+<p class="admonition-title">What is nil?</p>
+<p>Nil is actually same as null, just that <em>nil</em> is easier to type, so <em>nil</em> is adapted in Pineapple.</p>
+</div>
+<p>If you want to assign <code class="codehilite"><span class="kc">#nil</span></code> to a variable, you need to declare it explicitly by using nilable types (which is to add a question mark behind the type name).</p>
+<div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">x</span> <span class="nb">Int</span><span class="o">?</span> <span class="k">mutable</span> <span class="o">=</span> <span class="kc">0</span>
+<span class="nx">x</span> <span class="o">=</span> <span class="kc">#nil</span> <span class="c1">// No error</span>
+</pre></div>
+
+<hr>
+
 <h2 id="pass-by-value">Pass by value<a class="headerlink" href="#pass-by-value" title="Permanent link">&para;</a></h2>
 <p>When you try to assign the value of one variable to another variable, the value is copied, instead of copying its reference.  </p>
 <p>For example,
@@ -682,8 +713,11 @@ x = `nil // No error
 <span class="nx">newJohn</span><span class="o">:</span><span class="nx">name</span> <span class="o">=</span> <span class="s2">&quot;Johnny Bravo&quot;</span>
 
 <span class="nx">john</span><span class="o">:</span><span class="nx">name</span><span class="p">.</span><span class="nx">show</span> <span class="c1">// Still &quot;John&quot;</span>
-</pre></div>
-This feature is to prevent programmer from facing crazy bugs caused by pass-by-reference.</p>
+</pre></div></p>
+<div class="admonition question">
+<p class="admonition-title">Why?</p>
+<p>This feature is to prevent programmer from facing crazy bugs caused by pass-by-reference.</p>
+</div>
 <hr>
 
 <h3 id="optimization-implementing">Optimization (implementing)<a class="headerlink" href="#optimization-implementing" title="Permanent link">&para;</a></h3>
@@ -751,13 +785,13 @@ Fortunately, the Pineapple compiler will use pass-by-reference whenever possible
           </a>
         
         
-          <a href="../AdvanceFunctions/" title="Advance functions" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+          <a href="../025-ControlFlowStatements/" title="Control Flow Statements" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
             <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
               <span class="md-flex__ellipsis">
                 <span class="md-footer-nav__direction">
                   Next
                 </span>
-                Advance functions
+                Control Flow Statements
               </span>
             </div>
             <div class="md-flex__cell md-flex__cell--shrink">
