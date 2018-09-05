@@ -26,7 +26,7 @@ else
     Every test expression must have type of Boolean.
 
 !!! tip "Tips"
-    `.isCrazy` and other similar construct are just [functions](BasicFunctions.md).
+    `.isCrazy` and other similar construct are just [functions](./010-BasicFunctions.md).
 
 <hr>
 

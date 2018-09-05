@@ -30,8 +30,10 @@ If you wish to make a variable mutable (aka. change-able), you need to use the `
 let x mutable = 0
 x = 1 // No error
 ```
-This feature is implemented on purpose to discourage programmers from mutating variables all the time.  
-So, instead of creating one variables and change it all the time, **you should create as many variables as you want**!
+
+!!! tip
+    This feature is implemented on purpose to discourage programmers from mutating variables all the time.  
+    So, instead of creating one variables and change it all the time, **you should create as many variables as you want**!
 
 ## Default non-nullablility
 By default, you cannot assign ``nil` to a mutable variable.
@@ -51,16 +53,18 @@ When you try to assign the value of one variable to another variable, the value 
 For example,
 ```js
 let john = People
-    'name = "John"
-    'age  = 99
+    :name = "John"
+    :age  = 99
 
-let newJohn = john
+let newJohn = john // copy john to newJohn
 
-newJohn'name = "Johnny Bravo"
+newJohn:name = "Johnny Bravo"
 
-john'name.show // Still "John"
+john:name.show // Still "John"
 ```
 This feature is to prevent programmer from facing crazy bugs caused by pass-by-reference.
+
+<hr>
 
 ### Optimization (implementing)
 Of course, pass-by-value is expensive, thus it might slows down the program performance.  
