@@ -1,0 +1,1 @@
+var interpreter = require("./dist/interpreter");

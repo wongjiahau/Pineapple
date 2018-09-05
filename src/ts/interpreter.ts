@@ -4,6 +4,7 @@ import {Declaration} from "./ast";
 import {getIntermediateForm, initialIntermediateForm} from "./getIntermediateForm";
 import {tpDeclaration} from "./transpile";
 const clear = require("clear");
+const path = require("path");
 
 const program = require("commander");
 program
@@ -22,7 +23,8 @@ program.args.forEach((arg: string) => {
         if(file === null) {
             throw new Error(`Cannot open file ${arg}`);
         }
-        const dependencies = loadPreludeScript(file.filename).concat(loadDependency(file));
+        let dependencies = loadPreludeScript(file.filename)
+        dependencies = dependencies.concat(loadDependency(file));
         const sortedDependencies = sortDependency(dependencies);
         const allCodes = sortedDependencies.map(loadFile);
         const ir = loadSource(allCodes); // ir means intermediate representation
@@ -39,11 +41,16 @@ function loadPreludeScript(currentFile: string): Dependencies {
     let dependencies: Dependencies = [];
     const PRELUDE_DIR = "./pinelib/prelude/";
     fs.readdirSync(PRELUDE_DIR).forEach((filename: string) => {
-        const libFile = fs.realpathSync(PRELUDE_DIR + filename);
+        const libFile = getFullFilePath(PRELUDE_DIR + filename);
         dependencies.push([currentFile, /*depends on*/ libFile]);
         dependencies = dependencies.concat(loadDependency(loadFile(libFile)));
     });
     return dependencies;
+}
+
+function getFullFilePath(filename: string): string {
+    // Refer https://millermedeiros.github.io/mdoc/examples/node_api/doc/path.html#path.normalize
+    return path.normalize(fs.realpathSync(filename));
 }
 
 function sortDependency(dependencies: Dependencies): string[] {
@@ -95,7 +102,7 @@ function loadDependency(initSource: SourceCode | null): Dependencies {
         return [];
     }
     let imports = initSource.content.match(/(\n|^)import[ ]".+"/g) as string[];
-    const currentFile = fs.realpathSync(initSource.filename);
+    const currentFile = getFullFilePath(initSource.filename);
     const filepath = currentFile.split("/").slice(0, -1).join("/") + "/";
     let dependencies: string[][] = [];
 
@@ -113,7 +120,7 @@ function loadDependency(initSource: SourceCode | null): Dependencies {
         });
         // import user-defined scripts
         for (let i = 0; i < imports.length; i++) {
-            const importedFile = fs.realpathSync(filepath + imports[i]);
+            const importedFile = getFullFilePath(filepath + imports[i]);
             dependencies.push([currentFile, /*depends on*/ importedFile]);
             dependencies = dependencies.concat(loadDependency(loadFile(importedFile)));
         }
@@ -129,7 +136,7 @@ export function loadFile(filename: string): SourceCode | null {
         content: fs
             .readFileSync(filename)
             .toString(),
-        filename: fs.realpathSync(filename)
+        filename: getFullFilePath(filename)
     };
 }
 
