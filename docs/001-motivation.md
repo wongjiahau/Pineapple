@@ -105,8 +105,63 @@ john.bring(apple to kitchen)
 
 In this case, the names of the function is `bring..to`. 
 
-!!! info "Fun Facts"
+!!! info "Facts"
     Some programming languages like Smalltalk and Agda actually had this feature.
+
+<hr>
+
+### Too many ways to create functions
+
+Most programming languages offers the flexibility to create functions using different construct such as :
+
+- free functions
+
+- static class method
+
+- instance method
+
+- constructor
+
+Although it might seems good, it actually creates inconsistencies, which is against Human-Computer Interaction principles[^8][^9]. In layman term, the programming languages will become less user-friendly.
+
+For example, in Javascript:
+
+```js
+// To convert Integer to String
+(123).toString()
+
+// To conver String to Integer?
+"123".toInteger() // <- Oops, this is wrong
+
+// The correct way is:
+parseInt("123") // <- WTF?!
+```
+
+Such inconsistencies can increase the learning curve, moreover when we decides to create a new function, we might hesitate, because we are not sure which construct to use.  
+
+Furthermore, this causes weird looking code:
+
+```py
+# decoding a JSON data
+result = json.dumps(data.encode()) # is json an object or namespace?  
+
+# it could be better if it looks like this
+result = data.encode().toJson()
+
+# OR
+result = toJson(encode(data))
+```
+
+#### Solution
+
+Due to the consequences of having too many ways to create functions, Pineapple only provide one way to create functions, which is using [*free functions*](./Features/010-BasicFunctions.md).
+
+<hr>
+
+## Conclusion
+
+Due to the reasons above, I decided to create a new language called Pineapple to resolve those issues.
+
 
 
 [^1]: Glass, R.L., 2001. Frequently forgotten fundamental facts about software engineering. IEEE software, 18(3), pp.112-111.
@@ -122,3 +177,7 @@ In this case, the names of the function is `bring..to`.
 [^6]: Gros-Dubois, J. 2017. [Statically typed vs dynamically typed languages](https://hackernoon.com/statically-typed-vs-dynamically-typed-languages-e4778e1ca55)
 
 [^7]: React.js Conf 2015. [Immutable Data and React](https://www.youtube.com/watch?v=I7IdS-PbEgI&feature=youtu.be)
+
+[^8]: Shneiderman, B., 2010. Designing the user interface: strategies for effective human-computer interaction. Pearson Education India.
+
+[^9]: [Schneiderman's Eight Golden Rules of Interface Design](https://www.designprinciplesftw.com/collections/shneidermans-eight-golden-rules-of-interface-design)

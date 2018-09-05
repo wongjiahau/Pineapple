@@ -15,6 +15,7 @@ In general, there are 5 kinds of functions:
 |Polyfunc|Function that 4 or more parameters.|
 
 !!! info "Note"
+
     - Function name are always started with a dot. There are no exceptions.
 
         - For example: `.show` 
@@ -43,7 +44,9 @@ let x = .pi
     `-> Number` means that the `.pi` function will return a `Number` type.
 
 <hr>
+
 ## Monofunc (1 parameter)
+
 Monofunc is a function that takes only 1 parameter.  
 Note that the parameter must be at front. For example:
 ```scala
@@ -144,11 +147,11 @@ In this case, `to` is the *sub function identifier*.
 <hr>
 ## Polyfunc (4 or more parameters)
 Polyfunc is a function that takes 4 or more parameters.  
-It is similar as Trifunc, but it needs 2 or more **sub-function-identifier**.  
+It is similar as Trifunc, but it needs 2 or more *sub function identifiers*.  
 For example,
 ```scala
 // Here's how you define a Polyfunc with 4 parameters
-def (this String).replace(startIndex Int to endIndex Int with that String) -> string
+def (this String).replace(startIndex Integer to endIndex Integer with that String) -> String
     pass
 
 // Here's how you call it
@@ -161,7 +164,7 @@ let x = "Hello world".replace(0 to 4 with "Hi")
     In such case, defining functions like this would be dreadful.  
     So, you should pack those parameters into a single structure.  
     For example,
-    ```
+    ```py
     def RequestParam
         :url    String
         :method String
