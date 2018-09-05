@@ -31,7 +31,7 @@ In general, there are 5 kinds of functions:
 <hr>
 ## Nullifunc (0 parameter)
 Nullifunc is a function that do not need any parameters, for example:
-```scala
+```pine
 // Here's how you define a nullifunc
 def .pi -> Number
     return 3.142
@@ -40,7 +40,7 @@ def .pi -> Number
 let x = .pi
 ```
 
-!!! note
+!!! info "Note"
     `-> Number` means that the `.pi` function will return a `Number` type.
 
 <hr>
@@ -49,7 +49,7 @@ let x = .pi
 
 Monofunc is a function that takes only 1 parameter.  
 Note that the parameter must be at front. For example:
-```scala
+```pine
 // here's how you declare a monofunc
 def (this Number).square -> Number
     return this * this
@@ -61,8 +61,8 @@ let x = 99.square
 let y = 2.square.square.square
 ```
 
-!!! note
-    `this` is not a keyword, it is just a variable name!
+!!! info "Note"
+    `#!pine this` is not a keyword, it is just a variable name!
 
 <hr>
 ## Bifunc (2 parameters)
@@ -71,7 +71,7 @@ Since you cannot separate parameters with comma, the only way is to put the name
 
 For example:
 
-```scala
+```pine
 // here's how you define a bifunc
 def (this Number).plus(that Number) -> Number
     return this + that
@@ -82,7 +82,7 @@ let x = 99.plus(99).plus(22)
 
 ## User-defined operators
 In Pineapple, Bifunc is a special type of function, because you can use symbols as the function name. For example:
-```scala
+```pine
 // Here's how you define a operator bifunc
 def (this List{Number}) + (that List{Number}) -> List{Number}
     pass
@@ -91,9 +91,9 @@ def (this List{Number}) + (that List{Number}) -> List{Number}
 let x = [1,2,3] + [4,5,6]
 ```
 
-!!! note
-    `pass` means that the implementation of the function is temporarily passed.  
-    You can think of it as throwing `NotImplementedException`.
+!!! info "Note"
+    `#!pine pass` means that the implementation of the function is temporarily passed.  
+    You can think of it as throwing `#!pine NotImplementedException`.
 
 <hr>
 ## Trifunc (3 parameters)
@@ -101,7 +101,7 @@ Trifunc is a function that takes 3 parameters.
 As mentioned before, you cannot separate parameters with comma.  
 So, you should separate them with an identifier.  
 For example,
-```scala
+```pine
 // Here's how you define a trifunc
 def (this String).replace(old String with that String) -> String
     pass
@@ -110,11 +110,11 @@ def (this String).replace(old String with that String) -> String
 let x = "Hello world".replace("world" with "baby")
 ```
 
-!!! note
-    `with` is not a keyword, it is a *sub function identifier*, it means that you can use any word you like as long as it is a single alphabetical word without spaces!  
+!!! info "Note"
+    `#!pine with` is not a keyword, it is a *sub function identifier*, it means that you can use any word you like as long as it is a single alphabetical word without spaces!  
 
 Just to make it clear, let see another Trifunc example:
-```scala
+```pine
 // Defining a trifunc
 def (this Socket).send(message String to portNumber Integer)
     pass
@@ -128,12 +128,12 @@ In this case, `to` is the *sub function identifier*.
     Pineapple enforces this rules so that every function can be understood better.  
     Compare the following functions:
 
-    ```js
+    ```pine
     // Javascript
     replace("Hello", "el", "lo") // Hmm, is it replacing "el" or "lo" ?
     ```
 
-    ```js
+    ```pine
     // Pineapple
     "Hello".replace("el" with "lo") // I am very sure it is replacing "el" with "lo"!
     ```
@@ -149,7 +149,7 @@ In this case, `to` is the *sub function identifier*.
 Polyfunc is a function that takes 4 or more parameters.  
 It is similar as Trifunc, but it needs 2 or more *sub function identifiers*.  
 For example,
-```scala
+```pine
 // Here's how you define a Polyfunc with 4 parameters
 def (this String).replace(startIndex Integer to endIndex Integer with that String) -> String
     pass
@@ -164,7 +164,7 @@ let x = "Hello world".replace(0 to 4 with "Hi")
     In such case, defining functions like this would be dreadful.  
     So, you should pack those parameters into a single structure.  
     For example,
-    ```py
+    ```pine
     def RequestParam
         :url    String
         :method String
@@ -175,7 +175,7 @@ let x = "Hello world".replace(0 to 4 with "Hi")
         pass
     ```
     Example of usage:
-    ```js
+    ```pine
     let param = RequestParam
         :url    = "192.168.0.0/api/people"
         :method = "POST"
@@ -192,7 +192,7 @@ Look at the following example to understand the difference.
 # Python
 replace(target="Hello world", old="lo", new="wo")
 ```
-```scala
+```pine
 // Pineapple
 "Hello world".replace("lo" with "wo")
 ```
