@@ -615,7 +615,7 @@
 </div>
 <p>To create new data from your struct, you have to use the struct name.</p>
 <div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">john</span> <span class="o">=</span> <span class="nb">People</span>
-    <span class="o">:</span><span class="nx">name</span> <span class="o">=</span> <span class="s2">&quot;John&quot;</span>
+    <span class="o">:</span><span class="nx">name</span> <span class="o">=</span> <span class="sb">&quot;John&quot;</span>
     <span class="o">:</span><span class="nx">salary</span> <span class="o">=</span> <span class="kc">999</span>
 </pre></div>
 
@@ -636,12 +636,12 @@
 
 <p>And here's how you create new data from it:</p>
 <div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">john</span> <span class="o">=</span> <span class="nb">People</span>
-    <span class="o">:</span><span class="nx">name</span> <span class="o">=</span> <span class="s2">&quot;Marry&quot;</span>
+    <span class="o">:</span><span class="nx">name</span> <span class="o">=</span> <span class="sb">&quot;Marry&quot;</span>
     <span class="o">:</span><span class="nx">friend</span> <span class="o">=</span> <span class="nb">People</span>
-        <span class="o">:</span><span class="nx">name</span> <span class="o">=</span> <span class="s2">&quot;Jane&quot;</span>
+        <span class="o">:</span><span class="nx">name</span> <span class="o">=</span> <span class="sb">&quot;Jane&quot;</span>
         <span class="o">:</span><span class="nx">friend</span> <span class="o">=</span> <span class="nb">People</span>
-            <span class="o">:</span><span class="nx">name</span> <span class="o">=</span> <span class="s2">&quot;Lee&quot;</span>
-            <span class="o">:</span><span class="nx">friend</span> <span class="o">=</span> <span class="sb">`nil</span>
+            <span class="o">:</span><span class="nx">name</span> <span class="o">=</span> <span class="sb">&quot;Lee&quot;</span>
+            <span class="o">:</span><span class="nx">friend</span> <span class="o">=</span> <span class="err">`</span><span class="nx">nil</span>
 </pre></div>
 
 <p>Accessing data:</p>
@@ -662,8 +662,8 @@
 <span class="c1">// here&#39;s how you use it</span>
 <span class="kd">def</span> <span class="p">.</span><span class="nx">main</span>
     <span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="nb">Node</span><span class="p">{</span><span class="nb">Integer</span><span class="p">}</span>
-        <span class="o">:</span><span class="nx">current</span> <span class="o">=</span> <span class="s2">&quot;10&quot;</span> <span class="c1">// Error, should be Integer, not String</span>
-        <span class="o">:</span><span class="nx">next</span>    <span class="o">=</span> <span class="sb">`nil</span>
+        <span class="o">:</span><span class="nx">current</span> <span class="o">=</span> <span class="sb">&quot;10&quot;</span> <span class="c1">// Error, should be Integer, not String</span>
+        <span class="o">:</span><span class="nx">next</span>    <span class="o">=</span> <span class="err">`</span><span class="nx">nil</span>
 </pre></div>
                 
                   

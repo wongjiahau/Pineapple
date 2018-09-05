@@ -637,16 +637,16 @@
                 
                 <h1 id="variables">Variables<a class="headerlink" href="#variables" title="Permanent link">&para;</a></h1>
 <p>To create a variable, you need to use the <code class="codehilite"><span class="kd">let</span></code> keyword:</p>
-<div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">myVariable</span> <span class="o">=</span> <span class="s2">&quot;Hello World!&quot;</span>
+<div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">myVariable</span> <span class="o">=</span> <span class="sb">&quot;Hello World!&quot;</span>
 </pre></div>
 
 <div class="admonition info">
 <p class="admonition-title">Note</p>
 <p>Every variable in Pineapple must start with <mark>lowercase letter</mark> and cannot contain any spaces.<br />
 The following are invalid variable names:</p>
-<div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nb">Message</span> <span class="o">=</span> <span class="s2">&quot;Yo&quot;</span> <span class="c1">// Invalid, cannot start with uppercase letter</span>
+<div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nb">Message</span> <span class="o">=</span> <span class="sb">&quot;Yo&quot;</span> <span class="c1">// Invalid, cannot start with uppercase letter</span>
 
-<span class="kd">let</span> <span class="nx">my</span> <span class="nx">name</span> <span class="o">=</span> <span class="s2">&quot;Wong&quot;</span> <span class="c1">// Invalid, cannot contain spaces</span>
+<span class="kd">let</span> <span class="nx">my</span> <span class="nx">name</span> <span class="o">=</span> <span class="sb">&quot;Wong&quot;</span> <span class="c1">// Invalid, cannot contain spaces</span>
 </pre></div>
 
 </div>
@@ -654,13 +654,13 @@ The following are invalid variable names:</p>
 <h2 id="type-inference">Type inference<a class="headerlink" href="#type-inference" title="Permanent link">&para;</a></h2>
 <p>The type of each variables are resolved automatically by the Pineapple compiler, so you don't need to provide any type annotation.<br />
 For example:</p>
-<div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="s2">&quot;yo&quot;</span>    <span class="c1">// x has type of String</span>
+<div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="sb">&quot;yo&quot;</span>    <span class="c1">// x has type of String</span>
 <span class="kd">let</span> <span class="nx">y</span> <span class="o">=</span> <span class="kc">0</span>       <span class="c1">// y has type of Integer</span>
 <span class="kd">let</span> <span class="nx">z</span> <span class="o">=</span> <span class="p">[</span><span class="kc">1</span><span class="p">,</span><span class="kc">2</span><span class="p">,</span><span class="kc">3</span><span class="p">]</span> <span class="c1">// z has type of List{Integer}</span>
 </pre></div>
 
 <p>Although unnessecary, it is also possible to annotate variables with type manually:</p>
-<p><div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">x</span> <span class="nb">String</span> <span class="o">=</span> <span class="s2">&quot;yo&quot;</span>
+<p><div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">x</span> <span class="nb">String</span> <span class="o">=</span> <span class="sb">&quot;yo&quot;</span>
 </pre></div>
 <hr></p>
 <h2 id="default-immutability">Default immutability<a class="headerlink" href="#default-immutability" title="Permanent link">&para;</a></h2>

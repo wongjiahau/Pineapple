@@ -670,14 +670,14 @@
 <span class="kd">let</span> <span class="nx">isSad</span>   <span class="o">=</span> <span class="kc">#false</span>
 </pre></div>
 
-<p>Boolean type is necessary for using <a href="./ControlFlowStatements.md">control statements</a> such as <code>if-else</code> or <code>while</code> loop.</p>
+<p>Boolean type is necessary for using <a href="../025-ControlFlowStatements/">control statements</a> such as <code>if-else</code> or <code>while</code> loop.</p>
 <p>For example,</p>
 <div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">isMad</span> <span class="o">=</span> <span class="kc">#true</span>
 
 <span class="k">if</span> <span class="nx">isMad</span> 
-    <span class="s2">&quot;Oh my goodness&quot;</span><span class="p">.</span><span class="nx">show</span>
+    <span class="sb">&quot;Oh my goodness&quot;</span><span class="p">.</span><span class="nx">show</span>
 <span class="k">else</span>
-    <span class="s2">&quot;Thank goodness&quot;</span><span class="p">.</span><span class="nx">show</span>
+    <span class="sb">&quot;Thank goodness&quot;</span><span class="p">.</span><span class="nx">show</span>
 </pre></div>
 
 <hr />
@@ -707,9 +707,27 @@
 <hr />
 <h2 id="string">String<a class="headerlink" href="#string" title="Permanent link">&para;</a></h2>
 <p>In Pineapple, strings are enquoted using double quotes.</p>
-<div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">message</span> <span class="o">=</span> <span class="s2">&quot;Hello world&quot;</span>
+<div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">message</span> <span class="o">=</span> <span class="sb">&quot;Hello world&quot;</span>
 </pre></div>
 
+<p>You can also interpolate expressions into string using <code>$()</code>. </p>
+<div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">fruit</span> <span class="o">=</span> <span class="sb">&quot;Pineapple&quot;</span>
+
+<span class="kd">let</span> <span class="nx">message</span> <span class="o">=</span> <span class="sb">&quot;I like to eat </span><span class="si">$(</span><span class="nx">fruit</span><span class="si">)</span><span class="sb"> every </span><span class="si">$(</span><span class="p">(</span><span class="kc">3</span> <span class="o">+</span> <span class="kc">2</span><span class="si">)</span><span class="sb">.toString) days&quot;</span>
+
+<span class="nx">message</span><span class="mi">.show</span> <span class="c1">// I like to eat Pineapple 5 days</span>
+</pre></div>
+
+<div class="admonition info">
+<p class="admonition-title">Note</p>
+<p>Every interpolated expression must have type of String, if not the Pineapple compiler will complain about it.  </p>
+<p>For example,</p>
+<div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="kc">23</span><span class="mi">.</span><span class="kc">4</span>
+<span class="kd">let</span> <span class="nx">message</span> <span class="o">=</span> <span class="sb">&quot;My number is </span><span class="si">$(</span><span class="nx">x</span><span class="si">)</span><span class="sb">&quot;</span> <span class="c1">// Error, `x` should be String, but it is Number</span>
+</pre></div>
+
+<p>To prevent such problem, you have to use the <code class="codehilite"><span class="p">.</span><span class="nx">toString</span></code> function.</p>
+</div>
 <hr />
 <h2 id="list">List<a class="headerlink" href="#list" title="Permanent link">&para;</a></h2>
 <p>List are useful for storing more than one elements. To create a list in Pineapple, you need to use square brackets <code>[</code> <code>]</code> and comma <code>,</code> .</p>
@@ -722,7 +740,7 @@
 </pre></div>
 
 <p>List in Pineapple are homogeneous, it means that all elements within a list must be the same type. For example,</p>
-<div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="p">[</span><span class="kc">1</span><span class="p">,</span> <span class="s2">&quot;2&quot;</span><span class="p">]</span> <span class="c1">// Error, the second element should be Integer</span>
+<div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="p">[</span><span class="kc">1</span><span class="p">,</span> <span class="sb">&quot;2&quot;</span><span class="p">]</span> <span class="c1">// Error, the second element should be Integer</span>
 </pre></div>
 
 <div class="admonition warning">

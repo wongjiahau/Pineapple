@@ -798,7 +798,7 @@ For example,
     <span class="kd">pass</span>
 
 <span class="c1">// Here&#39;s how you call a trifunc</span>
-<span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="s2">&quot;Hello world&quot;</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="s2">&quot;world&quot;</span> <span class="nx">with</span> <span class="s2">&quot;baby&quot;</span><span class="p">)</span>
+<span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="sb">&quot;Hello world&quot;</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sb">&quot;world&quot;</span> <span class="nx">with</span> <span class="sb">&quot;baby&quot;</span><span class="p">)</span>
 </pre></div></p>
 <div class="admonition info">
 <p class="admonition-title">Note</p>
@@ -810,7 +810,7 @@ For example,
     <span class="kd">pass</span>
 
 <span class="c1">// Here&#39;s how you use it</span>
-<span class="nx">mySocket</span><span class="mi">.send</span><span class="p">(</span><span class="s2">&quot;Hello world&quot;</span> <span class="nx">to</span> <span class="kc">8080</span><span class="p">)</span>
+<span class="nx">mySocket</span><span class="mi">.send</span><span class="p">(</span><span class="sb">&quot;Hello world&quot;</span> <span class="nx">to</span> <span class="kc">8080</span><span class="p">)</span>
 </pre></div>
 In this case, <code>to</code> is the <em>sub function identifier</em>.  </p>
 <div class="admonition faq">
@@ -818,11 +818,11 @@ In this case, <code>to</code> is the <em>sub function identifier</em>.  </p>
 <p>Pineapple enforces this rules so that every function can be understood better.<br />
 Compare the following functions:</p>
 <div class="codehilite"><pre><span></span><span class="c1">// Javascript</span>
-<span class="nx">replace</span><span class="p">(</span><span class="s2">&quot;Hello&quot;</span><span class="p">,</span> <span class="s2">&quot;el&quot;</span><span class="p">,</span> <span class="s2">&quot;lo&quot;</span><span class="p">)</span> <span class="c1">// Hmm, is it replacing &quot;el&quot; or &quot;lo&quot; ?</span>
+<span class="nx">replace</span><span class="p">(</span><span class="sb">&quot;Hello&quot;</span><span class="p">,</span> <span class="sb">&quot;el&quot;</span><span class="p">,</span> <span class="sb">&quot;lo&quot;</span><span class="p">)</span> <span class="c1">// Hmm, is it replacing &quot;el&quot; or &quot;lo&quot; ?</span>
 </pre></div>
 
 <div class="codehilite"><pre><span></span><span class="c1">// Pineapple</span>
-<span class="s2">&quot;Hello&quot;</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="s2">&quot;el&quot;</span> <span class="nx">with</span> <span class="s2">&quot;lo&quot;</span><span class="p">)</span> <span class="c1">// I am very sure it is replacing &quot;el&quot; with &quot;lo&quot;!</span>
+<span class="sb">&quot;Hello&quot;</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sb">&quot;el&quot;</span> <span class="nx">with</span> <span class="sb">&quot;lo&quot;</span><span class="p">)</span> <span class="c1">// I am very sure it is replacing &quot;el&quot; with &quot;lo&quot;!</span>
 </pre></div>
 
 <p>There are at least 2 advantages with it:  </p>
@@ -846,7 +846,7 @@ For example,
     <span class="kd">pass</span>
 
 <span class="c1">// Here&#39;s how you call it</span>
-<span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="s2">&quot;Hello world&quot;</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="kc">0</span> <span class="nx">to</span> <span class="kc">4</span> <span class="nx">with</span> <span class="s2">&quot;Hi&quot;</span><span class="p">)</span>
+<span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="sb">&quot;Hello world&quot;</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="kc">0</span> <span class="nx">to</span> <span class="kc">4</span> <span class="nx">with</span> <span class="sb">&quot;Hi&quot;</span><span class="p">)</span>
 </pre></div>
 <hr></p>
 <div class="admonition tip">
@@ -866,10 +866,10 @@ For example,
 </pre></div>
 Example of usage:
 <div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">param</span> <span class="o">=</span> <span class="nb">RequestParam</span>
-    <span class="o">:</span><span class="nx">url</span>    <span class="o">=</span> <span class="s2">&quot;192.168.0.0/api/people&quot;</span>
-    <span class="o">:</span><span class="nx">method</span> <span class="o">=</span> <span class="s2">&quot;POST&quot;</span>
-    <span class="o">:</span><span class="nx">body</span>   <span class="o">=</span> <span class="s1">&#39;{&quot;name&quot;: &quot;Johnny&quot;, &quot;age&quot;: 999}&#39;</span>
-    <span class="o">:</span><span class="nx">schema</span> <span class="o">=</span> <span class="s2">&quot;FREE&quot;</span>
+    <span class="o">:</span><span class="nx">url</span>    <span class="o">=</span> <span class="sb">&quot;192.168.0.0/api/people&quot;</span>
+    <span class="o">:</span><span class="nx">method</span> <span class="o">=</span> <span class="sb">&quot;POST&quot;</span>
+    <span class="o">:</span><span class="nx">body</span>   <span class="o">=</span> <span class="err">&#39;</span><span class="p">{</span><span class="sb">&quot;name&quot;</span><span class="o">:</span> <span class="sb">&quot;Johnny&quot;</span><span class="p">,</span> <span class="sb">&quot;age&quot;</span><span class="o">:</span> <span class="kc">999</span><span class="p">}</span><span class="err">&#39;</span>
+    <span class="o">:</span><span class="nx">schema</span> <span class="o">=</span> <span class="sb">&quot;FREE&quot;</span>
 
 <span class="nx">myServer</span><span class="mi">.send</span><span class="p">(</span><span class="nx">param</span><span class="p">)</span>
 </pre></div></p>
@@ -882,7 +882,7 @@ Example of usage:
 <span class="n">replace</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="s2">&quot;Hello world&quot;</span><span class="p">,</span> <span class="n">old</span><span class="o">=</span><span class="s2">&quot;lo&quot;</span><span class="p">,</span> <span class="n">new</span><span class="o">=</span><span class="s2">&quot;wo&quot;</span><span class="p">)</span>
 </pre></div>
 <div class="codehilite"><pre><span></span><span class="c1">// Pineapple</span>
-<span class="s2">&quot;Hello world&quot;</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="s2">&quot;lo&quot;</span> <span class="nx">with</span> <span class="s2">&quot;wo&quot;</span><span class="p">)</span>
+<span class="sb">&quot;Hello world&quot;</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sb">&quot;lo&quot;</span> <span class="nx">with</span> <span class="sb">&quot;wo&quot;</span><span class="p">)</span>
 </pre></div>
 Obviously, the Pineapple's version is much more clearer than Python's version.<br />
 Moreover, it is also shorter!</p>
