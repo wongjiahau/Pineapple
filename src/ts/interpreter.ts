@@ -20,10 +20,10 @@ const fs = require("fs");
 program.args.forEach((arg: string) => {
     try {
         const file = loadFile(arg);
-        if(file === null) {
+        if (file === null) {
             throw new Error(`Cannot open file ${arg}`);
         }
-        let dependencies = loadPreludeScript(file.filename)
+        let dependencies = loadPreludeScript(file.filename);
         dependencies = dependencies.concat(loadDependency(file));
         const sortedDependencies = sortDependency(dependencies);
         const allCodes = sortedDependencies.map(loadFile);

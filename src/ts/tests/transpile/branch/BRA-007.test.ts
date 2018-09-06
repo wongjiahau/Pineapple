@@ -10,7 +10,7 @@ def Boolean
     #false
 
 def .main
-    if #true or #false and #true 
+    if #true or #false and #true
         return "ok"
 `;
         const expectedOutput =

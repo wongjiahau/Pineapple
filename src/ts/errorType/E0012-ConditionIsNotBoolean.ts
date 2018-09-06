@@ -1,5 +1,5 @@
-import { ErrorDetail, stringifyTypeReadable } from "./errorUtil";
 import { Expression } from "../ast";
+import { ErrorDetail, stringifyTypeReadable } from "./errorUtil";
 
 export function ErrorConditionIsNotBoolean(
     e: Expression
@@ -7,8 +7,8 @@ export function ErrorConditionIsNotBoolean(
     return {
         code: "0012",
         name: "ErrorConditionIsNotBoolean",
-        message: 
-`If/Elif's condition should have type of 
+        message:
+`If/Elif's condition should have type of
 
     Boolean
 

@@ -16,7 +16,7 @@ def .main
         return "ok"
 `;
         const expectedOutput =
-`    
+`
 function _$greaterThan_Number_Number($this,$that){
 $$pass$$();
 }

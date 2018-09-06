@@ -1,4 +1,5 @@
 import {
+    BuiltinTypename,
     GenericList,
     LinkedNode,
     newAtomicToken,
@@ -8,8 +9,7 @@ import {
     StructDeclaration,
     StructType,
     TypeExpression,
-    VoidType,
-    BuiltinTypename
+    VoidType
 } from "./ast";
 
 import { typeEquals } from "./fillUpTypeInformation";

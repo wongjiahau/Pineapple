@@ -10,7 +10,7 @@ def (this Number).toString -> String
 
 def .main
     let x = 123
-    let z = "Hello $((1+2).toString) world" 
+    let z = "Hello $((1+2).toString) world"
 `,
 `
 function _$plus_Number_Number($this,$that){

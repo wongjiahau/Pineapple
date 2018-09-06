@@ -1,12 +1,12 @@
-import { ErrorDetail } from "./errorUtil";
 import { StringExpression, TokenLocation } from "../ast";
+import { ErrorDetail } from "./errorUtil";
 
 export function ErrorMissingClosingBracket(
     s: StringExpression,
     numberOfClosingBracketsRequired: number,
     location: TokenLocation | null = null
 ): ErrorDetail {
-    if(location === null) {
+    if (location === null) {
         location = s.location;
         location.first_column = location.last_column - 1;
     }

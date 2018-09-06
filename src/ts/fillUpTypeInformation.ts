@@ -2,7 +2,9 @@ import {
     AtomicToken,
     BranchStatement,
     BuiltinType,
+    BuiltinTypename,
     Declaration,
+    EmptyList,
     EnumDeclaration,
     Expression,
     ForStatement,
@@ -13,10 +15,13 @@ import {
     LinkedNode,
     ListExpression,
     MemberDefinition,
+    newStringExpression,
     NumberExpression,
+    ResolvedType,
     ReturnStatement,
     Statement,
     StringExpression,
+    StringInterpolationExpression,
     StructDeclaration,
     StructType,
     TestExpression,
@@ -25,12 +30,7 @@ import {
     TypeExpression,
     UnresolvedType,
     Variable,
-    VariableDeclaration,
-    ResolvedType,
-    EmptyList,
-    BuiltinTypename,
-    StringInterpolationExpression,
-    newStringExpression
+    VariableDeclaration
 } from "./ast";
 
 import {ErrorAccessingInexistentMember} from "./errorType/E0001-AccessingInexistentMember";
@@ -42,7 +42,9 @@ import {ErrorIncorrectTypeGivenForVariable} from "./errorType/E0006-IncorrectTyp
 import {ErrorMissingMember} from "./errorType/E0007-ErrorMissingMember";
 import {ErrorNoConformingFunction} from "./errorType/E0008-NoConformingFunction";
 import {ErrorStructRedeclare} from "./errorType/E0009-StructRedeclare";
+import { ErrorSyntax, ParserErrorDetail } from "./errorType/E0010-Syntax";
 import {ErrorUnmatchingReturnType} from "./errorType/E0011-UnmatchingReturnType";
+import { ErrorConditionIsNotBoolean } from "./errorType/E0012-ConditionIsNotBoolean";
 import {ErrorUsingUnknownFunction} from "./errorType/E0013-UsingUnknownFunction";
 import {ErrorVariableRedeclare} from "./errorType/E0014-VariableRedeclare";
 import {ErrorEnumRedeclare} from "./errorType/E0015-EnumRedeclare";
@@ -56,10 +58,13 @@ import {ErrorAssigningNullToUnnullableVariable} from "./errorType/E0022-Assignin
 import {ErrorUsingUndefinedType} from "./errorType/E0023-UsingUndefinedType";
 import {ErrorListElementsArentHomogeneous} from "./errorType/E0024-ListElementsArentHomogeneous";
 import {ErrorUsingUndefinedGenericName} from "./errorType/E0025-UsingUndefinedGenericName";
+import { ErrorInterpolatedExpressionIsNotString } from "./errorType/E0026-InperolatedExpressionIsNotString";
+import { ErrorMissingClosingBracket } from "./errorType/E0027-MissingClosingBracket";
 import {ErrorDetail, stringifyTypeReadable} from "./errorType/errorUtil";
 import {renderError} from "./errorType/renderError";
 import {convertToLinkedNode, flattenLinkedNode, isSyntaxError} from "./getIntermediateForm";
 import {SourceCode} from "./interpreter";
+import { prettyPrint } from "./pine2js";
 import {stringifyFuncSignature} from "./transpile";
 import {
     BaseStructType,
@@ -76,11 +81,6 @@ import {
     VoidType
 } from "./typeTree";
 import {find} from "./util";
-import { ErrorConditionIsNotBoolean } from "./errorType/E0012-ConditionIsNotBoolean";
-import { prettyPrint } from "./pine2js";
-import { ParserErrorDetail, ErrorSyntax } from "./errorType/E0010-Syntax";
-import { ErrorInterpolatedExpressionIsNotString } from "./errorType/E0026-InperolatedExpressionIsNotString";
-import { ErrorMissingClosingBracket } from "./errorType/E0027-MissingClosingBracket";
 
 const parser     = require("../jison/pineapple-parser-v2");
 
@@ -237,7 +237,7 @@ export function resolveType(t: TypeExpression | null, symbols: SymbolTable): Typ
             if (matchingType) {
                 result = copy(matchingType);
                 result.nullable = t.nullable;
-                if("genericList" in result) {
+                if ("genericList" in result) {
                     result.genericList = t.genericList;
                     result.genericList = resolveGenericsType(result.genericList, symbols);
                 }
@@ -491,7 +491,7 @@ export function fillUpTestExprTypeInfo(t: TestExpression, symbols: SymbolTable, 
 
 export function assertReturnTypeIsBoolean(e: Expression) {
     const type = e.returnType;
-    if((type.kind === "EnumDeclaration" && type.name.repr === "Boolean") || 
+    if ((type.kind === "EnumDeclaration" && type.name.repr === "Boolean") ||
         (type.kind === "StructType" && type.reference.name.repr === "Boolean")) {
         // ok
     } else {
@@ -538,25 +538,24 @@ export function fillUpExpressionTypeInfo(e: Expression, symbols: SymbolTable, va
         case "ObjectExpression":
             if (e.constructor !== null) {
                 e.constructor = resolveType(e.constructor, symbols);
-                if(e.constructor.kind === "StructType") {
+                if (e.constructor.kind === "StructType") {
                     e.returnType = newStructType(e.constructor.reference, e.constructor.genericList);
                     [e.keyValueList, symbols] = fillUpKeyValueListTypeInfo(e.keyValueList, symbols, vartab);
                     checkIfKeyValueListConforms(
-                        e.keyValueList, 
-                        substituteStructGeneric(e.constructor, e.constructor.reference), 
+                        e.keyValueList,
+                        substituteStructGeneric(e.constructor, e.constructor.reference),
                         symbols
                     );
-                } else if(e.constructor.kind === "BuiltinType") {
-                    if(e.constructor.name === "List") {
-                        if(e.keyValueList === null) {
+                } else if (e.constructor.kind === "BuiltinType") {
+                    if (e.constructor.name === "List") {
+                        if (e.keyValueList === null) {
                             e = EmptyList(e.location, e.constructor);
                         } else {
                             throw new Error("List type shouldn't have key value");
                         }
                     }
-                }
-                else {
-                    throw new Error(`${stringifyTypeReadable(e.constructor)} is neither struct nor builtin.`)
+                } else {
+                    throw new Error(`${stringifyTypeReadable(e.constructor)} is neither struct nor builtin.`);
                 }
             } else {
                 e.returnType = newBuiltinType("Table");
@@ -590,13 +589,13 @@ export function fillUpExpressionTypeInfo(e: Expression, symbols: SymbolTable, va
 }
 
 export function resolveExpressionInterpolation(
-    s: StringExpression, 
+    s: StringExpression,
     symbols: SymbolTable,
     vartab: VariableTable
 ): [StringInterpolationExpression | StringExpression, SymbolTable] {
     const str = s.repr;
 
-    if(str.indexOf("$(") < 0) {
+    if (str.indexOf("$(") < 0) {
         return [s, symbols];
     }
 
@@ -614,7 +613,7 @@ export function resolveExpressionInterpolation(
     for (let i = 1; i < str.length; i++) {  // starts from 1 skip quotes
         const isOpeningBracket = str[i] === "$" && str[i + 1] === "(";
         const isAtLastPosition = i === str.length - 1;
-        if(isAtLastPosition || isOpeningBracket) {
+        if (isAtLastPosition || isOpeningBracket) {
             const location = copy(s.location);
             location.last_column = s.location.first_column + i;
             location.first_column = previousIndex;
@@ -622,9 +621,9 @@ export function resolveExpressionInterpolation(
             current = "";
             i++;
             previousIndex = i + 1;
-            if(isOpeningBracket) {
-                if(interpolationFound) { 
-                    const errorLocation = s.location; 
+            if (isOpeningBracket) {
+                if (interpolationFound) {
+                    const errorLocation = s.location;
                     errorLocation.first_column += i - 2;
                     errorLocation.last_column = errorLocation.first_column + 1;
                     raise(ErrorMissingClosingBracket(
@@ -636,7 +635,7 @@ export function resolveExpressionInterpolation(
                 closingBracketFound = false;
             }
         } else if (str[i] === "(" && str[i - 1] !== "$") {
-            if(interpolationFound) {
+            if (interpolationFound) {
                 numberOfClosingBracketRequired++;
                 current += str[i];
             }
@@ -650,7 +649,7 @@ export function resolveExpressionInterpolation(
                 const repr = pad(current, s.location.first_line - 1, s.location.first_column + previousIndex);
                 let expr = parser.parse(repr + " @EOF") as Expression;
                 [expr, symbols] = fillUpExpressionTypeInfo(expr, symbols, vartab);
-                if(isStringType(expr.returnType)) {
+                if (isStringType(expr.returnType)) {
                     result.expressions.push(expr);
                     current = "";
                 } else {
@@ -661,7 +660,7 @@ export function resolveExpressionInterpolation(
             current += str[i];
         }
     }
-    if(interpolationFound && !closingBracketFound) {
+    if (interpolationFound && !closingBracketFound) {
         raise(ErrorMissingClosingBracket(s, 1 + numberOfClosingBracketRequired));
     }
     return [result, symbols];
@@ -684,7 +683,7 @@ export function isStringType(r: TypeExpression): boolean {
 }
 
 export function extractGenericList(t: TypeExpression): GenericList {
-    switch(t.kind) {
+    switch (t.kind) {
         case "BuiltinType":
         case "StructType":
             return t.genericList;
@@ -759,8 +758,8 @@ export function isSubtypeOf(x: TypeExpression, y: TypeExpression, tree: Tree < T
 }
 
 export function checkIfKeyValueListConforms(
-    keyValues: LinkedNode < KeyValue > | null, 
-    structDecl: StructDeclaration, 
+    keyValues: LinkedNode < KeyValue > | null,
+    structDecl: StructDeclaration,
     symbols: SymbolTable
 ): void {
     const kvs = flattenLinkedNode(keyValues);
@@ -1022,7 +1021,7 @@ export function fillUpArrayTypeInfo(e: ListExpression, symbols: SymbolTable, var
         [e.elements, symbols] = fillUpElementsType(e.elements, symbols, vartab);
         e.returnType = getElementsType(e.elements);
     } else {
-        throw new Error("impossible")
+        throw new Error("impossible");
     }
     return [e, symbols];
 }

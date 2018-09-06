@@ -2,7 +2,7 @@ import { testError } from "../../tests/testUtil";
 
 testError("ErrorUsingUndefinedType", `
 def Peopl
-    pass 
+    pass
 def .main
     let x = People
         :name = "Wong"

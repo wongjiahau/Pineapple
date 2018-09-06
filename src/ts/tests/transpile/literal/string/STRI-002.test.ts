@@ -4,7 +4,7 @@ testTranspile("string interpolation with nested brackets",
 `
 def .main
     let x = "123"
-    let z = "Hello $((x)) world $(x)" 
+    let z = "Hello $((x)) world $(x)"
 `,
 `
 

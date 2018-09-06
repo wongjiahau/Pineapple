@@ -5,6 +5,7 @@ import {
     AssignmentStatement,
     AtomicToken,
     BranchStatement,
+    BuiltinType,
     Declaration,
     EnumDeclaration,
     EnumExpression,
@@ -23,14 +24,13 @@ import {
     ReturnStatement,
     Statement,
     StringExpression,
+    StringInterpolationExpression,
     StructDeclaration,
     TestExpression,
     TupleExpression,
     TypeExpression,
     VariableDeclaration,
-    WhileStatement,
-    BuiltinType,
-    StringInterpolationExpression
+    WhileStatement
 } from "./ast";
 import { flattenLinkedNode } from "./getIntermediateForm";
 
@@ -133,7 +133,7 @@ export function tpTestExpression(t: TestExpression, isFirst = true): string {
         return "";
     }
     let precedingLeftParenthesis = "";
-    if(isFirst) {
+    if (isFirst) {
         precedingLeftParenthesis = flattenLinkedNode(t).map(() => "(").join("");
     }
     return precedingLeftParenthesis
@@ -142,11 +142,11 @@ export function tpTestExpression(t: TestExpression, isFirst = true): string {
         + (t.chainOperator ? tpChainOperator(t.chainOperator) : "")
         + tpTestExpression(t.next, false)
         ;
-    
+
     function tpChainOperator(a: AtomicToken): string {
-        if(a.repr === "or") {
+        if (a.repr === "or") {
             return " || ";
-        } else if(a.repr === "and") {
+        } else if (a.repr === "and") {
             return " && ";
         } else {
             throw new Error(`Unknown logical operator ${a.repr}, this should be the problem of parser`);
@@ -248,7 +248,7 @@ export function tpExpression(e: Expression): string {
     }
 }
 
-export function tpStringInterpolationExpression(s: StringInterpolationExpression): strinng {
+export function tpStringInterpolationExpression(s: StringInterpolationExpression): string {
     return s.expressions.map(tpExpression).join(" + ");
 }
 
@@ -278,7 +278,7 @@ ${s.repr.replace(/(<javascript>|<\/javascript>|@.+)/g, "").trim()}
 // </javascript>`;
 }
 export function tpStringExpression(s: StringExpression): string {
-    if(s.repr[0] !== '"' || s.repr[s.repr.length - 1] !== '"') {
+    if (s.repr[0] !== '"' || s.repr[s.repr.length - 1] !== '"') {
         throw new Error(`String repr should be enclosed by quotes, but it was ${s.repr}`);
     }
     return `"${s.repr.slice(1, -1)}"`;

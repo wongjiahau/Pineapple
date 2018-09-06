@@ -347,11 +347,12 @@ StatementList
     ;
 
 Statement
-    : AssignmentStatement           {$$=$1}
+    : AssignmentStatement           
     | ReturnStatement   
-    | AtomicFuncCall    NEWLINE     {$$=$1}
-    | OperatorFuncCall  NEWLINE     {$$=$1}
-    | IfStatement                   {$$=$1}
+    | AtomicFuncCall          NEWLINE {$$=$1}
+    | BinaryOperatorCall      NEWLINE {$$=$1}
+    | PrefixUnaryOperatorCall NEWLINE {$$=$1}
+    | IfStatement                     {$$=$1}
     | ForStatement
     | WhileStatement
     ;
@@ -440,11 +441,16 @@ MultilineExpr
 
 SinglelineExpr
     : AtomicExpr {$$.location = this._$}
-    | OperatorFuncCall
+    | PrefixUnaryOperatorCall
+    | BinaryOperatorCall
     ;
 
-OperatorFuncCall
-    : OperatorFuncCall OperatorAtom AtomicExpr {$$=_FunctionCall("Bi",[$2],[$1,$3],this._$)}
+PrefixUnaryOperatorCall
+    : OperatorAtom AtomicExpr
+    ;
+
+BinaryOperatorCall
+    : BinaryOperatorCall OperatorAtom AtomicExpr {$$=_FunctionCall("Bi",[$2],[$1,$3],this._$)}
     | AtomicExpr OperatorAtom AtomicExpr {$$=_FunctionCall("Bi",[$2],[$1,$3],this._$)}
     ;
 

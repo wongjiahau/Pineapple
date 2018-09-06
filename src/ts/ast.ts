@@ -119,19 +119,19 @@ export type ResolvedType
 
 export interface BuiltinType {
     kind: "BuiltinType";
-    name: BuiltinTypename
+    name: BuiltinTypename;
     genericList: GenericList;
     nullable: boolean;
     location: TokenLocation;
 }
-export type BuiltinTypename 
+export type BuiltinTypename
     = "Any"
-    | "Number" 
-    | "Integer" 
-    | "String" 
+    | "Number"
+    | "Integer"
+    | "String"
     | "Date"
-    | "List" 
-    | "Table" 
+    | "List"
+    | "Table"
     | "Struct"
     | "Tuple"
     | "Enum"
