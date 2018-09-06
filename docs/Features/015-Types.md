@@ -67,9 +67,6 @@ let y = 123.4 // Will be inferred as Number
 !!! info
     Integer is any number that do not contains decimal values. It is especially useful for counting things, for example `#!pine numberOfFruits` should be Integer instead of Number.
 
-!!! warning
-    Negative number are not implemented yet in Pineapple.
-
 --- 
 
 ## String

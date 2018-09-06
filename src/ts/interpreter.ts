@@ -31,9 +31,12 @@ program.args.forEach((arg: string) => {
         const transpiledCode = ir.map(tpDeclaration).join("\n") + "\n_main_();";
         execute(transpiledCode);
     } catch (error) {
-        clear();
-        // console.log(error);
-        console.log(error.message);
+        if(error.name[0] === "#") { // if this error is processed
+            clear();
+            console.log(error.message);
+        } else { // if this error is not processed, means it is a compiler's bug
+            console.log(error);
+        }
     }
 });
 

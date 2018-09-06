@@ -89,21 +89,6 @@ def (this Number).plus(that Number) -> Number
 let x = 99.plus(99).plus(22)
 ```
 
-## User-defined operators
-In Pineapple, Bifunc is a special type of function, because you can use symbols as the function name. For example:
-```pine
-// Here's how you define a operator bifunc
-def (this List{Number}) + (that List{Number}) -> List{Number}
-    pass
-
-// Here's how you call it
-let x = [1,2,3] + [4,5,6]
-```
-
-!!! info "Note"
-    `#!pine pass` means that the implementation of the function is temporarily passed.  
-    You can think of it as throwing `#!pine NotImplementedException`.
-
 <hr>
 ## Trifunc (3 parameters)
 Trifunc is a function that takes 3 parameters.
@@ -193,6 +178,9 @@ let x = "Hello world".replace(0 to 4 with "Hi")
 
     myServer.send(param)
     ```
+
+!!! warning
+    Polyfunc is not implemented yet.
 
 <hr>
 ## What's the difference of Pineapple function with named parameters?

@@ -371,7 +371,11 @@ function updateVariableTable(vtab: VariableTable, variable: Variable): VariableT
 
 export function raise(errorDetail: ErrorDetail, sourceCode: SourceCode = CURRENT_SOURCE_CODE()): any {
     const e = Error(renderError(sourceCode, errorDetail));
-    e.name = errorDetail.name;
+
+    // # symbol is to indicate this error had been processed
+    // this is necessary for interpreter.ts to differentiate between processed and unprocessed error
+    // because unprocessed error is usually the compiler internal error
+    e.name = "#" + errorDetail.name; 
     throw e;
 }
 

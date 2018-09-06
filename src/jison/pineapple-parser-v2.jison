@@ -199,7 +199,7 @@ const _AnonymousExpression = (location) => ({
 "@EOF"           return 'EOF'
 
 // Custom operator literals that might overlap with built-in symbols
-[=.<>][-!$%^&*_+|~=`\[\]:";'<>?,.\/]+ return 'OPERATOR'
+[=.<>][-!$%^&*_+|~=`;<>.\/]+ return 'OPERATOR'
 
 // Built-in symbols
 "_"     return '_'
@@ -227,7 +227,7 @@ const _AnonymousExpression = (location) => ({
 [A-Z][a-zA-Z0-9]*               return 'TYPENAME'
 [a-z][a-zA-Z0-9]*               return 'VARNAME'
 [:][a-z][a-zA-Z0-9]*            return 'MEMBERNAME'
-[-!$%^&*_+|~=`\[\]:";'<>?,.\/]+ return 'OPERATOR'
+[-!$%^&*_+|~=`;<>\/]+ return 'OPERATOR'
 
 /lex
 
@@ -321,6 +321,10 @@ MonoFuncDeclaration
         {$$=_FunctionDeclaration([$2],$4,[$1],$5,"Mono")}
     | VarDecl FuncAtom Block 
         {$$=_FunctionDeclaration([$2],null,[$1],$3,"Mono")}
+    
+    /* prefix unary operator function */
+    | OperatorAtom VarDecl Arrow TypeExpression Block 
+        {$$=_FunctionDeclaration([$1],$4,[$2],$5,"Mono")}
     ;
 
 BiFuncDeclaration
@@ -328,6 +332,8 @@ BiFuncDeclaration
         {$$=_FunctionDeclaration([$2],$5,[$1,$3],$6,"Bi")}
     | VarDecl FuncAtom VarDecl Block 
         {$$=_FunctionDeclaration([$2],null,[$1,$3],$4,"Bi")}
+    
+    /* binary operator function */
     | VarDecl OperatorAtom VarDecl Arrow TypeExpression Block
         {$$=_FunctionDeclaration([$2],$5,[$1,$3],$6,"Bi")}
     ;
@@ -445,12 +451,12 @@ MultilineExpr
 
 SinglelineExpr
     : AtomicExpr {$$.location = this._$}
-    | PrefixUnaryOperatorCall
+    | PrefixUnaryOperatorCall 
     | BinaryOperatorCall
     ;
 
 PrefixUnaryOperatorCall
-    : OperatorAtom AtomicExpr
+    : OperatorAtom AtomicExpr {$$=_FunctionCall("Mono", [$1], [$2], this._$)}
     ;
 
 BinaryOperatorCall

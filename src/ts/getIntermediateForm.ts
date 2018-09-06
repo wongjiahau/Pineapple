@@ -4,6 +4,7 @@ import { fillUpTypeInformation, raise, SymbolTable } from "./fillUpTypeInformati
 import { SourceCode } from "./interpreter";
 import { preprocess } from "./preprocess";
 import { initTypeTree } from "./typeTree";
+import { ErrorLexical } from "./errorType/E0028-Lexical";
 const parser     = require("../jison/pineapple-parser-v2");
 
 export function getIntermediateForm(
@@ -25,16 +26,21 @@ export function getIntermediateForm(
         };
     } catch (error) {
         if (isSyntaxError(error)) {
-
             // this part is needed to inject the sourceCode
             raise(ErrorSyntax(error.hash), sourceCode);
+        } else if(isLexError(error)) {
+            raise(ErrorLexical(error), sourceCode);
         }
         throw error; // Will be caught by interpreter.ts
     }
 }
 
 export function isSyntaxError(error: any) {
-    return error.hash !== undefined;
+    return error.hash !== undefined && error.hash.token !== null;
+}
+
+export function isLexError(error: any) {
+    return error.hash !== undefined && error.hash.token === null;
 }
 
 export function initialIntermediateForm(): IntermediateForm {
