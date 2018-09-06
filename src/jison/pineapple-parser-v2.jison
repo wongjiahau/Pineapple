@@ -246,7 +246,7 @@ const _AnonymousExpression = (location) => ({
 
 EntryPoint
     : DeclarationList EOF {return $1}
-    | SinglelineExpr {return $1} // This is for String Interpolation only, not for other uses. Maybe REPL can use this
+    | SinglelineExpr EOF {return $1} // This is for String Interpolation only, not for other uses. Maybe REPL can use this
     ;
 
 DeclarationList

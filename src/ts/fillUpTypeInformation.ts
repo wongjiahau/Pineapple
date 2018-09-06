@@ -80,6 +80,7 @@ import { ErrorConditionIsNotBoolean } from "./errorType/E0012-ConditionIsNotBool
 import { prettyPrint } from "./pine2js";
 import { ParserErrorDetail, ErrorSyntax } from "./errorType/E0010-Syntax";
 import { ErrorInterpolatedExpressionIsNotString } from "./errorType/E0026-InperolatedExpressionIsNotString";
+import { ErrorMissingClosingBracket } from "./errorType/E0027-MissingClosingBracket";
 
 const parser     = require("../jison/pineapple-parser-v2");
 
@@ -594,12 +595,11 @@ export function resolveExpressionInterpolation(
     vartab: VariableTable
 ): [StringInterpolationExpression | StringExpression, SymbolTable] {
     const str = s.repr;
-    const regex = /[$][(].*?[)]/g;
 
-    // if no interpolated expressions is found
-    if(!regex.test(str)) {
+    if(str.indexOf("$(") < 0) {
         return [s, symbols];
     }
+
     const result: StringInterpolationExpression = {
         kind: "StringInterpolationExpression",
         returnType: newBuiltinType("String"),
@@ -609,8 +609,12 @@ export function resolveExpressionInterpolation(
     let current = "";
     let previousIndex = 0;
     let numberOfClosingBracketRequired = 0;
+    let interpolationFound = false;
+    let closingBracketFound = false;
     for (let i = 1; i < str.length; i++) {  // starts from 1 skip quotes
-        if((i === str.length - 1) || (str[i] === "$" && str[i + 1] === "(")) {
+        const isOpeningBracket = str[i] === "$" && str[i + 1] === "(";
+        const isAtLastPosition = i === str.length - 1;
+        if(isAtLastPosition || isOpeningBracket) {
             const location = copy(s.location);
             location.last_column = s.location.first_column + i;
             location.first_column = previousIndex;
@@ -618,16 +622,33 @@ export function resolveExpressionInterpolation(
             current = "";
             i++;
             previousIndex = i + 1;
+            if(isOpeningBracket) {
+                if(interpolationFound) { 
+                    const errorLocation = s.location; 
+                    errorLocation.first_column += i - 2;
+                    errorLocation.last_column = errorLocation.first_column + 1;
+                    raise(ErrorMissingClosingBracket(
+                        s, 1 + numberOfClosingBracketRequired,
+                        errorLocation
+                    ));
+                }
+                interpolationFound = true;
+                closingBracketFound = false;
+            }
         } else if (str[i] === "(" && str[i - 1] !== "$") {
-            numberOfClosingBracketRequired++;
-            current += str[i];
+            if(interpolationFound) {
+                numberOfClosingBracketRequired++;
+                current += str[i];
+            }
         } else if (str[i] === ")") {
             if (numberOfClosingBracketRequired > 0) {
                 numberOfClosingBracketRequired --;
                 current += str[i];
             } else {
+                closingBracketFound = true;
+                interpolationFound = false;
                 const repr = pad(current, s.location.first_line - 1, s.location.first_column + previousIndex);
-                let expr = parser.parse(repr) as Expression;
+                let expr = parser.parse(repr + " @EOF") as Expression;
                 [expr, symbols] = fillUpExpressionTypeInfo(expr, symbols, vartab);
                 if(isStringType(expr.returnType)) {
                     result.expressions.push(expr);
@@ -640,8 +661,8 @@ export function resolveExpressionInterpolation(
             current += str[i];
         }
     }
-    if(numberOfClosingBracketRequired > 0) {
-        throw new Error(`Missing ${numberOfClosingBracketRequired} closing brackets`);
+    if(interpolationFound && !closingBracketFound) {
+        raise(ErrorMissingClosingBracket(s, 1 + numberOfClosingBracketRequired));
     }
     return [result, symbols];
 }
