@@ -350,6 +350,18 @@
           
           
 
+
+  <li class="md-nav__item">
+    <a href="../007-Keywords/" title="Keywords" class="md-nav__link">
+      Keywords
+    </a>
+  </li>
+
+        
+          
+          
+          
+
   
 
 
@@ -407,13 +419,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#user-defined-operators" title="User-defined operators" class="md-nav__link">
-    User-defined operators
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#trifunc-3-parameters" title="Trifunc (3 parameters)" class="md-nav__link">
     Trifunc (3 parameters)
   </a>
@@ -448,6 +453,18 @@
   
 </nav>
     
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../013-Operators/" title="Operators" class="md-nav__link">
+      Operators
+    </a>
   </li>
 
         
@@ -493,6 +510,18 @@
 
 
   <li class="md-nav__item">
+    <a href="../030-Struct/" title="Struct" class="md-nav__link">
+      Struct
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
     <a href="../AdvanceFunctions/" title="Advance functions" class="md-nav__link">
       Advance functions
     </a>
@@ -517,8 +546,8 @@
 
 
   <li class="md-nav__item">
-    <a href="../Modules/" title="Modules" class="md-nav__link">
-      Modules
+    <a href="../Modules/" title="Module" class="md-nav__link">
+      Module
     </a>
   </li>
 
@@ -531,18 +560,6 @@
   <li class="md-nav__item">
     <a href="../StandardLibrary/" title="Standard Library" class="md-nav__link">
       Standard Library
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="../Struct/" title="Struct" class="md-nav__link">
-      Struct
     </a>
   </li>
 
@@ -608,13 +625,6 @@
         <li class="md-nav__item">
   <a href="#bifunc-2-parameters" title="Bifunc (2 parameters)" class="md-nav__link">
     Bifunc (2 parameters)
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#user-defined-operators" title="User-defined operators" class="md-nav__link">
-    User-defined operators
   </a>
   
 </li>
@@ -706,7 +716,7 @@
 <p>Function name are always started with a dot. There are no exceptions.</p>
 <ul>
 <li>
-<p>For example: <code>.show</code> </p>
+<p>For example: <code class="codehilite"><span class="p">.</span><span class="nx">show</span></code> </p>
 </li>
 <li>
 <p>Not only that, <code>.</code> is also a valid function name!</p>
@@ -717,10 +727,10 @@
 <p>You cannot separate the parameters using comma.</p>
 </li>
 <li>
-<p>Every function definition must start with a <code>def</code> keyword.</p>
+<p>Every function definition must start with a <code class="codehilite"><span class="kd">def</span></code> keyword.</p>
 </li>
 <li>
-<p>By convention, parameters names are usually <code>this</code>, <code>that</code> or <code>the</code>. </p>
+<p>By convention, parameters names are usually <code class="codehilite"><span class="nx">this</span></code>, <code class="codehilite"><span class="nx">that</span></code> or <code class="codehilite"><span class="nx">the</span></code>. </p>
 </li>
 </ul>
 </div>
@@ -737,7 +747,16 @@
 </pre></div></p>
 <div class="admonition info">
 <p class="admonition-title">Note</p>
-<p><code>-&gt; Number</code> means that the <code>.pi</code> function will return a <code>Number</code> type.</p>
+<p><code class="codehilite"><span class="o">-&gt;</span> <span class="nb">Number</span></code> means that the <code class="codehilite"><span class="p">.</span><span class="nx">pi</span></code> function will return a <code class="codehilite"><span class="nb">Number</span></code> type.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>If you want to declare a function that does not return anything, just don't put the arrow symbol. </p>
+<p>For example,</p>
+<div class="codehilite"><pre><span></span><span class="kd">def</span> <span class="p">.</span><span class="nx">showMyName</span> <span class="c1">// no need to put -&gt; here</span>
+    <span class="kd">pass</span>
+</pre></div>
+
 </div>
 <hr>
 
@@ -772,20 +791,6 @@ Since you cannot separate parameters with comma, the only way is to put the name
 <span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="kc">99</span><span class="mi">.plus</span><span class="p">(</span><span class="kc">99</span><span class="p">).</span><span class="nx">plus</span><span class="p">(</span><span class="kc">22</span><span class="p">)</span>
 </pre></div>
 
-<h2 id="user-defined-operators">User-defined operators<a class="headerlink" href="#user-defined-operators" title="Permanent link">&para;</a></h2>
-<p>In Pineapple, Bifunc is a special type of function, because you can use symbols as the function name. For example:
-<div class="codehilite"><pre><span></span><span class="c1">// Here&#39;s how you define a operator bifunc</span>
-<span class="kd">def</span> <span class="p">(</span><span class="nx">this</span> <span class="nb">List</span><span class="p">{</span><span class="nb">Number</span><span class="p">})</span> <span class="o">+</span> <span class="p">(</span><span class="nx">that</span> <span class="nb">List</span><span class="p">{</span><span class="nb">Number</span><span class="p">})</span> <span class="o">-&gt;</span> <span class="nb">List</span><span class="p">{</span><span class="nb">Number</span><span class="p">}</span>
-    <span class="kd">pass</span>
-
-<span class="c1">// Here&#39;s how you call it</span>
-<span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="p">[</span><span class="kc">1</span><span class="p">,</span><span class="kc">2</span><span class="p">,</span><span class="kc">3</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="kc">4</span><span class="p">,</span><span class="kc">5</span><span class="p">,</span><span class="kc">6</span><span class="p">]</span>
-</pre></div></p>
-<div class="admonition info">
-<p class="admonition-title">Note</p>
-<p><code class="codehilite"><span class="kd">pass</span></code> means that the implementation of the function is temporarily passed.<br />
-You can think of it as throwing <code class="codehilite"><span class="nb">NotImplementedException</span></code>.</p>
-</div>
 <hr>
 
 <h2 id="trifunc-3-parameters">Trifunc (3 parameters)<a class="headerlink" href="#trifunc-3-parameters" title="Permanent link">&para;</a></h2>
@@ -874,6 +879,10 @@ Example of usage:
 <span class="nx">myServer</span><span class="mi">.send</span><span class="p">(</span><span class="nx">param</span><span class="p">)</span>
 </pre></div></p>
 </div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Polyfunc is not implemented yet.</p>
+</div>
 <hr>
 
 <h2 id="whats-the-difference-of-pineapple-function-with-named-parameters">What's the difference of Pineapple function with named parameters?<a class="headerlink" href="#whats-the-difference-of-pineapple-function-with-named-parameters" title="Permanent link">&para;</a></h2>
@@ -923,7 +932,7 @@ Moreover, it is also shorter!</p>
     <div class="md-footer-nav">
       <nav class="md-footer-nav__inner md-grid">
         
-          <a href="../005-ProgramStructure/" title="Program structure" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+          <a href="../007-Keywords/" title="Keywords" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
             <div class="md-flex__cell md-flex__cell--shrink">
               <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
             </div>
@@ -932,19 +941,19 @@ Moreover, it is also shorter!</p>
                 <span class="md-footer-nav__direction">
                   Previous
                 </span>
-                Program structure
+                Keywords
               </span>
             </div>
           </a>
         
         
-          <a href="../015-Types/" title="Built-in types" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+          <a href="../013-Operators/" title="Operators" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
             <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
               <span class="md-flex__ellipsis">
                 <span class="md-footer-nav__direction">
                   Next
                 </span>
-                Built-in types
+                Operators
               </span>
             </div>
             <div class="md-flex__cell md-flex__cell--shrink">

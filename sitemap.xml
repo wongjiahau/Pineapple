@@ -36,7 +36,17 @@
      <changefreq>daily</changefreq>
     </url>
     <url>
+     <loc>https://wongjiahau.github.io/Pineapple/Features/007-Keywords/</loc>
+     <lastmod>2018-09-06</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+    <url>
      <loc>https://wongjiahau.github.io/Pineapple/Features/010-BasicFunctions/</loc>
+     <lastmod>2018-09-06</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+    <url>
+     <loc>https://wongjiahau.github.io/Pineapple/Features/013-Operators/</loc>
      <lastmod>2018-09-06</lastmod>
      <changefreq>daily</changefreq>
     </url>
@@ -52,6 +62,11 @@
     </url>
     <url>
      <loc>https://wongjiahau.github.io/Pineapple/Features/025-ControlFlowStatements/</loc>
+     <lastmod>2018-09-06</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+    <url>
+     <loc>https://wongjiahau.github.io/Pineapple/Features/030-Struct/</loc>
      <lastmod>2018-09-06</lastmod>
      <changefreq>daily</changefreq>
     </url>
@@ -72,11 +87,6 @@
     </url>
     <url>
      <loc>https://wongjiahau.github.io/Pineapple/Features/StandardLibrary/</loc>
-     <lastmod>2018-09-06</lastmod>
-     <changefreq>daily</changefreq>
-    </url>
-    <url>
-     <loc>https://wongjiahau.github.io/Pineapple/Features/Struct/</loc>
      <lastmod>2018-09-06</lastmod>
      <changefreq>daily</changefreq>
     </url>

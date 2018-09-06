@@ -352,8 +352,32 @@
 
 
   <li class="md-nav__item">
+    <a href="../007-Keywords/" title="Keywords" class="md-nav__link">
+      Keywords
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
     <a href="../010-BasicFunctions/" title="Functions" class="md-nav__link">
       Functions
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../013-Operators/" title="Operators" class="md-nav__link">
+      Operators
     </a>
   </li>
 
@@ -423,6 +447,19 @@
     String
   </a>
   
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#string-interpolation" title="String interpolation" class="md-nav__link">
+    String interpolation
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -479,6 +516,18 @@
 
 
   <li class="md-nav__item">
+    <a href="../030-Struct/" title="Struct" class="md-nav__link">
+      Struct
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
     <a href="../AdvanceFunctions/" title="Advance functions" class="md-nav__link">
       Advance functions
     </a>
@@ -503,8 +552,8 @@
 
 
   <li class="md-nav__item">
-    <a href="../Modules/" title="Modules" class="md-nav__link">
-      Modules
+    <a href="../Modules/" title="Module" class="md-nav__link">
+      Module
     </a>
   </li>
 
@@ -517,18 +566,6 @@
   <li class="md-nav__item">
     <a href="../StandardLibrary/" title="Standard Library" class="md-nav__link">
       Standard Library
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="../Struct/" title="Struct" class="md-nav__link">
-      Struct
     </a>
   </li>
 
@@ -602,6 +639,19 @@
   <a href="#string" title="String" class="md-nav__link">
     String
   </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#string-interpolation" title="String interpolation" class="md-nav__link">
+    String interpolation
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -700,20 +750,18 @@
 <p class="admonition-title">Info</p>
 <p>Integer is any number that do not contains decimal values. It is especially useful for counting things, for example <code class="codehilite"><span class="nx">numberOfFruits</span></code> should be Integer instead of Number.</p>
 </div>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>Negative number are not implemented yet in Pineapple.</p>
-</div>
 <hr />
 <h2 id="string">String<a class="headerlink" href="#string" title="Permanent link">&para;</a></h2>
 <p>In Pineapple, strings are enquoted using double quotes.</p>
 <div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">message</span> <span class="o">=</span> <span class="sb">&quot;Hello world&quot;</span>
 </pre></div>
 
+<h3 id="string-interpolation">String interpolation<a class="headerlink" href="#string-interpolation" title="Permanent link">&para;</a></h3>
 <p>You can also interpolate expressions into string using <code>$()</code>. </p>
 <div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">fruit</span> <span class="o">=</span> <span class="sb">&quot;Pineapple&quot;</span>
+<span class="kd">let</span> <span class="nx">howMany</span>  <span class="o">=</span> <span class="kc">5</span> <span class="o">+</span> <span class="kc">9</span>
 
-<span class="kd">let</span> <span class="nx">message</span> <span class="o">=</span> <span class="sb">&quot;I like to eat </span><span class="si">$(</span><span class="nx">fruit</span><span class="si">)</span><span class="sb"> every </span><span class="si">$(</span><span class="p">(</span><span class="kc">3</span> <span class="o">+</span> <span class="kc">2</span><span class="si">)</span><span class="sb">.toString) days&quot;</span>
+<span class="kd">let</span> <span class="nx">message</span> <span class="o">=</span> <span class="sb">&quot;I like to eat </span><span class="si">$(</span><span class="nx">fruit</span><span class="si">)</span><span class="sb"> every </span><span class="si">$(</span><span class="nx">howMany</span><span class="mi">.toString</span><span class="si">)</span><span class="sb"> days&quot;</span>
 
 <span class="nx">message</span><span class="mi">.show</span> <span class="c1">// I like to eat Pineapple 5 days</span>
 </pre></div>
@@ -727,6 +775,13 @@
 </pre></div>
 
 <p>To prevent such problem, you have to use the <code class="codehilite"><span class="p">.</span><span class="nx">toString</span></code> function.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Interpolated expression cannot be raw string. For example,</p>
+<div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">y</span> <span class="o">=</span> <span class="sb">&quot;</span><span class="si">$(</span><span class="sb">&quot;yo&quot;</span><span class="si">)</span><span class="sb">&quot;</span> <span class="c1">// Syntax error</span>
+</pre></div>
+
 </div>
 <hr />
 <h2 id="list">List<a class="headerlink" href="#list" title="Permanent link">&para;</a></h2>
@@ -788,7 +843,7 @@
     <div class="md-footer-nav">
       <nav class="md-footer-nav__inner md-grid">
         
-          <a href="../010-BasicFunctions/" title="Functions" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+          <a href="../013-Operators/" title="Operators" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
             <div class="md-flex__cell md-flex__cell--shrink">
               <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
             </div>
@@ -797,7 +852,7 @@
                 <span class="md-footer-nav__direction">
                   Previous
                 </span>
-                Functions
+                Operators
               </span>
             </div>
           </a>
