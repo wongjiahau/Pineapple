@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # This script is to transpile the TypeScript source code to Javascript
-if [ -d js ]; then
-    echo "Removing js folder . . ."
-    rm -rf js
+if [ -d dist ]; then
+    echo "Removing dist folder . . ."
+    rm -rf dist
 fi
 
 cd ts
