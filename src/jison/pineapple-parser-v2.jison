@@ -326,6 +326,8 @@ MonoFuncDeclaration
 BiFuncDeclaration
     : VarDecl FuncAtom VarDecl Arrow TypeExpression Block 
         {$$=_FunctionDeclaration([$2],$5,[$1,$3],$6,"Bi")}
+    | VarDecl FuncAtom VarDecl Block 
+        {$$=_FunctionDeclaration([$2],null,[$1,$3],$4,"Bi")}
     | VarDecl OperatorAtom VarDecl Arrow TypeExpression Block
         {$$=_FunctionDeclaration([$2],$5,[$1,$3],$6,"Bi")}
     ;
@@ -333,6 +335,8 @@ BiFuncDeclaration
 TriFuncDeclaration
     : VarDecl FuncAtom LeftParenthesis VarDecl VariableAtom  VarDecl RightParenthesis Arrow TypeExpression Block
         {$$=_FunctionDeclaration([$2,$5],$9,[$1,$4,$6],$10,"Tri")}
+    | VarDecl FuncAtom LeftParenthesis VarDecl VariableAtom  VarDecl RightParenthesis Block
+        {$$=_FunctionDeclaration([$2,$5],null,[$1,$4,$6],$8,"Tri")}
     ;
 
 Block

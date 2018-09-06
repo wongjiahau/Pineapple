@@ -43,6 +43,15 @@ let x = .pi
 !!! info "Note"
     `#!pine -> Number` means that the `#!pine .pi` function will return a `#!pine Number` type.
 
+!!! tip
+    If you want to declare a function that does not return anything, just don't put the arrow symbol. 
+
+    For example,
+
+    ```pine
+    def .showMyName // no need to put -> here
+        pass
+    ```
 <hr>
 
 ## Monofunc (1 parameter)
