@@ -79,6 +79,7 @@ import {find} from "./util";
 import { ErrorConditionIsNotBoolean } from "./errorType/E0012-ConditionIsNotBoolean";
 import { prettyPrint } from "./pine2js";
 import { ParserErrorDetail, ErrorSyntax } from "./errorType/E0010-Syntax";
+import { ErrorInterpolatedExpressionIsNotString } from "./errorType/E0026-InperolatedExpressionIsNotString";
 
 const parser     = require("../jison/pineapple-parser-v2");
 
@@ -632,7 +633,7 @@ export function resolveExpressionInterpolation(
                     result.expressions.push(expr);
                     current = "";
                 } else {
-                    throw new Error("Should be string type");
+                    raise(ErrorInterpolatedExpressionIsNotString(expr));
                 }
             }
         } else {

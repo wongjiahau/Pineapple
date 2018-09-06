@@ -84,8 +84,9 @@ You can also interpolate expressions into string using `$()`.
 
 ```pine
 let fruit = "Pineapple"
+let howMany  = 5 + 9
 
-let message = "I like to eat $(fruit) every $((3 + 2).toString) days"
+let message = "I like to eat $(fruit) every $(howMany.toString) days"
 
 message.show // I like to eat Pineapple 5 days
 ```
