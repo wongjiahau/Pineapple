@@ -18,15 +18,15 @@ In general, there are 5 kinds of functions:
 
     - Function name are always started with a dot. There are no exceptions.
 
-        - For example: `.show` 
+        - For example: `#!pine .show` 
 
         - Not only that, `.` is also a valid function name!
 
     - You cannot separate the parameters using comma.
 
-    - Every function definition must start with a `def` keyword.
+    - Every function definition must start with a `#!pine def` keyword.
 
-    - By convention, parameters names are usually `this`, `that` or `the`. 
+    - By convention, parameters names are usually `#!pine this`, `#!pine that` or `#!pine the`. 
 
 <hr>
 ## Nullifunc (0 parameter)
@@ -41,7 +41,7 @@ let x = .pi
 ```
 
 !!! info "Note"
-    `-> Number` means that the `.pi` function will return a `Number` type.
+    `#!pine -> Number` means that the `#!pine .pi` function will return a `#!pine Number` type.
 
 <hr>
 

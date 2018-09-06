@@ -33,6 +33,7 @@ def (this List{Number}) + (that List{Number}) -> List{Number}
 <hr>
 ## Generic functions
 
+!!! note "Pending"
 
 <hr>
 ## Javascript binding

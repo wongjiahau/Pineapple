@@ -80,6 +80,8 @@ In Pineapple, strings are enquoted using double quotes.
 let message = "Hello world"
 ```
 
+### String interpolation
+
 You can also interpolate expressions into string using `$()`. 
 
 ```pine
@@ -102,7 +104,15 @@ message.show // I like to eat Pineapple 5 days
     ```
 
     To prevent such problem, you have to use the `#!pine .toString` function.
---- 
+
+!!! warning
+    Interpolated expression cannot be raw string. For example,
+
+    ```pine
+    let y = "$("yo")" // Syntax error
+    ```
+
+---
 
 ## List
 
