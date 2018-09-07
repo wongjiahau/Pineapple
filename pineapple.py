@@ -65,7 +65,7 @@ class PineappleLexer(RegexLexer):
             (r'[{(\[;,]', Punctuation, 'slashstartsregex'),
             (r'[})\].]', Punctuation),
             (r'(for|in|while|do|break|return|continue|if|else|elif|mutable|'
-             r'throw|try|catch|new)\b', Keyword, 'slashstartsregex'),
+             r'throw|try|catch|new|o)\b', Keyword, 'slashstartsregex'),
             (r'(def|let|function|import|pass)\b', Keyword.Declaration, 'slashstartsregex'),
             (r'(and|or|not)\b', Keyword.Reserved),
             (r'[#][a-zA-Z0-9]+\b', Keyword.Constant),

@@ -8,7 +8,7 @@ Pineapple has special support for the following types:
 
 - `#!pine Nil` (also known as null)
 
-- `#!pine Number` and `#!pine Integer` 
+- `#!pine Number` and `#!pine Integer`
 
 - `#!pine String`
 
@@ -36,7 +36,7 @@ For example,
 ```pine
 let isMad = #true
 
-if isMad 
+if isMad
     "Oh my goodness".show
 else
     "Thank goodness".show
@@ -55,7 +55,7 @@ let car = #nil // This means that you dont have a car
 !!! info "Note"
     By default, you cannot assign `#!pine #nil` to any variable. Check out [Variables](./020-Variables.md) for more information.
 
---- 
+---
 
 ## Number and Integer
 
@@ -67,7 +67,7 @@ let y = 123.4 // Will be inferred as Number
 !!! info
     Integer is any number that do not contains decimal values. It is especially useful for counting things, for example `#!pine numberOfFruits` should be Integer instead of Number.
 
---- 
+---
 
 ## String
 
@@ -138,3 +138,56 @@ let x = [1, "2"] // Error, the second element should be Integer
 
     let ys = List{Integer} // No error
     ```
+
+### Multiline List
+
+Sometimes your list might contains too many elements to be fit in a single line. In such situation you will need to use multiline list. For example,
+
+```pine
+let fruits =
+    o "Apple"
+    o "Banana"
+    o "Pineapple"
+    o "Durian"
+    o "Hello"
+```
+
+!!! info "Note"
+    The indentation is necessary. So, the following is invalid in Pineapple:
+
+    ```pine
+    let fruits = 
+    o "Apple"
+    o "Banana"
+    // Error
+    ```
+
+!!! tldr "Reminder"
+    Since `#!pine o` is used as list bullet in Pineapple, you cannot named a variable as `o`.
+
+---
+
+## Table
+
+Table is also known as Dictionary or HashMap. It is useful when you need to store a list of key-value data.  
+For example, let say you want to store phone numbers:
+
+```pine
+// note that the indentation is necessary
+let phoneNumbers =
+    "john" = "0123456"
+    "babe" = "3333222"
+    "wong" = "3212344"
+    "lee"  = "9843056"
+
+phoneNumbers.("john").show // "0123456"
+```
+
+### Empty table
+
+To create an empty table, use the `Table` constructor.
+
+```pine
+                        // key , value
+let phoneNumbers = Table{String, String}
+```
