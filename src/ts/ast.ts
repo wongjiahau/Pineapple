@@ -65,7 +65,7 @@ export interface PassStatement {
 
 export interface WhileStatement {
     kind: "WhileStatement";
-    test: TestExpression;
+    test: Expression;
     body: LinkedNode<Statement>;
 }
 
@@ -78,17 +78,9 @@ export interface ForStatement {
 
 export interface BranchStatement {
     kind: "BranchStatement";
-    test: TestExpression;
+    test: Expression;
     body: LinkedNode<Statement>;
     elseBranch: BranchStatement;
-}
-
-export interface TestExpression {
-    kind: "TestExpression";
-    current: Expression;
-    negated: boolean;
-    chainOperator: AtomicToken;
-    next: TestExpression;
 }
 
 export interface ReturnStatement {

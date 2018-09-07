@@ -26,7 +26,6 @@ import {
     StringExpression,
     StringInterpolationExpression,
     StructDeclaration,
-    TestExpression,
     TupleExpression,
     TypeExpression,
     VariableDeclaration,
@@ -99,7 +98,7 @@ export function tpStatement(s: LinkedNode<Statement>): string {
 
 export function tpWhileStatement(w: WhileStatement): string {
     return "" +
-`while(${tpTestExpression(w.test)}){
+`while(${tpExpression(w.test)}){
     ${tpStatement(w.body)}
 }
 `;
@@ -122,35 +121,9 @@ export function tpBranchStatement(b: BranchStatement): string {
 ${tpStatement(b.body)}
 }`;
     } else {
-        return `if(${tpTestExpression(b.test)}){
+        return `if(${tpExpression(b.test)}){
 ${tpStatement(b.body)}
 }${b.elseBranch ? `else ${tpBranchStatement(b.elseBranch)}` : "" }`;
-    }
-}
-
-export function tpTestExpression(t: TestExpression, isFirst = true): string {
-    if (t === null) {
-        return "";
-    }
-    let precedingLeftParenthesis = "";
-    if (isFirst) {
-        precedingLeftParenthesis = flattenLinkedNode(t).map(() => "(").join("");
-    }
-    return precedingLeftParenthesis
-        + (t.negated ? "!" : "")
-        + tpExpression(t.current) + ")"
-        + (t.chainOperator ? tpChainOperator(t.chainOperator) : "")
-        + tpTestExpression(t.next, false)
-        ;
-
-    function tpChainOperator(a: AtomicToken): string {
-        if (a.repr === "or") {
-            return " || ";
-        } else if (a.repr === "and") {
-            return " && ";
-        } else {
-            throw new Error(`Unknown logical operator ${a.repr}, this should be the problem of parser`);
-        }
     }
 }
 

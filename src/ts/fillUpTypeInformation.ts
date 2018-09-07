@@ -17,14 +17,12 @@ import {
     MemberDefinition,
     newStringExpression,
     NumberExpression,
-    ResolvedType,
     ReturnStatement,
     Statement,
     StringExpression,
     StringInterpolationExpression,
     StructDeclaration,
     StructType,
-    TestExpression,
     TokenLocation,
     TupleExpression,
     TypeExpression,
@@ -43,7 +41,6 @@ import {ErrorIncorrectTypeGivenForVariable} from "./errorType/E0006-IncorrectTyp
 import {ErrorMissingMember} from "./errorType/E0007-ErrorMissingMember";
 import {ErrorNoConformingFunction} from "./errorType/E0008-NoConformingFunction";
 import {ErrorStructRedeclare} from "./errorType/E0009-StructRedeclare";
-import { ErrorSyntax, ParserErrorDetail } from "./errorType/E0010-Syntax";
 import {ErrorUnmatchingReturnType} from "./errorType/E0011-UnmatchingReturnType";
 import { ErrorConditionIsNotBoolean } from "./errorType/E0012-ConditionIsNotBoolean";
 import {ErrorUsingUnknownFunction} from "./errorType/E0013-UsingUnknownFunction";
@@ -63,9 +60,8 @@ import { ErrorInterpolatedExpressionIsNotString } from "./errorType/E0026-Inpero
 import { ErrorMissingClosingBracket } from "./errorType/E0027-MissingClosingBracket";
 import {ErrorDetail, stringifyTypeReadable} from "./errorType/errorUtil";
 import {renderError} from "./errorType/renderError";
-import {convertToLinkedNode, flattenLinkedNode, isSyntaxError} from "./getIntermediateForm";
+import {convertToLinkedNode, flattenLinkedNode} from "./getIntermediateForm";
 import {SourceCode} from "./interpreter";
-import { prettyPrint } from "./pine2js";
 import {stringifyFuncSignature} from "./transpile";
 import {
     BaseStructType,
@@ -482,15 +478,9 @@ export function fillUpForStmtTypeInfo(f: ForStatement, symbols: SymbolTable, var
     return [f, symbols, vartab];
 }
 
-export function fillUpTestExprTypeInfo(t: TestExpression, symbols: SymbolTable, vartab: VariableTable): [TestExpression, SymbolTable] {
-    [t.current, symbols] = fillUpExpressionTypeInfo(t.current, symbols, vartab);
-    assertReturnTypeIsBoolean(t.current);
-    let next = t.next;
-    while (next !== null) {
-        [next.current, symbols] = fillUpExpressionTypeInfo(next.current, symbols, vartab);
-        assertReturnTypeIsBoolean(next.current);
-        next = next.next;
-    }
+export function fillUpTestExprTypeInfo(t: Expression, symbols: SymbolTable, vartab: VariableTable): [Expression, SymbolTable] {
+    [t, symbols] = fillUpExpressionTypeInfo(t, symbols, vartab);
+    assertReturnTypeIsBoolean(t);
     return [t, symbols];
 }
 

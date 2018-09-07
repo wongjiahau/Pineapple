@@ -49,14 +49,6 @@ const _BranchStatement = (test,body,elseBranch) => ({
     kind:"BranchStatement",test,body,elseBranch
 });
 
-const _TestExpression = (current, negated, chainOperator, next) => ({
-    kind: "TestExpression",
-    current,
-    negated,
-    chainOperator,
-    next
-});
-
 const _ImportDeclaration = (filename) => ({
     kind: "ImportDeclaration",
     filename,
@@ -175,9 +167,6 @@ const _AnonymousExpression = (location) => ({
 "if"        return 'IF'
 "elif"      return 'ELIF'
 "else"      return 'ELSE'
-"or"        return 'OR'
-"and"       return 'AND'
-"not"       return 'NOT'
 "for"       return 'FOR' 
 "in"        return 'IN'
 "while"     return 'WHILE'
@@ -376,32 +365,25 @@ ForStatement
     ;
 
 WhileStatement
-    : WHILE Test Block {$$=_WhileStatement($2,$3)}
+    : WHILE SinglelineExpr Block {$$=_WhileStatement($2,$3)}
     ;
 
 IfStatement
-    : IF Test Block               {$$=_BranchStatement($2,$3,null)}
-    | IF Test Block ElifChain     {$$=_BranchStatement($2,$3,$4)}
-    | IF Test Block ElseStatement {$$=_BranchStatement($2,$3,$4)}
+    : IF SinglelineExpr Block               {$$=_BranchStatement($2,$3,null)}
+    | IF SinglelineExpr Block ElifChain     {$$=_BranchStatement($2,$3,$4)}
+    | IF SinglelineExpr Block ElseStatement {$$=_BranchStatement($2,$3,$4)}
     ;
 
 ElifChain
-    : ELIF Test Block ElifChain     {$$=_BranchStatement($2,$3,$4)}
-    | ELIF Test Block ElseStatement {$$=_BranchStatement($2,$3,$4)}
-    | ELIF Test Block               {$$=_BranchStatement($2,$3,null)}
+    : ELIF SinglelineExpr Block ElifChain     {$$=_BranchStatement($2,$3,$4)}
+    | ELIF SinglelineExpr Block ElseStatement {$$=_BranchStatement($2,$3,$4)}
+    | ELIF SinglelineExpr Block               {$$=_BranchStatement($2,$3,null)}
     ;
 
 ElseStatement
     : ELSE Block {$$=_BranchStatement(null,$2,null)}
     ;
     
-Test
-    : SinglelineExpr                              {$$=_TestExpression($1,false,null,null)}
-    | SinglelineExpr LogicOperatorAtom Test       {$$=_TestExpression($1,false,$2,$3)}
-    | NOT SinglelineExpr                          {$$=_TestExpression($2,true,null,null)}
-    | NOT SinglelineExpr LogicOperatorAtom Test   {$$=_TestExpression($2,true,$3,$4)}
-    ;
-
 AssignmentStatement
     : LET VarDecl EqualSign MultilineExpr         {$$=_AssignmentStatement($2,true,$4)}
     | VariableAtom EqualSign MultilineExpr        {$$=_AssignmentStatement($1,false,$3)}
@@ -496,13 +478,11 @@ AtomicExpr
     | SinglelineList
     | Tuple
     | AtomicFuncCall 
-    | BooleanAtom
     | StringAtom
     | NumberAtom
     | EnumAtom {$$=_EnumExpression($1)}
     | VariableAtom
     | AnonymousExpression
-    | NIL
     ;
 
 Tuple
@@ -575,11 +555,6 @@ MultilineList
 MultilineElements
     : LIST_BULLET MultilineExpr MultilineElements {$$=_LinkedNode($2,$3)}
     | LIST_BULLET MultilineExpr {$$=_LinkedNode($2,null)}
-    ;
-
-BooleanAtom
-    : TRUE  {$$=_BooleanExpression($1, this._$)}
-    | FALSE {$$=_BooleanExpression($1, this._$)}
     ;
 
 StringAtom

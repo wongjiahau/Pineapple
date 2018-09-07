@@ -10,6 +10,6 @@ def .show
     pass
 
 def .main
-    if #true or .show
+    if .show
         .show
 `);

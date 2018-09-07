@@ -35,43 +35,26 @@ else
 
 ## Test expression chaining
 
-Sometimes, a single test expression is not enough to express what you really wanted.  In such situation, you can use the following logical operators:
+Sometimes, a single test expression is not enough to express what you really wanted.  In such situation, you can use the following functions:
 
-- `#!pine and`
+- `#!pine .and`
 
-- `#!pine or`
+- `#!pine .or`
 
-- `#!pine not`
+- `#!pine .not`
 
 For example:
 
 ```pine
-if he.isYoung and he.isNaughty
+if he.isYoung.and(he.isNaughty)
     "He is a kid".show
 
-elif sky.isBlue or air.isFresh
+elif sky.isBlue.or(air.isFresh)
     "I am happy!".show
 
-elif not current.isLunchTime
+elif current.isLunchTime.not
     "Continue working . . .".show
 ```
-
-!!! info "Note"
-    `#!pine not` operator have higher precedence than `#!pine or` and `#!pine and`.  
-    For example, the following code: 
-    ```pine
-    if not he.isFine and he.isEating
-    ```
-
-    Is same as:
-
-    ```pine
-    if (not he.isFine) and he.isEating
-        ...
-    ```
-
-
-
 
 <hr>
 

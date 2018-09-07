@@ -1,5 +1,10 @@
 import "./core.pine"
 
+def - (this Number) -> Number
+    <javascript>
+    return - $this;
+    </javascript>
+
 def (this Number) + (that Number) -> Number
     <javascript>
     return $this + $that;
@@ -44,4 +49,10 @@ def (this Number) > (that Number) -> Boolean
     <javascript>
     return $this > $that;
     </javascript>
+
+def (this Number) >= (that Number) -> Boolean
+    return (this > that).or(this == that)
+
+def (this Number) <= (that Number) -> Boolean
+    return (this < that).or(this == that)
 
