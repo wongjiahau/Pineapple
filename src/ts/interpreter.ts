@@ -35,6 +35,7 @@ program.args.forEach((arg: string) => {
             clear();
             console.log(error.message);
         } else { // if this error is not processed, means it is a compiler's bug
+            error.name += "(This is possibly a compiler internal error)";
             console.log(error);
         }
     }

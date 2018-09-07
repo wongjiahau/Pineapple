@@ -8,6 +8,9 @@ def (this List{T}) ++ (that List{T}) -> List{T}
 
 def (this List{T}).(that Number) -> T 
     <javascript>
+    if($that < 0) {
+        return $this[$this.length + $that]
+    }
     return $this[$that]
     </javascript>
 

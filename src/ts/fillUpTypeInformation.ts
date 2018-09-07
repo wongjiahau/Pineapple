@@ -30,7 +30,8 @@ import {
     TypeExpression,
     UnresolvedType,
     Variable,
-    VariableDeclaration
+    VariableDeclaration,
+    EmptyTable
 } from "./ast";
 
 import {ErrorAccessingInexistentMember} from "./errorType/E0001-AccessingInexistentMember";
@@ -551,12 +552,15 @@ export function fillUpExpressionTypeInfo(e: Expression, symbols: SymbolTable, va
                         symbols
                     );
                 } else if (e.constructor.kind === "BuiltinType") {
+                    if(e.keyValueList !== null) {
+                        throw new Error("List type shouldn't have key value");
+                    }
                     if (e.constructor.name === "List") {
-                        if (e.keyValueList === null) {
-                            e = EmptyList(e.location, e.constructor);
-                        } else {
-                            throw new Error("List type shouldn't have key value");
-                        }
+                        e = EmptyList(e.location, e.constructor);
+                    } else if(e.constructor.name === "Table") {
+                        e = EmptyTable(e.location, e.constructor);
+                    } else {
+                        throw new Error(`Cannot handle ${e.constructor.name} yet`)
                     }
                 } else {
                     throw new Error(`${stringifyTypeReadable(e.constructor)} is neither struct nor builtin.`);

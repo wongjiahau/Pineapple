@@ -250,12 +250,22 @@ export interface Variable extends AtomicToken {
     returnType: TypeExpression; // This info should be fill in by type checker
 }
 
-export interface ObjectExpression { // NOTE: Object is also Dictionary
+export interface ObjectExpression { // NOTE: Object is also Dictionary/Table
     kind: "ObjectExpression";
     constructor: TypeExpression;
     keyValueList: LinkedNode<KeyValue> | null;
     returnType: TypeExpression;
     location: TokenLocation;
+}
+
+export function EmptyTable(location: TokenLocation, type: TypeExpression): ObjectExpression {
+    return {
+        kind: "ObjectExpression",
+        constructor: type,
+        keyValueList: null,
+        returnType: type,
+        location: location
+    };
 }
 
 export interface KeyValue {

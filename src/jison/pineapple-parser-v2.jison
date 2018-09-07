@@ -573,8 +573,8 @@ MultilineList
     ;
 
 MultilineElements
-    : LIST_BULLET SinglelineExpr NEWLINE MultilineElements {$$=_LinkedNode($2,$4)}
-    | LIST_BULLET SinglelineExpr NEWLINE {$$=_LinkedNode($2,null)}
+    : LIST_BULLET MultilineExpr MultilineElements {$$=_LinkedNode($2,$3)}
+    | LIST_BULLET MultilineExpr {$$=_LinkedNode($2,null)}
     ;
 
 BooleanAtom

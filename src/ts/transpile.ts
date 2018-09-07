@@ -301,6 +301,9 @@ export function tpListElements(e: LinkedNode<Expression>): string {
 }
 
 export function tpObjectExpression(e: ObjectExpression): string {
+    if(e.keyValueList === null) {
+        return "{}";
+    }
     return `{
 ${e.constructor !== null ? `$kind: "${stringifyType(e.constructor)}",` : ""}
 ${tpKeyValueList(e.keyValueList)}
