@@ -1,5 +1,5 @@
 ts/
 js/
 src/
-dist/tests/
+*.test.js
 *.sh
