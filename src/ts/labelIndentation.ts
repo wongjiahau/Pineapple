@@ -1,8 +1,15 @@
-export function labelIndentation(input: string): string {
+import {raise} from "./fillUpTypeInformation";
+import {ErrorInvalidIndentation} from "./errorType/E0029-InvalidIndentation";
+import {SourceCode} from "./interpreter";
+
+export function labelIndentation(input : string, sourceCode : SourceCode) : string {
     const lines = input.split("\n");
     for (let i = 0; i < lines.length; i++) {
-        const currentIndentationLevel = indentationLevel(lines[i]);
-        const nextIndentationLevel = i < lines.length - 1 ? indentationLevel(lines[i + 1]) : 0;
+        const currentIndentationLevel = indentationLevel(lines[i], i, sourceCode);
+
+        const nextIndentationLevel = i < lines.length - 1
+            ? indentationLevel(lines[i + 1], i + 1, sourceCode)
+            : 0;
         if (currentIndentationLevel < nextIndentationLevel) {
             lines[i] += "@INDENT";
         } else if (currentIndentationLevel > nextIndentationLevel) {
@@ -14,10 +21,11 @@ export function labelIndentation(input: string): string {
     return lines.join("\n");
 }
 
-function indentationLevel(line: string): number {
+function indentationLevel(line : string, lineNumber : number, sourceCode : SourceCode) : number {
     const numberOfLeadingSpaces = line.search(/\S|$/);
     if (numberOfLeadingSpaces % 4 !== 0) {
-        throw new Error("Number of leading spaces should be divisible by 4 at >>> " + line);
+        const error = ErrorInvalidIndentation(lineNumber, numberOfLeadingSpaces);
+        raise(error, sourceCode);
     }
     return numberOfLeadingSpaces / 4;
 }

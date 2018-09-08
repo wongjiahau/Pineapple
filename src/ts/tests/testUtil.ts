@@ -4,6 +4,7 @@ require("colors");
 // @ts-ignore
 import { mocha } from "mocha";
 import { pine2js } from "../pine2js";
+import { SourceCode } from "../interpreter";
 const jsdiff = require("diff");
 
 export function assertEquals(actual: string, expected: string) {
@@ -127,3 +128,10 @@ export function mockChalk(): any {
 }
 
 export const numberComparer = (x: number, y: number) => x === y;
+
+export function dummySourceCode(content: string): SourceCode {
+    return {
+        filename: "dummy",
+        content: content
+    }
+}
