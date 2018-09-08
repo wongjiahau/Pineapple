@@ -5,6 +5,7 @@ import {
     BuiltinTypename,
     Declaration,
     EmptyList,
+    EmptyTable,
     EnumDeclaration,
     Expression,
     ForStatement,
@@ -28,10 +29,10 @@ import {
     TypeExpression,
     UnresolvedType,
     Variable,
-    VariableDeclaration,
-    EmptyTable
+    VariableDeclaration
 } from "./ast";
 
+import {SourceCode} from "./cli";
 import {ErrorAccessingInexistentMember} from "./errorType/E0001-AccessingInexistentMember";
 import {ErrorAssigningToImmutableVariable} from "./errorType/E0002-AssigningToImmutableVariable";
 import {ErrorDuplicatedMember} from "./errorType/E0003-DuplicatedMember";
@@ -61,7 +62,6 @@ import { ErrorMissingClosingBracket } from "./errorType/E0027-MissingClosingBrac
 import {ErrorDetail, stringifyTypeReadable} from "./errorType/errorUtil";
 import {renderError} from "./errorType/renderError";
 import {convertToLinkedNode, flattenLinkedNode} from "./getIntermediateForm";
-import {SourceCode} from "./cli";
 import {stringifyFuncSignature} from "./transpile";
 import {
     BaseStructType,
@@ -372,7 +372,7 @@ export function raise(errorDetail: ErrorDetail, sourceCode: SourceCode = CURRENT
     // # symbol is to indicate this error had been processed
     // this is necessary for interpreter.ts to differentiate between processed and unprocessed error
     // because unprocessed error is usually the compiler internal error
-    e.name = "#" + errorDetail.name; 
+    e.name = "#" + errorDetail.name;
     throw e;
 }
 
@@ -542,15 +542,15 @@ export function fillUpExpressionTypeInfo(e: Expression, symbols: SymbolTable, va
                         symbols
                     );
                 } else if (e.constructor.kind === "BuiltinType") {
-                    if(e.keyValueList !== null) {
+                    if (e.keyValueList !== null) {
                         throw new Error("List type shouldn't have key value");
                     }
                     if (e.constructor.name === "List") {
                         e = EmptyList(e.location, e.constructor);
-                    } else if(e.constructor.name === "Table") {
+                    } else if (e.constructor.name === "Table") {
                         e = EmptyTable(e.location, e.constructor);
                     } else {
-                        throw new Error(`Cannot handle ${e.constructor.name} yet`)
+                        throw new Error(`Cannot handle ${e.constructor.name} yet`);
                     }
                 } else {
                     throw new Error(`${stringifyTypeReadable(e.constructor)} is neither struct nor builtin.`);
@@ -857,7 +857,7 @@ export function getFuncSignature(f: FunctionCall, functab: FunctionTable, typetr
         // this step is needed for generic substituted function
         functab = newFunctionTable(closestFunction, functab);
 
-        if(closestFunction.isAsync) {
+        if (closestFunction.isAsync) {
             f.isAsync = true;
         }
 

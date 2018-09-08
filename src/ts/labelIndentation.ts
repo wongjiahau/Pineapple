@@ -1,8 +1,8 @@
-import {raise} from "./fillUpTypeInformation";
-import {ErrorInvalidIndentation} from "./errorType/E0029-InvalidIndentation";
 import {SourceCode} from "./cli";
+import {ErrorInvalidIndentation} from "./errorType/E0029-InvalidIndentation";
+import {raise} from "./fillUpTypeInformation";
 
-export function labelIndentation(input : string, sourceCode : SourceCode) : string {
+export function labelIndentation(input: string, sourceCode: SourceCode): string {
     const lines = input.split("\n");
     for (let i = 0; i < lines.length; i++) {
         const currentIndentationLevel = indentationLevel(lines[i], i, sourceCode);
@@ -21,7 +21,7 @@ export function labelIndentation(input : string, sourceCode : SourceCode) : stri
     return lines.join("\n");
 }
 
-function indentationLevel(line : string, lineNumber : number, sourceCode : SourceCode) : number {
+function indentationLevel(line: string, lineNumber: number, sourceCode: SourceCode): number {
     line = line.replace(/\t/g, "    "); // replace tabs with 4 spaces
     const numberOfLeadingSpaces = line.search(/\S|$/);
     if (numberOfLeadingSpaces % 4 !== 0) {

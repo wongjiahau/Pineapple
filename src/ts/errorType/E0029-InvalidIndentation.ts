@@ -7,7 +7,7 @@ export function ErrorInvalidIndentation(
     return {
         name: "ErrorInvalidIndentation",
         code: "0029",
-        message: 
+        message:
 `Number of leading spaces of each line should be divisible by 4.
 
 But the number of spaces at the pointed line is ${numberOfLeadingSpaces}, which is not divisible by 4.`,

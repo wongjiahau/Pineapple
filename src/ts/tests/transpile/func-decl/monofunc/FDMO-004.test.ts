@@ -1,6 +1,6 @@
 import { testTranspile } from "../../../testUtil";
 
-testTranspile("prefix unary operator", 
+testTranspile("prefix unary operator",
 `
 def - (this Number) -> Number
     pass

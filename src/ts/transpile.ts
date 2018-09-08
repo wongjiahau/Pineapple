@@ -79,7 +79,7 @@ export function tpFunctionDeclaration(f: FunctionDeclaration): string {
     const typeSignature = f.parameters.map((x) => stringifyType(x.typeExpected)).join("_");
     const params = tpParameters(f.parameters);
     const statements = tpStatement(f.statements);
-    return `${f.isAsync ? "async ": ""}function ${funcSignature}_${typeSignature}(${params}){\n${statements};\n}\n\n`;
+    return `${f.isAsync ? "async " : ""}function ${funcSignature}_${typeSignature}(${params}){\n${statements};\n}\n\n`;
 }
 
 export function tpStatement(s: LinkedNode<Statement>): string {
@@ -136,7 +136,7 @@ export function tpFunctionCall(f: FunctionCall): string {
     const typeSignature = f.parameters.map((x) => stringifyType(x.returnType)).join("_");
     const params = f.parameters.map((x) => tpExpression(x));
     const result = `${f.isAsync ? "await " : ""}${funcSignature}_${typeSignature}(${params.join(",")})`;
-    if(f.isAsync) {
+    if (f.isAsync) {
         return "(" + result + ")";
     } else {
         return result;
@@ -281,7 +281,7 @@ export function tpListElements(e: LinkedNode<Expression>): string {
 }
 
 export function tpObjectExpression(e: ObjectExpression): string {
-    if(e.keyValueList === null) {
+    if (e.keyValueList === null) {
         return "{}";
     }
     return `{

@@ -1,8 +1,8 @@
-import { ErrorDetail } from "./errorUtil";
 import { TokenLocation } from "../ast";
+import { ErrorDetail } from "./errorUtil";
 
 export interface LexerErrorDetail {
-    message: string; 
+    message: string;
     hash: {
         text: string;
         line: number;

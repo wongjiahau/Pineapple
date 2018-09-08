@@ -1,10 +1,10 @@
 import { Declaration, LinkedNode } from "./ast";
-import { ErrorSyntax } from "./errorType/E0010-Syntax";
-import { fillUpTypeInformation, raise, SymbolTable } from "./fillUpTypeInformation";
 import { SourceCode } from "./cli";
+import { ErrorSyntax } from "./errorType/E0010-Syntax";
+import { ErrorLexical } from "./errorType/E0028-Lexical";
+import { fillUpTypeInformation, raise, SymbolTable } from "./fillUpTypeInformation";
 import { preprocess } from "./preprocess";
 import { initTypeTree } from "./typeTree";
-import { ErrorLexical } from "./errorType/E0028-Lexical";
 const parser     = require("../jison/pineapple-parser-v2");
 
 export function getIntermediateForm(
@@ -28,7 +28,7 @@ export function getIntermediateForm(
         if (isSyntaxError(error)) {
             // this part is needed to inject the sourceCode
             raise(ErrorSyntax(error.hash), sourceCode);
-        } else if(isLexError(error)) {
+        } else if (isLexError(error)) {
             raise(ErrorLexical(error), sourceCode);
         }
         throw error; // Will be caught by interpreter.ts

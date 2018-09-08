@@ -2,7 +2,6 @@ import { expect } from "chai";
 import { preprocess } from "../../preprocess";
 import { dummySourceCode } from "../testUtil";
 
-
 describe("preprocess", () => {
     it("case 1", () => {
         const input =

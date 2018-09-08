@@ -18,7 +18,7 @@ if (program.log) {
     console.log("Logging");
 }
 
-if(program.args.length === 0) {
+if (program.args.length === 0) {
     console.log(`Pineapple ${VERSION}`);
 }
 
@@ -37,7 +37,7 @@ program.args.forEach((arg: string) => {
         const transpiledCode = ir.map(tpDeclaration).join("\n") + "\n_main_();";
         execute(transpiledCode);
     } catch (error) {
-        if(error.name[0] === "#") { // if this error is processed
+        if (error.name[0] === "#") { // if this error is processed
             clear();
             console.log(error.message);
         } else { // if this error is not processed, means it is a compiler's bug

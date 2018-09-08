@@ -9,4 +9,4 @@ def .main
 function _main_(){
 const $x = (3);
 }
-`)
+`);

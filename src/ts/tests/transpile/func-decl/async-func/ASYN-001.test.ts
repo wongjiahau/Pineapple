@@ -16,4 +16,4 @@ $$pass$$();
 function _main_(){
 const $x = (await _readline_());
 }
-`)
+`);

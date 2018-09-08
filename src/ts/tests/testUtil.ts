@@ -3,8 +3,8 @@ require("colors");
 
 // @ts-ignore
 import { mocha } from "mocha";
-import { pine2js } from "../pine2js";
 import { SourceCode } from "../cli";
+import { pine2js } from "../pine2js";
 const jsdiff = require("diff");
 
 export function assertEquals(actual: string, expected: string) {
@@ -133,5 +133,5 @@ export function dummySourceCode(content: string): SourceCode {
     return {
         filename: "dummy",
         content: content
-    }
+    };
 }

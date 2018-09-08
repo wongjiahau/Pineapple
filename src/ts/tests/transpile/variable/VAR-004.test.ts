@@ -6,9 +6,9 @@ testTranspile("variable optimization",
 def .main
     let x = 5
     let y = x
-    let z = x    
+    let z = x
 `,
 
 `
 
-`)
+`);
