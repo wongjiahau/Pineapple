@@ -43,7 +43,7 @@ program.args.forEach((arg: string) => {
 
 function loadPreludeScript(currentFile: string): Dependencies {
     let dependencies: Dependencies = [];
-    const PRELUDE_DIR = "./pinelib/prelude/";
+    const PRELUDE_DIR = __dirname + "/../pinelib/prelude/";
     fs.readdirSync(PRELUDE_DIR).forEach((filename: string) => {
         const libFile = getFullFilePath(PRELUDE_DIR + filename);
         dependencies.push([currentFile, /*depends on*/ libFile]);
@@ -101,13 +101,21 @@ function Nothing(): string {
     return "";
 }
 
+/**
+ * This function is to get the filename from a fullFilename
+ */
+function filename(fullFilename: string) {
+    return path.basename(fullFilename, path.extname(fullFilename));
+}
+
 function loadDependency(initSource: SourceCode | null): Dependencies {
     if (initSource === null) {
         return [];
     }
     let imports = initSource.content.match(/(\n|^)import[ ]".+"/g) as string[];
     const currentFile = getFullFilePath(initSource.filename);
-    const filepath = currentFile.split("/").slice(0, -1).join("/") + "/";
+
+    const dirname = path.dirname(currentFile) + "/";
     let dependencies: string[][] = [];
 
     if (imports === null) {
@@ -124,7 +132,7 @@ function loadDependency(initSource: SourceCode | null): Dependencies {
         });
         // import user-defined scripts
         for (let i = 0; i < imports.length; i++) {
-            const importedFile = getFullFilePath(filepath + imports[i]);
+            const importedFile = getFullFilePath(dirname + imports[i]);
             dependencies.push([currentFile, /*depends on*/ importedFile]);
             dependencies = dependencies.concat(loadDependency(loadFile(importedFile)));
         }
