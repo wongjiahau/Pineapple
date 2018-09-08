@@ -22,6 +22,7 @@ export function labelIndentation(input : string, sourceCode : SourceCode) : stri
 }
 
 function indentationLevel(line : string, lineNumber : number, sourceCode : SourceCode) : number {
+    line = line.replace(/\t/g, "    "); // replace tabs with 4 spaces
     const numberOfLeadingSpaces = line.search(/\S|$/);
     if (numberOfLeadingSpaces % 4 !== 0) {
         const error = ErrorInvalidIndentation(lineNumber, numberOfLeadingSpaces);
