@@ -1,6 +1,6 @@
 {
   "name": "pineapple-alpha",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "gypfile": true,
   "description": "```The interpreter of Pineapple```",
   "main": "./js/interpreter.js",
@@ -16,12 +16,9 @@
     "chalk": "^2.4.1",
     "clear": "^0.1.0",
     "commander": "^2.15.1",
-    "console.table": "^0.10.0",
     "fast-levenshtein": "^2.0.6",
     "jison": "^0.4.18",
     "lex": "^1.7.9",
-    "nexe": "^2.0.0-rc.34",
-    "node-addon-api": "^1.4.0",
     "number-to-words": "^1.2.4",
     "toposort": "^2.0.2"
   },
