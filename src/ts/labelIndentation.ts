@@ -1,6 +1,6 @@
 import {raise} from "./fillUpTypeInformation";
 import {ErrorInvalidIndentation} from "./errorType/E0029-InvalidIndentation";
-import {SourceCode} from "./interpreter";
+import {SourceCode} from "./cli";
 
 export function labelIndentation(input : string, sourceCode : SourceCode) : string {
     const lines = input.split("\n");

@@ -4,7 +4,7 @@ require("colors");
 // @ts-ignore
 import { mocha } from "mocha";
 import { pine2js } from "../pine2js";
-import { SourceCode } from "../interpreter";
+import { SourceCode } from "../cli";
 const jsdiff = require("diff");
 
 export function assertEquals(actual: string, expected: string) {

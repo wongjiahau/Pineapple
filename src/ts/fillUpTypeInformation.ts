@@ -61,7 +61,7 @@ import { ErrorMissingClosingBracket } from "./errorType/E0027-MissingClosingBrac
 import {ErrorDetail, stringifyTypeReadable} from "./errorType/errorUtil";
 import {renderError} from "./errorType/renderError";
 import {convertToLinkedNode, flattenLinkedNode} from "./getIntermediateForm";
-import {SourceCode} from "./interpreter";
+import {SourceCode} from "./cli";
 import {stringifyFuncSignature} from "./transpile";
 import {
     BaseStructType,

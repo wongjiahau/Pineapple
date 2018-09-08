@@ -1,3 +1,3 @@
 #!/usr/bin/env node
 
-var interpreter = require("../dist/interpreter");
+var interpreter = require("../dist/cli");

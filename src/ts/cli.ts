@@ -6,14 +6,20 @@ import {tpDeclaration} from "./transpile";
 const clear = require("clear");
 const path = require("path");
 
+const VERSION = require("../package.json").version;
+
 const program = require("commander");
 program
-    .version("0.1.0")
+    .version(VERSION)
     .option("-l, --log", "Log output")
     .parse(process.argv);
 
 if (program.log) {
     console.log("Logging");
+}
+
+if(program.args.length === 0) {
+    console.log(`Pineapple ${VERSION}`);
 }
 
 const fs = require("fs");

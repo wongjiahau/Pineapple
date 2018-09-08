@@ -1,5 +1,5 @@
 import { getIntermediateForm, initialIntermediateForm } from "./getIntermediateForm";
-import { SourceCode } from "./interpreter";
+import { SourceCode } from "./cli";
 import { transpile } from "./transpile";
 
 /**

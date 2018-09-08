@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import { SourceCode } from "../interpreter";
+import { SourceCode } from "../cli";
 import { labelLineNumbers } from "../labelLineNumbers";
 import { ErrorDetail } from "./errorUtil";
 const boxen = require("boxen");

@@ -1,7 +1,7 @@
 import { labelIndentation } from "./labelIndentation";
 import { labelNewlines } from "./labelNewlines";
 import { smoothify } from "./smoothify";
-import { SourceCode } from "./interpreter";
+import { SourceCode } from "./cli";
 
 export function preprocess(input: SourceCode): string {
     let result = input.content + "\n";

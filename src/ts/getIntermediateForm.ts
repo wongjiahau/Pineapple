@@ -1,7 +1,7 @@
 import { Declaration, LinkedNode } from "./ast";
 import { ErrorSyntax } from "./errorType/E0010-Syntax";
 import { fillUpTypeInformation, raise, SymbolTable } from "./fillUpTypeInformation";
-import { SourceCode } from "./interpreter";
+import { SourceCode } from "./cli";
 import { preprocess } from "./preprocess";
 import { initTypeTree } from "./typeTree";
 import { ErrorLexical } from "./errorType/E0028-Lexical";
