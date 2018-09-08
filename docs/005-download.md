@@ -59,3 +59,7 @@ pine hello.pine
 ```
 
 Happy hacking :)
+
+---
+
+Read more about [Pineapple features](./Features/001-BasicProgram.md).

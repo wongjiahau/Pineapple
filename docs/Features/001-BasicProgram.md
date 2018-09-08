@@ -8,6 +8,6 @@ def .main
 ```
 
 !!! info "Note"
-    Indentation(tab) is necessary.
+    Indentation(tab) is necessary. If you are using spaces, it must be 4 spaces per tab.
 
-Also, by default, Prelude library will be loaded.
+Also, by default, the [Prelude library](https://github.com/wongjiahau/Pineapple/tree/master/src/pinelib/prelude) will be loaded.
