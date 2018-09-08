@@ -13,7 +13,7 @@
         <meta name="description" content="The documentation of Pineapple language">
       
       
-        <link rel="canonical" href="https://wongjiahau.github.io/Pineapple/005-installation/">
+        <link rel="canonical" href="https://wongjiahau.github.io/Pineapple/005-download/">
       
       
         <meta name="author" content="Wong Jia Hau">
@@ -291,9 +291,51 @@
       
     
     
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        Download Pineapple
+      </label>
+    
     <a href="./" title="Download Pineapple" class="md-nav__link md-nav__link--active">
       Download Pineapple
     </a>
+    
+      
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#validation" title="Validation" class="md-nav__link">
+    Validation
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#create-a-hello-world-program" title="Create a Hello world! program" class="md-nav__link">
+    Create a Hello world! program
+  </a>
+  
+</li>
+      
+      
+      
+      
+      
+        <li class="md-nav__item">
+          <a href="#__comments" title="Comments" class="md-nav__link md-nav__link--active">
+            Comments
+          </a>
+        </li>
+      
+    </ul>
+  
+</nav>
     
   </li>
 
@@ -543,6 +585,35 @@
     
   
   
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#validation" title="Validation" class="md-nav__link">
+    Validation
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#create-a-hello-world-program" title="Create a Hello world! program" class="md-nav__link">
+    Create a Hello world! program
+  </a>
+  
+</li>
+      
+      
+      
+      
+      
+        <li class="md-nav__item">
+          <a href="#__comments" title="Comments" class="md-nav__link md-nav__link--active">
+            Comments
+          </a>
+        </li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -553,10 +624,52 @@
             <article class="md-content__inner md-typeset">
               
                 
-                  <a href="https://github.com/wongjiahau/Pineapple/edit/master/docs/005-installation.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
+                  <a href="https://github.com/wongjiahau/Pineapple/edit/master/docs/005-download.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
                 
                 
                 <h1 id="download-pineapple">Download Pineapple<a class="headerlink" href="#download-pineapple" title="Permanent link">&para;</a></h1>
+<p>To use Pineapple interpreter, you need to <a href="https://nodejs.org/en/download/">install Node.js V8.11</a> first.</p>
+<p>Then, open command prompt, run the following command:</p>
+<div class="codehilite"><pre><span></span>npm install --global pineapple-alpha
+</pre></div>
+
+<div class="admonition info">
+<p class="admonition-title">Note</p>
+<p>For Windows users, you might need to open the command prompt in Administrator mode.</p>
+<p>For Linux/Mac users, you might need to prefix the command above with <code>sudo</code>.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The current version of Pineapple is an alpha release, so it is meant for alpha testers only as it might contain a lot of bugs, and not all features are fully implemented yet.</p>
+</div>
+<hr />
+<h3 id="validation">Validation<a class="headerlink" href="#validation" title="Permanent link">&para;</a></h3>
+<p>To ensure that you have installed Pineapple successfully. Type the following command in your command prompt or terminal:</p>
+<div class="codehilite"><pre><span></span>pine 
+</pre></div>
+
+<p>Then, you should see the following:</p>
+<div class="codehilite"><pre><span></span>Pineapple <span class="m">0</span>.0.X
+</pre></div>
+
+<p>If you do not see something similar to the output above, it means that you had not successfully installed Pineapple, so you might need to retry again.</p>
+<hr />
+<h2 id="create-a-hello-world-program">Create a <strong>Hello world!</strong> program<a class="headerlink" href="#create-a-hello-world-program" title="Permanent link">&para;</a></h2>
+<p>First, create a file called <code>hello.pine</code>.</p>
+<p>Secondly, open the file in your favourite code editor (for example, Notepad).</p>
+<p>Thirdly, copy and paste the following code into <code>hello.pine</code>.</p>
+<div class="codehilite"><pre><span></span><span class="kd">def</span> <span class="p">.</span><span class="nx">main</span>
+    <span class="sb">&quot;Hello world!&quot;</span><span class="p">.</span><span class="nx">show</span>
+</pre></div>
+
+<p>Fourthly, save the file.</p>
+<p>Lastly, type in the following command in your command prompt or terminal.</p>
+<div class="codehilite"><pre><span></span>pine hello.pine
+</pre></div>
+
+<p>Happy hacking :)</p>
+<hr />
+<p>Read more about <a href="../Features/001-BasicProgram/">Pineapple features</a>.</p>
                 
                   
                 
@@ -569,9 +682,9 @@
   <div id="disqus_thread"></div>
   <script>
     var disqus_config = function () {
-      this.page.url = "https://wongjiahau.github.io/Pineapple/005-installation/";
+      this.page.url = "https://wongjiahau.github.io/Pineapple/005-download/";
       this.page.identifier =
-        "005-installation/";
+        "005-download/";
     };
     (function() {
       var d = document, s = d.createElement("script");
