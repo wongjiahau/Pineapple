@@ -271,6 +271,18 @@
 
 
   <li class="md-nav__item">
+    <a href="../../003-philosophy/" title="Pineapple's Philosophy" class="md-nav__link">
+      Pineapple's Philosophy
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
     <a href="../../005-installation/" title="Download Pineapple" class="md-nav__link">
       Download Pineapple
     </a>
@@ -310,13 +322,13 @@
 
   <li class="md-nav__item md-nav__item--active md-nav__item--nested">
     
-      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-6" type="checkbox" id="nav-6" checked>
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-7" type="checkbox" id="nav-7" checked>
     
-    <label class="md-nav__link" for="nav-6">
+    <label class="md-nav__link" for="nav-7">
       Features
     </label>
     <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
-      <label class="md-nav__title" for="nav-6">
+      <label class="md-nav__title" for="nav-7">
         Features
       </label>
       <ul class="md-nav__list" data-md-scrollfix>
@@ -467,6 +479,39 @@
     List
   </a>
   
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#multiline-list" title="Multiline List" class="md-nav__link">
+    Multiline List
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#table" title="Table" class="md-nav__link">
+    Table
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#empty-table" title="Empty table" class="md-nav__link">
+    Empty table
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
       
@@ -542,6 +587,18 @@
   <li class="md-nav__item">
     <a href="../Generics/" title="Generics" class="md-nav__link">
       Generics
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../JavaScriptBinding/" title="JavaScript binding" class="md-nav__link">
+      JavaScript binding
     </a>
   </li>
 
@@ -660,6 +717,39 @@
     List
   </a>
   
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#multiline-list" title="Multiline List" class="md-nav__link">
+    Multiline List
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#table" title="Table" class="md-nav__link">
+    Table
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#empty-table" title="Empty table" class="md-nav__link">
+    Empty table
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
       
@@ -698,7 +788,7 @@
 <p><code class="codehilite"><span class="nb">Nil</span></code> (also known as null)</p>
 </li>
 <li>
-<p><code class="codehilite"><span class="nb">Number</span></code> and <code class="codehilite"><span class="nb">Integer</span></code> </p>
+<p><code class="codehilite"><span class="nb">Number</span></code> and <code class="codehilite"><span class="nb">Integer</span></code></p>
 </li>
 <li>
 <p><code class="codehilite"><span class="nb">String</span></code></p>
@@ -724,7 +814,7 @@
 <p>For example,</p>
 <div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">isMad</span> <span class="o">=</span> <span class="kc">#true</span>
 
-<span class="k">if</span> <span class="nx">isMad</span> 
+<span class="k">if</span> <span class="nx">isMad</span>
     <span class="sb">&quot;Oh my goodness&quot;</span><span class="p">.</span><span class="nx">show</span>
 <span class="k">else</span>
     <span class="sb">&quot;Thank goodness&quot;</span><span class="p">.</span><span class="nx">show</span>
@@ -807,6 +897,49 @@
 </pre></div>
 
 </div>
+<h3 id="multiline-list">Multiline List<a class="headerlink" href="#multiline-list" title="Permanent link">&para;</a></h3>
+<p>Sometimes your list might contains too many elements to be fit in a single line. In such situation you will need to use multiline list. For example,</p>
+<div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">fruits</span> <span class="o">=</span>
+    <span class="k">o</span> <span class="sb">&quot;Apple&quot;</span>
+    <span class="k">o</span> <span class="sb">&quot;Banana&quot;</span>
+    <span class="k">o</span> <span class="sb">&quot;Pineapple&quot;</span>
+    <span class="k">o</span> <span class="sb">&quot;Durian&quot;</span>
+    <span class="k">o</span> <span class="sb">&quot;Hello&quot;</span>
+</pre></div>
+
+<div class="admonition info">
+<p class="admonition-title">Note</p>
+<p>The indentation is necessary. So, the following is invalid in Pineapple:</p>
+<div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">fruits</span> <span class="o">=</span> 
+<span class="k">o</span> <span class="sb">&quot;Apple&quot;</span>
+<span class="k">o</span> <span class="sb">&quot;Banana&quot;</span>
+<span class="c1">// Error</span>
+</pre></div>
+
+</div>
+<div class="admonition tldr">
+<p class="admonition-title">Reminder</p>
+<p>Since <code class="codehilite"><span class="k">o</span></code> is used as list bullet in Pineapple, you cannot named a variable as <code>o</code>.</p>
+</div>
+<hr />
+<h2 id="table">Table<a class="headerlink" href="#table" title="Permanent link">&para;</a></h2>
+<p>Table is also known as Dictionary or HashMap. It is useful when you need to store a list of key-value data.<br />
+For example, let say you want to store phone numbers:</p>
+<div class="codehilite"><pre><span></span><span class="c1">// note that the indentation is necessary</span>
+<span class="kd">let</span> <span class="nx">phoneNumbers</span> <span class="o">=</span>
+    <span class="sb">&quot;john&quot;</span> <span class="o">=</span> <span class="sb">&quot;0123456&quot;</span>
+    <span class="sb">&quot;babe&quot;</span> <span class="o">=</span> <span class="sb">&quot;3333222&quot;</span>
+    <span class="sb">&quot;wong&quot;</span> <span class="o">=</span> <span class="sb">&quot;3212344&quot;</span>
+    <span class="sb">&quot;lee&quot;</span>  <span class="o">=</span> <span class="sb">&quot;9843056&quot;</span>
+
+<span class="nx">phoneNumbers</span><span class="mi">.</span><span class="p">(</span><span class="sb">&quot;john&quot;</span><span class="p">).</span><span class="nx">show</span> <span class="c1">// &quot;0123456&quot;</span>
+</pre></div>
+
+<h3 id="empty-table">Empty table<a class="headerlink" href="#empty-table" title="Permanent link">&para;</a></h3>
+<p>To create an empty table, use the <code>Table</code> constructor.</p>
+<div class="codehilite"><pre><span></span>                        <span class="c1">// key , value</span>
+<span class="kd">let</span> <span class="nx">phoneNumbers</span> <span class="o">=</span> <span class="nb">Table</span><span class="p">{</span><span class="nb">String</span><span class="p">,</span> <span class="nb">String</span><span class="p">}</span>
+</pre></div>
                 
                   
                 

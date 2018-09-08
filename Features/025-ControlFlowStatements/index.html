@@ -271,6 +271,18 @@
 
 
   <li class="md-nav__item">
+    <a href="../../003-philosophy/" title="Pineapple's Philosophy" class="md-nav__link">
+      Pineapple's Philosophy
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
     <a href="../../005-installation/" title="Download Pineapple" class="md-nav__link">
       Download Pineapple
     </a>
@@ -310,13 +322,13 @@
 
   <li class="md-nav__item md-nav__item--active md-nav__item--nested">
     
-      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-6" type="checkbox" id="nav-6" checked>
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-7" type="checkbox" id="nav-7" checked>
     
-    <label class="md-nav__link" for="nav-6">
+    <label class="md-nav__link" for="nav-7">
       Features
     </label>
     <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
-      <label class="md-nav__title" for="nav-6">
+      <label class="md-nav__title" for="nav-7">
         Features
       </label>
       <ul class="md-nav__list" data-md-scrollfix>
@@ -525,6 +537,18 @@
 
 
   <li class="md-nav__item">
+    <a href="../JavaScriptBinding/" title="JavaScript binding" class="md-nav__link">
+      JavaScript binding
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
     <a href="../Modules/" title="Module" class="md-nav__link">
       Module
     </a>
@@ -673,41 +697,29 @@ For example:</p>
 <hr>
 
 <h2 id="test-expression-chaining">Test expression chaining<a class="headerlink" href="#test-expression-chaining" title="Permanent link">&para;</a></h2>
-<p>Sometimes, a single test expression is not enough to express what you really wanted.  In such situation, you can use the following logical operators:</p>
+<p>Sometimes, a single test expression is not enough to express what you really wanted.  In such situation, you can use the following functions:</p>
 <ul>
 <li>
-<p><code class="codehilite"><span class="kr">and</span></code></p>
+<p><code class="codehilite"><span class="p">.</span><span class="nx">and</span></code></p>
 </li>
 <li>
-<p><code class="codehilite"><span class="kr">or</span></code></p>
+<p><code class="codehilite"><span class="p">.</span><span class="nx">or</span></code></p>
 </li>
 <li>
-<p><code class="codehilite"><span class="kr">not</span></code></p>
+<p><code class="codehilite"><span class="p">.</span><span class="nx">not</span></code></p>
 </li>
 </ul>
 <p>For example:</p>
-<div class="codehilite"><pre><span></span><span class="k">if</span> <span class="nx">he</span><span class="mi">.isYoun</span><span class="nx">g</span> <span class="kr">and</span> <span class="nx">he</span><span class="mi">.isNaught</span><span class="nx">y</span>
+<div class="codehilite"><pre><span></span><span class="k">if</span> <span class="nx">he</span><span class="mi">.isYoun</span><span class="nx">g</span><span class="mi">.an</span><span class="nx">d</span><span class="p">(</span><span class="nx">he</span><span class="mi">.isNaught</span><span class="nx">y</span><span class="p">)</span>
     <span class="sb">&quot;He is a kid&quot;</span><span class="p">.</span><span class="nx">show</span>
 
-<span class="k">elif</span> <span class="nx">sky</span><span class="mi">.isBlue</span> <span class="kr">or</span> <span class="nx">air</span><span class="mi">.isFres</span><span class="nx">h</span>
+<span class="k">elif</span> <span class="nx">sky</span><span class="mi">.isBlue.or</span><span class="p">(</span><span class="nx">air</span><span class="mi">.isFres</span><span class="nx">h</span><span class="p">)</span>
     <span class="sb">&quot;I am happy!&quot;</span><span class="p">.</span><span class="nx">show</span>
 
-<span class="k">elif</span> <span class="kr">not</span> <span class="nx">current</span><span class="mi">.isLunchTim</span><span class="nx">e</span>
+<span class="k">elif</span> <span class="nx">current</span><span class="mi">.isLunchTim</span><span class="nx">e</span><span class="mi">.no</span><span class="nx">t</span>
     <span class="sb">&quot;Continue working . . .&quot;</span><span class="p">.</span><span class="nx">show</span>
 </pre></div>
 
-<div class="admonition info">
-<p class="admonition-title">Note</p>
-<p><code class="codehilite"><span class="kr">not</span></code> operator have higher precedence than <code class="codehilite"><span class="kr">or</span></code> and <code class="codehilite"><span class="kr">and</span></code>.<br />
-For example, the following code: 
-<div class="codehilite"><pre><span></span><span class="k">if</span> <span class="kr">not</span> <span class="nx">he</span><span class="mi">.isFine</span> <span class="kr">and</span> <span class="nx">he</span><span class="mi">.isEating</span>
-</pre></div></p>
-<p>Is same as:</p>
-<div class="codehilite"><pre><span></span><span class="k">if</span> <span class="p">(</span><span class="kr">not</span> <span class="nx">he</span><span class="mi">.isFine</span><span class="p">)</span> <span class="kr">and</span> <span class="nx">he</span><span class="mi">.isEating</span>
-    <span class="p">...</span>
-</pre></div>
-
-</div>
 <hr>
 
 <h2 id="for-statements">For statements<a class="headerlink" href="#for-statements" title="Permanent link">&para;</a></h2>
@@ -721,7 +733,7 @@ For example:</p>
 
 <h2 id="while-loop">While loop<a class="headerlink" href="#while-loop" title="Permanent link">&para;</a></h2>
 <p>While loop is use to loop some code until certain condition is met.</p>
-<div class="codehilite"><pre><span></span><span class="k">while</span> <span class="kr">not</span> <span class="nx">file</span><span class="mi">.atEO</span><span class="nb">F</span>
+<div class="codehilite"><pre><span></span><span class="k">while</span> <span class="nx">not</span> <span class="nx">file</span><span class="mi">.atEO</span><span class="nb">F</span>
     <span class="nx">file</span><span class="mi">.readline.show</span>
 </pre></div>
                 

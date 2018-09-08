@@ -271,6 +271,18 @@
 
 
   <li class="md-nav__item">
+    <a href="../../003-philosophy/" title="Pineapple's Philosophy" class="md-nav__link">
+      Pineapple's Philosophy
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
     <a href="../../005-installation/" title="Download Pineapple" class="md-nav__link">
       Download Pineapple
     </a>
@@ -310,13 +322,13 @@
 
   <li class="md-nav__item md-nav__item--active md-nav__item--nested">
     
-      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-6" type="checkbox" id="nav-6" checked>
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-7" type="checkbox" id="nav-7" checked>
     
-    <label class="md-nav__link" for="nav-6">
+    <label class="md-nav__link" for="nav-7">
       Features
     </label>
     <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
-      <label class="md-nav__title" for="nav-6">
+      <label class="md-nav__title" for="nav-7">
         Features
       </label>
       <ul class="md-nav__list" data-md-scrollfix>
@@ -458,6 +470,18 @@
           
           
 
+
+  <li class="md-nav__item">
+    <a href="../JavaScriptBinding/" title="JavaScript binding" class="md-nav__link">
+      JavaScript binding
+    </a>
+  </li>
+
+        
+          
+          
+          
+
   
 
 
@@ -496,6 +520,13 @@
         <li class="md-nav__item">
   <a href="#importing-code-from-github" title="Importing code from Github" class="md-nav__link">
     Importing code from Github
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#default-encapsulation" title="Default encapsulation" class="md-nav__link">
+    Default encapsulation
   </a>
   
 </li>
@@ -580,6 +611,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#default-encapsulation" title="Default encapsulation" class="md-nav__link">
+    Default encapsulation
+  </a>
+  
+</li>
+      
       
       
       
@@ -632,14 +670,24 @@
 </pre></div>
 
 <p>Every function defined in <code>math.pine</code> is now exposed in <code>app.pine</code>.</p>
-<div class="admonition info">
-<p class="admonition-title">Note</p>
-<p>If A imported B, and B imported C, the declarations from C will not be exposed in A.</p>
-</div>
+<hr />
 <h2 id="importing-code-from-github">Importing code from Github<a class="headerlink" href="#importing-code-from-github" title="Permanent link">&para;</a></h2>
 <p>You must specify the version.</p>
 <div class="codehilite"><pre><span></span><span class="kd">import</span> <span class="sb">&quot;github.com/wongjiahau/yaml/v2.0.0&quot;</span>
 </pre></div>
+
+<hr />
+<h2 id="default-encapsulation">Default encapsulation<a class="headerlink" href="#default-encapsulation" title="Permanent link">&para;</a></h2>
+<p>By default, the imported modules of an imported module will not be exposed to the importer.</p>
+<p>Consider the following scenario</p>
+<div class="codehilite"><pre><span></span><span class="c1">// Filename: math.pine</span>
+<span class="kd">def</span> 
+</pre></div>
+
+<div class="admonition info">
+<p class="admonition-title">Note</p>
+<p>If A imported B, and B imported C, the declarations from C will not be exposed in A.</p>
+</div>
                 
                   
                 
@@ -676,7 +724,7 @@
     <div class="md-footer-nav">
       <nav class="md-footer-nav__inner md-grid">
         
-          <a href="../Generics/" title="Generics" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+          <a href="../JavaScriptBinding/" title="JavaScript binding" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
             <div class="md-flex__cell md-flex__cell--shrink">
               <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
             </div>
@@ -685,7 +733,7 @@
                 <span class="md-footer-nav__direction">
                   Previous
                 </span>
-                Generics
+                JavaScript binding
               </span>
             </div>
           </a>
