@@ -33,6 +33,11 @@ npm i -g typescript
 npm i -g tslint 
 ```
 
+## 1.4 Lastly, install needed modules
+```
+cd src
+npm install
+```
 
 ## 2. Generate the parser
 ```
