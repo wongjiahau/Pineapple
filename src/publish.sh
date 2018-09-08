@@ -3,9 +3,7 @@
 # this function is called when Ctrl-C is sent
 function cleanup ()
 {
-    echo "Git ignoring dist and build folder again . . ."
-    sed -i "s/#dist/dist/g" .gitignore
-    sed -i "s/#build/build/g" .gitignore
+    # This part is reserved for future purposes
     echo "Done cleanup."
 }
  
@@ -14,9 +12,6 @@ function cleanup ()
 # when signal 2 (SIGINT) is received
 trap "cleanup" 2
 
-# Unignore dist and build folder, because it needs to be published
-sed -i "s/dist/#dist/g" .gitignore
-sed -i "s/build/#build/g" .gitignore
 
 echo "Testing if this package can be install properly . . ."
 
