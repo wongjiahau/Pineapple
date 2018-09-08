@@ -50,7 +50,8 @@ export function testError(expectedErrorName: string, input: string, logError = f
 export function testTranspile(description: string, input: string, expectedOutput: string) {
     describe("", () => {
         it(description, () => {
-            assertEquals(pine2js(input).trim(), expectedOutput.trim());
+            const result = pine2js(input).trim();
+            assertEquals(result, expectedOutput.trim());
         });
     });
 }

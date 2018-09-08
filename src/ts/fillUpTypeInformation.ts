@@ -857,6 +857,10 @@ export function getFuncSignature(f: FunctionCall, functab: FunctionTable, typetr
         // this step is needed for generic substituted function
         functab = newFunctionTable(closestFunction, functab);
 
+        if(closestFunction.isAsync) {
+            f.isAsync = true;
+        }
+
         return [f, functab];
     } else {
         return raise(ErrorUsingUnknownFunction(f));

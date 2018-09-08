@@ -7,5 +7,5 @@
 - [] update docs about types
 - [x] implement dictionary type
 - [x] write docs about keywords
-- [] rewrite boolean expression grammar
 - [] type checking for table type
+- [] variable optimization

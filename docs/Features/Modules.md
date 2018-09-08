@@ -31,8 +31,7 @@ def .main
 
 Every function defined in `math.pine` is now exposed in `app.pine`.
 
-!!! info "Note"
-    If A imported B, and B imported C, the declarations from C will not be exposed in A.
+---
 
 ## Importing code from Github
 
@@ -42,3 +41,19 @@ You must specify the version.
 import "github.com/wongjiahau/yaml/v2.0.0"
 
 ```
+
+---
+
+## Default encapsulation
+
+By default, the imported modules of an imported module will not be exposed to the importer.
+
+Consider the following scenario
+
+```pine
+// Filename: math.pine
+def 
+```
+
+!!! info "Note"
+    If A imported B, and B imported C, the declarations from C will not be exposed in A.

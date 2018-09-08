@@ -79,7 +79,7 @@ export function tpFunctionDeclaration(f: FunctionDeclaration): string {
     const typeSignature = f.parameters.map((x) => stringifyType(x.typeExpected)).join("_");
     const params = tpParameters(f.parameters);
     const statements = tpStatement(f.statements);
-    return `function ${funcSignature}_${typeSignature}(${params}){\n${statements};\n}\n\n`;
+    return `${f.isAsync ? "async ": ""}function ${funcSignature}_${typeSignature}(${params}){\n${statements};\n}\n\n`;
 }
 
 export function tpStatement(s: LinkedNode<Statement>): string {
@@ -135,7 +135,12 @@ export function tpFunctionCall(f: FunctionCall): string {
     const funcSignature = stringifyFuncSignature(f.signature);
     const typeSignature = f.parameters.map((x) => stringifyType(x.returnType)).join("_");
     const params = f.parameters.map((x) => tpExpression(x));
-    return `${funcSignature}_${typeSignature}(${params.join(",")})`;
+    const result = `${f.isAsync ? "await " : ""}${funcSignature}_${typeSignature}(${params.join(",")})`;
+    if(f.isAsync) {
+        return "(" + result + ")";
+    } else {
+        return result;
+    }
 }
 
 export function stringifyFuncSignature(signature: AtomicToken[]): string {
@@ -181,6 +186,8 @@ export function stringifyType(t: TypeExpression): string {
             return `${typename}${genericsName.length > 0 ? "Of" + genericsName : ""}` ;
         case "VoidType":
             return `Void`;
+        case "EnumDeclaration":
+            return t.name.repr;
         default:
             throw new Error(`Cant stringify ${t.kind} yet`);
     }

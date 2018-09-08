@@ -26,6 +26,7 @@ export interface FunctionDeclaration {
     parameters: VariableDeclaration[];
     statements: LinkedNode<Statement>;
     originFile: string;
+    isAsync: true | undefined;
 }
 
 export interface StructDeclaration {
@@ -227,6 +228,7 @@ export interface FunctionCall {
     parameters: Expression[];
     returnType: TypeExpression;
     location: TokenLocation;
+    isAsync: true | undefined;
 }
 
 export interface VariableDeclaration {

@@ -3,12 +3,19 @@ def (this Any).show
     console.log($this)
     </javascript>
 
-def .readline -> String
+def async (question String).ask -> String
     <javascript>
-    const x = require("../build/Release/cfunctions.node")
-    return x.readline();
-    </javascript>
+    const readline = require('readline');
 
-def (this String).ask -> String
-    this.show
-    return .readline
+    const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+    });
+
+    return new Promise((resolve, reject) => {
+        rl.question($question, (message) => {
+            resolve(message);
+            rl.close();
+        });
+    })
+    </javascript>

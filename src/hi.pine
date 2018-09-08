@@ -1,28 +1,3 @@
-def .main
-    let x = [1,2,3]
-
-    x.(-1).show
-
-    let result = "What is your name?".ask
-    "Your name is $(result)".show
-
-    let p = People
-        :name = "Wong"
-        :age  = 25
-    
-    let q = People
-        :name = "Johnny"
-        :age  = 25
-
-    if p.isOld.and(q.isOld)
-        "p is not old man".show
-    else
-        "yo".show
-
-def People
-    :name String
-    :age  Integer
-
-
-def (this People).isOld -> Boolean
-    return this:age > 20
+def async .main
+    let result = "What is your name?\n".ask
+    "Hello $(result)".show

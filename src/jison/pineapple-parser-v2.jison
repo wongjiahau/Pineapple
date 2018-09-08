@@ -163,6 +163,7 @@ const _AnonymousExpression = (location) => ({
 // Keywords
 "let"       return 'LET'
 "def"       return 'DEF'
+"async"     return 'ASYNC'
 "return"    return 'RETURN'
 "if"        return 'IF'
 "elif"      return 'ELIF'
@@ -293,10 +294,15 @@ MemberDefinition
     ;
 
 FunctionDeclaration
-    : DEF NulliFuncDeclaration  {$$=$2}
-    | DEF MonoFuncDeclaration   {$$=$2}
-    | DEF BiFuncDeclaration     {$$=$2}
-    | DEF TriFuncDeclaration    {$$=$2}
+    : DEF FunctionDecls {$$=$2}
+    | DEF ASYNC FunctionDecls {$3.isAsync = true;$$=$3;}
+    ;
+
+FunctionDecls
+    : NulliFuncDeclaration
+    | MonoFuncDeclaration 
+    | BiFuncDeclaration   
+    | TriFuncDeclaration  
     ;
 
 NulliFuncDeclaration

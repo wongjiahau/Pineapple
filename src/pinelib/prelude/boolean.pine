@@ -1,3 +1,18 @@
 def Boolean 
     #true
     #false
+
+def (this Boolean).or(that Boolean) -> Boolean
+    <javascript>
+    return $this || $that;
+    </javascript> 
+
+def (this Boolean).and(that Boolean) -> Boolean
+    <javascript>
+    return $this && $that;
+    </javascript>
+
+def (this Boolean).not -> Boolean
+    <javascript>
+    return ! $this;
+    </javascript>
