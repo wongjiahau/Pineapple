@@ -5,13 +5,13 @@
 For Windows user, open command prompt in Administrator mode and enter the following command:
 
 ```sh
-npm install -g pineapple-alpha
+npm install -g pinelang
 ```
 
 For Mac/Linux user, enter the following command:
 
 ```sh
-sudo npm install -g pineapple-alpha
+sudo npm install -g pinelang
 ```
 
 ## 2. How to use?
