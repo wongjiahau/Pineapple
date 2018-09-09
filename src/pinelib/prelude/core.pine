@@ -18,7 +18,7 @@ def (this Any) =/= (that Any) -> Boolean
 
 def (this String).toInteger -> Integer
     <javascript>
-    return parseInteger($this);
+    return parseInt($this);
     </javascript>
 
 def (this Any).toString -> String
