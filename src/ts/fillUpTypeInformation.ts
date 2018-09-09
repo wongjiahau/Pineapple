@@ -134,12 +134,59 @@ export function fillUpTypeInformation(decls: Declaration[], sourceCode: SourceCo
                 const [statements,
                     newSymbols] = fillUp(currentDecl.statements, symbols, vartab);
                 currentDecl.statements = statements;
+                if(!currentDecl.isAsync) {
+                    currentDecl.isAsync = flattenLinkedNode(currentDecl.statements).some(isCallingAysncFunction);
+                }
                 symbols = newSymbols;
                 verifyFunctionDeclaration(currentDecl);
                 break;
         }
     }
     return [decls, symbols];
+}
+
+export function isCallingAysncFunction(s: Statement | null): boolean {
+    if(s === null) {
+        return false;
+    }
+    switch(s.kind) {
+        case "AssignmentStatement":
+            return containsAsyncFunction(s.expression);
+        case "BranchStatement":
+            return containsAsyncFunction(s.test) ||
+                flattenLinkedNode(s.body).some(isCallingAysncFunction) ||
+                isCallingAysncFunction(s.elseBranch);
+        case "ForStatement":
+            return containsAsyncFunction(s.expression) ||
+                flattenLinkedNode(s.body).some(isCallingAysncFunction);
+        case "WhileStatement":
+            return containsAsyncFunction(s.test) ||
+                flattenLinkedNode(s.body).some(isCallingAysncFunction);
+        case "ReturnStatement":
+            return containsAsyncFunction(s.expression);
+        case "FunctionCall":
+            return s.isAsync;
+        default:
+            return false;
+    }
+}
+
+export function containsAsyncFunction(e: Expression | null): boolean {
+    if(e === null) {
+        return false;
+    }
+    switch(e.kind) {
+        case "FunctionCall":
+            if(e.isAsync) {
+                return true;
+            } else {
+                return e.parameters.some(containsAsyncFunction);
+            }
+        case "List":
+            return flattenLinkedNode(e.elements).some(containsAsyncFunction);
+        default: // TODO: Add code handler for other types of expression
+            return false;
+    }
 }
 
 export function validateStruct(s: StructDeclaration, symbols: SymbolTable): StructDeclaration {

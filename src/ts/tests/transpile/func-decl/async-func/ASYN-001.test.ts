@@ -1,5 +1,7 @@
 import { testTranspile } from "../../../testUtil";
 
+// should automatically add async keyword if the function contains any expression
+// that calls an async function
 testTranspile("async function",
 `
 def async .readline -> String
@@ -13,7 +15,7 @@ async function _readline_(){
 $$pass$$();
 }
 
-function _main_(){
+async function _main_(){
 const $x = (await _readline_());
 }
 `);
