@@ -29,9 +29,14 @@ program.args.forEach((arg: string) => {
         if (file === null) {
             throw new Error(`Cannot open file ${arg}`);
         }
-        let dependencies = loadPreludeScript(file.filename);
-        dependencies = dependencies.concat(loadDependency(file));
-        const sortedDependencies = sortDependency(dependencies);
+
+        // dependencies of prelude library
+        const preludeDependencies = loadPreludeScript(file.filename);
+
+        // dependencies of user scripts
+        const scriptDependencies = loadDependency(file);
+
+        const sortedDependencies = sortDependency(preludeDependencies).concat(sortDependency(scriptDependencies));
         const allCodes = sortedDependencies.map(loadFile);
         const ir = loadSource(allCodes); // ir means intermediate representation
         let transpiledCode = ir.map(tpDeclaration).join("\n");
