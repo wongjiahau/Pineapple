@@ -34,7 +34,8 @@ program.args.forEach((arg: string) => {
         const sortedDependencies = sortDependency(dependencies);
         const allCodes = sortedDependencies.map(loadFile);
         const ir = loadSource(allCodes); // ir means intermediate representation
-        const transpiledCode = ir.map(tpDeclaration).join("\n") + "\n_main_();";
+        let transpiledCode = ir.map(tpDeclaration).join("\n");
+        transpiledCode += "if(typeof _main_ === 'function')_main_()";
         execute(transpiledCode);
     } catch (error) {
         if (error.name[0] === "#") { // if this error is processed
