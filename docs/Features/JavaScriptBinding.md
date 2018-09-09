@@ -40,7 +40,34 @@ def (filename String).open -> String
 
 ## Binding asynchronous functions
 
+To bind to a callback function, you need to use the `#!pine async` keyword.  
+Furthermore, you must return a Promise.
+
+For example,
+
 ```pine
-def async .readline -> String
-    pass
+def async (question String).ask -> String
+    <javascript>
+    const readline = require('readline');
+
+    const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+    });
+
+    return new Promise((resolve, reject) => {
+        rl.question($question, (message) => {
+            resolve(message);
+            rl.close();
+        });
+    })
+    </javascript>
+```
+
+And to use it, you don't need to use `async` or `await` keyword, just treat it as a normal function!
+
+```pine
+def .main // no need to annotate `async` here
+    let name = "What is your name? ".ask // no need to annotate it with `await`
+    "Hello $(name)!".show
 ```
