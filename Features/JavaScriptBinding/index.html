@@ -651,8 +651,31 @@
 
 <hr />
 <h2 id="binding-asynchronous-functions">Binding asynchronous functions<a class="headerlink" href="#binding-asynchronous-functions" title="Permanent link">&para;</a></h2>
-<div class="codehilite"><pre><span></span><span class="kd">def</span> <span class="nx">async</span> <span class="p">.</span><span class="nx">readline</span> <span class="o">-&gt;</span> <span class="nb">String</span>
-    <span class="kd">pass</span>
+<p>To bind to a callback function, you need to use the <code class="codehilite"><span class="kd">async</span></code> keyword.<br />
+Furthermore, you must return a Promise.</p>
+<p>For example,</p>
+<div class="codehilite"><pre><span></span><span class="kd">def</span> <span class="kd">async</span> <span class="p">(</span><span class="nx">question</span> <span class="nb">String</span><span class="p">).</span><span class="nx">ask</span> <span class="o">-&gt;</span> <span class="nb">String</span>
+    <span class="o">&lt;</span><span class="nx">javascript</span><span class="o">&gt;</span>
+    <span class="nx">const</span> <span class="nx">readline</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="err">&#39;</span><span class="nx">readline</span><span class="err">&#39;</span><span class="p">);</span>
+
+    <span class="nx">const</span> <span class="nx">rl</span> <span class="o">=</span> <span class="nx">readline</span><span class="mi">.createInterfac</span><span class="nx">e</span><span class="p">({</span>
+    <span class="nx">input</span><span class="o">:</span> <span class="nx">process</span><span class="mi">.stdi</span><span class="nx">n</span><span class="p">,</span>
+    <span class="nx">output</span><span class="o">:</span> <span class="nx">process</span><span class="mi">.stdout</span>
+    <span class="p">});</span>
+
+    <span class="k">return</span> <span class="k">new</span> <span class="nb">Promise</span><span class="p">((</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+        <span class="nx">rl</span><span class="mi">.question</span><span class="p">(</span><span class="err">$</span><span class="nx">question</span><span class="p">,</span> <span class="p">(</span><span class="nx">message</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+            <span class="nx">resolve</span><span class="p">(</span><span class="nx">message</span><span class="p">);</span>
+            <span class="nx">rl</span><span class="mi">.clos</span><span class="nx">e</span><span class="p">();</span>
+        <span class="p">});</span>
+    <span class="p">})</span>
+    <span class="o">&lt;</span><span class="err">/javascript&gt;</span>
+</pre></div>
+
+<p>And to use it, you don't need to use <code>async</code> or <code>await</code> keyword, just treat it as a normal function!</p>
+<div class="codehilite"><pre><span></span><span class="kd">def</span> <span class="p">.</span><span class="nx">main</span> <span class="c1">// no need to annotate `async` here</span>
+    <span class="kd">let</span> <span class="nx">name</span> <span class="o">=</span> <span class="sb">&quot;What is your name? &quot;</span><span class="p">.</span><span class="nx">ask</span> <span class="c1">// no need to annotate it with `await`</span>
+    <span class="sb">&quot;Hello </span><span class="si">$(</span><span class="nx">name</span><span class="si">)</span><span class="sb">!&quot;</span><span class="p">.</span><span class="nx">show</span>
 </pre></div>
                 
                   
