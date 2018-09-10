@@ -519,7 +519,7 @@ MultilineObjectKeyValue
 
 MulitilineDictionary
     : LeftCurlyBracket RightCurlyBracket
-    | NEWLINE INDENT MultilineDictionaryKeyValueList DEDENT {$$=_ObjectExpr([], $3)}
+    | NEWLINE INDENT MultilineDictionaryKeyValueList DEDENT {$$=_ObjectExpr(null, $3)}
     ;
 
 MultilineDictionaryKeyValueList

@@ -10,10 +10,8 @@ def .main
 `
 function _main_(){
 const $x = {
-
 name" : "John",
-age" : "Hello"
+age" : "Hello",
 };
 }
-
 `);

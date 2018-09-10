@@ -278,11 +278,10 @@ export function tpListElements(e: Expression[]): string {
 }
 
 export function tpObjectExpression(e: ObjectExpression): string {
-    if (e.keyValueList === null) {
+    if (e.keyValueList.length === 0) {
         return "{}";
     }
-    return `{
-${e.constructor !== null ? `$kind: "${stringifyType(e.constructor)}",` : ""}
+    return `{${e.constructor !== null ? `\n$kind: "${stringifyType(e.constructor)}",` : ""}
 ${tpKeyValueList(e.keyValueList)}
 }`;
 }
