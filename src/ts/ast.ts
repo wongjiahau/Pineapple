@@ -57,7 +57,7 @@ export type Statement
 export interface ImportDeclaration {
     kind: "ImportDeclaration";
     filename: StringExpression;
-    originFile: string;
+    originFile: string;  // originFile means where the current declaration is declared
 }
 
 export interface PassStatement {

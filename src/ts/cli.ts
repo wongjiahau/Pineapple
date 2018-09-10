@@ -1,8 +1,11 @@
 const toposort = require("toposort");
 const vm = require("vm");
-import {Declaration} from "./ast";
+import {Declaration, ImportDeclaration} from "./ast";
 import {getIntermediateForm, initialIntermediateForm} from "./getIntermediateForm";
 import {tpDeclaration} from "./transpile";
+import { parseCodeToSyntaxTree } from "./parseCodeToSyntaxTree";
+import { raise } from "./fillUpTypeInformation";
+import { ErrorImportFail } from "./errorType/E0030-ImportFail";
 const clear = require("clear");
 const path = require("path");
 
@@ -23,13 +26,22 @@ if (program.args.length === 0) {
 }
 
 const fs = require("fs");
+
+type SyntaxTreeCache = {[filename: string]: Declaration[]}
 program.args.forEach((arg: string) => {
     try {
         const file = loadFile(arg);
         if (file === null) {
             throw new Error(`Cannot open file ${arg}`);
         }
+        const cache: SyntaxTreeCache = {};
+        const ast = parseCodeToSyntaxTree(file);
+        cache[file.filename] = ast;
 
+        const imports = extractImports(ast, file, cache);
+        console.log(cache);
+        console.log(imports);
+        return;
         // dependencies of prelude library
         const preludeDependencies = loadPreludeScript(file.filename);
 
@@ -52,6 +64,25 @@ program.args.forEach((arg: string) => {
         }
     }
 });
+
+function extractImports(syntaxTree: Declaration[], source: SourceCode, cache: SyntaxTreeCache)
+: [Dependencies, SyntaxTreeCache] {
+    const result: Dependencies = [];
+
+    const importedFiles = (syntaxTree
+        .filter((x) => x.kind === "ImportDeclaration") as ImportDeclaration[])
+        .map((x) => x.filename);
+    
+    for (let i = 0; i < importedFiles.length; i++) {
+        const f = importedFiles[i];
+        if(!fs.existsSync(f.repr)) {
+            return raise(ErrorImportFail(f), source);
+        } else {
+            result.push([source.filename, /*depends on*/ f.repr]);
+        }
+    }
+    return [result, cache];
+}
 
 function loadPreludeScript(currentFile: string): Dependencies {
     let dependencies: Dependencies = [];
