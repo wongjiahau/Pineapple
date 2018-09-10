@@ -1,11 +1,9 @@
 import {
     BuiltinTypename,
     GenericList,
-    LinkedNode,
     newAtomicToken,
     newGenericTypename,
     NullTokenLocation,
-    singleLinkedNode,
     StructDeclaration,
     StructType,
     TypeExpression,
@@ -195,13 +193,13 @@ export function newListType(of: TypeExpression): TypeExpression {
     return {
         kind: "BuiltinType",
         name: "List",
-        genericList: singleLinkedNode(of),
+        genericList: [of],
         nullable: false,
         location: NullTokenLocation()
     };
 }
 
-export function newTupleType(of: LinkedNode<TypeExpression> | null): TypeExpression {
+export function newTupleType(of: TypeExpression[]): TypeExpression {
     return {
         kind: "BuiltinType",
         name: "Tuple",
@@ -235,7 +233,7 @@ export function newBuiltinType(name: BuiltinTypename): TypeExpression {
         kind: "BuiltinType",
         name: name,
         nullable: false,
-        genericList: null,
+        genericList: [],
         location: NullTokenLocation()
     };
 }

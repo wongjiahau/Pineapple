@@ -20,9 +20,10 @@ function _main_(){
 const $people = {
 $kind: "People",
 name : "john",
-age : (123)
+age : (123),
 };
 }
+
 `;
         assertEquals(pine2js(input).trim(), expectedOutput.trim());
     });

@@ -21,13 +21,13 @@ def (this String).say
 function _show_String($this){
 // <javascript>
 console.log($this.valueOf());
-// </javascript>;
+// </javascript>
 }
 
 function _say_String($this){
 // <javascript>
 console.log($this.valueOf());
-// </javascript>;
+// </javascript>
 }
 
 

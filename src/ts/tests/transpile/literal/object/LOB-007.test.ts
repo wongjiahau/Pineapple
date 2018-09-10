@@ -17,7 +17,7 @@ def .main
 function _main_(){
 const $x = {
 $kind: "NodeOfNumber",
-current : (123)
+current : (123),
 };
 }
 

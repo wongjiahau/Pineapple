@@ -17,7 +17,7 @@ def .main
 function _main_(){
 const $x = {
 $kind: "TreeOfInteger",
-children : [(1),(2),(3)]
+children : [(1),(2),(3)],
 };
 }
 `;

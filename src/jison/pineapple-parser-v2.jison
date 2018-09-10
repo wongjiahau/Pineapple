@@ -240,8 +240,8 @@ EntryPoint
     ;
 
 DeclarationList
-    : Declaration DeclarationList {$$=_LinkedNode($1,$2)}
-    | Declaration {$$=_LinkedNode($1,null)} 
+    : Declaration DeclarationList {$$=[$1].concat($2)}
+    | Declaration {$$=[$1]} 
     ;
 
 
@@ -257,8 +257,8 @@ EnumDeclaration
     ;
 
 EnumList
-    : EnumAtom NEWLINE EnumList {$$=_LinkedNode($1,$3)}
-    | EnumAtom NEWLINE          {$$=_LinkedNode($1,null)}
+    : EnumAtom NEWLINE EnumList {$$=[$1].concat($3)}
+    | EnumAtom NEWLINE          {$$=[$1]}
     ;
 
 ImportDeclaration
@@ -267,26 +267,26 @@ ImportDeclaration
 
 StructDeclaration
     : DEF TypenameAtom NEWLINE INDENT MembernameTypeList DEDENT   
-        {$$=_StructDeclaration($2,$5,null)}
+        {$$=_StructDeclaration($2,$5,[])}
 
     | DEF TypenameAtom NEWLINE INDENT PASS NEWLINE DEDENT         
-        {$$=_StructDeclaration($2,null,null)}
+        {$$=_StructDeclaration($2,[],[])}
 
     | DEF TypenameAtom LeftCurlyBracket GenericList RightCurlyBracket NEWLINE INDENT MembernameTypeList DEDENT   
         {$$=_StructDeclaration($2,$8,$4)}
 
     | DEF TypenameAtom LeftCurlyBracket GenericList RightCurlyBracket NEWLINE INDENT PASS NEWLINE DEDENT 
-        {$$=_StructDeclaration($2,null,$4)}
+        {$$=_StructDeclaration($2,[],$4)}
     ;
 
 GenericList
-    : GenericAtom Comma GenericList {$$=_LinkedNode(_GenericTypename($1),$3)}
-    | GenericAtom                  {$$=_LinkedNode(_GenericTypename($1),null)}
+    : GenericAtom Comma GenericList {$$=[_GenericTypename($1)].concat($3)}
+    | GenericAtom                  {$$=[_GenericTypename($1)]}
     ;
 
 MembernameTypeList
-    : MemberDefinition NEWLINE MembernameTypeList   {$$=_LinkedNode($1,$3)}
-    | MemberDefinition NEWLINE                      {$$=_LinkedNode($1,null)}
+    : MemberDefinition NEWLINE MembernameTypeList   {$$=[$1].concat($3)}
+    | MemberDefinition NEWLINE                      {$$=[$1]}
     ;
 
 MemberDefinition 
@@ -342,13 +342,13 @@ TriFuncDeclaration
 
 Block
     : NEWLINE INDENT StatementList DEDENT {$$=$3}
-    | NEWLINE INDENT JavascriptCodeAtom NEWLINE DEDENT {$$=_LinkedNode($3,null)}
-    | NEWLINE INDENT PASS NEWLINE DEDENT {$$=_LinkedNode(_PassStatement(),null)}
+    | NEWLINE INDENT JavascriptCodeAtom NEWLINE DEDENT {$$=[$3]}
+    | NEWLINE INDENT PASS NEWLINE DEDENT {$$=[_PassStatement()]}
     ;
 
 StatementList
-    : Statement StatementList {$$=_LinkedNode($1,$2)}
-    | Statement {$$=_LinkedNode($1,null)}
+    : Statement StatementList {$$=[$1].concat($2)}
+    | Statement {$$=[$1]}
     ;
 
 Statement
@@ -415,8 +415,8 @@ TypeExpression
 AtomicTypeExpr
     : GenericAtom               {$$=_GenericTypename($1, false)}
     | GenericAtom QuestionMark  {$$=_GenericTypename($1, true)}
-    | TypenameAtom              {$$=_UnresolvedType($1,null,false)}
-    | TypenameAtom QuestionMark {$$=_UnresolvedType($1,null,true)}
+    | TypenameAtom              {$$=_UnresolvedType($1,[],false)}
+    | TypenameAtom QuestionMark {$$=_UnresolvedType($1,[],true)}
     | TypenameAtom LeftCurlyBracket TypeExprList RightCurlyBracket       
         {$$=_UnresolvedType($1,$3,false)}
     | TypenameAtom LeftCurlyBracket TypeExprList RightCurlyBracket QuestionMark   
@@ -424,8 +424,8 @@ AtomicTypeExpr
     ;
 
 TypeExprList
-    : AtomicTypeExpr Comma TypeExprList {$$=_LinkedNode($1,$3)}
-    | AtomicTypeExpr {$$=_LinkedNode($1,null)}
+    : AtomicTypeExpr Comma TypeExprList {$$=[$1].concat($3)}
+    | AtomicTypeExpr {$$=[$1]}
     ;
 
 
@@ -492,7 +492,7 @@ AtomicExpr
     ;
 
 Tuple
-    : LeftParenthesis AtomicExpr Comma Elements RightParenthesis {$$=_TupleExpression(_LinkedNode($2,$4),this._$)}
+    : LeftParenthesis AtomicExpr Comma Elements RightParenthesis {$$=_TupleExpression([$2].concat($4),this._$)}
     ;
 
 ObjectAccessExpr
@@ -500,7 +500,7 @@ ObjectAccessExpr
     ;
 
 MultilineObject
-    : Constructor NEWLINE {$$=_ObjectExpr($1,null)}
+    : Constructor NEWLINE {$$=_ObjectExpr($1,[])}
     | Constructor NEWLINE INDENT MultilineObjectKeyValueList DEDENT {$$=_ObjectExpr($1,$4)}
     ;
 
@@ -509,8 +509,8 @@ Constructor
     ;
 
 MultilineObjectKeyValueList
-    : MultilineObjectKeyValue MultilineObjectKeyValueList {$$=_LinkedNode($1,$2)}
-    | MultilineObjectKeyValue {$$=_LinkedNode($1,null)}
+    : MultilineObjectKeyValue MultilineObjectKeyValueList {$$=[$1].concat($2)}
+    | MultilineObjectKeyValue {$$=[$1]}
     ;
 
 MultilineObjectKeyValue
@@ -519,12 +519,12 @@ MultilineObjectKeyValue
 
 MulitilineDictionary
     : LeftCurlyBracket RightCurlyBracket
-    | NEWLINE INDENT MultilineDictionaryKeyValueList DEDENT {$$=_ObjectExpr(null, $3)}
+    | NEWLINE INDENT MultilineDictionaryKeyValueList DEDENT {$$=_ObjectExpr([], $3)}
     ;
 
 MultilineDictionaryKeyValueList
-    : MultilineDictionaryKeyValue MultilineDictionaryKeyValueList {$$=_LinkedNode($1,$2)}
-    | MultilineDictionaryKeyValue {$$=_LinkedNode($1,null)}
+    : MultilineDictionaryKeyValue MultilineDictionaryKeyValueList {$$=[$1].concat($2)}
+    | MultilineDictionaryKeyValue {$$=[$1]}
     ;
 
 MultilineDictionaryKeyValue
@@ -536,8 +536,8 @@ SinglelineObject
     ;
 
 KeyValueList
-    : KeyValue KeyValueList {$$=_LinkedNode($1,$3)}
-    | KeyValue                  {$$=_LinkedNode($1,null)}
+    : KeyValue KeyValueList {$$=[$1].concat($3)}
+    | KeyValue                  {$$=[$1]}
     ;
 
 KeyValue 
@@ -550,8 +550,8 @@ SinglelineList
     ;
 
 Elements
-    : AtomicExpr Comma Elements  {$$=_LinkedNode($1,$3)}
-    | AtomicExpr {$$=_LinkedNode($1,null)}
+    : AtomicExpr Comma Elements  {$$=[$1].concat($3)}
+    | AtomicExpr {$$=[$1]}
     ;
 
 MultilineList
@@ -559,8 +559,8 @@ MultilineList
     ;
 
 MultilineElements
-    : LIST_BULLET MultilineExpr MultilineElements {$$=_LinkedNode($2,$3)}
-    | LIST_BULLET MultilineExpr {$$=_LinkedNode($2,null)}
+    : LIST_BULLET MultilineExpr MultilineElements {$$=[$2].concat($3)}
+    | LIST_BULLET MultilineExpr {$$=[$2]}
     ;
 
 StringAtom

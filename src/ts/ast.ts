@@ -3,10 +3,10 @@ import { newBuiltinType } from "./typeTree";
 // Abstract Syntax Tree Node Interfaces
 export interface LinkedNode<T> {
     current: T;
-    next: LinkedNode<T> | null;
+    next: T[] | null;
 }
 
-export type GenericList = LinkedNode<TypeExpression> | null;
+export type GenericList = TypeExpression[];
 
 export type Declaration
     = FunctionDeclaration
@@ -22,9 +22,9 @@ export interface FunctionDeclaration {
     kind: "FunctionDeclaration";
     affix: FunctionAffix;
     signature: AtomicToken[];
-    returnType: TypeExpression;
+    returnType: TypeExpression | null;
     parameters: VariableDeclaration[];
-    statements: LinkedNode<Statement>;
+    statements: Statement[];
     originFile: string;
     isAsync: boolean;
 }
@@ -32,8 +32,8 @@ export interface FunctionDeclaration {
 export interface StructDeclaration {
     kind: "StructDeclaration";
     name: AtomicToken;
-    members: LinkedNode<MemberDefinition> | null;
-    genericList: LinkedNode<GenericTypename>;
+    members: MemberDefinition[];
+    genericList: GenericTypename[];
     location: TokenLocation;
     originFile: string;
 }
@@ -67,20 +67,20 @@ export interface PassStatement {
 export interface WhileStatement {
     kind: "WhileStatement";
     test: Expression;
-    body: LinkedNode<Statement>;
+    body: Statement[];
 }
 
 export interface ForStatement {
     kind: "ForStatement";
     iterator: Variable;
     expression: Expression;
-    body: LinkedNode<Statement>;
+    body: Statement[];
 }
 
 export interface BranchStatement {
     kind: "BranchStatement";
     test: Expression;
-    body: LinkedNode<Statement>;
+    body: Statement[];
     elseBranch: BranchStatement;
 }
 
@@ -141,7 +141,7 @@ export interface StructType {
 export interface EnumDeclaration {
     kind: "EnumDeclaration";
     name: AtomicToken;
-    enums: LinkedNode<AtomicToken>;
+    enums: AtomicToken[];
     location: TokenLocation;
     nullable: boolean;
     originFile: string;
@@ -166,7 +166,7 @@ export interface UnresolvedType {
     name: AtomicToken;
     nullable: boolean;
     location: TokenLocation;
-    genericList: LinkedNode<UnresolvedType | GenericTypename> | null;
+    genericList: Array<UnresolvedType | GenericTypename>;
 }
 
 export interface GenericTypename {
@@ -200,7 +200,7 @@ export interface StringInterpolationExpression {
 
 export interface TupleExpression {
     kind: "TupleExpression";
-    elements: LinkedNode<Expression>;
+    elements: Expression[];
     location: TokenLocation;
     returnType: TypeExpression;
 }
@@ -247,7 +247,7 @@ export interface Variable extends AtomicToken {
 export interface ObjectExpression { // NOTE: Object is also Dictionary/Table
     kind: "ObjectExpression";
     constructor: TypeExpression;
-    keyValueList: LinkedNode<KeyValue> | null;
+    keyValueList: KeyValue[];
     returnType: TypeExpression;
     location: TokenLocation;
 }
@@ -256,7 +256,7 @@ export function EmptyTable(location: TokenLocation, type: TypeExpression): Objec
     return {
         kind: "ObjectExpression",
         constructor: type,
-        keyValueList: null,
+        keyValueList: [],
         returnType: type,
         location: location
     };
@@ -277,7 +277,7 @@ export interface ObjectAccess {
 
 export interface ListExpression {
     kind: "List";
-    elements: LinkedNode<Expression> | null;
+    elements: Expression[];
     location: TokenLocation;
     returnType: TypeExpression;
 }
@@ -285,7 +285,7 @@ export interface ListExpression {
 export function EmptyList(location: TokenLocation, returnType: TypeExpression): ListExpression {
     return {
         kind: "List",
-        elements: null,
+        elements: [],
         location: location,
         returnType: returnType
     };
@@ -333,13 +333,6 @@ export function NullTokenLocation(): TokenLocation {
         first_line: -1,
         last_column: -1,
         last_line: -1,
-    };
-}
-
-export function singleLinkedNode<T>(current: T): LinkedNode<T> {
-    return {
-        current: current,
-        next: null
     };
 }
 

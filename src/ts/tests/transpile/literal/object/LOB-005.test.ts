@@ -17,7 +17,7 @@ def .newPeople -> People
 function _newPeople_(){
 return {
 $kind: "People",
-name : "John"
+name : "John",
 };
 }
 `;

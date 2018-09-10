@@ -15,7 +15,7 @@ def (x Number) + (y Number) -> Number
 function _$plus_Number_Number($x,$y){
 // <javascript>
 return $x + $y;
-// </javascript>;
+// </javascript>
 }
 `;
         assertEquals(pine2js(input).trim(), expectedOutput.trim());

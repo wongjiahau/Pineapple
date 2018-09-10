@@ -14,7 +14,7 @@ describe("@literal-javascript-LJ-001", () => {
 function _print_String($this){
 // <javascript>
 console.log($this);
-// </javascript>;
+// </javascript>
 }
 `;
         assertEquals(pine2js(input).trim(), expectedOutput.trim());

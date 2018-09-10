@@ -26,7 +26,7 @@ function _main_(){
 const $x = {
 $kind: "People",
 name : "Wong",
-age : (99)
+age : (99),
 };
 const $y = $x.name;
 _show_String($y);
@@ -35,7 +35,6 @@ _show_String($y);
 function _show_String($this){
 $$pass$$();
 }
-
 `;
         assertEquals(pine2js(input).trim(), expectedOutput.trim());
     });

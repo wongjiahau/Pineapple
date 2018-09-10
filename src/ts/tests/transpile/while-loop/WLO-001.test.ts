@@ -32,9 +32,8 @@ $$pass$$();
 function _main_(){
 let $x = (0.0);
 while(_$lessThan_Number_Number($x,(10.0))){
-    $x = _$plus_Number_Number($x,(1))
+$x = _$plus_Number_Number($x,(1));
 }
-;
 }
 `;
         assertEquals(pine2js(input).trim(), expectedOutput.trim());

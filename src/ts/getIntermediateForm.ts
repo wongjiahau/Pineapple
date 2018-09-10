@@ -3,6 +3,7 @@ import { SourceCode } from "./cli";
 import { ErrorSyntax } from "./errorType/E0010-Syntax";
 import { ErrorLexical } from "./errorType/E0028-Lexical";
 import { fillUpTypeInformation, raise, SymbolTable } from "./fillUpTypeInformation";
+import { prettyPrint } from "./pine2js";
 import { preprocess } from "./preprocess";
 import { initTypeTree } from "./typeTree";
 const parser     = require("../jison/pineapple-parser-v2");
@@ -12,10 +13,10 @@ export function getIntermediateForm(
     prevIntermediate: IntermediateForm,
 ): IntermediateForm {
     try {
-        const ast = parser.parse(preprocess(sourceCode)) as LinkedNode<Declaration>;
+        const ast = parser.parse(preprocess(sourceCode)) as Declaration[];
         // prettyPrint(ast, true);
         const [newAst, symbolTable] = fillUpTypeInformation(
-            flattenLinkedNode(ast),
+            ast,
             sourceCode,
             prevIntermediate.symbolTable
         );

@@ -3,7 +3,7 @@ import { ErrorDetail, stringifyTypeReadable } from "./errorUtil";
 
 export function ErrorUnmatchingReturnType(
     relatedReturnStatement: ReturnStatement,
-    expectedReturnType: TypeExpression
+    expectedReturnType: TypeExpression | null
 ): ErrorDetail {
     return {
         code: "0011",

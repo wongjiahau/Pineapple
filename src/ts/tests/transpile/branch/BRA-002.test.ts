@@ -29,14 +29,14 @@ $$pass$$();
 
 function _main_(){
 if(_$greaterThan_Number_Number((1),(2))){
-const $a = "no"
+const $a = "no";
 }else if(_$greaterThan_Number_Number((2),(3))){
-const $b = "no"
+const $b = "no";
 }else if(_$greaterThan_Number_Number((3),(4))){
-const $c = "no"
+const $c = "no";
 }else {
-const $d = "oops"
-};
+const $d = "oops";
+}
 }
 `.trim();
 

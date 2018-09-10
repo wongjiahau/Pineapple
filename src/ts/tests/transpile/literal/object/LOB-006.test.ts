@@ -28,11 +28,10 @@ name : "John",
 friend : {
 $kind: "People",
 name : "Jane",
-friend : null
-}
+friend : null,
+},
 };
 }
-
 `;
         assertEquals(pine2js(input).trim(), expectedOutput.trim());
     });

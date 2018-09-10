@@ -1,5 +1,4 @@
 import { AtomicToken, GenericList, TokenLocation, TypeExpression } from "../ast";
-import { flattenLinkedNode } from "../getIntermediateForm";
 
 export interface ErrorDetail  {
     code: string;
@@ -9,15 +8,14 @@ export interface ErrorDetail  {
     hint?: string;
 }
 
-export function stringifyGenericList(g: GenericList): string {
-    if (g === null) {
-        return "";
-    } else {
-        return "{" + flattenLinkedNode(g).map(stringifyTypeReadable).join(",") + "}";
-    }
+export function stringifyGenericList(gs: GenericList): string {
+    return "{" + gs.map(stringifyTypeReadable).join(",") + "}";
 }
 
-export function stringifyTypeReadable(t: TypeExpression): string {
+export function stringifyTypeReadable(t: TypeExpression | null): string {
+    if (t === null)  {
+        return `Void`;
+    }
     switch (t.kind) {
         case "BuiltinType":
             return `${t.name}${stringifyGenericList(t.genericList)}`;

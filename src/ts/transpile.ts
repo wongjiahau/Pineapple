@@ -5,7 +5,6 @@ import {
     AssignmentStatement,
     AtomicToken,
     BranchStatement,
-    BuiltinType,
     Declaration,
     EnumDeclaration,
     EnumExpression,
@@ -16,7 +15,6 @@ import {
     ImportDeclaration,
     JavascriptCode,
     KeyValue,
-    LinkedNode,
     ListExpression,
     NumberExpression,
     ObjectAccess,
@@ -31,7 +29,7 @@ import {
     VariableDeclaration,
     WhileStatement
 } from "./ast";
-import { flattenLinkedNode } from "./getIntermediateForm";
+import { prettyPrint } from "./pine2js";
 
 // Note: tp means transpile
 // Example: tpDeclaration means transpileDeclaration
@@ -58,7 +56,7 @@ export function tpDeclaration(input: Declaration): string {
 export function tpEnumDeclaration(e: EnumDeclaration): string {
     return `
 /**
- * enum ${e.name.repr} = ${flattenLinkedNode(e.enums).map((x) => (x.repr)).join(",")}
+ * enum ${e.name.repr} = ${e.enums.map((x) => (x.repr)).join(",")}
 */
     `;
 }
@@ -66,7 +64,7 @@ export function tpEnumDeclaration(e: EnumDeclaration): string {
 export function tpStructDeclaration(s: StructDeclaration): string {
     return `
     /*struct ${s.name.repr} {
-        ${flattenLinkedNode(s.members).map((x) => `${x.name.repr}:${stringifyType(x.expectedType)}`)}
+        ${s.members.map((x) => `${x.name.repr}:${stringifyType(x.expectedType)}`)}
     }*/`.trim();
 }
 
@@ -78,57 +76,56 @@ export function tpFunctionDeclaration(f: FunctionDeclaration): string {
     const funcSignature = stringifyFuncSignature(f.signature);
     const typeSignature = f.parameters.map((x) => stringifyType(x.typeExpected)).join("_");
     const params = tpParameters(f.parameters);
-    const statements = tpStatement(f.statements);
-    return `${f.isAsync ? "async " : ""}function ${funcSignature}_${typeSignature}(${params}){\n${statements};\n}\n\n`;
+    const statements = tpStatements(f.statements);
+    return `${f.isAsync ? "async " : ""}function ${funcSignature}_${typeSignature}(${params}){\n${statements}}\n\n`;
 }
 
-export function tpStatement(s: LinkedNode<Statement>): string {
-    const next = s.next　? ";\n" + tpStatement(s.next) : "";
-    switch (s.current.kind) {
-        case "FunctionCall":        return tpFunctionCall(s.current)           + next;
-        case "AssignmentStatement": return tpAssignmentStatement(s.current)    + next;
-        case "JavascriptCode":      return tpJavascriptCode(s.current)         + next;
-        case "ReturnStatement":     return tpReturnStatement(s.current)        + next;
-        case "BranchStatement":     return tpBranchStatement(s.current)        + next;
-        case "ForStatement":        return tpForStatement(s.current)           + next;
-        case "WhileStatement":      return tpWhileStatement(s.current)         + next;
-        case "PassStatement":       return "$$pass$$()";
+export function tpStatements(statements: Statement[]): string {
+    let result = "";
+    for (let i = 0; i < statements.length; i++) {
+        const s = statements[i];
+        switch (s.kind) {
+            case "FunctionCall":        result += tpFunctionCall(s) + ";" ; break;
+            case "AssignmentStatement": result += tpAssignmentStatement(s); break;
+            case "JavascriptCode":      result += tpJavascriptCode(s)     ; break;
+            case "ReturnStatement":     result += tpReturnStatement(s)    ; break;
+            case "BranchStatement":     result += tpBranchStatement(s)    ; break;
+            case "ForStatement":        result += tpForStatement(s)       ; break;
+            case "WhileStatement":      result += tpWhileStatement(s)     ; break;
+            case "PassStatement":       result += "$$pass$$();";
+        }
+        result += "\n";
     }
+    return result;
 }
 
 export function tpWhileStatement(w: WhileStatement): string {
     return "" +
 `while(${tpExpression(w.test)}){
-    ${tpStatement(w.body)}
-}
-`;
+${tpStatements(w.body)}}`;
 }
 
 export function tpForStatement(f: ForStatement): string {
     const itemsName = `itemsOf${f.iterator.repr}`;
     return "" +
-`
-const ${itemsName} = ${tpExpression(f.expression)};
+`const ${itemsName} = ${tpExpression(f.expression)};
 for(let i = 0; i < ${itemsName}.length; i++){
-    const $${f.iterator.repr} = ${itemsName}[i];
-    ${tpStatement(f.body)}
-}`;
+const $${f.iterator.repr} = ${itemsName}[i];
+${tpStatements(f.body)}}`;
 }
 
 export function tpBranchStatement(b: BranchStatement): string {
     if (b.test === null) {
         return `{
-${tpStatement(b.body)}
-}`;
+${tpStatements(b.body)}}`;
     } else {
         return `if(${tpExpression(b.test)}){
-${tpStatement(b.body)}
-}${b.elseBranch ? `else ${tpBranchStatement(b.elseBranch)}` : "" }`;
+${tpStatements(b.body)}}${b.elseBranch ? `else ${tpBranchStatement(b.elseBranch)}` : "" }`;
     }
 }
 
 export function tpReturnStatement(r: ReturnStatement): string {
-    return `return ${tpExpression(r.expression)}`;
+    return `return ${tpExpression(r.expression)};`;
 }
 
 export function tpFunctionCall(f: FunctionCall): string {
@@ -181,7 +178,7 @@ export function stringifyType(t: TypeExpression): string {
             return `Generic$${t.name.repr}`;
         case "BuiltinType":
         case "StructType":
-            const genericsName = flattenLinkedNode(t.genericList).map((x) => stringifyType(x)).join("$");
+            const genericsName = t.genericList.map((x) => stringifyType(x)).join("$");
             const typename = t.kind === "BuiltinType" ? t.name : t.reference.name.repr;
             return `${typename}${genericsName.length > 0 ? "Of" + genericsName : ""}` ;
         case "VoidType":
@@ -199,12 +196,12 @@ export function tpAssignmentStatement(a: AssignmentStatement): string {
         case "VariableDeclaration":
             if (a.isDeclaration) {
                 return `${a.variable.isMutable ? "let" : "const"} ` +
-                `$${a.variable.variable.repr} = ${tpExpression(a.expression)}`;
+                `$${a.variable.variable.repr} = ${tpExpression(a.expression)};`;
             } else {
                 throw new Error("a.isDeclaration should be true");
             }
         case "Variable":
-            return `$${a.variable.repr} = ${tpExpression(a.expression)}`;
+            return `$${a.variable.repr} = ${tpExpression(a.expression)};`;
     }
 }
 
@@ -276,8 +273,8 @@ export function tpArrayExpression(e: ListExpression): string {
     }
 }
 
-export function tpListElements(e: LinkedNode<Expression>): string {
-    return flattenLinkedNode(e).map((x) => tpExpression(x)).join(",");
+export function tpListElements(e: Expression[]): string {
+    return e.map((x) => tpExpression(x)).join(",");
 }
 
 export function tpObjectExpression(e: ObjectExpression): string {
@@ -290,15 +287,20 @@ ${tpKeyValueList(e.keyValueList)}
 }`;
 }
 
-export function tpKeyValueList(e: LinkedNode<KeyValue> | null): string {
-    if (e === null) {
-        return "";
-    }
-    return e.current.memberName.repr.slice(1)
+export function tpKeyValueList(kvs: KeyValue[]): string {
+    let result = "";
+    for (let i = 0; i < kvs.length; i++) {
+        const current = kvs[i];
+        result += current.memberName.repr.slice(1)
         + " : "
-        + tpExpression(e.current.expression)
-        + (e.next ? ",\n" + tpKeyValueList(e.next) : "")
+        + tpExpression(current.expression)
+        + ","
         ;
+        if (i < kvs.length - 1) {
+            result += "\n";
+        }
+    }
+    return result;
 }
 
 export function removeLastComma(s: string): string {
