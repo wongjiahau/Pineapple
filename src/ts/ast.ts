@@ -2,11 +2,6 @@ import { newBuiltinType } from "./typeTree";
 import { SourceCode } from "./cli";
 
 // Abstract Syntax Tree Node Interfaces
-export interface LinkedNode<T> {
-    current: T;
-    next: T[] | null;
-}
-
 export type GenericList = TypeExpression[];
 
 export interface SyntaxTree {

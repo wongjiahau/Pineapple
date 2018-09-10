@@ -94,16 +94,6 @@ function extractImports(ast: SyntaxTree, cache: SyntaxTreeCache)
     return [dependencies, cache];
 }
 
-function loadPreludeScript(currentFile: string): Dependencies {
-    let dependencies: Dependencies = [];
-    const PRELUDE_DIR = __dirname + "/../pinelib/prelude/";
-    fs.readdirSync(PRELUDE_DIR).forEach((filename: string) => {
-        const libFile = getFullFilePath(PRELUDE_DIR + filename);
-        dependencies.push([currentFile, /*depends on*/ libFile]);
-        dependencies = dependencies.concat(loadDependency(loadFile(libFile)));
-    });
-    return dependencies;
-}
 
 function getFullFilePath(filename: string): string {
     // Refer https://millermedeiros.github.io/mdoc/examples/node_api/doc/path.html#path.normalize
@@ -154,44 +144,7 @@ function Nothing(): string {
     return "";
 }
 
-/**
- * This function is to get the filename from a fullFilename
- */
-function filename(fullFilename: string) {
-    return path.basename(fullFilename, path.extname(fullFilename));
-}
 
-function loadDependency(initSource: SourceCode | null): Dependencies {
-    if (initSource === null) {
-        return [];
-    }
-    let imports = initSource.content.match(/(\n|^)import[ ]".+"/g) as string[];
-    const currentFile = getFullFilePath(initSource.filename);
-
-    const dirname = path.dirname(currentFile) + "/";
-    let dependencies: string[][] = [];
-
-    if (imports === null) {
-        dependencies.push([initSource.filename, /*depends on*/ Nothing()]);
-        return dependencies;
-    } else {
-        imports = imports.map((x) => {
-            const stringWithinQuotes = x.match(/".+"/g);
-            if (stringWithinQuotes === null) {
-                throw new Error(`Cannot extract filename from ${x}`);
-            } else {
-                return stringWithinQuotes[0].slice(1, -1);
-            }
-        });
-        // import user-defined scripts
-        for (let i = 0; i < imports.length; i++) {
-            const importedFile = getFullFilePath(dirname + imports[i]);
-            dependencies.push([currentFile, /*depends on*/ importedFile]);
-            dependencies = dependencies.concat(loadDependency(loadFile(importedFile)));
-        }
-        return dependencies;
-    }
-}
 
 export function loadFile(filename: string): SourceCode | null {
     if (filename === Nothing()) {

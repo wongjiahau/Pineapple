@@ -77,8 +77,8 @@ import {
     VoidType
 } from "./typeTree";
 import {find} from "./util";
+import { parseCode } from "./parseCodeToSyntaxTree";
 
-const parser     = require("../jison/pineapple-parser-v2");
 
 let CURRENT_SOURCE_CODE: () => SourceCode;
 export function fillUpTypeInformation(syntaxTree: SyntaxTree, symbols: SymbolTable): [Declaration[], SymbolTable] {
@@ -689,7 +689,7 @@ export function resolveExpressionInterpolation(
                 closingBracketFound = true;
                 interpolationFound = false;
                 const repr = pad(current, s.location.first_line - 1, s.location.first_column + previousIndex);
-                let expr = parser.parse(repr + " @EOF") as Expression;
+                let expr = parseCode({content: repr + " @EOF", filename: ""}, CURRENT_SOURCE_CODE()) as Expression;
                 [expr, symbols] = fillUpExpressionTypeInfo(expr, symbols, vartab);
                 if (isStringType(expr.returnType)) {
                     result.expressions.push(expr);
