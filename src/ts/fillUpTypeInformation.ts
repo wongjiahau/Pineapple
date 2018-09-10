@@ -28,7 +28,8 @@ import {
     TypeExpression,
     UnresolvedType,
     Variable,
-    VariableDeclaration
+    VariableDeclaration,
+    SyntaxTree
 } from "./ast";
 
 import {SourceCode} from "./cli";
@@ -80,11 +81,12 @@ import {find} from "./util";
 const parser     = require("../jison/pineapple-parser-v2");
 
 let CURRENT_SOURCE_CODE: () => SourceCode;
-export function fillUpTypeInformation(decls: Declaration[], sourceCode: SourceCode, symbols: SymbolTable): [Declaration[], SymbolTable] {
-    CURRENT_SOURCE_CODE = () => sourceCode;
+export function fillUpTypeInformation(syntaxTree: SyntaxTree, symbols: SymbolTable): [Declaration[], SymbolTable] {
+    CURRENT_SOURCE_CODE = () => syntaxTree.source;
     // Complete the function and struct table This step is to allow programmer to
     // define function anywhere without needing to adhere to strict top-down or
     // bottom-up structure
+    const decls = syntaxTree.declarations;
     for (let i = 0; i < decls.length; i++) {
         const currentDecl = decls[i];
         currentDecl.originFile = CURRENT_SOURCE_CODE().filename;

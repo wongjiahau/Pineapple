@@ -1,4 +1,5 @@
 import { newBuiltinType } from "./typeTree";
+import { SourceCode } from "./cli";
 
 // Abstract Syntax Tree Node Interfaces
 export interface LinkedNode<T> {
@@ -7,6 +8,11 @@ export interface LinkedNode<T> {
 }
 
 export type GenericList = TypeExpression[];
+
+export interface SyntaxTree {
+    source: SourceCode;
+    declarations: Declaration[];
+}
 
 export type Declaration
     = FunctionDeclaration

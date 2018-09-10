@@ -1,6 +1,7 @@
 import { SourceCode } from "./cli";
 import { getIntermediateForm, initialIntermediateForm } from "./getIntermediateForm";
 import { transpile } from "./transpile";
+import { parseCodeToSyntaxTree } from "./parseCodeToSyntaxTree";
 
 /**
  * WARNING: The `pine2js` function is meant for unit testing only
@@ -10,7 +11,8 @@ export function pine2js(input: string, filename: string= "STDIN"): string {
             filename: filename,
             content: input
     };
-    const intermediateForm = getIntermediateForm(source, initialIntermediateForm());
+    const ast = parseCodeToSyntaxTree(source);
+    const intermediateForm = getIntermediateForm(ast, initialIntermediateForm());
     let result = "";
     for (const key in intermediateForm.symbolTable.funcTab) {
         if (intermediateForm.symbolTable.funcTab.hasOwnProperty(key)) {

@@ -1,10 +1,13 @@
-def async .main
-    let str = "Enter a string > ".ask
-    let old = "Which old char you want to replace > ".ask
-    let new = "Replace with? > ".ask
-    let result = str.replace(old with new)
-    "The result is '$(result)'".show
+import "./hey.pine"
 
-    for i in 0 ..< 10
-        let x = "Tell me your name".ask
-        x.show
+def .main
+    .yo
+    // let str = "Enter a string > ".ask
+    // let old = "Which old char you want to replace > ".ask
+    // let new = "Replace with? > ".ask
+    // let result = str.replace(old with new)
+    // "The result is '$(result)'".show
+
+    // for i in 0 ..< 10
+    //     let x = "Tell me your name".ask
+    //     x.show

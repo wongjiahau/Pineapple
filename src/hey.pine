@@ -1,0 +1,4 @@
+import "./pinelib/prelude/io.pine"
+
+def .yo
+    "Hello world".show

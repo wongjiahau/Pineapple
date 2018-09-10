@@ -1,6 +1,6 @@
 const toposort = require("toposort");
 const vm = require("vm");
-import {Declaration, ImportDeclaration} from "./ast";
+import {Declaration, ImportDeclaration, SyntaxTree} from "./ast";
 import {getIntermediateForm, initialIntermediateForm} from "./getIntermediateForm";
 import {tpDeclaration} from "./transpile";
 import { parseCodeToSyntaxTree } from "./parseCodeToSyntaxTree";
@@ -27,30 +27,30 @@ if (program.args.length === 0) {
 
 const fs = require("fs");
 
-type SyntaxTreeCache = {[filename: string]: Declaration[]}
+type SyntaxTreeCache = {[filename: string]: SyntaxTree}
 program.args.forEach((arg: string) => {
     try {
         const file = loadFile(arg);
         if (file === null) {
             throw new Error(`Cannot open file ${arg}`);
         }
-        const cache: SyntaxTreeCache = {};
+        const initialCache: SyntaxTreeCache = {};
         const ast = parseCodeToSyntaxTree(file);
-        cache[file.filename] = ast;
+        initialCache[file.filename] = ast;
+        const [dependencies, updatedCache] = extractImports(ast, initialCache);
 
-        const imports = extractImports(ast, file, cache);
-        console.log(cache);
-        console.log(imports);
-        return;
+        const sortedDependencies = sortDependency(dependencies);
+        const sortedSyntaxTrees = sortedDependencies.map((x) => updatedCache[x]);
+        const ir = loadSource(sortedSyntaxTrees); // ir means intermediate representation
         // dependencies of prelude library
-        const preludeDependencies = loadPreludeScript(file.filename);
+        // const preludeDependencies = loadPreludeScript(file.filename);
 
         // dependencies of user scripts
-        const scriptDependencies = loadDependency(file);
+        // const scriptDependencies = loadDependency(file);
 
-        const sortedDependencies = sortDependency(preludeDependencies).concat(sortDependency(scriptDependencies));
-        const allCodes = sortedDependencies.map(loadFile);
-        const ir = loadSource(allCodes); // ir means intermediate representation
+        // const _sortedDependencies = sortDependency(preludeDependencies).concat(sortDependency(scriptDependencies));
+        // const _allCodes = sortedDependencies.map(loadFile);
+        // const _ir = loadSource(allCodes); // ir means intermediate representation
         let transpiledCode = ir.map(tpDeclaration).join("\n");
         transpiledCode += "if(typeof _main_ === 'function')_main_()";
         execute(transpiledCode);
@@ -65,23 +65,33 @@ program.args.forEach((arg: string) => {
     }
 });
 
-function extractImports(syntaxTree: Declaration[], source: SourceCode, cache: SyntaxTreeCache)
+function extractImports(ast: SyntaxTree, cache: SyntaxTreeCache)
 : [Dependencies, SyntaxTreeCache] {
-    const result: Dependencies = [];
+    let dependencies: Dependencies = [];
 
-    const importedFiles = (syntaxTree
+    const importedFiles = (ast.declarations
         .filter((x) => x.kind === "ImportDeclaration") as ImportDeclaration[])
         .map((x) => x.filename);
     
     for (let i = 0; i < importedFiles.length; i++) {
-        const f = importedFiles[i];
-        if(!fs.existsSync(f.repr)) {
-            return raise(ErrorImportFail(f), source);
+        const filename = importedFiles[i].repr.slice(1, -1);
+        if(!fs.existsSync(filename)) {
+            return raise(ErrorImportFail(importedFiles[i]), ast.source);
         } else {
-            result.push([source.filename, /*depends on*/ f.repr]);
+            const file = loadFile(filename);
+            if(file !== null) {
+                const ast = parseCodeToSyntaxTree(file);
+                cache[file.filename] = ast;
+                const temp = dependencies.slice();
+                [dependencies, cache] = extractImports(ast, cache);
+                dependencies = dependencies.concat(temp);
+            } else {
+                throw new Error("why?");
+            }
+            dependencies.push([ast.source.filename, /*depends on*/ file.filename]);
         }
     }
-    return [result, cache];
+    return [dependencies, cache];
 }
 
 function loadPreludeScript(currentFile: string): Dependencies {
@@ -110,10 +120,10 @@ function sortDependency(dependencies: Dependencies): string[] {
     return toposort(dependencies).reverse();
 }
 
-function loadSource(sources: Array<SourceCode | null>): Declaration[] {
+function loadSource(syntaxTrees: Array<SyntaxTree>): Declaration[] {
     let result = initialIntermediateForm();
-    for (let i = 0; i < sources.length; i++) {
-        const s = sources[i];
+    for (let i = 0; i < syntaxTrees.length; i++) {
+        const s = syntaxTrees[i];
         if (s !== null) {
             result = getIntermediateForm(s, result);
         }
@@ -188,9 +198,7 @@ export function loadFile(filename: string): SourceCode | null {
         return null;
     }
     return {
-        content: fs
-            .readFileSync(filename)
-            .toString(),
+        content: fs.readFileSync(filename).toString(), 
         filename: getFullFilePath(filename)
     };
 }

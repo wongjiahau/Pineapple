@@ -1,34 +1,30 @@
-import { Declaration, LinkedNode } from "./ast";
+import { Declaration, LinkedNode, SyntaxTree } from "./ast";
 import { SourceCode } from "./cli";
 import { ErrorSyntax } from "./errorType/E0010-Syntax";
 import { ErrorLexical } from "./errorType/E0028-Lexical";
 import { fillUpTypeInformation, raise, SymbolTable } from "./fillUpTypeInformation";
 import { initTypeTree } from "./typeTree";
-import { parseCodeToSyntaxTree } from "./parseCodeToSyntaxTree";
 
 export function getIntermediateForm(
-    sourceCode: SourceCode,
+    ast: SyntaxTree,
     prevIntermediate: IntermediateForm,
 ): IntermediateForm {
     try {
-        const ast = parseCodeToSyntaxTree(sourceCode);
-        // prettyPrint(ast, true);
         const [newAst, symbolTable] = fillUpTypeInformation(
             ast,
-            sourceCode,
             prevIntermediate.symbolTable
         );
         return {
             syntaxTrees: prevIntermediate.syntaxTrees.concat(newAst),
-            importedFiles: prevIntermediate.importedFiles.concat([sourceCode.filename]),
+            importedFiles: prevIntermediate.importedFiles.concat([ast.source.filename]),
             symbolTable: symbolTable
         };
     } catch (error) {
         if (isSyntaxError(error)) {
             // this part is needed to inject the sourceCode
-            raise(ErrorSyntax(error.hash), sourceCode);
+            raise(ErrorSyntax(error.hash), ast.source);
         } else if (isLexError(error)) {
-            raise(ErrorLexical(error), sourceCode);
+            raise(ErrorLexical(error), ast.source);
         }
         throw error; // Will be caught by interpreter.ts
     }
