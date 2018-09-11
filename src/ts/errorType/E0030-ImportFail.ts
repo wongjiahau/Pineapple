@@ -15,6 +15,7 @@ export function ErrorImportFail(
     1. The file does not exist
     2. You typed the filename wrongly
     3. You do not have permission to the file
+    4. The given path is a folder
 `
     };
 }
