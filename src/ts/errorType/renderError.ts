@@ -1,7 +1,7 @@
 import chalk from "chalk";
-import { SourceCode } from "../cli";
 import { labelLineNumbers } from "../labelLineNumbers";
 import { ErrorDetail } from "./errorUtil";
+import { SourceCode } from "../interpret";
 const boxen = require("boxen");
 
 export function renderError(
@@ -18,7 +18,7 @@ export function renderError(
     result = "\n" + boxen(result, errorMessageStyle) + "\n";
     result += boxen(
         labelLineNumbers(
-            sourceCode.content,
+            removeHiddenToken(sourceCode.content),
             errorDetail.relatedLocation,
             3
         ),
@@ -45,4 +45,8 @@ export function extractFilename(path: string): string {
 
 export function extractPathname(path: string): string {
     return path.split("/").slice(0, -1).join("/");
+}
+
+export function removeHiddenToken(code: string): string {
+    return code.replace(/@[a-zA-Z]+\b/g, "");
 }

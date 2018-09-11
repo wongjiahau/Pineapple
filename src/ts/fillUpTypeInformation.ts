@@ -32,7 +32,6 @@ import {
     SyntaxTree
 } from "./ast";
 
-import {SourceCode} from "./cli";
 import {ErrorAccessingInexistentMember} from "./errorType/E0001-AccessingInexistentMember";
 import {ErrorAssigningToImmutableVariable} from "./errorType/E0002-AssigningToImmutableVariable";
 import {ErrorDuplicatedMember} from "./errorType/E0003-DuplicatedMember";
@@ -76,8 +75,9 @@ import {
     Tree,
     VoidType
 } from "./typeTree";
-import {find} from "./util";
+import {find, copy} from "./util";
 import { parseCode } from "./parseCodeToSyntaxTree";
+import { SourceCode } from "./interpret";
 
 
 let CURRENT_SOURCE_CODE: () => SourceCode;
@@ -1144,10 +1144,6 @@ export function typeEquals(x: TypeExpression, y: TypeExpression | null): boolean
                 throw new Error(`Type comparison for ${x.kind} is not implemented yet`);
         }
     }
-}
-
-function copy < T >(x: T): T {
-    return JSON.parse(JSON.stringify(x));
 }
 
 function isNil(t: TypeExpression): boolean {

@@ -185,8 +185,6 @@ export function stringifyType(t: TypeExpression): string {
             return `Void`;
         case "EnumDeclaration":
             return t.name.repr;
-        default:
-            throw new Error(`Cant stringify ${t.kind} yet`);
     }
 }
 

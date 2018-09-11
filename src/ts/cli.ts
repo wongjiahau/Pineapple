@@ -1,4 +1,4 @@
-import { interpret, loadFile, ErrorHandler } from "./interpret";
+import { interpret, loadFile } from "./interpret";
 const vm = require("vm");
 
 const VERSION = require("../package.json").version;

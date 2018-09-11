@@ -1,3 +1,4 @@
+
 // @ts-ignore
 import levenshtein from "fast-levenshtein";
 
@@ -35,4 +36,8 @@ export function findSimilarStrings(needle: string, haystack: string[]): string[]
         }
     }
     return result;
+}
+
+export function copy < T >(x: T): T {
+    return JSON.parse(JSON.stringify(x));
 }
