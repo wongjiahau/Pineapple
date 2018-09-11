@@ -1,17 +1,13 @@
-import { pine2js } from "../../../../pine2js";
-import { assertEquals } from "../../../testUtil";
+import { testTranspile } from "../../../testUtil";
 
-describe("FCMO-005", () => {
-    it("generic monofunc", () => {
-        const input =
+testTranspile("generic monofunc", 
 `
 def (this T).show
     pass
 
 def .main
     "Hello".show
-`;
-        const expectedOutput =
+`,
 `
 function _show_Generic$T($this){
 $$pass$$();
@@ -24,8 +20,4 @@ $$pass$$();
 function _main_(){
 _show_String("Hello");
 }
-`;
-        assertEquals(pine2js(input).trim(), expectedOutput.trim());
-    });
-
-});
+`);

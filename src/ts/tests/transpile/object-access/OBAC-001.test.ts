@@ -1,9 +1,6 @@
-import { pine2js } from "../../../pine2js";
-import { assertEquals } from "../../testUtil";
+import { testTranspile } from "../../testUtil";
 
-describe("LAR-003", () => {
-    it("empty array", () => {
-        const input =
+testTranspile("object access",
 `
 def People
     :name String
@@ -19,8 +16,8 @@ def .main
 
 def (this String).show
     pass
-`;
-        const expectedOutput =
+`
+,
 `
 function _main_(){
 const $x = {
@@ -35,8 +32,4 @@ _show_String($y);
 function _show_String($this){
 $$pass$$();
 }
-`;
-        assertEquals(pine2js(input).trim(), expectedOutput.trim());
-    });
-
-});
+`)

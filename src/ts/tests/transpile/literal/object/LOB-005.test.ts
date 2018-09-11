@@ -1,9 +1,6 @@
-import { pine2js } from "../../../../pine2js";
-import { assertEquals } from "../../../testUtil";
+import { testTranspile } from "../../../testUtil";
 
-describe("LOB-005", () => {
-    it("returning object directly", () => {
-        const input =
+testTranspile("return object directly",
 `
 def People
     :name String
@@ -11,8 +8,7 @@ def People
 def .newPeople -> People
     return People
         :name = "John"
-`;
-        const expectedOutput =
+`,
 `
 function _newPeople_(){
 return {
@@ -20,8 +16,4 @@ $kind: "People",
 name : "John",
 };
 }
-`;
-        assertEquals(pine2js(input).trim(), expectedOutput.trim());
-    });
-
-});
+`)

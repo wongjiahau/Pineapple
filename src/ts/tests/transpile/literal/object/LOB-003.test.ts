@@ -1,9 +1,6 @@
-import { pine2js } from "../../../../pine2js";
-import { assertEquals } from "../../../testUtil";
+import { testTranspile } from "../../../testUtil";
 
-describe("LOB-003", () => {
-    it("object literals with member key", () => {
-        const input =
+testTranspile("object literals with member key",
 `
 def People
     :name   String
@@ -13,8 +10,7 @@ def .main
     let people = People
         :name  = "john"
         :age   = 123
-`;
-        const expectedOutput =
+`,
 `
 function _main_(){
 const $people = {
@@ -23,9 +19,4 @@ name : "john",
 age : (123),
 };
 }
-
-`;
-        assertEquals(pine2js(input).trim(), expectedOutput.trim());
-    });
-
-});
+`)

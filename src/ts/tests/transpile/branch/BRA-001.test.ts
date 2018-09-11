@@ -1,9 +1,6 @@
-import { pine2js } from "../../../pine2js";
-import { assertEquals } from "../../testUtil";
+import { testTranspile } from "../../testUtil";
 
-describe("@branch-BRA-001", () => {
-    it("if", () => {
-        const input =
+testTranspile("if branch", 
 `
 def Boolean
     pass
@@ -21,8 +18,7 @@ def .main
         let b = "no"
     else
         let c = "oops"
-`;
-        const expectedOutput =
+`,
 `
 function _$greaterThan_Number_Number($this,$that){
 $$pass$$();
@@ -41,10 +37,4 @@ const $b = "no";
 const $c = "oops";
 }
 }
-`;
-
-        const result = pine2js(input);
-        assertEquals(result.trim(), expectedOutput.trim());
-    });
-
-});
+`)

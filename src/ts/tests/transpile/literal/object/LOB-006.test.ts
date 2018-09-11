@@ -1,9 +1,6 @@
-import { pine2js } from "../../../../pine2js";
-import { assertEquals } from "../../../testUtil";
+import { testTranspile } from "../../../testUtil";
 
-describe("LOB-006", () => {
-    it("recursive struct", () => {
-        const input =
+testTranspile("recursive struct",
 `
 def Nil
     #nil
@@ -18,8 +15,7 @@ def .newPeople -> People
         :friend = People
             :name = "Jane"
             :friend = #nil
-`;
-        const expectedOutput =
+`,
 `
 function _newPeople_(){
 return {
@@ -32,8 +28,4 @@ friend : null,
 },
 };
 }
-`;
-        assertEquals(pine2js(input).trim(), expectedOutput.trim());
-    });
-
-});
+`)

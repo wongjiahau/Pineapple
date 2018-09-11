@@ -1,9 +1,6 @@
-import { pine2js } from "../../../../pine2js";
-import { assertEquals } from "../../../testUtil";
+import { testTranspile } from "../../../testUtil";
 
-describe("LOB-001", () => {
-    it("object literals with string key", () => {
-        const input =
+testTranspile("object literals with string key", 
 `
 def .main
     let y = 6
@@ -17,8 +14,7 @@ def .main
         "yo" = 123
 
     let x = 5
-`;
-        const expectedOutput =
+`,
 `
 function _main_(){
 const $y = (6);
@@ -33,8 +29,4 @@ yo" : (123),
 };
 const $x = (5);
 }
-`;
-        assertEquals(pine2js(input).trim(), expectedOutput.trim());
-    });
-
-});
+`)

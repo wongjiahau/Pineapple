@@ -1,9 +1,6 @@
-import { pine2js } from "../../../pine2js";
-import { assertEquals } from "../../testUtil";
+import { testTranspile } from "../../testUtil";
 
-describe("ENUM-001", () => {
-    it("boolean/null/undefined literal will be optimized", () => {
-        const input =
+testTranspile("boolean/null/undefined literal will be optimized",
 `
 def Boolean
     #true
@@ -20,19 +17,11 @@ def .main
     let y = #false
     let z = #nil
     let a = #undefined
-`;
-        const expectedOutput =
-`
-function _main_(){
+`,
+`function _main_(){
 const $x = true;
 const $y = false;
 const $z = null;
 const $a = undefined;
 }
-`;
-
-        const result = pine2js(input);
-        assertEquals(result.trim(), expectedOutput.trim());
-    });
-
-});
+`);

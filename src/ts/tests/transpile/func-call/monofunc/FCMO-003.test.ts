@@ -1,9 +1,6 @@
-import { pine2js } from "../../../../pine2js";
-import { assertEquals } from "../../../testUtil";
+import { testTranspile } from "../../../testUtil";
 
-describe("FCMO-003", () => {
-    it("should find for more specific type if possible", () => {
-        const input =
+testTranspile("should find for more specific type if possible",
 `
 def (this Any).show
     pass
@@ -13,10 +10,8 @@ def (this String).show
 
 def .main
     "Hello".show
-`;
-        const expectedOutput =
+`,
 `
-
 function _show_Any($this){
 $$pass$$();
 }
@@ -28,9 +23,4 @@ $$pass$$();
 function _main_(){
 _show_String("Hello");
 }
-
-`;
-        assertEquals(pine2js(input).trim(), expectedOutput.trim());
-    });
-
-});
+`)

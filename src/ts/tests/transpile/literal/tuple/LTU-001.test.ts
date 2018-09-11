@@ -1,20 +1,14 @@
-import { pine2js } from "../../../../pine2js";
-import { assertEquals } from "../../../testUtil";
+import { testTranspile } from "../../../testUtil";
 
-describe("tuple", () => {
-    it("case", () => {
-        const input =
+testTranspile("tuple literal",
 `
 def .main
     let tuple = (1, "2", 3)
-`;
-        const expectedOutput =
+`
+,
 `
 function _main_(){
 const $tuple = [(1),"2",(3)];
 }
-`;
-
-        assertEquals(pine2js(input).trim(), expectedOutput.trim());
-    });
-});
+`
+)

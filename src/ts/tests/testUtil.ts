@@ -3,7 +3,6 @@ require("colors");
 
 // @ts-ignore
 import { mocha } from "mocha";
-import { pine2js } from "../pine2js";
 import { interpret, SourceCode } from "../interpret";
 const jsdiff = require("diff");
 

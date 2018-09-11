@@ -1,32 +1,12 @@
-import { pine2js } from "../../../../pine2js";
-import { assertEquals } from "../../../testUtil";
+import { testTranspile } from "../../../testUtil";
 
-describe("LAR-003", () => {
-    it("empty array", () => {
-        const input =
+testTranspile("empty array",
 `
 def .main
     let x = List{String}
-`;
-        const expectedOutput =
+`,
 `
 function _main_(){
 const $x = [];
 }
-`;
-        assertEquals(pine2js(input).trim(), expectedOutput.trim());
-    });
-
-});
-/*
-
-// Some idea
-class ArrayOfString extends Array {
-    constructor(xs) {
-        super(...xs);
-    }
-}
-
-let xs = ArrayOfString([1,2,3])
-
-*/
+`)

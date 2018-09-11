@@ -1,9 +1,6 @@
-import { pine2js } from "../../../../pine2js";
-import { assertEquals } from "../../../testUtil";
+import { testTranspile } from "../../../testUtil";
 
-describe("FCMO-004", () => {
-    it("chaining multiple monofunc", () => {
-        const input =
+testTranspile("chaining multiple monofunc",
 `
 def (this String).capitalize -> String
     pass
@@ -13,8 +10,7 @@ def (this String).reverse
 
 def .main
     "Hello".capitalize.reverse
-`;
-        const expectedOutput =
+`,
 `
 function _capitalize_String($this){
 $$pass$$();
@@ -27,8 +23,4 @@ $$pass$$();
 function _main_(){
 _reverse_String(_capitalize_String("Hello"));
 }
-`;
-        assertEquals(pine2js(input).trim(), expectedOutput.trim());
-    });
-
-});
+`)

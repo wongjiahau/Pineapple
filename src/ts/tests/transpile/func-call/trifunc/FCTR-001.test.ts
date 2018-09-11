@@ -1,17 +1,13 @@
-import { pine2js } from "../../../../pine2js";
-import { assertEquals } from "../../../testUtil";
+import { testTranspile } from "../../../testUtil";
 
-describe("FCTR-001", () => {
-    it("case 1", () => {
-        const input =
+testTranspile("trifunc",
 `
 def (this String).replace(old String with that String) -> String
     pass
 
 def .main
     let x = "1,2,3".replace("," with ".")
-`;
-        const expectedOutput =
+`,
 `
 function _replace_with_String_String_String($this,$old,$that){
 $$pass$$();
@@ -20,11 +16,4 @@ $$pass$$();
 function _main_(){
 const $x = _replace_with_String_String_String("1,2,3",",",".");
 }
-
-`.trim();
-
-        const result = pine2js(input).trim();
-        assertEquals(result, expectedOutput);
-    });
-
-});
+`)

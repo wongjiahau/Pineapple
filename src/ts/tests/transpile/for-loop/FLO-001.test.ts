@@ -1,9 +1,6 @@
-import { pine2js } from "../../../pine2js";
-import { assertEquals } from "../../testUtil";
+import { testTranspile } from "../../testUtil";
 
-describe("FLO-001", () => {
-    it("for loop 1", () => {
-        const input =
+testTranspile("for loop 1",
 `
 def (this String).print
     pass
@@ -11,8 +8,7 @@ def (this String).print
 def .main
     for i in ["a", "b", "c"]
         i.print
-`;
-        const expectedOutput =
+`,
 `
 function _print_String($this){
 $$pass$$();
@@ -25,7 +21,4 @@ const $i = itemsOfi[i];
 _print_String($i);
 }
 }
-`;
-        assertEquals(pine2js(input).trim(), expectedOutput.trim());
-    });
-});
+`)

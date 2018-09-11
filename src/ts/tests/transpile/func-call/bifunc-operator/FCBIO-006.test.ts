@@ -1,17 +1,13 @@
-import { pine2js } from "../../../../pine2js";
-import { assertEquals } from "../../../testUtil";
+import { testTranspile } from "../../../testUtil";
 
-describe("FCBIO-006", () => {
-    it("generic type specialization", () => {
-        const input =
+testTranspile("generic type specialization",
 `
 def .main
     let x = [1,2,3].append(1).append(3)
 
 def (this List{T}).append(that T) -> List{T}
     pass
-`;
-        const expectedOutput =
+`,
 `
 function _main_(){
 const $x = _append_ListOfInteger_Integer(_append_ListOfInteger_Integer([(1),(2),(3)],(1)),(3));
@@ -24,8 +20,4 @@ $$pass$$();
 function _append_ListOfInteger_Integer($this,$that){
 $$pass$$();
 }
-`;
-        assertEquals(pine2js(input).trim(), expectedOutput.trim());
-    });
-
-});
+`)

@@ -1,18 +1,12 @@
-import { pine2js } from "../../../../pine2js";
-import { assertEquals } from "../../../testUtil";
+import { testTranspile } from "../../../testUtil";
 
-describe("FDNU-001", () => {
-    it("case1", () => {
-        const input =
-`def .main
+testTranspile("nullifunc",
+`
+def .main
     pass
-`;
-        const expectedOutput =
+`,
 `
 function _main_(){
 $$pass$$();
 }
-`;
-        assertEquals(pine2js(input).trim(), expectedOutput.trim());
-    });
-});
+`)

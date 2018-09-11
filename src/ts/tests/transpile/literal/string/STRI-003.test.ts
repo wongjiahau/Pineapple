@@ -17,11 +17,9 @@ function _$plus_Number_Number($this,$that){
 $$pass$$();
 }
 
-
 function _toString_Number($this){
 $$pass$$();
 }
-
 
 function _main_(){
 const $x = (123);

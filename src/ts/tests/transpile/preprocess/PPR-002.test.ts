@@ -1,22 +1,20 @@
-import { pine2js } from "../../../pine2js";
-import { assertEquals } from "../../testUtil";
+import { testTranspile } from "../../testUtil";
 
-describe("@preprocess-PP-002", () => {
-    it("should ignore consequtive newlines", () => {
-        const input =
+testTranspile("should ignore consequtive newlines",
 `
 def (this String).show
     <javascript>
     console.log($this.valueOf());
     </javascript>
 
+
 def (this String).say
     <javascript>
     console.log($this.valueOf());
     </javascript>
 
-`;
-        const expectedOutput =
+`
+,
 `
 function _show_String($this){
 // <javascript>
@@ -31,8 +29,4 @@ console.log($this.valueOf());
 }
 
 
-`;
-        assertEquals(pine2js(input).trim(), expectedOutput.trim());
-    });
-
-});
+`);

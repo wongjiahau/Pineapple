@@ -1,9 +1,6 @@
-import { pine2js } from "../../../../pine2js";
-import { assertEquals } from "../../../testUtil";
+import { testTranspile } from "../../../testUtil";
 
-describe("@literal-array-LAR-002", () => {
-    it("multiline lists", () => {
-        const input =
+testTranspile("multiline lists",
 `
 def .main
     let fruits =
@@ -11,14 +8,9 @@ def .main
         o "apple"
         o "banana"
 `
-;
-        const expectedOutput =
+,
 `
 function _main_(){
 const $fruits = ["pineapple","apple","banana"];
 }
-`;
-        assertEquals(pine2js(input).trim(), expectedOutput.trim());
-    });
-
-});
+`)

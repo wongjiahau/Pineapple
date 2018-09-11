@@ -1,9 +1,6 @@
-import { pine2js } from "../../../../pine2js";
-import { assertEquals } from "../../../testUtil";
+import { testTranspile } from "../../../testUtil";
 
-describe("fcbi", () => {
-    it("bifunction call", () => {
-        const input =
+testTranspile("bifunction call",
 `
 def (this Number) + (that Number) -> Number
     pass
@@ -12,8 +9,7 @@ def .main
     let x Number = 4
     let y Number = 6
     let result = x + y
-`;
-        const expectedOutput =
+`,
 `
 function _$plus_Number_Number($this,$that){
 $$pass$$();
@@ -24,11 +20,4 @@ const $x = (4);
 const $y = (6);
 const $result = _$plus_Number_Number($x,$y);
 }
-
-`.trim();
-
-        const result = pine2js(input).trim();
-        assertEquals(result, expectedOutput);
-    });
-
-});
+`);
