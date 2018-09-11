@@ -16,8 +16,16 @@ type CodeExecuter = (code: string) => string;
 
 export type ErrorHandler = (e: Error) => void;
 
-export function interpret(source: SourceCode, execute: CodeExecuter, rethrowError: boolean): string {
+export function interpret(
+    source: SourceCode, 
+    execute: CodeExecuter, 
+    rethrowError: boolean, 
+    loadPreludeLibrary: boolean
+): string {
     try {
+        if(loadPreludeLibrary) {
+            source.content = `import "$/prelude/*"\n` + source.content;
+        }
         const initialCache: SyntaxTreeCache = {};
         const ast = parseCodeToSyntaxTree(source);
         initialCache[source.filename] = ast;
@@ -26,15 +34,6 @@ export function interpret(source: SourceCode, execute: CodeExecuter, rethrowErro
         const sortedDependencies = sortDependency(dependencies);
         const sortedSyntaxTrees = sortedDependencies.map((x) => updatedCache[x]).filter((x) => x !== undefined);
         const ir = loadSource(sortedSyntaxTrees); // ir means intermediate representation
-        // dependencies of prelude library
-        // const preludeDependencies = loadPreludeScript(file.filename);
-
-        // dependencies of user scripts
-        // const scriptDependencies = loadDependency(file);
-
-        // const _sortedDependencies = sortDependency(preludeDependencies).concat(sortDependency(scriptDependencies));
-        // const _allCodes = sortedDependencies.map(loadFile);
-        // const _ir = loadSource(allCodes); // ir means intermediate representation
         const transpiledCode = ir.map(tpDeclaration).join("\n");
         return execute(transpiledCode);
     } catch (error) {
@@ -65,12 +64,16 @@ function extractImports(ast: SyntaxTree, cache: SyntaxTreeCache)
     
     for (let i = 0; i < importedFiles.length; i++) {
         let files: string [] = [];
-        if(/[/][*]["]$/.test(importedFiles[i].repr)) // for example "server/*" 
-        {
+        const repr = importedFiles[i].repr;
+        if(startsWithDollarSign(repr)) {
+            importedFiles[i].repr = repr.replace(/^["][$]/, '"pinelib');
+        }
+        if(endsWithAsterisk(importedFiles[i].repr)) {
             const dirname = importedFiles[i].repr.slice(1, -2);
             if(fs.existsSync(dirname)) {
                 files = fs.readdirSync(dirname).filter((x: string) => /[.]pine$/.test(x));
                 files = files.map((x) => fs.realpathSync(dirname + "/" + x));
+                files = files.filter((x) => fs.lstatSync(x).isFile()); // remove directory names
             } else {
                 throw new Error(`Cannot import the directory ${importedFiles[i]}`)
             }
@@ -92,6 +95,14 @@ function extractImports(ast: SyntaxTree, cache: SyntaxTreeCache)
         }
     }
     return [dependencies, cache];
+}
+
+function endsWithAsterisk(s: string): boolean {
+    return /[/][*]["]$/.test(s);
+}
+
+function startsWithDollarSign(s: string): boolean {
+    return /^["][$]/.test(s);
 }
 
 
