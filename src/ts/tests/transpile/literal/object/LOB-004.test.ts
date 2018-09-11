@@ -1,6 +1,6 @@
-import { testTranspile } from "../../../testUtil";
+import { testTranspileSkip } from "../../../testUtil";
 
-testTranspile("bodyless object",
+testTranspileSkip("bodyless object",
 `
 def People
     pass

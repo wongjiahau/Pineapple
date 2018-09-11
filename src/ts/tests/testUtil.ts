@@ -66,6 +66,14 @@ export function testTranspile(description: string, input: string, expectedOutput
     });
 }
 
+export function testTranspileSkip(description: string, input: string, expectedOutput: string) {
+    describe("", () => {
+        it.skip(description, () => {
+
+        });
+    });
+}
+
 export function mockChalk(): any {
     const result: any = {};
     const self = (src: string) => src;

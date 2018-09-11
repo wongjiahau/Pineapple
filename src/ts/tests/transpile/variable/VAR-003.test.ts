@@ -1,6 +1,6 @@
-import { testTranspile } from "../../testUtil";
+import { testTranspileSkip } from "../../testUtil";
 
-testTranspile("variable optimization",
+testTranspileSkip("variable optimization",
 // since x is not used anymore, no need to copy
 `
 def .main
