@@ -9,3 +9,5 @@
 - [x] write docs about keywords
 - [] type checking for table type
 - [] variable optimization
+- [] add docs about importing files
+- [] add support for importing modules from github

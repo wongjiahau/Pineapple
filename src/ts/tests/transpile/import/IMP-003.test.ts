@@ -2,7 +2,7 @@ import { testTranspile } from "../../testUtil";
 
 testTranspile("importing file from pinelib",
 `
-import "$/prelude/dummy.pine"
+import "$pine/prelude/dummy"
 
 def .main
     .dummy

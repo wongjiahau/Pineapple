@@ -1,4 +1,4 @@
-import "./core.pine"
+import "./core"
 
 def - (this Number) -> Number
     <javascript>

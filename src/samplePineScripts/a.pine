@@ -1,4 +1,4 @@
-import "b.pine"
+import "b"
 
 def .main
     "Hello world".show

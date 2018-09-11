@@ -5,6 +5,8 @@ import { raise } from "./fillUpTypeInformation";
 import { ErrorImportFail } from "./errorType/E0030-ImportFail";
 import { initialIntermediateForm, getIntermediateForm } from "./getIntermediateForm";
 
+import S from 'string';
+
 const clear    = require("clear");
 const fs       = require("fs");
 const path     = require("path");
@@ -47,6 +49,7 @@ export function interpret(
                 error.name += "(This is possibly a compiler internal error)";
                 console.log(error);
             }
+            return "";
         }
     }
 }
@@ -64,11 +67,18 @@ function extractImports(ast: SyntaxTree, cache: SyntaxTreeCache)
     
     for (let i = 0; i < importedFiles.length; i++) {
         let files: string [] = [];
+
+
         const repr = importedFiles[i].repr;
-        if(startsWithDollarSign(repr)) {
-            importedFiles[i].repr = repr.replace(/^["][$]/, '"pinelib');
+        if(S(repr).startsWith('"$')) {
+            if(S(repr).startsWith('"$pine/')) {
+                const pinelibPath = __dirname + "/../pinelib";
+                importedFiles[i].repr = repr.replace("$pine", pinelibPath);
+            } else {
+                throw new Error(`Cannot handle ${repr} yet`);
+            }
         }
-        if(endsWithAsterisk(importedFiles[i].repr)) {
+        if(S(importedFiles[i].repr).endsWith('*"')) {
             const dirname = importedFiles[i].repr.slice(1, -2);
             if(fs.existsSync(dirname)) {
                 files = fs.readdirSync(dirname).filter((x: string) => /[.]pine$/.test(x));
@@ -78,6 +88,8 @@ function extractImports(ast: SyntaxTree, cache: SyntaxTreeCache)
                 throw new Error(`Cannot import the directory ${importedFiles[i]}`)
             }
         } else {
+            // automaticallyl append file extension
+            importedFiles[i].repr = importedFiles[i].repr.slice(0, -1) + '.pine"'; 
             files = [getFullFilename(ast, importedFiles[i])];
         }
         for (let j = 0; j < files.length; j++) {
@@ -97,23 +109,23 @@ function extractImports(ast: SyntaxTree, cache: SyntaxTreeCache)
     return [dependencies, cache];
 }
 
-function endsWithAsterisk(s: string): boolean {
-    return /[/][*]["]$/.test(s);
-}
-
-function startsWithDollarSign(s: string): boolean {
-    return /^["][$]/.test(s);
-}
-
-
 function getFullFilename(ast: SyntaxTree, importedFilename: StringExpression): string {
     const filename = importedFilename.repr.slice(1, -1);
-    const fullFilename = path.dirname(ast.source.filename) + "/" + filename;
+    let fullFilename: string = (() => {
+        if(importedFilename.repr[1] === "/") { // if is absolute path
+            return filename;
+        } else { // is relative path
+            return path.dirname(ast.source.filename) + "/" + filename;
+        }
+    })();
+    
+    // Refer https://millermedeiros.github.io/mdoc/examples/node_api/doc/path.html#path.normalize
+    fullFilename = path.normalize(fullFilename);
     if(!fs.existsSync(fullFilename)) {
+        console.log(fullFilename);
         return raise(ErrorImportFail(importedFilename), ast.source);
     } else {
-        // Refer https://millermedeiros.github.io/mdoc/examples/node_api/doc/path.html#path.normalize
-        return path.normalize(fs.realpathSync(fullFilename));
+        return fs.realpathSync(fullFilename);
     }
 }
 

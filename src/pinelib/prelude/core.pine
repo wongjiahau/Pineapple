@@ -1,4 +1,4 @@
-import "./boolean.pine"
+import "./boolean"
 
 def Nil
     #nil
