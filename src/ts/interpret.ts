@@ -64,18 +64,32 @@ function extractImports(ast: SyntaxTree, cache: SyntaxTreeCache)
         .map((x) => x.filename);
     
     for (let i = 0; i < importedFiles.length; i++) {
-        const fullFilename = getFullFilename(ast, importedFiles[i]);
-        const file = loadFile(fullFilename);
-        if(file !== null) {
-            const ast = parseCodeToSyntaxTree(file);
-            cache[file.filename] = ast;
-            const temp = dependencies.slice();
-            [dependencies, cache] = extractImports(ast, cache);
-            dependencies = dependencies.concat(temp);
+        let files: string [] = [];
+        if(/[/][*]["]$/.test(importedFiles[i].repr)) // for example "server/*" 
+        {
+            const dirname = importedFiles[i].repr.slice(1, -2);
+            if(fs.existsSync(dirname)) {
+                files = fs.readdirSync(dirname).filter((x: string) => /[.]pine$/.test(x));
+                files = files.map((x) => fs.realpathSync(dirname + "/" + x));
+            } else {
+                throw new Error(`Cannot import the directory ${importedFiles[i]}`)
+            }
         } else {
-            throw new Error("why?");
+            files = [getFullFilename(ast, importedFiles[i])];
         }
-        dependencies.push([ast.source.filename, /*depends on*/ file.filename]);
+        for (let j = 0; j < files.length; j++) {
+            const f = loadFile(files[j]);
+            if(f !== null) {
+                const ast = parseCodeToSyntaxTree(f);
+                cache[f.filename] = ast;
+                const temp = dependencies.slice();
+                [dependencies, cache] = extractImports(ast, cache);
+                dependencies = dependencies.concat(temp);
+            } else {
+                throw new Error("why?");
+            }
+            dependencies.push([ast.source.filename, /*depends on*/ f.filename]);
+        }
     }
     return [dependencies, cache];
 }

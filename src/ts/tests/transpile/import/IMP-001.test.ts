@@ -1,6 +1,6 @@
 import { testTranspile } from "../../testUtil";
 
-testTranspile("import",
+testTranspile("import single file",
 `
 import "samplePineScripts/a.pine"
 
