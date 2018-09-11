@@ -1,7 +1,7 @@
-import { SourceCode } from "./cli";
 import { getIntermediateForm, initialIntermediateForm } from "./getIntermediateForm";
 import { transpile } from "./transpile";
 import { parseCodeToSyntaxTree } from "./parseCodeToSyntaxTree";
+import { SourceCode } from "./interpret";
 
 /**
  * WARNING: The `pine2js` function is meant for unit testing only

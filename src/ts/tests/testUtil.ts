@@ -3,8 +3,8 @@ require("colors");
 
 // @ts-ignore
 import { mocha } from "mocha";
-import { SourceCode } from "../cli";
 import { pine2js } from "../pine2js";
+import { interpret, SourceCode } from "../interpret";
 const jsdiff = require("diff");
 
 export function assertEquals(actual: string, expected: string) {
@@ -36,13 +36,19 @@ export function catchError(f: () => void): Error {
     }
 }
 
+const testerInterpret = (s: SourceCode) => interpret(s, (x) => x, true);
+
 export function testError(expectedErrorName: string, input: string, logError = false) {
     describe("", () => {
         it(expectedErrorName, () => {
+            const source: SourceCode = {
+                content: input,
+                filename: "<UNIT_TEST>"
+            };
             if (logError) {
-                pine2js(input);
+                testerInterpret(source);
             } else {
-                expect(catchError(() => pine2js(input)).name).to.eq("#" + expectedErrorName);
+                expect(catchError(() => testerInterpret(source)).name).to.eq("#" + expectedErrorName);
             }
         });
     });
@@ -51,8 +57,12 @@ export function testError(expectedErrorName: string, input: string, logError = f
 export function testTranspile(description: string, input: string, expectedOutput: string) {
     describe("", () => {
         it(description, () => {
-            const result = pine2js(input).trim();
-            assertEquals(result, expectedOutput.trim());
+            const source: SourceCode = {
+                content: input,
+                filename: "<UNIT_TEST>"
+            };
+            const result = testerInterpret(source).trim();
+            assertEquals(result.trim(), expectedOutput.trim());
         });
     });
 }

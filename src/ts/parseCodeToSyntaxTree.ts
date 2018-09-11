@@ -9,7 +9,8 @@ export function parseCodeToSyntaxTree(sourceCode: SourceCode): SyntaxTree {
     sourceCode.content = preprocess(sourceCode);
     return {
         source: sourceCode,
-        declarations: parseCode(sourceCode) as Declaration[]
+        declarations: parseCode(sourceCode) as Declaration[],
+        importedFiles: {}
     };
 }
 

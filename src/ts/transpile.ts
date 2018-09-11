@@ -77,7 +77,7 @@ export function tpFunctionDeclaration(f: FunctionDeclaration): string {
     const typeSignature = f.parameters.map((x) => stringifyType(x.typeExpected)).join("_");
     const params = tpParameters(f.parameters);
     const statements = tpStatements(f.statements);
-    return `${f.isAsync ? "async " : ""}function ${funcSignature}_${typeSignature}(${params}){\n${statements}}\n\n`;
+    return `${f.isAsync ? "async " : ""}function ${funcSignature}_${typeSignature}(${params}){\n${statements}}\n`;
 }
 
 export function tpStatements(statements: Statement[]): string {

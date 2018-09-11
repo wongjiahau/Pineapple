@@ -1,5 +1,5 @@
 import { newBuiltinType } from "./typeTree";
-import { SourceCode } from "./cli";
+import { SourceCode } from "./interpret";
 
 // Abstract Syntax Tree Node Interfaces
 export type GenericList = TypeExpression[];
@@ -7,6 +7,7 @@ export type GenericList = TypeExpression[];
 export interface SyntaxTree {
     source: SourceCode;
     declarations: Declaration[];
+    importedFiles: {[filename: string]: true};
 }
 
 export type Declaration
