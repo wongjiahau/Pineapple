@@ -1,0 +1,4 @@
+import "b.pine"
+
+def .main
+    "Hello world".show

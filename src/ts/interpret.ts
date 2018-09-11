@@ -1,12 +1,13 @@
-import { SyntaxTree, ImportDeclaration, Declaration } from "./ast";
+import { SyntaxTree, ImportDeclaration, Declaration, StringExpression } from "./ast";
 import { parseCodeToSyntaxTree } from "./parseCodeToSyntaxTree";
 import { tpDeclaration } from "./transpile";
 import { raise } from "./fillUpTypeInformation";
 import { ErrorImportFail } from "./errorType/E0030-ImportFail";
 import { initialIntermediateForm, getIntermediateForm } from "./getIntermediateForm";
 
-const fs = require("fs");
-const path = require("path");
+const clear    = require("clear");
+const fs       = require("fs");
+const path     = require("path");
 const toposort = require("toposort");
 
 type SyntaxTreeCache = {[filename: string]: SyntaxTree}
@@ -41,6 +42,7 @@ export function interpret(source: SourceCode, execute: CodeExecuter, rethrowErro
             throw error;
         } else {
             if (error.name[0] === "#") { // if this error is processed
+                clear();
                 console.log(error.message);
             } else { // if this error is not processed, means it is a compiler's bug
                 error.name += "(This is possibly a compiler internal error)";
@@ -52,6 +54,7 @@ export function interpret(source: SourceCode, execute: CodeExecuter, rethrowErro
 
 function extractImports(ast: SyntaxTree, cache: SyntaxTreeCache)
 : [Dependencies, SyntaxTreeCache] {
+
     let dependencies: Dependencies = [
         [ast.source.filename, /*depends on */ Nothing()]
     ];
@@ -61,30 +64,32 @@ function extractImports(ast: SyntaxTree, cache: SyntaxTreeCache)
         .map((x) => x.filename);
     
     for (let i = 0; i < importedFiles.length; i++) {
-        const filename = importedFiles[i].repr.slice(1, -1);
-        if(!fs.existsSync(filename)) {
-            return raise(ErrorImportFail(importedFiles[i]), ast.source);
+        const fullFilename = getFullFilePath(ast, importedFiles[i]);
+        const file = loadFile(fullFilename);
+        if(file !== null) {
+            const ast = parseCodeToSyntaxTree(file);
+            cache[file.filename] = ast;
+            const temp = dependencies.slice();
+            [dependencies, cache] = extractImports(ast, cache);
+            dependencies = dependencies.concat(temp);
         } else {
-            const file = loadFile(filename);
-            if(file !== null) {
-                const ast = parseCodeToSyntaxTree(file);
-                cache[file.filename] = ast;
-                const temp = dependencies.slice();
-                [dependencies, cache] = extractImports(ast, cache);
-                dependencies = dependencies.concat(temp);
-            } else {
-                throw new Error("why?");
-            }
-            dependencies.push([ast.source.filename, /*depends on*/ file.filename]);
+            throw new Error("why?");
         }
+        dependencies.push([ast.source.filename, /*depends on*/ file.filename]);
     }
     return [dependencies, cache];
 }
 
 
-function getFullFilePath(filename: string): string {
-    // Refer https://millermedeiros.github.io/mdoc/examples/node_api/doc/path.html#path.normalize
-    return path.normalize(fs.realpathSync(filename));
+function getFullFilePath(ast: SyntaxTree, importedFilename: StringExpression): string {
+    const filename = importedFilename.repr.slice(1, -1);
+    const fullFilename = path.dirname(ast.source.filename) + "/" + filename;
+    if(!fs.existsSync(fullFilename)) {
+        return raise(ErrorImportFail(importedFilename), ast.source);
+    } else {
+        // Refer https://millermedeiros.github.io/mdoc/examples/node_api/doc/path.html#path.normalize
+        return path.normalize(fs.realpathSync(fullFilename));
+    }
 }
 
 function sortDependency(dependencies: Dependencies): string[] {
@@ -129,7 +134,7 @@ export function loadFile(filename: string): SourceCode | null {
     }
     return {
         content: fs.readFileSync(filename).toString(), 
-        filename: getFullFilePath(filename)
+        filename: filename
     };
 }
 

@@ -3,7 +3,6 @@ const vm = require("vm");
 
 const VERSION = require("../package.json").version;
 const program = require("commander");
-const clear = require("clear");
 
 program
     .version(VERSION)
@@ -24,12 +23,7 @@ program.args.forEach((arg: string) => {
     if (file === null) {
         throw new Error(`Cannot open file ${arg}`);
     }
-    const errorHandler: ErrorHandler = (e: Error) => {
-        clear();
-        console.log(e);
-    };
-
-    interpret(file, execute, errorHandler);
+    interpret(file, execute, false);
 });
 
 function execute(javascriptCode: string): string {
