@@ -64,7 +64,7 @@ function extractImports(ast: SyntaxTree, cache: SyntaxTreeCache)
         .map((x) => x.filename);
     
     for (let i = 0; i < importedFiles.length; i++) {
-        const fullFilename = getFullFilePath(ast, importedFiles[i]);
+        const fullFilename = getFullFilename(ast, importedFiles[i]);
         const file = loadFile(fullFilename);
         if(file !== null) {
             const ast = parseCodeToSyntaxTree(file);
@@ -81,7 +81,7 @@ function extractImports(ast: SyntaxTree, cache: SyntaxTreeCache)
 }
 
 
-function getFullFilePath(ast: SyntaxTree, importedFilename: StringExpression): string {
+function getFullFilename(ast: SyntaxTree, importedFilename: StringExpression): string {
     const filename = importedFilename.repr.slice(1, -1);
     const fullFilename = path.dirname(ast.source.filename) + "/" + filename;
     if(!fs.existsSync(fullFilename)) {

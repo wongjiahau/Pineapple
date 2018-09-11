@@ -1,6 +1,7 @@
 import { interpret, loadFile } from "./interpret";
-const vm = require("vm");
 
+const fs = require("fs");
+const vm = require("vm");
 const VERSION = require("../package.json").version;
 const program = require("commander");
 
@@ -19,11 +20,15 @@ if (program.args.length === 0) {
 
 
 program.args.forEach((arg: string) => {
-    const file = loadFile(arg);
-    if (file === null) {
-        throw new Error(`Cannot open file ${arg}`);
+    if(fs.existsSync(arg)) {
+        const file = loadFile(fs.realpathSync(arg));
+        if (file === null) {
+            throw new Error(`Cannot open file ${arg}`);
+        }
+        interpret(file, execute, false);
+    } else {
+        console.log(`Cannot open file '${arg}'.`);
     }
-    interpret(file, execute, false);
 });
 
 function execute(javascriptCode: string): string {
