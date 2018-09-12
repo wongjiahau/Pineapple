@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import { preprocess } from "../../preprocess";
-import { assertEquals, dummySourceCode } from "../testUtil";
+import { dummySourceCode } from "../testUtil";
 
 describe("preprocess", () => {
     it("should maintain the number of lines", () => {

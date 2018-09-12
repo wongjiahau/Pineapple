@@ -29,7 +29,6 @@ import {
     VariableDeclaration,
     WhileStatement
 } from "./ast";
-import { prettyPrint } from "./pine2js";
 
 // Note: tp means transpile
 // Example: tpDeclaration means transpileDeclaration

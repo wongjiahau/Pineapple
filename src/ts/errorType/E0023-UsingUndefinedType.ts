@@ -1,7 +1,7 @@
 import { AtomicToken } from "../ast";
 import { SymbolTable } from "../fillUpTypeInformation";
 import { flattenTree } from "../typeTree";
-import { findSimilarStrings, values } from "../util";
+import { findSimilarStrings } from "../util";
 import { ErrorDetail, showSuggestion, stringifyTypeReadable } from "./errorUtil";
 
 export function ErrorUsingUndefinedType(
