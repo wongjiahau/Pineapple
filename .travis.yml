@@ -16,9 +16,6 @@ before_script:
   - npm install -g jest
 
 script:
-  - cd ts
-  - ./transpile.sh 0
-  - cd ../jison
-  - jison pineapple-parser-v2.jison 
-  - cd ..
-  - jest 
+  - ./genparser.sh
+  - ./build.sh 0
+  - ./test.sh
