@@ -1,6 +1,6 @@
-import { testTranspile } from "../../testUtil";
+import { testTranspileSkip } from "../../testUtil";
 
-testTranspile("importing file from github",
+testTranspileSkip("importing file from github",
 `
 import "$github/wongjiahau/Pineapple/"
 
