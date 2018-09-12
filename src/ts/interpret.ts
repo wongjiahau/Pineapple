@@ -4,8 +4,7 @@ import { tpDeclaration } from "./transpile";
 import { raise } from "./fillUpTypeInformation";
 import { ErrorImportFail } from "./errorType/E0030-ImportFail";
 import { initialIntermediateForm, getIntermediateForm } from "./getIntermediateForm";
-
-import S from 'string';
+import { endsWith, startsWith } from "./util";
 
 const clear    = require("clear");
 const fs       = require("fs");
@@ -70,22 +69,22 @@ function extractImports(ast: SyntaxTree, cache: SyntaxTreeCache)
 
 
         const repr = importedFiles[i].repr;
-        if(S(repr).startsWith('"$')) {
-            if(S(repr).startsWith('"$pine/')) {
+        if(startsWith(repr, '"$')) {
+            if(startsWith(repr, '"$pine/')) {
                 const pinelibPath = __dirname + "/../pinelib";
                 importedFiles[i].repr = repr.replace("$pine", pinelibPath);
             } else {
                 throw new Error(`Cannot handle ${repr} yet`);
             }
         }
-        if(S(importedFiles[i].repr).endsWith('*"')) {
+        if(endsWith(importedFiles[i].repr, '*"')) {
             const dirname = importedFiles[i].repr.slice(1, -2);
             if(fs.existsSync(dirname)) {
                 files = fs.readdirSync(dirname).filter((x: string) => /[.]pine$/.test(x));
                 files = files.map((x) => fs.realpathSync(dirname + "/" + x));
                 files = files.filter((x) => fs.lstatSync(x).isFile()); // remove directory names
             } else {
-                throw new Error(`Cannot import the directory ${importedFiles[i]}`)
+                throw new Error(`Cannot import the directory ${importedFiles[i].repr}`)
             }
         } else {
             // automaticallyl append file extension

@@ -15,6 +15,11 @@ def (this Integer) + (that Integer) -> Integer
     return $this + $that;
     </javascript>
 
+def (this Integer) - (that Integer) -> Integer
+    <javascript>
+    return $this - $that;
+    </javascript>
+
 def (this Number) - (that Number) -> Number
     <javascript>
     return $this - $that;

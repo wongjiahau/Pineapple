@@ -41,3 +41,12 @@ export function findSimilarStrings(needle: string, haystack: string[]): string[]
 export function copy < T >(x: T): T {
     return JSON.parse(JSON.stringify(x));
 }
+
+
+export function endsWith(s: String, suffixes: string): boolean {
+    return s.slice(-suffixes.length) === suffixes;
+}
+
+export function startsWith(s: string, prefixes: string): boolean {
+    return s.slice(0, prefixes.length) === prefixes;
+}

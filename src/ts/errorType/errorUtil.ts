@@ -9,7 +9,11 @@ export interface ErrorDetail  {
 }
 
 export function stringifyGenericList(gs: GenericList): string {
-    return "{" + gs.map(stringifyTypeReadable).join(",") + "}";
+    if(gs.length === 0) {
+        return "";
+    } else {
+        return "{" + gs.map(stringifyTypeReadable).join(",") + "}";
+    }
 }
 
 export function stringifyTypeReadable(t: TypeExpression | null): string {
