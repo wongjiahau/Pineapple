@@ -1,4 +1,9 @@
+# transpiled typescript
 dist
+
+# code coverage details
+coverage
+
 build
 site
 **/node_modules/**

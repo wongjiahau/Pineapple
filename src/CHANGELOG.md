@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.0.8
+Added support for importing modules and directories.
+
 ## 0.0.3
 Fix the problem of v0.0.2.
 See https://github.com/npm/npm/issues/17268

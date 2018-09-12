@@ -8,4 +8,4 @@ build/
 
 # ignore grammar file
 *.jison
-*.ebnd
+*.ebnf

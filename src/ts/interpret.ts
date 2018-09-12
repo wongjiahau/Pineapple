@@ -26,7 +26,7 @@ export function interpret(
 ): string {
     try {
         if(loadPreludeLibrary) {
-            source.content = `import "$/prelude/*"\n` + source.content;
+            source.content = `import "$pine/prelude/*"\n` + source.content;
         }
         const initialCache: SyntaxTreeCache = {};
         const ast = parseCodeToSyntaxTree(source);
