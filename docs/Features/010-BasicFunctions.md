@@ -33,15 +33,15 @@ In general, there are 5 kinds of functions:
 Nullifunc is a function that do not need any parameters, for example:
 ```pine
 // Here's how you define a nullifunc
-def .pi -> Number
+def ().pi -> Number
     return 3.142
  
 // Here's how you call a nullifunc
-let x = .pi
+let x = ().pi
 ```
 
 !!! info "Note"
-    `#!pine -> Number` means that the `#!pine .pi` function will return a `#!pine Number` type.
+    `#!pine -> Number` means that the `#!pine ().pi` function will return a `#!pine Number` type.
 
 !!! tip
     If you want to declare a function that does not return anything, just don't put the arrow symbol. 
@@ -49,7 +49,7 @@ let x = .pi
     For example,
 
     ```pine
-    def .showMyName // no need to put -> here
+    def ().showMyName // no need to put -> here
         pass
     ```
 <hr>
