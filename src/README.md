@@ -31,25 +31,7 @@ pine hello.pine
 
 # How to get started (For developers)
 
-## 1.1 You need to install `jison` parser generator.
-
-```
-npm i -g jison
-```
-
-## 1.2 You also need `tsc`, Typescript Compiler
-
-```
-npm i -g typescript
-```
-
-## 1.3 Also, TSLint
-
-```
-npm i -g tslint 
-```
-
-## 1.4 Lastly, install needed modules
+## 1. Install dependencies
 
 ```
 cd src

@@ -9,12 +9,9 @@ fi
 cd ts
 # If passed in 0, don't launch watch mode
 if [ "$1" -eq 0 ]; then
-    echo "Running TSLint to check for bad code . . ."
-    tslint --project .
-
     echo "Transpiling . . ."
-    tsc
+    ../node_modules/typescript/bin/tsc
 else
     echo "Transpiling in watch mode . . ."
-    tsc --watch
+    ../node_modules/typescript/bin/tsc --watch
 fi

@@ -1,2 +1,3 @@
 #!/bin/bash
-jest --watch
+./node_modules/jest/bin/jest.js --watch
+# jest --watch

@@ -11,9 +11,6 @@ before_script:
   - sed -i 's/\[ "node" \]/\[\]/g' "./src/ts/tsconfig.json" # For correcting Error TS2688
   - cd src
   - npm install
-  - npm install -g typescript@2.7.2
-  - npm install -g jison
-  - npm install -g jest
 
 script:
   - ./genparser.sh

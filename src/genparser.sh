@@ -3,7 +3,7 @@
 
 echo "Generating parser using jison . . ."
 cd "./jison"
-jison pineapple-parser-v2.jison
+../node_modules/jison/lib/cli.js pineapple-parser-v2.jison
 
 # The following line is a workaround
 # This is to allow lexical error to have location details
