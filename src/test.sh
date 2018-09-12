@@ -1,3 +1,8 @@
 #!/bin/bash
-./node_modules/jest/bin/jest.js --watch
-# jest --watch
+
+# This 0 option is needed for Travis CI
+if [ "$1" -eq 0 ]; then
+    ./node_modules/jest/bin/jest.js
+else
+    ./node_modules/jest/bin/jest.js --watch
+fi
