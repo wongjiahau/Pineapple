@@ -690,11 +690,13 @@
 
 <div class="admonition info">
 <p class="admonition-title">Note</p>
-<p>Every variable in Pineapple must start with <mark>lowercase letter</mark> and cannot contain any spaces.<br />
+<p>Every variable in Pineapple must start with <mark>lowercase letter</mark> and cannot contain any spaces or underscore.<br />
 The following are invalid variable names:</p>
 <div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nb">Message</span> <span class="o">=</span> <span class="sb">&quot;Yo&quot;</span> <span class="c1">// Invalid, cannot start with uppercase letter</span>
 
 <span class="kd">let</span> <span class="nx">my</span> <span class="nx">name</span> <span class="o">=</span> <span class="sb">&quot;Wong&quot;</span> <span class="c1">// Invalid, cannot contain spaces</span>
+
+<span class="kd">let</span> <span class="err">my_</span><span class="nx">pet</span> <span class="o">=</span> <span class="sb">&quot;Cat&quot;</span> <span class="c1">// Invalid, cannot contain underscore</span>
 </pre></div>
 
 </div>
