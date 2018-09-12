@@ -8,7 +8,7 @@ def (this Any).show
 def (this String).show
     pass
 
-def .main
+def ().main
     "Hello".show
 `,
 `

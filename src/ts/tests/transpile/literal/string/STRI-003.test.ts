@@ -8,7 +8,7 @@ def (this Number) + (that Number) -> Number
 def (this Number).toString -> String
     pass
 
-def .main
+def ().main
     let x = 123
     let z = "Hello $((1+2).toString) world"
 `,

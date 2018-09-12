@@ -5,7 +5,7 @@ testError("ErrorAssigningNullToUnnullableVariable",
 def Nil
     #nil
 
-def .main
+def ().main
     let x Number = #nil
 `
 );

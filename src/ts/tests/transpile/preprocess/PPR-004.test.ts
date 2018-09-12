@@ -1,7 +1,7 @@
 import { testTranspile } from "../../testUtil";
 
 testTranspile("should auto add missing newline at EOF", 
-`def .main
+`def ().main
     let y = 6`
 ,
 `

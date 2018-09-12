@@ -5,7 +5,7 @@ testTranspile("trifunc",
 def (this String).replace(old String with that String) -> String
     pass
 
-def .main
+def ().main
     let x = "1,2,3".replace("," with ".")
 `,
 `

@@ -1,4 +1,4 @@
 import "b"
 
-def .main
+def ().main
     "Hello world".show

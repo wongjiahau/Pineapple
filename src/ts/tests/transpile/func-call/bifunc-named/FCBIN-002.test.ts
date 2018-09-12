@@ -8,7 +8,7 @@ def (this Number).mul(that Number) -> Number
 def (this Number) + (that Number) -> Number
     pass
 
-def .main
+def ().main
     let result = 1.mul(2) + 3.mul(6)
 `,
 `

@@ -2,10 +2,10 @@ import { testError } from "../../tests/testUtil";
 
 testError("ErrorConditionIsNotBoolean",
 `
-def .show
+def ().show
     pass
 
-def .main
-    if .show
-        .show
+def ().main
+    if ().show
+        ().show
 `);

@@ -5,7 +5,7 @@ testTranspile("for loop 1",
 def (this String).print
     pass
 
-def .main
+def ().main
     for i in ["a", "b", "c"]
         i.print
 `,

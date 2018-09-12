@@ -5,7 +5,7 @@ testTranspile("bifunc",
 def (this Number).add(that Number) -> Number
     pass
 
-def .main
+def ().main
     let result = 1.add(2)
 `,
 `

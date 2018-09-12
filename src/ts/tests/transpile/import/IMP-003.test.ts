@@ -4,8 +4,8 @@ testTranspile("importing file from pinelib",
 `
 import "$pine/prelude/dummy"
 
-def .main
-    .dummy
+def ().main
+    ().dummy
 `,
 `
 function _dummy_(){

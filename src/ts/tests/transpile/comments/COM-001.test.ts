@@ -3,7 +3,7 @@ import { testTranspile } from "../../testUtil";
 testTranspile("simple comments",
 `
 // hello world
-def .main
+def ().main
     let x = 3
 `,
 `

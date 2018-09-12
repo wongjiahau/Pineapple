@@ -2,7 +2,7 @@ import { testTranspile } from "../../../testUtil";
 
 testTranspile("tuple literal",
 `
-def .main
+def ().main
     let tuple = (1, "2", 3)
 `
 ,

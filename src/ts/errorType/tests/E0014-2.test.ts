@@ -1,7 +1,7 @@
 import { testError } from "../../tests/testUtil";
 
 testError("ErrorVariableRedeclare", `
-def .main
+def ().main
     let myName String = "123"
     let myName Number = 123
 `);

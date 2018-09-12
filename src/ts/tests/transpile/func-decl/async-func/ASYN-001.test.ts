@@ -4,11 +4,11 @@ import { testTranspile } from "../../../testUtil";
 // that calls an async function
 testTranspile("async function",
 `
-def async .readline -> String
+def async ().readline -> String
     pass
 
-def .main
-    let x = .readline
+def ().main
+    let x = ().readline
 `,
 `
 async function _readline_(){

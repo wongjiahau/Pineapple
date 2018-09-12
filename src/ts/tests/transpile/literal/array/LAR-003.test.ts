@@ -2,7 +2,7 @@ import { testTranspile } from "../../../testUtil";
 
 testTranspile("empty array",
 `
-def .main
+def ().main
     let x = List{String}
 `,
 `

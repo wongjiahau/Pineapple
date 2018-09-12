@@ -4,6 +4,6 @@ testError("ErrorNoConformingFunction", `
 def (this String).print
     pass
 
-def .main
+def ().main
     123.print
 `);

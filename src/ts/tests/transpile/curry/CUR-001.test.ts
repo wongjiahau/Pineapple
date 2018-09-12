@@ -5,7 +5,7 @@ describe.skip("CUR-001", () => {
     it("case 1", () => {
         const input =
 `
-def .main
+def ().main
     let x = _.isPrime
 
 def (this Number).isPrime -> Boolean

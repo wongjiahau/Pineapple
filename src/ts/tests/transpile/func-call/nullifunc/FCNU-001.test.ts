@@ -2,10 +2,10 @@ import { testTranspile } from "../../../testUtil";
 
 testTranspile("nullifunc invocation",
 `
-def .main
-    let x = .pi
+def ().main
+    let x = ().pi
 
-def .pi -> Number
+def ().pi -> Number
     pass
 `
 ,

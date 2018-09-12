@@ -4,9 +4,9 @@ testTranspile("import every file from a directory",
 `
 import "samplePineScripts/innerDir/*"
 
-def .main
-    .cFunc
-    .dFunc
+def ().main
+    ().cFunc
+    ().dFunc
 `,
 `
 function _dFunc_(){

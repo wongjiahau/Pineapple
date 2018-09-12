@@ -2,7 +2,7 @@ import { testTranspile } from "../../testUtil";
 
 testTranspile("should ignore dangling newlines",
 `
-def .main
+def ().main
     let y = 6
 
 

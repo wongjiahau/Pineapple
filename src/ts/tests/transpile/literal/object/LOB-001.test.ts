@@ -2,7 +2,7 @@ import { testTranspile } from "../../../testUtil";
 
 testTranspile("object literals with string key", 
 `
-def .main
+def ().main
     let y = 6
 
     let people =

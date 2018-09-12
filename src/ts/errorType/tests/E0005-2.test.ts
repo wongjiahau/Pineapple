@@ -4,7 +4,7 @@ testError("ErrorIncorrectTypeGivenForMember", `
 def Node{T}
     :current T
 
-def .main
+def ().main
     let x = Node{Number}
         :current = "hi"
 `);

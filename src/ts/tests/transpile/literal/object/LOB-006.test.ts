@@ -9,7 +9,7 @@ def People
     :name   String
     :friend People?
 
-def .newPeople -> People
+def ().newPeople -> People
     return People
         :name = "John"
         :friend = People

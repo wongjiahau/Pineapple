@@ -5,7 +5,7 @@ testTranspile("return object directly",
 def People
     :name String
 
-def .newPeople -> People
+def ().newPeople -> People
     return People
         :name = "John"
 `,

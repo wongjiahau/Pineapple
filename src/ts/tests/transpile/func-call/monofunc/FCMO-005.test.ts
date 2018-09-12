@@ -5,7 +5,7 @@ testTranspile("generic monofunc",
 def (this T).show
     pass
 
-def .main
+def ().main
     "Hello".show
 `,
 `

@@ -1,10 +1,15 @@
 def .main
-    let str = "Enter a string > ".ask
-    let old = "Which old char you want to replace > ".ask
-    let new = "Replace with? > ".ask
-    let result = str.replace(old with new)
-    "The result is '$(result)'".show
+    let age = "How old are you?".ask.toInteger
+    if age > 50
+        "You are old".show
+    else
+        "You are young".show
 
-    for i in 0 ..< 10
-        let x = "Tell me your name".ask
-        x.show
+
+    // if #false
+    //     let str = "Enter a string > ".ask
+    //     let old = "Which old char you want to replace > ".ask
+    //     let new = "Replace with? > ".ask
+    //     let result = str.replace(old with new)
+    //     "The result is '$(result)'".show
+    // else 

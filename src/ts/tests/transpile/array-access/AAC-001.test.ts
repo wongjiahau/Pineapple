@@ -5,7 +5,7 @@ testTranspile("case 1",
 def (this List{T}).(that Number) -> T
     pass
 
-def .main
+def ().main
     let x = [1, 2, 3]
     let y = x.(0)
 `,

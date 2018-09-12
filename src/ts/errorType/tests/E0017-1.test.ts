@@ -2,6 +2,6 @@ import { testError } from "../../tests/testUtil";
 
 testError("ErrorUsingUndefinedVariable",
 `
-def .main
+def ().main
     let x = a
 `);

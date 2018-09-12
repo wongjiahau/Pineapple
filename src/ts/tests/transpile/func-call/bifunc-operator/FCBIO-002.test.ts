@@ -5,7 +5,7 @@ testTranspile("nested bifunction call",
 def (this Number) + (that Number) -> Number
     pass
 
-def .main
+def ().main
     let y = 6 + 7 + 8
 `,
 `

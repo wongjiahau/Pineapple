@@ -306,9 +306,9 @@ FunctionDecls
     ;
 
 NulliFuncDeclaration
-    : FuncAtom Arrow TypeExpression Block 
-        {$$=_FunctionDeclaration([$1],$3,[],$4,"Nulli")}
-    | FuncAtom Block {$$=_FunctionDeclaration([$1],null,[],$2,"Nulli")}
+    : LeftParenthesis RightParenthesis FuncAtom Arrow TypeExpression Block 
+        {$$=_FunctionDeclaration([$3],$5,[],$6,"Nulli")}
+    | LeftParenthesis RightParenthesis FuncAtom Block {$$=_FunctionDeclaration([$3],null,[],$4,"Nulli")}
     ;
 
 MonoFuncDeclaration
@@ -460,7 +460,7 @@ AtomicFuncCall
     ;
 
 NulliFuncCall
-    : FuncAtom  {$$=_FunctionCall("Nulli",[$1],[],this._$)}
+    : LeftParenthesis RightParenthesis FuncAtom  {$$=_FunctionCall("Nulli",[$3],[],this._$)}
     ;
 
 MonoFuncCall

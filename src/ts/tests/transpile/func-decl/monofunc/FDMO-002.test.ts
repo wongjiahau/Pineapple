@@ -2,7 +2,7 @@ import { testTranspile } from "../../../testUtil";
 
 testTranspile("order of function declaration should not matter",
 `
-def .main
+def ().main
     "Hello".show
 
 def (this String).show

@@ -2,7 +2,7 @@ import { testTranspile } from "../../../testUtil";
 
 testTranspile("list with some elements",
 `
-def .main
+def ().main
     let x = [1.1, 2.2, 3.3, 4.4]
 `
 ,

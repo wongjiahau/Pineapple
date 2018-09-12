@@ -8,7 +8,7 @@ def (this String).capitalize -> String
 def (this String).reverse
     pass
 
-def .main
+def ().main
     "Hello".capitalize.reverse
 `,
 `

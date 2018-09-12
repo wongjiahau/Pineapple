@@ -5,7 +5,7 @@ testTranspile("case 1",
 def (this String).show
     pass
 
-def .main
+def ().main
     "hello world".show
 `,
 `

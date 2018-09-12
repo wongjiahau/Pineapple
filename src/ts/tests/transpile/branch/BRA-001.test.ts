@@ -8,7 +8,7 @@ def Boolean
 def (this Number) > (that Number) -> Boolean
     pass
 
-def .main
+def ().main
     let x Number = 4
     let y Number = 6
     if x > y

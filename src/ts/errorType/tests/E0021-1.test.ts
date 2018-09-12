@@ -4,6 +4,6 @@ testError("ErrorAssigningVoidToVariable", `
 def (this String).show
     pass
 
-def .main
+def ().main
     let x = "hello".show
 `);

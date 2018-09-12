@@ -7,7 +7,7 @@ describe("LOB-002", () => {
     it.skip("single line object", () => {
         const input =
 `
-def .main
+def ().main
     let people = {"x"=2, "y"=2}
 
 `;

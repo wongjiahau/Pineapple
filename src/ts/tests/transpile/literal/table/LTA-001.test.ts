@@ -2,7 +2,7 @@ import { testTranspile } from "../../../testUtil";
 
 testTranspile("type inferred literal table", // a.k.a dictionary
 `
-def .main
+def ().main
     let x =
         "name" = "John"
         "age"  = "Hello"

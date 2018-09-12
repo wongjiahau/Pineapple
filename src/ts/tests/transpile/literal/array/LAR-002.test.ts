@@ -2,7 +2,7 @@ import { testTranspile } from "../../../testUtil";
 
 testTranspile("multiline lists",
 `
-def .main
+def ().main
     let fruits =
         o "pineapple"
         o "apple"

@@ -12,7 +12,7 @@ def Nil
 def Undefined
     #undefined
 
-def .main
+def ().main
     let x = #true
     let y = #false
     let z = #nil

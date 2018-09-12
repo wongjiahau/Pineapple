@@ -7,7 +7,7 @@ def Color
     #green
     #blue
 
-def .main
+def ().main
     let x Color = #green
 `,
 `

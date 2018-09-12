@@ -5,7 +5,7 @@ testTranspile("parent type inference",
 def (this Any).show
     pass
 
-def .main
+def ().main
     "Hello".show
 `,
 `

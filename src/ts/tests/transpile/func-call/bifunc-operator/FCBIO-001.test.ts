@@ -5,7 +5,7 @@ testTranspile("bifunction call",
 def (this Number) + (that Number) -> Number
     pass
 
-def .main
+def ().main
     let x Number = 4
     let y Number = 6
     let result = x + y

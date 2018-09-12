@@ -4,7 +4,7 @@ testError("ErrorDuplicatedMember", `
 def People
     :name String
 
-def .main
+def ().main
     let x = People
         :name = "123"
         :name = "123"

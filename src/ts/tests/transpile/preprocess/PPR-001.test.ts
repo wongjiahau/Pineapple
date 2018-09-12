@@ -2,7 +2,7 @@ import { testTranspile } from "../../testUtil";
 
 testTranspile("should ignore consecutive newlines",
 `
-def .main
+def ().main
     let x = "hello world"
 
 

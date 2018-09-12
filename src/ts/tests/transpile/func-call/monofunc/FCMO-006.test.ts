@@ -5,7 +5,7 @@ testTranspile("prefix unary operator function call",
 def - (this Number) -> Number
     pass
 
-def .main
+def ().main
     let x = -123
 
 `,

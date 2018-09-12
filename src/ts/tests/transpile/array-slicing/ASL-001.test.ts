@@ -5,7 +5,7 @@ testTranspile("array slicing",
 def (this List{T}).(start Integer to end Integer) -> T
     pass
 
-def .main
+def ().main
     let x = [1, 2, 3]
     let y = x.(0 to 1)
 `,

@@ -6,7 +6,7 @@ describe("label line numbers", () => {
     it("case 1", () => {
         const input =
 `
-def .main
+def ().main
     "Hello world".show
 "bye".show
     "bye".show
@@ -20,7 +20,7 @@ def .main
         const result = labelLineNumbers(input, location, 3, mockChalk());
         const expected =
 `
-            | 1 | def .main
+            | 1 | def ().main
             | 2 |     "Hello world".show
     ERROR >>| 3 | "bye".show
             |   | ^^^^^

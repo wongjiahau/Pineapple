@@ -25,7 +25,7 @@ hello world
     });
 
     it("should be able to process tabs", () => {
-        const input = "def .main\n\tlet x = 3";
+        const input = "def ().main\n\tlet x = 3";
         expect(() => {
             preprocess(dummySourceCode(input));
         }).to.not.throws();

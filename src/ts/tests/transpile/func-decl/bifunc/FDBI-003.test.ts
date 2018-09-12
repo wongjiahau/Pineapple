@@ -8,7 +8,7 @@ def (this Number) + (that Number) -> Number
 def (this Integer) + (that Integer) -> Integer
     pass
 
-def .main
+def ().main
     let x = 1 + 2.0
     let y = 1 + 2
 `,

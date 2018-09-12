@@ -2,7 +2,7 @@ import { testError } from "../../tests/testUtil";
 
 testError("ErrorUsingUndefinedType",
 `
-def .main
+def ().main
     let x Numbe = 123
 `
 );

@@ -4,7 +4,7 @@ testError("ErrorIncorrectTypeGivenForMember", `
 def Node{T}
     :children List{T}
 
-def .main
+def ().main
     let x = Node{Number}
         :children = "hi"
 `);

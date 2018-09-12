@@ -6,10 +6,10 @@ def Boolean
     #true
     #false
 
-def .show
+def ().show
     pass
 
-def .main
-    if .show
-        .show
+def ().main
+    if ().show
+        ().show
 `);

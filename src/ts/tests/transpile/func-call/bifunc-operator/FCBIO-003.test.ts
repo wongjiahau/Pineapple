@@ -5,7 +5,7 @@ testTranspile("double symbols",
 def (this String) ++ (that String) -> String
     pass
 
-def .main
+def ().main
     let y = "pine" ++ "apple"
 `,
 `

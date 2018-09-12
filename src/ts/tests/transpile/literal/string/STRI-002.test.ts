@@ -2,7 +2,7 @@ import { testTranspile } from "../../../testUtil";
 
 testTranspile("string interpolation with nested brackets",
 `
-def .main
+def ().main
     let x = "123"
     let z = "Hello $((x)) world $(x)"
 `,

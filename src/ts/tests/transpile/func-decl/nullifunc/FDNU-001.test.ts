@@ -2,7 +2,7 @@ import { testTranspile } from "../../../testUtil";
 
 testTranspile("nullifunc",
 `
-def .main
+def ().main
     pass
 `,
 `

@@ -2,7 +2,7 @@ import { testTranspile } from "../../../testUtil";
 
 testTranspile("generic type specialization",
 `
-def .main
+def ().main
     let x = [1,2,3].append(1).append(3)
 
 def (this List{T}).append(that T) -> List{T}

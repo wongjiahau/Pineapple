@@ -5,7 +5,7 @@ testTranspileSkip("bodyless object",
 def People
     pass
 
-def .main
+def ().main
     let x = People
     let y = 6
 `,

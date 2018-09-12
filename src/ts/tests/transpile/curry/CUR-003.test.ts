@@ -5,7 +5,7 @@ describe.skip("CUR-003", () => {
     it("case 1", () => {
         const input =
 `
-def .main
+def ().main
     let x = 2 > _
 `;
         const expectedOutput =

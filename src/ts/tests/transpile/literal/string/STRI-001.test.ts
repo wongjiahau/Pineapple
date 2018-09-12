@@ -2,7 +2,7 @@ import { testTranspile } from "../../../testUtil";
 
 testTranspile("string interpolation",
 `
-def .main
+def ().main
     let message1 = "baby"
     let message2 = "123"
     let z = "Hello $(message1) baby $(message2) world"

@@ -5,7 +5,7 @@ testTranspile("function call type inference",
 def (this Number) + (that Number) -> Number
     pass
 
-def .main
+def ().main
     let y = 6 + (6 + 6)
 `,
 `

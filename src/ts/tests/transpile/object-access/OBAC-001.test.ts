@@ -6,7 +6,7 @@ def People
     :name String
     :age  Number
 
-def .main
+def ().main
     let x = People
         :name = "Wong"
         :age  = 99

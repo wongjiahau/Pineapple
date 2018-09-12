@@ -5,7 +5,7 @@ describe.skip("CUR-004", () => {
     it("double parameter lambda", () => {
         const input =
 `
-def .main
+def ().main
     let x = _ > _
 `;
         const expectedOutput =

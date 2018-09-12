@@ -8,7 +8,7 @@ def Boolean
 def (this Number) > (that Number) -> Boolean
     pass
 
-def .main
+def ().main
     if 5 > 6
         return "ok"
     else

@@ -2,7 +2,7 @@ import { testTranspile } from "../../testUtil";
 
 testTranspile("behind the line comments",
 `
-def .main
+def ().main
     let x = 3 // hello
 `,
 `
