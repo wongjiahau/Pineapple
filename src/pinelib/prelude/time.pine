@@ -1,4 +1,4 @@
-def .now -> Date 
+def ().now -> Date 
     <javascript>
     return new Date();
     </javascript>

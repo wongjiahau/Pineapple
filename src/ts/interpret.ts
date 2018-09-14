@@ -40,7 +40,7 @@ export function interpret(
         const sortedDependencies = sortDependency(dependencies);
         const sortedSyntaxTrees = sortedDependencies.map((x) => updatedCache[x]).filter((x) => x !== undefined);
         const result = loadSource(sortedSyntaxTrees); // ir means intermediate representation
-        if(result.kind === "OK") {
+        if(isOK(result)) {
             const ir = result.value;
             const transpiledCode = ir.map(tpDeclaration).join("\n");
             return ok(execute(transpiledCode));

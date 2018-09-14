@@ -1,4 +1,6 @@
 import { interpret, loadFile } from "./interpret";
+import { isFail } from "./fillUpTypeInformation";
+import { renderError } from "./errorType/renderError";
 
 const fs = require("fs");
 const vm = require("vm");
@@ -25,7 +27,10 @@ program.args.forEach((arg: string) => {
         if (file === null) {
             throw new Error(`Cannot open file ${arg}`);
         }
-        interpret(file, execute, false, true);
+        const result = interpret(file, execute, false, true);
+        if(isFail(result)) {
+            console.log(renderError(result.error));
+        }
     } else {
         console.log(`Cannot open file '${arg}'.`);
     }

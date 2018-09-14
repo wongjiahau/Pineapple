@@ -1,4 +1,4 @@
-def .main
+def ().main
     let age = "How old are you?".ask.toInteger
     if age > 50
         "You are old".show

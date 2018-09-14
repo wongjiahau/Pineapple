@@ -1,13 +1,15 @@
 import chalk from "chalk";
 import { labelLineNumbers } from "../labelLineNumbers";
 import { ErrorDetail } from "./errorUtil";
-import { SourceCode } from "../interpret";
 const boxen = require("boxen");
 
 export function renderError(
-    sourceCode: SourceCode,
     errorDetail: ErrorDetail,
 ): string {
+    if(errorDetail.source === undefined) {
+        return `ERROR: errorDetail.source is not defined. This error is related to ${errorDetail.name}`;
+    }
+    const sourceCode = errorDetail.source;
     const errorMessageStyle = {borderStyle: "double", padding: 1, borderColor: "red"};
     const sourceCodeStyle = {padding: 1, borderColor: "grey"};
     const hintStyle = {padding: 1, borderColor: "cyan"};
