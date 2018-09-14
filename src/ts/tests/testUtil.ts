@@ -168,3 +168,7 @@ export function dummySourceCode(content: string): SourceCode {
         content: content
     };
 }
+
+export function assertFail(message: string) {
+    throw new Error(message);
+}

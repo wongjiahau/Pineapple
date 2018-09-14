@@ -1,7 +1,7 @@
 import { SyntaxTree, ImportDeclaration, Declaration, StringExpression } from "./ast";
 import { parseCodeToSyntaxTree, UnkwownError } from "./parseCodeToSyntaxTree";
 import { tpDeclaration } from "./transpile";
-import { raise, Maybe, ok, isOK, isFail, fail } from "./fillUpTypeInformation";
+import { Maybe, ok, isOK, isFail, fail } from "./fillUpTypeInformation";
 import { ErrorImportFail } from "./errorType/E0030-ImportFail";
 import { initialIntermediateForm, getIntermediateForm } from "./getIntermediateForm";
 import { endsWith, startsWith } from "./util";
@@ -99,7 +99,11 @@ function extractImports(ast: SyntaxTree, cache: SyntaxTreeCache)
         } else {
             // automaticallyl append file extension
             importedFiles[i].repr = importedFiles[i].repr.slice(0, -1) + '.pine"'; 
-            files = [getFullFilename(ast, importedFiles[i])];
+
+            const result = getFullFilename(ast, importedFiles[i])
+            if(isFail(result)) return result;
+
+            files = [result.value];
         }
         for (let j = 0; j < files.length; j++) {
             const f = loadFile(files[j]);
@@ -122,7 +126,8 @@ function extractImports(ast: SyntaxTree, cache: SyntaxTreeCache)
     return ok([dependencies, cache] as [Dependencies, SyntaxTreeCache]);
 }
 
-function getFullFilename(ast: SyntaxTree, importedFilename: StringExpression): string {
+function getFullFilename(ast: SyntaxTree, importedFilename: StringExpression)
+: Maybe<string, ErrorDetail> {
     const filename = importedFilename.repr.slice(1, -1);
     let fullFilename: string = (() => {
         if(importedFilename.repr[1] === "/") { // if is absolute path
@@ -136,9 +141,11 @@ function getFullFilename(ast: SyntaxTree, importedFilename: StringExpression): s
     fullFilename = path.normalize(fullFilename);
     if(!fs.existsSync(fullFilename)) {
         console.log(fullFilename);
-        return raise(ErrorImportFail(importedFilename), ast.source);
+        const error = ErrorImportFail(importedFilename);
+        error.source = ast.source;
+        return fail(error);
     } else {
-        return fs.realpathSync(fullFilename);
+        return ok(fs.realpathSync(fullFilename) as string);
     }
 }
 

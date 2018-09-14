@@ -1,6 +1,7 @@
 import { expect } from "chai";
 import { preprocess } from "../../preprocess";
-import { assertEquals, dummySourceCode } from "../testUtil";
+import { dummySourceCode, assertFail } from "../testUtil";
+import { isFail } from "../../fillUpTypeInformation";
 
 describe("preprocess", () => {
     it("should maintain the number of lines", () => {
@@ -19,8 +20,9 @@ hello world
 
 `;
         const result = preprocess(dummySourceCode(input));
+        if(isFail(result)) return assertFail("");
         // 2 new lines will be added
-        expect(input.split("\n").length + 2).to.eq(result.split("\n").length);
+        expect(input.split("\n").length + 2).to.eq(result.value.split("\n").length);
 
     });
 

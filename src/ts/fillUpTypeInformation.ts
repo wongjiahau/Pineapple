@@ -140,7 +140,8 @@ export function fillUpTypeInformation(
                 break;
             case "StructDeclaration":
                 // check if the struct is declared already or not
-                newStructTab(currentDecl, copy(symbols.structTab));
+                const tempStructTab  = newStructTab(currentDecl, copy(symbols.structTab));
+                if(isFail(tempStructTab)) return tempStructTab;
 
                 const tempSymbols = copy(symbols);
                 tempSymbols.typeTree = insertChild<TypeExpression> (
@@ -151,10 +152,14 @@ export function fillUpTypeInformation(
                 );
 
                 const result = validateStruct(currentDecl, tempSymbols);
-                if(result.kind === "Fail") return result;
+                if(isFail(result)) return result;
                 const validatedStruct = result.value;
-                const newSturctTab = newStructTab(validatedStruct, symbols.structTab);
-                // symbols.structTab = newStructTab(validatedStruct, symbols.structTab);
+
+                const structTab = newStructTab(validatedStruct, symbols.structTab);
+                if(isFail(structTab)) return structTab;
+
+                symbols.structTab = structTab.value;
+
                 symbols.typeTree = insertChild<TypeExpression> (
                     newStructType(validatedStruct, validatedStruct.genericList),
                     BaseStructType(),
@@ -407,13 +412,13 @@ export function resolveType(t: TypeExpression | null, symbols: SymbolTable)
 }
 
 export function newStructTab(s: StructDeclaration, structTab: StructTable)
-: StructTable | ErrorDetail {
+: Maybe<StructTable , ErrorDetail> {
     if (s.name.repr in structTab) {
-        return ErrorStructRedeclare(s);
+        return fail(ErrorStructRedeclare(s));
     } else {
         structTab[s.name.repr] = s;
     }
-    return structTab;
+    return ok(structTab);
 }
 
 export function newFunctionTable(newFunc: FunctionDeclaration, previousFuncTab: FunctionTable, ): FunctionTable {

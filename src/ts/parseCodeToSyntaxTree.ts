@@ -1,6 +1,6 @@
 import { Declaration, SyntaxTree, Expression, NullTokenLocation } from "./ast";
 import { preprocess } from "./preprocess";
-import { Maybe, fail, ok, isOK } from "./fillUpTypeInformation";
+import { Maybe, fail, ok, isOK, isFail } from "./fillUpTypeInformation";
 import { ErrorSyntax } from "./errorType/E0010-Syntax";
 import { ErrorLexical } from "./errorType/E0028-Lexical";
 import { SourceCode } from "./interpret";
@@ -8,16 +8,19 @@ import { ErrorDetail } from "./errorType/errorUtil";
 
 export function parseCodeToSyntaxTree(sourceCode: SourceCode)
 : Maybe<SyntaxTree, ErrorDetail> {
-    sourceCode.content = preprocess(sourceCode);
-    const parsedCode = parseCode(sourceCode);
-    if(isOK(parsedCode)) {
+    const preprocessResult = preprocess(sourceCode);
+    if(isFail(preprocessResult)) return preprocessResult;
+    sourceCode.content = preprocessResult.value;
+
+    const parseResult = parseCode(sourceCode);
+    if(isOK(parseResult)) {
         return ok({
             source: sourceCode,
-            declarations: parsedCode.value as Declaration[],
+            declarations: parseResult.value as Declaration[],
             importedFiles: {}
         });
     } else {
-        return parsedCode;
+        return parseResult;
     }
 }
 
