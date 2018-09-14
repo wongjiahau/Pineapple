@@ -1,11 +1,13 @@
 import { AtomicToken, GenericList, TokenLocation, TypeExpression } from "../ast";
+import { SourceCode } from "../interpret";
 
-export interface ErrorDetail  {
+export type ErrorDetail = {
     code: string;
     name: string;
     message: string;
     relatedLocation: TokenLocation;
     hint?: string;
+    source?: SourceCode;
 }
 
 export function stringifyGenericList(gs: GenericList): string {

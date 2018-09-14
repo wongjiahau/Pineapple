@@ -5,7 +5,6 @@ def .main
     else
         "You are young".show
 
-
     // if #false
     //     let str = "Enter a string > ".ask
     //     let old = "Which old char you want to replace > ".ask

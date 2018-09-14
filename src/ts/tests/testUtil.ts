@@ -1,6 +1,9 @@
 import { expect } from "chai";
 require("colors");
 
+declare var describe: any;
+declare var it: any;
+
 // @ts-ignore
 import { mocha } from "mocha";
 import { interpret, SourceCode } from "../interpret";
@@ -44,10 +47,19 @@ export function testError(expectedErrorName: string, input: string, logError = f
                 content: input,
                 filename: "<UNIT_TEST>"
             };
-            if (logError) {
-                testerInterpret(source);
+            const result = testerInterpret(source);
+            if(result.kind === "OK") {
+                throw new Error("No error is caught");
             } else {
-                expect(catchError(() => testerInterpret(source)).name).to.eq("#" + expectedErrorName);
+                const error = result.error;
+                if (logError) {
+                    console.log(error);
+                } else {
+                    expect(error).to.not.equal(null);
+                    if(error !== null) {
+                        expect(error.name).to.eq(expectedErrorName);
+                    }
+                }
             }
         });
     });
@@ -60,8 +72,12 @@ export function testTranspile(description: string, input: string, expectedOutput
                 content: input,
                 filename: "<UNIT_TEST>"
             };
-            const result = testerInterpret(source).trim();
-            assertEquals(result.trim(), expectedOutput.trim());
+            const result = testerInterpret(source);
+            if(result.kind === "OK") {
+                assertEquals(result.value.trim(), expectedOutput.trim());
+            } else {
+                throw new Error("Caught error ")
+            }
         });
     });
 }
