@@ -21,45 +21,29 @@ export type ErrorHandler = (e: Error) => void;
 export function interpret(
     source: SourceCode, 
     execute: CodeExecuter, 
-    rethrowError: boolean, 
     loadPreludeLibrary: boolean
 ): Maybe<string, ErrorDetail> {
-    try {
-        if(loadPreludeLibrary) {
-            source.content = `import "$pine/prelude/*"\n` + source.content;
-        }
-        const initialCache: SyntaxTreeCache = {};
-        const parsedCode = parseCodeToSyntaxTree(source);
-        if(isFail(parsedCode)) return parsedCode;
-        const ast = parsedCode.value;
-        initialCache[source.filename] = ast;
-        const extractResult = extractImports(ast, initialCache);
-        if(isFail(extractResult)) return extractResult;
-        const [dependencies, updatedCache] = extractResult.value;
+    if(loadPreludeLibrary) {
+        source.content = `import "$pine/prelude/*"\n` + source.content;
+    }
+    const initialCache: SyntaxTreeCache = {};
+    const parsedCode = parseCodeToSyntaxTree(source);
+    if(isFail(parsedCode)) return parsedCode;
+    const ast = parsedCode.value;
+    initialCache[source.filename] = ast;
+    const extractResult = extractImports(ast, initialCache);
+    if(isFail(extractResult)) return extractResult;
+    const [dependencies, updatedCache] = extractResult.value;
 
-        const sortedDependencies = sortDependency(dependencies);
-        const sortedSyntaxTrees = sortedDependencies.map((x) => updatedCache[x]).filter((x) => x !== undefined);
-        const result = loadSource(sortedSyntaxTrees); // ir means intermediate representation
-        if(isOK(result)) {
-            const ir = result.value;
-            const transpiledCode = ir.map(tpDeclaration).join("\n");
-            return ok(execute(transpiledCode));
-        } else {
-            return result;
-        }
-    } catch (error) {
-        if(rethrowError) {
-            throw error;
-        } else {
-            if (error.name[0] === "#") { // if this error is processed
-                clear();
-                console.log(error.message);
-            } else { // if this error is not processed, means it is a compiler's bug
-                error.name += "(This is possibly a compiler internal error)";
-                console.log(error);
-            }
-            return fail(UnkwownError(""));
-        }
+    const sortedDependencies = sortDependency(dependencies);
+    const sortedSyntaxTrees = sortedDependencies.map((x) => updatedCache[x]).filter((x) => x !== undefined);
+    const result = loadSource(sortedSyntaxTrees); // ir means intermediate representation
+    if(isOK(result)) {
+        const ir = result.value;
+        const transpiledCode = ir.map(tpDeclaration).join("\n");
+        return ok(execute(transpiledCode));
+    } else {
+        return result;
     }
 }
 
@@ -140,7 +124,6 @@ function getFullFilename(ast: SyntaxTree, importedFilename: StringExpression)
     // Refer https://millermedeiros.github.io/mdoc/examples/node_api/doc/path.html#path.normalize
     fullFilename = path.normalize(fullFilename);
     if(!fs.existsSync(fullFilename)) {
-        console.log(fullFilename);
         const error = ErrorImportFail(importedFilename);
         error.source = ast.source;
         return fail(error);

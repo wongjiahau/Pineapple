@@ -2,6 +2,8 @@ ts/
 js/
 src/
 build/
+coverage/
+dist/tests/
 
 *.test.js
 *.sh

@@ -38,7 +38,7 @@ export function catchError(f: () => void): Error {
     }
 }
 
-const testerInterpret = (s: SourceCode) => interpret(s, (x) => x, true, false);
+const testerInterpret = (s: SourceCode) => interpret(s, (x) => x, false);
 
 export function testError(expectedErrorName: string, input: string, logError = false) {
     describe("", () => {

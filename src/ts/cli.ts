@@ -27,7 +27,7 @@ program.args.forEach((arg: string) => {
         if (file === null) {
             throw new Error(`Cannot open file ${arg}`);
         }
-        const result = interpret(file, execute, false, true);
+        const result = interpret(file, execute, true);
         if(isFail(result)) {
             console.log(renderError(result.error));
         }
