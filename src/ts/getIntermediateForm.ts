@@ -1,7 +1,8 @@
 import { Declaration, SyntaxTree } from "./ast";
-import { ErrorDetail } from "./errorType/errorUtil";
-import { fillUpTypeInformation, Maybe, ok, SymbolTable } from "./fillUpTypeInformation";
+import { ErrorDetail } from "./errorType/ErrorDetail";
+import { fillUpTypeInformation, SymbolTable } from "./fillUpTypeInformation";
 import { initTypeTree } from "./typeTree";
+import { Maybe, ok } from "./maybeMonad";
 
 export function getIntermediateForm(
     ast: SyntaxTree,

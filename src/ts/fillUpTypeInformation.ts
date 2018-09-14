@@ -58,8 +58,8 @@ import {ErrorListElementsArentHomogeneous} from "./errorType/E0024-ListElementsA
 import {ErrorUsingUndefinedGenericName} from "./errorType/E0025-UsingUndefinedGenericName";
 import { ErrorInterpolatedExpressionIsNotString } from "./errorType/E0026-InperolatedExpressionIsNotString";
 import { ErrorMissingClosingBracket } from "./errorType/E0027-MissingClosingBracket";
-import {ErrorDetail, stringifyTypeReadable} from "./errorType/errorUtil";
-import {renderError} from "./errorType/renderError";
+import {stringifyTypeReadable} from "./errorType/errorUtil";
+import { ErrorDetail } from "./errorType/ErrorDetail";
 import { SourceCode } from "./interpret";
 import { parseCode } from "./parseCodeToSyntaxTree";
 import {stringifyFuncSignature} from "./transpile";
@@ -78,39 +78,8 @@ import {
     VoidType
 } from "./typeTree";
 import {copy, find} from "./util";
+import { Maybe, isOK, isFail, ok, fail } from "./maybeMonad";
 
-export type Maybe<TResult, TError> = OK<TResult> | Fail<TError>;
-
-interface OK<T> {
-    kind: "OK";
-    value: T;
-}
-export function ok<T>(value: T): OK<T> {
-    return {
-        kind: "OK",
-        value: value
-    };
-}
-
-export function isOK<X, Y>(result: Maybe<X, Y>): result is OK<X> {
-    return result.kind === "OK";
-}
-
-export function isFail<X, Y>(result: Maybe<X, Y>): result is Fail<Y> {
-    return result.kind === "Fail";
-}
-
-interface Fail<T> {
-    kind: "Fail";
-    error: T;
-}
-
-export function fail<T>(error: T): Fail<T> {
-    return {
-        kind: "Fail",
-        error: error
-    };
-}
 
 let CURRENT_SOURCE_CODE: () => SourceCode;
 export function fillUpTypeInformation(
@@ -129,7 +98,11 @@ export function fillUpTypeInformation(
             case "FunctionDeclaration":
                 for (let j = 0; j < currentDecl.parameters.length; j++) {
                     const result1 = resolveType(currentDecl.parameters[j].typeExpected, symbols);
-                    if (result1.kind === "OK") { currentDecl.parameters[j].typeExpected = result1.value; } else { return result1; }
+                    if (isOK(result1)) {
+                        currentDecl.parameters[j].typeExpected = result1.value;
+                    } else {
+                        return result1;
+                    }
                 }
                 const result2 = resolveType(currentDecl.returnType, symbols);
                 if (result2.kind === "OK") { currentDecl.returnType = result2.value; } else { return result2; }
@@ -444,7 +417,8 @@ export function functionEqual(x: FunctionDeclaration, y: FunctionDeclaration): b
         return false;
     } else {
         for (let i = 0; i < x.parameters.length; i++) {
-            if (stringifyTypeReadable(x.parameters[i].typeExpected) !== stringifyTypeReadable(y.parameters[i].typeExpected)) {
+            if (stringifyTypeReadable(x.parameters[i].typeExpected)
+            !== stringifyTypeReadable(y.parameters[i].typeExpected)) {
                 return false;
             }
         }
@@ -488,16 +462,6 @@ function updateVariableTable(vtab: VariableTable, variable: Variable)
     return ok(vtab);
 }
 
-export function raise(errorDetail: ErrorDetail, sourceCode: SourceCode = CURRENT_SOURCE_CODE()): any {
-    const e = Error(renderError(sourceCode, errorDetail));
-
-    // # symbol is to indicate this error had been processed
-    // this is necessary for interpreter.ts to differentiate between processed and unprocessed error
-    // because unprocessed error is usually the compiler internal error
-    e.name = "#" + errorDetail.name;
-    throw e;
-}
-
 export function fillUp(statements: Statement[], symbols: SymbolTable, vartab: VariableTable)
 : Maybe<[Statement[], SymbolTable], ErrorDetail> {
     for (let i = 0; i < statements.length; i++) {
@@ -510,8 +474,8 @@ export function fillUp(statements: Statement[], symbols: SymbolTable, vartab: Va
         case "AssignmentStatement":
             switch (s.variable.kind) {
                 case "VariableDeclaration":
-                    const result = fillUpExpressionTypeInfo(s.expression, symbols, vartab);
-                    if (result.kind === "OK") { [s.expression, symbols] = result.value; } else { return result; }
+                    const resultVD = fillUpExpressionTypeInfo(s.expression, symbols, vartab);
+                    if (resultVD.kind === "OK") { [s.expression, symbols] = resultVD.value; } else { return resultVD; }
                     if (s.expression.returnType.kind === "VoidType") {
                         return fail(ErrorAssigningVoidToVariable(s.expression));
                     }
@@ -525,13 +489,19 @@ export function fillUp(statements: Statement[], symbols: SymbolTable, vartab: Va
                         if (isNil(s.expression.returnType) && s.variable.typeExpected.nullable === false) {
                             return fail(ErrorAssigningNullToUnnullableVariable(s.variable, s.expression, ));
                         }
-                        const result = resolveType(s.variable.typeExpected, symbols);
-                        if (result.kind === "OK") { s.variable.typeExpected = result.value; } else { return result; }
+                        const resultType = resolveType(s.variable.typeExpected, symbols);
+                        if (isOK(resultType)) {
+                            s.variable.typeExpected = resultType.value;
+                        } else {
+                            return resultType;
+                        }
+
                         s.variable.variable.returnType = s.variable.typeExpected;
                         const exprType = s.expression.returnType;
                         const expectedType = s.variable.typeExpected;
                         if (!isSubtypeOf(exprType, expectedType, symbols.typeTree, typeEquals)) {
-                            return fail(ErrorIncorrectTypeGivenForVariable(s.variable.variable, s.variable.typeExpected, s.expression));
+                            return fail(ErrorIncorrectTypeGivenForVariable(
+                                s.variable.variable, s.variable.typeExpected, s.expression));
                         }
                     }
 
@@ -548,11 +518,13 @@ export function fillUp(statements: Statement[], symbols: SymbolTable, vartab: Va
                         if (!matching.isMutable) {
                             return fail(ErrorAssigningToImmutableVariable(s.variable));
                         }
-                        const result3 = fillUpExpressionTypeInfo(s.expression, symbols, vartab);
-                        if (result3.kind === "OK") { [s.expression, symbols] = result3.value; } else { return result3; }
+                        const resultType = fillUpExpressionTypeInfo(s.expression, symbols, vartab);
+                        if (resultType.kind === "OK") { [s.expression, symbols] = resultType.value;
+                        } else { return resultType; }
 
                         if (!isSubtypeOf(s.expression.returnType, matching.returnType, symbols.typeTree, typeEquals)) {
-                            return fail(ErrorIncorrectTypeGivenForVariable(s.variable, matching.returnType, s.expression));
+                            return fail(ErrorIncorrectTypeGivenForVariable(
+                                s.variable, matching.returnType, s.expression));
                         } else {
                             s.variable.returnType = matching.returnType;
                         }
@@ -614,8 +586,8 @@ export function fillUpForStmtTypeInfo(f: ForStatement, symbols: SymbolTable, var
         } else {
             throw new Error("Something is wrong");
         }
-        const result = updateVariableTable(vartab, f.iterator);
-        if (result.kind === "OK") { vartab = result.value; } else { return result; }
+        const updateResult = updateVariableTable(vartab, f.iterator);
+        if (updateResult.kind === "OK") { vartab = updateResult.value; } else { return updateResult; }
     } else {
         return fail(ErrorForExprNotArray(f.expression));
     }
@@ -693,8 +665,8 @@ export function fillUpExpressionTypeInfo(e: Expression, symbols: SymbolTable, va
             break;
         case "ObjectExpression":
             if (e.constructor !== null) {
-                const result = resolveType(e.constructor, symbols);
-                if (result.kind === "OK") { e.constructor = result.value; } else { return result; }
+                const typeResult = resolveType(e.constructor, symbols);
+                if (typeResult.kind === "OK") { e.constructor = typeResult.value; } else { return typeResult; }
                 if (e.constructor.kind === "StructType") {
                     e.returnType = newStructType(e.constructor.reference, e.constructor.genericList);
                     const resultKV = fillUpKeyValueListTypeInfo(e.keyValueList, symbols, vartab);
@@ -913,7 +885,12 @@ export function findMatchingEnumType(value: AtomicToken, enumTab: EnumTable)
 /**
  * Check if x is subtype of y
  */
-export function isSubtypeOf(x: TypeExpression, y: TypeExpression, tree: Tree < TypeExpression >, comparer: Comparer < TypeExpression >): boolean {
+export function isSubtypeOf(
+    x: TypeExpression,
+    y: TypeExpression,
+    tree: Tree < TypeExpression >,
+    comparer: Comparer < TypeExpression >
+): boolean {
     if (x.nullable && y.kind === "EnumDeclaration" && y.name.repr === "Nil") {
         return true;
     } else if (y.nullable && x.kind === "EnumDeclaration" && x.name.repr === "Nil") {
@@ -1029,6 +1006,8 @@ export function getFuncSignature(f: FunctionCall, functab: FunctionTable, typetr
         for (let j = 0; j < f.parameters.length; j++) {
             f.parameters[j].returnType = closestFunction.parameters[j].typeExpected;
         }
+
+        // @ts-ignore
         f.returnType = closestFunction.returnType;
 
         // this step is needed for generic substituted function
@@ -1044,8 +1023,11 @@ export function getFuncSignature(f: FunctionCall, functab: FunctionTable, typetr
     }
 }
 
-export function getClosestFunction(f: FunctionCall, matchingFunctions: FunctionDeclaration[], typeTree: Tree < TypeExpression >)
-: Maybe<FunctionDeclaration, ErrorDetail> {
+export function getClosestFunction(
+    f: FunctionCall,
+    matchingFunctions: FunctionDeclaration[],
+    typeTree: Tree < TypeExpression >
+): Maybe<FunctionDeclaration, ErrorDetail> {
     const paramLength = f.parameters.length;
     // First, find function that have the exact type signature with the calling
     // signature
@@ -1077,8 +1059,11 @@ export function getClosestFunction(f: FunctionCall, matchingFunctions: FunctionD
             const genericsBinding = extractGenericBinding(currentFunc.parameters, f.parameters);
             if (genericsBinding !== null) {
                 for (let j = 0; j < currentFunc.parameters.length; j++) {
-                    currentFunc.parameters[j].typeExpected = substituteGeneric(currentFunc.parameters[j].typeExpected, genericsBinding);
+                    currentFunc.parameters[j].typeExpected =
+                        substituteGeneric(currentFunc.parameters[j].typeExpected, genericsBinding);
                 }
+
+                // @ts-ignore
                 currentFunc.returnType = substituteGeneric(currentFunc.returnType, genericsBinding);
             }
         }
@@ -1096,7 +1081,11 @@ export function getClosestFunction(f: FunctionCall, matchingFunctions: FunctionD
     }
     if (closestFunction === null) {
         const farthestMatchingParamPosition = errors.sort((x, y) => x.paramPosition - y.paramPosition)[0].paramPosition;
-        return fail(ErrorNoConformingFunction(f, farthestMatchingParamPosition, f.parameters[farthestMatchingParamPosition], relatedFuncs.map((x) => x.parameters[farthestMatchingParamPosition].typeExpected)));
+        return fail(ErrorNoConformingFunction(
+            f, farthestMatchingParamPosition,
+            f.parameters[farthestMatchingParamPosition],
+            relatedFuncs.map((x) => x.parameters[farthestMatchingParamPosition].typeExpected)
+        ));
     } else {
         return ok(closestFunction);
     }
@@ -1154,11 +1143,11 @@ function extract(genericType: TypeExpression, actualType: TypeExpression): Table
     return result;
 }
 
-export function paramTypesConforms(expectedParams: VariableDeclaration[], actualParams: Expression[], typeTree: Tree < TypeExpression >): [
-    number, {
-        paramPosition: number/*zero-based*/
-    } | null
-] {
+export function paramTypesConforms(
+    expectedParams: VariableDeclaration[],
+    actualParams: Expression[],
+    typeTree: Tree < TypeExpression >
+): [ number, { paramPosition: number/*zero-based*/ } | null ] {
     let resultScore = 0;
     for (let i = 0; i < expectedParams.length; i++) {
         const expectedType = expectedParams[i].typeExpected;
@@ -1181,7 +1170,10 @@ function containsGeneric(params: VariableDeclaration[]): boolean {
     return params.some((x) => JSON.stringify(x).indexOf("GenericTypename") > -1);
 }
 
-function substituteGeneric(unsubstitutedType: TypeExpression, genericBinding: TableOf < TypeExpression >): TypeExpression {
+function substituteGeneric(
+    unsubstitutedType: TypeExpression,
+    genericBinding: TableOf < TypeExpression >
+): TypeExpression {
     switch (unsubstitutedType.kind) {
         case "GenericTypename":
             return genericBinding[unsubstitutedType.name.repr];

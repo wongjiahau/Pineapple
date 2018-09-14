@@ -1,5 +1,5 @@
-import { ErrorDetail } from "./errorType/errorUtil";
-import { isFail, Maybe, ok } from "./fillUpTypeInformation";
+import { ErrorDetail } from "./errorType/ErrorDetail";
+import { isFail, Maybe, ok } from "./maybeMonad";
 import { SourceCode } from "./interpret";
 import { labelIndentation } from "./labelIndentation";
 import { labelNewlines } from "./labelNewlines";

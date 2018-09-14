@@ -1,5 +1,6 @@
 import { Expression, VariableDeclaration } from "../ast";
-import { ErrorDetail, stringifyTypeReadable } from "./errorUtil";
+import { stringifyTypeReadable } from "./errorUtil";
+import { ErrorDetail } from "./ErrorDetail";
 
 export function ErrorAssigningNullToUnnullableVariable(
     v: VariableDeclaration,

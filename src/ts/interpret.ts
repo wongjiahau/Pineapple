@@ -1,13 +1,12 @@
 import { Declaration, ImportDeclaration, StringExpression, SyntaxTree } from "./ast";
 import { ErrorImportFail } from "./errorType/E0030-ImportFail";
-import { ErrorDetail } from "./errorType/errorUtil";
-import { fail, isFail, isOK, Maybe, ok } from "./fillUpTypeInformation";
+import { ErrorDetail } from "./errorType/ErrorDetail";
+import { fail, isFail, isOK, Maybe, ok } from "./maybeMonad";
 import { getIntermediateForm, initialIntermediateForm } from "./getIntermediateForm";
-import { parseCodeToSyntaxTree, UnkwownError } from "./parseCodeToSyntaxTree";
+import { parseCodeToSyntaxTree } from "./parseCodeToSyntaxTree";
 import { tpDeclaration } from "./transpile";
 import { endsWith, startsWith } from "./util";
 
-const clear    = require("clear");
 const fs       = require("fs");
 const path     = require("path");
 const toposort = require("toposort");
@@ -93,10 +92,9 @@ function extractImports(ast: SyntaxTree, cache: SyntaxTreeCache)
             if (f !== null) {
                 const parsedCode = parseCodeToSyntaxTree(f);
                 if (!isOK(parsedCode)) { return parsedCode; }
-                const ast = parsedCode.value;
-                cache[f.filename] = ast;
+                cache[f.filename] = parsedCode.value;
                 const temp = dependencies.slice();
-                const extractResult = extractImports(ast, cache);
+                const extractResult = extractImports(parsedCode.value, cache);
                 if (isFail(extractResult)) { return extractResult; }
                 [dependencies, cache] = extractResult.value;
                 dependencies = dependencies.concat(temp);

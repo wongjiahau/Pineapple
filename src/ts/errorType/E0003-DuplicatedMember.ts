@@ -1,5 +1,5 @@
 import { AtomicToken } from "../ast";
-import { ErrorDetail } from "./errorUtil";
+import { ErrorDetail } from "./ErrorDetail";
 
 export function ErrorDuplicatedMember(
     repeatedMember: AtomicToken,

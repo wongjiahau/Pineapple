@@ -1,5 +1,5 @@
 import { AtomicToken, StructDeclaration } from "../ast";
-import { ErrorDetail } from "./errorUtil";
+import { ErrorDetail } from "./ErrorDetail";
 
 export function ErrorExtraMember(
     extraMember: AtomicToken,

@@ -1,5 +1,6 @@
 import {FunctionCall} from "../ast";
-import {displayFuncSignature, ErrorDetail} from "./errorUtil";
+import {displayFuncSignature} from "./errorUtil";
+import { ErrorDetail } from "./ErrorDetail";
 
 export function ErrorUsingUnknownFunction(relatedFunction: FunctionCall): ErrorDetail {
     const funcname = displayFuncSignature(relatedFunction.signature);

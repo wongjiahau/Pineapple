@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { isFail } from "../../fillUpTypeInformation";
+import { isFail } from "../../maybeMonad";
 import { preprocess } from "../../preprocess";
 import { assertFail, dummySourceCode } from "../testUtil";
 

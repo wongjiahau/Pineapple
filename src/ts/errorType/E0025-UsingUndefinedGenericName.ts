@@ -1,5 +1,6 @@
 import { AtomicToken } from "../ast";
-import { ErrorDetail, showSuggestion } from "./errorUtil";
+import { showSuggestion } from "./errorUtil";
+import { ErrorDetail } from "./ErrorDetail";
 
 export function ErrorUsingUndefinedGenericName(
     relatedGenericName: AtomicToken,

@@ -1,5 +1,6 @@
 import { Expression, TypeExpression } from "../ast";
-import { ErrorDetail, stringifyTypeReadable } from "./errorUtil";
+import { stringifyTypeReadable } from "./errorUtil";
+import { ErrorDetail } from "./ErrorDetail";
 const converter = require("number-to-words");
 
 export function ErrorListElementsArentHomogeneous(

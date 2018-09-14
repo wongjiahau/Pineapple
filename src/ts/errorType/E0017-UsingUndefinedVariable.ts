@@ -1,7 +1,8 @@
 import { Variable } from "../ast";
 import { VariableTable } from "../fillUpTypeInformation";
 import { findSimilarStrings, values } from "../util";
-import { ErrorDetail, showSuggestion } from "./errorUtil";
+import { showSuggestion } from "./errorUtil";
+import { ErrorDetail } from "./ErrorDetail";
 
 export function ErrorUsingUndefinedVariable(
     v: Variable,

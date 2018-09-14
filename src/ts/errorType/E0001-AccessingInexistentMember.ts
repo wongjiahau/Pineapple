@@ -1,6 +1,7 @@
 import { AtomicToken, StructDeclaration } from "../ast";
 import { findSimilarStrings } from "../util";
-import { ErrorDetail, showSuggestion } from "./errorUtil";
+import { showSuggestion } from "./errorUtil";
+import { ErrorDetail } from "./ErrorDetail";
 
 export function ErrorAccessingInexistentMember(
     relatedStruct: StructDeclaration,

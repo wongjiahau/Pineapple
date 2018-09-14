@@ -1,5 +1,5 @@
 import { Variable } from "../ast";
-import { ErrorDetail } from "./errorUtil";
+import { ErrorDetail } from "./ErrorDetail";
 
 export function ErrorAssigningToUndefinedVariable(
     v: Variable

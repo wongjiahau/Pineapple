@@ -1,6 +1,7 @@
 import chalk from "chalk";
 import { Expression, FunctionCall, TypeExpression } from "../ast";
-import { displayFuncSignature, ErrorDetail, stringifyTypeReadable } from "./errorUtil";
+import { displayFuncSignature, stringifyTypeReadable } from "./errorUtil";
+import { ErrorDetail } from "./ErrorDetail";
 
 export function ErrorNoConformingFunction(
     relatedFunction: FunctionCall,

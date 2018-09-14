@@ -1,8 +1,8 @@
 import { Declaration, Expression, NullTokenLocation, SyntaxTree } from "./ast";
 import { ErrorSyntax } from "./errorType/E0010-Syntax";
 import { ErrorLexical } from "./errorType/E0028-Lexical";
-import { ErrorDetail } from "./errorType/errorUtil";
-import { fail, isFail, isOK, Maybe, ok } from "./fillUpTypeInformation";
+import { ErrorDetail } from "./errorType/ErrorDetail";
+import { fail, isFail, isOK, Maybe, ok } from "./maybeMonad";
 import { SourceCode } from "./interpret";
 import { preprocess } from "./preprocess";
 

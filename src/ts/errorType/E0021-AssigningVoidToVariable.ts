@@ -1,5 +1,5 @@
 import { Expression } from "../ast";
-import { ErrorDetail } from "./errorUtil";
+import { ErrorDetail } from "./ErrorDetail";
 
 export function ErrorAssigningVoidToVariable(
     expr: Expression

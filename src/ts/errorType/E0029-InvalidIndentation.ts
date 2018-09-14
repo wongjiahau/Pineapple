@@ -1,4 +1,4 @@
-import { ErrorDetail } from "./errorUtil";
+import { ErrorDetail } from "./ErrorDetail";
 
 export function ErrorInvalidIndentation(
     lineNumber: number,

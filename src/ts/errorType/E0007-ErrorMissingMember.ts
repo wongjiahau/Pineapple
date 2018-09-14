@@ -1,5 +1,5 @@
 import { StructDeclaration, TokenLocation } from "../ast";
-import { ErrorDetail } from "./errorUtil";
+import { ErrorDetail } from "./ErrorDetail";
 
 export function ErrorMissingMember(
     missingKey: string,

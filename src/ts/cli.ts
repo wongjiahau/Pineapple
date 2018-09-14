@@ -1,6 +1,6 @@
 import { renderError } from "./errorType/renderError";
-import { isFail } from "./fillUpTypeInformation";
 import { interpret, loadFile } from "./interpret";
+import { isFail } from "./maybeMonad";
 
 const fs = require("fs");
 const vm = require("vm");

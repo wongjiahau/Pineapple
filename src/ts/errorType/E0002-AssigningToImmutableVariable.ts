@@ -1,6 +1,6 @@
 import chalk from "chalk";
 import { Variable } from "../ast";
-import { ErrorDetail } from "./errorUtil";
+import { ErrorDetail } from "./ErrorDetail";
 
 export function ErrorAssigningToImmutableVariable(
     relatedVariable: Variable

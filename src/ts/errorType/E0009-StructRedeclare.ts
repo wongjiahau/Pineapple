@@ -1,5 +1,5 @@
 import { StructDeclaration } from "../ast";
-import { ErrorDetail } from "./errorUtil";
+import { ErrorDetail } from "./ErrorDetail";
 
 export function ErrorStructRedeclare(structDecl: StructDeclaration): ErrorDetail {
     return {

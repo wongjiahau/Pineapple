@@ -1,6 +1,6 @@
 import chalk from "chalk";
 import { labelLineNumbers } from "../labelLineNumbers";
-import { ErrorDetail } from "./errorUtil";
+import { ErrorDetail } from "./ErrorDetail";
 const boxen = require("boxen");
 
 export function renderError(

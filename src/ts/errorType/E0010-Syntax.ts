@@ -1,5 +1,5 @@
 import { TokenLocation } from "../ast";
-import { ErrorDetail } from "./errorUtil";
+import { ErrorDetail } from "./ErrorDetail";
 
 export interface ParserErrorDetail {
     text: string;
