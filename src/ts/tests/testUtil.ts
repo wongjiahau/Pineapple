@@ -48,7 +48,7 @@ export function testError(expectedErrorName: string, input: string, logError = f
                 filename: "<UNIT_TEST>"
             };
             const result = testerInterpret(source);
-            if(result.kind === "OK") {
+            if (result.kind === "OK") {
                 throw new Error("No error is caught");
             } else {
                 const error = result.error;
@@ -56,7 +56,7 @@ export function testError(expectedErrorName: string, input: string, logError = f
                     console.log(error);
                 } else {
                     expect(error).to.not.equal(null);
-                    if(error !== null) {
+                    if (error !== null) {
                         expect(error.name).to.eq(expectedErrorName);
                     }
                 }
@@ -73,10 +73,10 @@ export function testTranspile(description: string, input: string, expectedOutput
                 filename: "<UNIT_TEST>"
             };
             const result = testerInterpret(source);
-            if(result.kind === "OK") {
+            if (result.kind === "OK") {
                 assertEquals(result.value.trim(), expectedOutput.trim());
             } else {
-                throw new Error("Caught error ")
+                throw new Error("Caught error ");
             }
         });
     });

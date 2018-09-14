@@ -6,7 +6,7 @@ const boxen = require("boxen");
 export function renderError(
     errorDetail: ErrorDetail,
 ): string {
-    if(errorDetail.source === undefined) {
+    if (errorDetail.source === undefined) {
         return `ERROR: errorDetail.source is not defined. This error is related to ${errorDetail.name}`;
     }
     const sourceCode = errorDetail.source;

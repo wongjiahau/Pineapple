@@ -16,13 +16,13 @@ function _main_(){
 _dummy_();
 }
 
-`)
+`);
 
-let commment = `
+const commment = `
 
 git push --tags
 
-API: 
+API:
 https://api.github.com/repos/<user>/<repos>/git/refs/tags
 
 Example:

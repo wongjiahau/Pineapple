@@ -1,6 +1,6 @@
-import { ErrorDetail } from './errorType/errorUtil';
 import {ErrorInvalidIndentation} from "./errorType/E0029-InvalidIndentation";
-import {Maybe, fail, ok, isFail} from "./fillUpTypeInformation";
+import { ErrorDetail } from "./errorType/errorUtil";
+import {fail, isFail, Maybe, ok} from "./fillUpTypeInformation";
 import { SourceCode } from "./interpret";
 
 export function labelIndentation(input: string, sourceCode: SourceCode)
@@ -8,14 +8,14 @@ export function labelIndentation(input: string, sourceCode: SourceCode)
     const lines = input.split("\n");
     for (let i = 0; i < lines.length; i++) {
         const result = indentationLevel(lines[i], i, sourceCode);
-        if(isFail(result)) return result;
+        if (isFail(result)) { return result; }
 
         const currentIndentationLevel = result.value;
 
         let temp: Maybe<number, ErrorDetail>;
-        if(i < lines.length - 1) {
+        if (i < lines.length - 1) {
             temp = indentationLevel(lines[i + 1], i + 1, sourceCode);
-            if(isFail(temp)) return temp;
+            if (isFail(temp)) { return temp; }
         } else {
             temp = ok(0);
         }

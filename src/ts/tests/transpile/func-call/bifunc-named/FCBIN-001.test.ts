@@ -1,6 +1,6 @@
 import { testTranspile } from "../../../testUtil";
 
-testTranspile("bifunc", 
+testTranspile("bifunc",
 `
 def (this Number).add(that Number) -> Number
     pass
@@ -16,4 +16,4 @@ $$pass$$();
 function _main_(){
 const $result = _add_Number_Number((1),(2));
 }
-`)
+`);

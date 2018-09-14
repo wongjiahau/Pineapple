@@ -1,7 +1,7 @@
 import { Declaration, SyntaxTree } from "./ast";
-import { fillUpTypeInformation, SymbolTable, Maybe, ok } from "./fillUpTypeInformation";
-import { initTypeTree } from "./typeTree";
 import { ErrorDetail } from "./errorType/errorUtil";
+import { fillUpTypeInformation, Maybe, ok, SymbolTable } from "./fillUpTypeInformation";
+import { initTypeTree } from "./typeTree";
 
 export function getIntermediateForm(
     ast: SyntaxTree,
@@ -11,7 +11,7 @@ export function getIntermediateForm(
         ast,
         prevIntermediate.symbolTable
     );
-    if(result.kind === "OK") {
+    if (result.kind === "OK") {
         const [newAst, symbolTable] = result.value;
         return ok({
             syntaxTrees: prevIntermediate.syntaxTrees.concat(newAst),
@@ -22,7 +22,6 @@ export function getIntermediateForm(
         return result;
     }
 }
-
 
 export function initialIntermediateForm(): IntermediateForm {
     return {

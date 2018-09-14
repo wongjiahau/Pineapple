@@ -12,4 +12,4 @@ def ().main
 function _main_(){
 const $x = "hello world";
 }
-`)
+`);

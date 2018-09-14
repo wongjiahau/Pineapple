@@ -17,4 +17,4 @@ const $x = _pi_();
 function _pi_(){
 $$pass$$();
 }
-`)
+`);

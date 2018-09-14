@@ -16,4 +16,4 @@ $$pass$$();
 function _main_(){
 const $y = _$plus_Number_Number((6),_$plus_Number_Number((6),(6)));
 }
-`)
+`);

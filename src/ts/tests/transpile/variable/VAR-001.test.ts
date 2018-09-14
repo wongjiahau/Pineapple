@@ -1,6 +1,6 @@
 import { testTranspile } from "../../testUtil";
 
-testTranspile("mutable variable", 
+testTranspile("mutable variable",
 `
 def ().main
     let x mutable = 1

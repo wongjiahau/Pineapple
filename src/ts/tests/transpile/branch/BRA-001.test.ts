@@ -1,6 +1,6 @@
 import { testTranspile } from "../../testUtil";
 
-testTranspile("if branch", 
+testTranspile("if branch",
 `
 def Boolean
     pass
@@ -37,4 +37,4 @@ const $b = "no";
 const $c = "oops";
 }
 }
-`)
+`);

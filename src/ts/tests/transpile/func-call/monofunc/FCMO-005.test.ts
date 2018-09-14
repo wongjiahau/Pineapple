@@ -1,6 +1,6 @@
 import { testTranspile } from "../../../testUtil";
 
-testTranspile("generic monofunc", 
+testTranspile("generic monofunc",
 `
 def (this T).show
     pass

@@ -1,6 +1,6 @@
-import { interpret, loadFile } from "./interpret";
-import { isFail } from "./fillUpTypeInformation";
 import { renderError } from "./errorType/renderError";
+import { isFail } from "./fillUpTypeInformation";
+import { interpret, loadFile } from "./interpret";
 
 const fs = require("fs");
 const vm = require("vm");
@@ -20,15 +20,14 @@ if (program.args.length === 0) {
     console.log(`Pineapple ${VERSION}`);
 }
 
-
 program.args.forEach((arg: string) => {
-    if(fs.existsSync(arg)) {
+    if (fs.existsSync(arg)) {
         const file = loadFile(fs.realpathSync(arg));
         if (file === null) {
             throw new Error(`Cannot open file ${arg}`);
         }
         const result = interpret(file, execute, true);
-        if(isFail(result)) {
+        if (isFail(result)) {
             console.log(renderError(result.error));
         }
     } else {

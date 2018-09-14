@@ -1,19 +1,19 @@
-import { Declaration, SyntaxTree, Expression, NullTokenLocation } from "./ast";
-import { preprocess } from "./preprocess";
-import { Maybe, fail, ok, isOK, isFail } from "./fillUpTypeInformation";
+import { Declaration, Expression, NullTokenLocation, SyntaxTree } from "./ast";
 import { ErrorSyntax } from "./errorType/E0010-Syntax";
 import { ErrorLexical } from "./errorType/E0028-Lexical";
-import { SourceCode } from "./interpret";
 import { ErrorDetail } from "./errorType/errorUtil";
+import { fail, isFail, isOK, Maybe, ok } from "./fillUpTypeInformation";
+import { SourceCode } from "./interpret";
+import { preprocess } from "./preprocess";
 
 export function parseCodeToSyntaxTree(sourceCode: SourceCode)
 : Maybe<SyntaxTree, ErrorDetail> {
     const preprocessResult = preprocess(sourceCode);
-    if(isFail(preprocessResult)) return preprocessResult;
+    if (isFail(preprocessResult)) { return preprocessResult; }
     sourceCode.content = preprocessResult.value;
 
     const parseResult = parseCode(sourceCode);
-    if(isOK(parseResult)) {
+    if (isOK(parseResult)) {
         return ok({
             source: sourceCode,
             declarations: parseResult.value as Declaration[],
@@ -33,14 +33,14 @@ export function parseCodeToSyntaxTree(sourceCode: SourceCode)
  * @returns {(Declaration[] | Expression)}
  */
 export function parseCode(
-    preprocessedSourceCode: SourceCode, 
+    preprocessedSourceCode: SourceCode,
     originalSourceCode?: SourceCode
 ): Maybe<Declaration[] | Expression, ErrorDetail> {
     const parser     = require("../jison/pineapple-parser-v2");
     try {
         return ok(parser.parse(preprocessedSourceCode.content));
-    } catch(error) {
-        if(originalSourceCode) {
+    } catch (error) {
+        if (originalSourceCode) {
             preprocessedSourceCode = originalSourceCode;
         }
         if (isSyntaxError(error)) {

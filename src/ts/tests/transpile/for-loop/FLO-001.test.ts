@@ -21,4 +21,4 @@ const $i = itemsOfi[i];
 _print_String($i);
 }
 }
-`)
+`);

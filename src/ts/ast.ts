@@ -1,5 +1,5 @@
-import { newBuiltinType } from "./typeTree";
 import { SourceCode } from "./interpret";
+import { newBuiltinType } from "./typeTree";
 
 // Abstract Syntax Tree Node Interfaces
 export type GenericList = TypeExpression[];

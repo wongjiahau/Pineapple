@@ -13,4 +13,4 @@ def ().main
 function _main_(){
 const $fruits = ["pineapple","apple","banana"];
 }
-`)
+`);

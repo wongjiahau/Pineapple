@@ -23,13 +23,13 @@ import {
     StringInterpolationExpression,
     StructDeclaration,
     StructType,
+    SyntaxTree,
     TokenLocation,
     TupleExpression,
     TypeExpression,
     UnresolvedType,
     Variable,
-    VariableDeclaration,
-    SyntaxTree
+    VariableDeclaration
 } from "./ast";
 
 import {ErrorAccessingInexistentMember} from "./errorType/E0001-AccessingInexistentMember";
@@ -60,6 +60,8 @@ import { ErrorInterpolatedExpressionIsNotString } from "./errorType/E0026-Inpero
 import { ErrorMissingClosingBracket } from "./errorType/E0027-MissingClosingBracket";
 import {ErrorDetail, stringifyTypeReadable} from "./errorType/errorUtil";
 import {renderError} from "./errorType/renderError";
+import { SourceCode } from "./interpret";
+import { parseCode } from "./parseCodeToSyntaxTree";
 import {stringifyFuncSignature} from "./transpile";
 import {
     BaseStructType,
@@ -75,9 +77,7 @@ import {
     Tree,
     VoidType
 } from "./typeTree";
-import {find, copy} from "./util";
-import { parseCode } from "./parseCodeToSyntaxTree";
-import { SourceCode } from "./interpret";
+import {copy, find} from "./util";
 
 export type Maybe<TResult, TError> = OK<TResult> | Fail<TError>;
 
@@ -92,7 +92,7 @@ export function ok<T>(value: T): OK<T> {
     };
 }
 
-export function isOK<X, Y>(result: Maybe<X, Y>): result is OK<X>{
+export function isOK<X, Y>(result: Maybe<X, Y>): result is OK<X> {
     return result.kind === "OK";
 }
 
@@ -109,13 +109,12 @@ export function fail<T>(error: T): Fail<T> {
     return {
         kind: "Fail",
         error: error
-    }
+    };
 }
-
 
 let CURRENT_SOURCE_CODE: () => SourceCode;
 export function fillUpTypeInformation(
-    syntaxTree: SyntaxTree, 
+    syntaxTree: SyntaxTree,
     symbols: SymbolTable
 ): Maybe<[Declaration[], SymbolTable], ErrorDetail> {
     CURRENT_SOURCE_CODE = () => syntaxTree.source;
@@ -130,18 +129,16 @@ export function fillUpTypeInformation(
             case "FunctionDeclaration":
                 for (let j = 0; j < currentDecl.parameters.length; j++) {
                     const result1 = resolveType(currentDecl.parameters[j].typeExpected, symbols);
-                    if(result1.kind === "OK") currentDecl.parameters[j].typeExpected = result1.value;
-                    else return result1;
+                    if (result1.kind === "OK") { currentDecl.parameters[j].typeExpected = result1.value; } else { return result1; }
                 }
                 const result2 = resolveType(currentDecl.returnType, symbols);
-                if(result2.kind === "OK") currentDecl.returnType = result2.value;
-                else return result2;
+                if (result2.kind === "OK") { currentDecl.returnType = result2.value; } else { return result2; }
                 symbols.funcTab = newFunctionTable(currentDecl, symbols.funcTab);
                 break;
             case "StructDeclaration":
                 // check if the struct is declared already or not
                 const tempStructTab  = newStructTab(currentDecl, copy(symbols.structTab));
-                if(isFail(tempStructTab)) return tempStructTab;
+                if (isFail(tempStructTab)) { return tempStructTab; }
 
                 const tempSymbols = copy(symbols);
                 tempSymbols.typeTree = insertChild<TypeExpression> (
@@ -152,11 +149,11 @@ export function fillUpTypeInformation(
                 );
 
                 const result = validateStruct(currentDecl, tempSymbols);
-                if(isFail(result)) return result;
+                if (isFail(result)) { return result; }
                 const validatedStruct = result.value;
 
                 const structTab = newStructTab(validatedStruct, symbols.structTab);
-                if(isFail(structTab)) return structTab;
+                if (isFail(structTab)) { return structTab; }
 
                 symbols.structTab = structTab.value;
 
@@ -169,7 +166,7 @@ export function fillUpTypeInformation(
                 break;
             case "EnumDeclaration":
                 const result3 = newEnumTab(currentDecl, symbols.enumTab);
-                if(result3.kind === "OK") {
+                if (result3.kind === "OK") {
                     symbols.enumTab = result3.value;
                     symbols.typeTree = insertChild(currentDecl, EnumType(), symbols.typeTree, typeEquals);
                 } else {
@@ -183,9 +180,8 @@ export function fillUpTypeInformation(
         switch (currentDecl.kind) {
             case "FunctionDeclaration":
                 const vartab = getVariableTable(currentDecl.parameters);
-                const result = fillUp(currentDecl.statements, symbols, vartab); 
-                if(result.kind === "Fail") return result;
-                else {
+                const result = fillUp(currentDecl.statements, symbols, vartab);
+                if (result.kind === "Fail") { return result; } else {
                     const [statements, newSymbols] = result.value;
                     currentDecl.statements = statements;
                     if (!currentDecl.isAsync) {
@@ -193,7 +189,7 @@ export function fillUpTypeInformation(
                     }
                     symbols = newSymbols;
                     const verification = verifyFunctionDeclaration(currentDecl);
-                    if(verification.kind === "Fail") return verification;
+                    if (verification.kind === "Fail") { return verification; }
                 }
                 break;
         }
@@ -249,7 +245,7 @@ export function validateStruct(s: StructDeclaration, symbols: SymbolTable)
 : Maybe<StructDeclaration, ErrorDetail> {
     const generics = s.genericList.map((x) => x.name.repr);
     const result = validateMembers(generics, s.members, symbols);
-    if(result.kind === "OK") {
+    if (result.kind === "OK") {
         s.members = result.value;
     } else {
         return result;
@@ -258,15 +254,14 @@ export function validateStruct(s: StructDeclaration, symbols: SymbolTable)
 }
 
 function validateMembers(
-    declaredGenerics: string[], 
-    members: MemberDefinition[], 
+    declaredGenerics: string[],
+    members: MemberDefinition[],
     symbols: SymbolTable
-) : Maybe<MemberDefinition[], ErrorDetail> {
+): Maybe<MemberDefinition[], ErrorDetail> {
     for (let i = 0; i < members.length; i++) {
         const m = members[i];
         const result = resolveType(m.expectedType, symbols);
-        if(result.kind === "OK") m.expectedType = result.value;
-        else return result;
+        if (result.kind === "OK") { m.expectedType = result.value; } else { return result; }
         switch (m.expectedType.kind) {
             case "GenericTypename":
                 if (declaredGenerics.indexOf(m.expectedType.name.repr) < 0) {
@@ -277,8 +272,7 @@ function validateMembers(
             case "StructType":
                 if (m.expectedType.genericList !== null) {
                     const result1 = resolveGenericsType(m.expectedType.genericList, symbols);
-                    if(result1.kind === "OK") m.expectedType.genericList = result1.value;
-                    else return result1;
+                    if (result1.kind === "OK") { m.expectedType.genericList = result1.value; } else { return result1; }
 
                     const result2 = validateGenericType(
                         declaredGenerics,
@@ -286,8 +280,7 @@ function validateMembers(
                         symbols
                     );
 
-                    if(result2.kind === "OK") m.expectedType.genericList = result2.value;
-                    else return result2;
+                    if (result2.kind === "OK") { m.expectedType.genericList = result2.value; } else { return result2; }
                 }
                 break;
         }
@@ -308,18 +301,15 @@ export function validateGenericType(declaredGenerics: string[], gs: GenericList,
             }
         } else {
             const result1 = resolveType(g, symbols);
-            if(result1.kind === "OK") g = result1.value;
-            else return result1;
+            if (result1.kind === "OK") { g = result1.value; } else { return result1; }
             switch (g.kind) {
                 case "StructType":
                 case "BuiltinType":
                     const result2 = resolveGenericsType(g.genericList, symbols);
-                    if(result2.kind === "OK") g.genericList = result2.value;
-                    else return result2;
+                    if (result2.kind === "OK") { g.genericList = result2.value; } else { return result2; }
 
                     const result3 = validateGenericType(declaredGenerics, g.genericList, symbols);
-                    if(result3.kind === "OK") g.genericList = result3.value;
-                    else return result3;
+                    if (result3.kind === "OK") { g.genericList = result3.value; } else { return result3; }
             }
         }
     }
@@ -335,7 +325,6 @@ export function newEnumTab(e: EnumDeclaration, enumTab: EnumTable)
     }
     return ok(enumTab);
 }
-
 
 export function findTableEntry < T >(table: TableOf < T >, key: string): T | null {
     const matchingKey = Object
@@ -366,8 +355,7 @@ export function resolveType(t: TypeExpression | null, symbols: SymbolTable)
                 if ("genericList" in type) {
                     type.genericList = t.genericList;
                     const result = resolveGenericsType(type.genericList, symbols);
-                    if(result.kind === "OK") type.genericList = result.value;
-                    else return result;
+                    if (result.kind === "OK") { type.genericList = result.value; } else { return result; }
                 }
                 return ok(type);
             } else {
@@ -517,15 +505,13 @@ export function fillUp(statements: Statement[], symbols: SymbolTable, vartab: Va
         switch (s.kind) {
         case "ReturnStatement":
             const result = fillUpExpressionTypeInfo(s.expression, symbols, vartab);
-            if(result.kind === "OK") [s.expression, symbols] = result.value;
-            else return result;
+            if (result.kind === "OK") { [s.expression, symbols] = result.value; } else { return result; }
             break;
         case "AssignmentStatement":
             switch (s.variable.kind) {
                 case "VariableDeclaration":
                     const result = fillUpExpressionTypeInfo(s.expression, symbols, vartab);
-                    if(result.kind === "OK") [s.expression, symbols] = result.value;
-                    else return result;
+                    if (result.kind === "OK") { [s.expression, symbols] = result.value; } else { return result; }
                     if (s.expression.returnType.kind === "VoidType") {
                         return fail(ErrorAssigningVoidToVariable(s.expression));
                     }
@@ -540,8 +526,7 @@ export function fillUp(statements: Statement[], symbols: SymbolTable, vartab: Va
                             return fail(ErrorAssigningNullToUnnullableVariable(s.variable, s.expression, ));
                         }
                         const result = resolveType(s.variable.typeExpected, symbols);
-                        if(result.kind === "OK") s.variable.typeExpected = result.value;
-                        else return result;
+                        if (result.kind === "OK") { s.variable.typeExpected = result.value; } else { return result; }
                         s.variable.variable.returnType = s.variable.typeExpected;
                         const exprType = s.expression.returnType;
                         const expectedType = s.variable.typeExpected;
@@ -552,12 +537,11 @@ export function fillUp(statements: Statement[], symbols: SymbolTable, vartab: Va
 
                     s.variable.variable.isMutable = s.variable.isMutable;
                     const result3 = updateVariableTable(vartab, s.variable.variable);
-                    if(result3.kind === "OK") vartab = result3.value;
-                    else return result3;
+                    if (result3.kind === "OK") { vartab = result3.value; } else { return result3; }
                     break;
                 case "Variable":
                     const result2 = findVariable(s.variable, vartab, true);
-                    if(result2.kind === "Fail") {
+                    if (result2.kind === "Fail") {
                         return result2;
                     } else {
                         const matching = result2.value;
@@ -565,8 +549,7 @@ export function fillUp(statements: Statement[], symbols: SymbolTable, vartab: Va
                             return fail(ErrorAssigningToImmutableVariable(s.variable));
                         }
                         const result3 = fillUpExpressionTypeInfo(s.expression, symbols, vartab);
-                        if(result3.kind === "OK") [s.expression, symbols] = result3.value;
-                        else return result3;
+                        if (result3.kind === "OK") { [s.expression, symbols] = result3.value; } else { return result3; }
 
                         if (!isSubtypeOf(s.expression.returnType, matching.returnType, symbols.typeTree, typeEquals)) {
                             return fail(ErrorIncorrectTypeGivenForVariable(s.variable, matching.returnType, s.expression));
@@ -579,30 +562,25 @@ export function fillUp(statements: Statement[], symbols: SymbolTable, vartab: Va
             break;
         case "FunctionCall":
             const resultFC = fillUpFunctionCallTypeInfo(s, symbols, vartab);
-            if(resultFC.kind === "OK") [statements[i], symbols.funcTab] = resultFC.value;
-            else return resultFC;
+            if (resultFC.kind === "OK") { [statements[i], symbols.funcTab] = resultFC.value; } else { return resultFC; }
             if (s.returnType.kind !== "VoidType") {
                 return fail(ErrorNonVoidExprNotAssignedToVariable(s));
             }
             break;
         case "BranchStatement":
             const resultBS = fillUpBranchTypeInfo(s, symbols, vartab);
-            if(resultBS.kind === "OK") [statements[i], symbols] = resultBS.value;
-            else return resultBS;
+            if (resultBS.kind === "OK") { [statements[i], symbols] = resultBS.value; } else { return resultBS; }
             break;
         case "ForStatement":
             const resultFS = fillUpForStmtTypeInfo(s, symbols, vartab);
-            if(resultFS.kind === "OK") [statements[i], symbols, vartab] = resultFS.value;
-            else return resultFS;
+            if (resultFS.kind === "OK") { [statements[i], symbols, vartab] = resultFS.value; } else { return resultFS; }
             break;
         case "WhileStatement":
             const resultWS1 = fillUpTestExprTypeInfo(s.test, symbols, vartab);
-            if(resultWS1.kind === "OK") [s.test, symbols] = resultWS1.value;
-            else return resultWS1;
+            if (resultWS1.kind === "OK") { [s.test, symbols] = resultWS1.value; } else { return resultWS1; }
 
             const resultWS2 = fillUp(s.body, symbols, vartab);
-            if(resultWS2.kind === "OK") [s.body, symbols] = resultWS2.value;
-            else return resultWS2;
+            if (resultWS2.kind === "OK") { [s.body, symbols] = resultWS2.value; } else { return resultWS2; }
             break;
     }}
     return ok([statements, symbols] as [Statement[], SymbolTable]);
@@ -625,8 +603,7 @@ function findVariable(v: Variable, vartab: VariableTable, isAssignment: boolean)
 export function fillUpForStmtTypeInfo(f: ForStatement, symbols: SymbolTable, vartab: VariableTable)
 : Maybe<[ForStatement, SymbolTable, VariableTable], ErrorDetail> {
     const result = fillUpExpressionTypeInfo(f.expression, symbols, vartab);
-    if(result.kind === "OK") [f.expression, symbols] = result.value;
-    else return result;
+    if (result.kind === "OK") { [f.expression, symbols] = result.value; } else { return result; }
     const exprType = f.expression.returnType;
     if (exprType.kind === "BuiltinType" && exprType.name === "List") {
         if (exprType.genericList !== null) {
@@ -638,25 +615,22 @@ export function fillUpForStmtTypeInfo(f: ForStatement, symbols: SymbolTable, var
             throw new Error("Something is wrong");
         }
         const result = updateVariableTable(vartab, f.iterator);
-        if(result.kind === "OK") vartab = result.value;
-        else return result;
+        if (result.kind === "OK") { vartab = result.value; } else { return result; }
     } else {
         return fail(ErrorForExprNotArray(f.expression));
     }
     const result2 = fillUp(f.body, symbols, vartab);
-    if(result2.kind === "OK")  [f.body, symbols] = result2.value; 
-    else return result2; 
+    if (result2.kind === "OK") {  [f.body, symbols] = result2.value; } else { return result2; }
     return ok([f, symbols, vartab] as [ForStatement, SymbolTable, VariableTable]);
 }
 
 export function fillUpTestExprTypeInfo(t: Expression, symbols: SymbolTable, vartab: VariableTable)
 : Maybe<[Expression, SymbolTable], ErrorDetail> {
     const result = fillUpExpressionTypeInfo(t, symbols, vartab);
-    if(result.kind === "OK") [t, symbols] = result.value;
-    else return result;
+    if (result.kind === "OK") { [t, symbols] = result.value; } else { return result; }
 
-    const result2 = assertReturnTypeIsBoolean(t); 
-    if(result2.kind === "Fail") return result2;
+    const result2 = assertReturnTypeIsBoolean(t);
+    if (result2.kind === "Fail") { return result2; }
 
     return ok([t, symbols] as [Expression, SymbolTable]);
 }
@@ -674,17 +648,14 @@ export function assertReturnTypeIsBoolean(e: Expression): Maybe<boolean, ErrorDe
 export function fillUpBranchTypeInfo(b: BranchStatement, symbols: SymbolTable, vartab: VariableTable)
 : Maybe<[BranchStatement, SymbolTable], ErrorDetail> {
     const result = fillUp(b.body, symbols, vartab);
-    if(result.kind === "OK") [b.body, symbols] = result.value;
-    else return result;
+    if (result.kind === "OK") { [b.body, symbols] = result.value; } else { return result; }
     if (b.test !== null) {
         const result2 = fillUpTestExprTypeInfo(b.test, symbols, vartab);
-        if(result2.kind === "OK") [b.test, symbols] = result2.value;
-        else return result2;
+        if (result2.kind === "OK") { [b.test, symbols] = result2.value; } else { return result2; }
     }
     if (b.elseBranch !== null) {
         const result3 = fillUpBranchTypeInfo(b.elseBranch, symbols, vartab);
-        if(result3.kind === "OK") [b.elseBranch, symbols] = result3.value;
-        else return result3;
+        if (result3.kind === "OK") { [b.elseBranch, symbols] = result3.value; } else { return result3; }
     }
     return ok([b, symbols] as [BranchStatement, SymbolTable]);
 }
@@ -694,18 +665,15 @@ export function fillUpExpressionTypeInfo(e: Expression, symbols: SymbolTable, va
     switch (e.kind) {
         case "FunctionCall":
             const result = fillUpFunctionCallTypeInfo(e, symbols, vartab);
-            if(result.kind === "OK") [e, symbols.funcTab] = result.value;
-            else return result;
+            if (result.kind === "OK") { [e, symbols.funcTab] = result.value; } else { return result; }
             return ok([e, symbols] as [Expression, SymbolTable]);
         case "List":
             const resultList =  fillUpArrayTypeInfo(e, symbols, vartab);
-            if(isOK(resultList)) [e, symbols] = resultList.value;
-            else return resultList;
+            if (isOK(resultList)) { [e, symbols] = resultList.value; } else { return resultList; }
             break;
         case "TupleExpression":
             const resultTuple = fillUpTupleTypeInfo(e, symbols, vartab);
-            if(isOK(resultTuple)) [e, symbols] = resultTuple.value;
-            else return resultTuple;
+            if (isOK(resultTuple)) { [e, symbols] = resultTuple.value; } else { return resultTuple; }
             break;
         case "Number":
             if (e.repr.indexOf(".") >= 0) {
@@ -717,31 +685,27 @@ export function fillUpExpressionTypeInfo(e: Expression, symbols: SymbolTable, va
         case "String":
             e = fillUpSimpleTypeInfo(e, "String") as StringExpression;
             const resultStr = resolveExpressionInterpolation(e, symbols, vartab);
-            if(isOK(resultStr)) [e, symbols] = resultStr.value;
-            else return resultStr;
+            if (isOK(resultStr)) { [e, symbols] = resultStr.value; } else { return resultStr; }
             break;
         case "Variable":
             const resultVar = fillUpVariableTypeInfo(e, vartab);
-            if(isOK(resultVar)) e = resultVar.value;
-            else return resultVar;
+            if (isOK(resultVar)) { e = resultVar.value; } else { return resultVar; }
             break;
         case "ObjectExpression":
             if (e.constructor !== null) {
                 const result = resolveType(e.constructor, symbols);
-                if(result.kind === "OK") e.constructor = result.value;
-                else return result;
+                if (result.kind === "OK") { e.constructor = result.value; } else { return result; }
                 if (e.constructor.kind === "StructType") {
                     e.returnType = newStructType(e.constructor.reference, e.constructor.genericList);
                     const resultKV = fillUpKeyValueListTypeInfo(e.keyValueList, symbols, vartab);
-                    if(isOK(resultKV)) [e.keyValueList, symbols] = resultKV.value;
-                    else return resultKV;
-                    
+                    if (isOK(resultKV)) { [e.keyValueList, symbols] = resultKV.value; } else { return resultKV; }
+
                     const x = checkIfKeyValueListConforms(
                         e.keyValueList,
                         substituteStructGeneric(e.constructor, e.constructor.reference),
                         symbols
                     );
-                    if(!isOK(x)) return x;
+                    if (!isOK(x)) { return x; }
                 } else if (e.constructor.kind === "BuiltinType") {
                     if (e.keyValueList.length > 0) {
                         throw new Error("List type shouldn't have key value");
@@ -762,14 +726,12 @@ export function fillUpExpressionTypeInfo(e: Expression, symbols: SymbolTable, va
             break;
         case "ObjectAccess":
             const resultOA = fillUpExpressionTypeInfo(e.subject, symbols, vartab);
-            if(resultOA.kind === "OK") [e.subject, symbols] = resultOA.value;
-            else return resultOA;
+            if (resultOA.kind === "OK") { [e.subject, symbols] = resultOA.value; } else { return resultOA; }
             const subjectReturnType = e.subject.returnType;
             switch (subjectReturnType.kind) {
                 case "StructType":
                     const resultST = findMemberType(e.key, subjectReturnType.reference);
-                    if(isOK(resultST)) e.returnType = resultST.value;
-                    else return resultST;
+                    if (isOK(resultST)) { e.returnType = resultST.value; } else { return resultST; }
                     break;
                 default:
                     throw new Error("Must be dictionary type of object type");
@@ -777,8 +739,7 @@ export function fillUpExpressionTypeInfo(e: Expression, symbols: SymbolTable, va
             break;
         case "EnumExpression":
             const resultEnum = findMatchingEnumType(e.value, symbols.enumTab);
-            if(isOK(resultEnum)) e.returnType = resultEnum.value;
-            else return resultEnum;
+            if (isOK(resultEnum)) { e.returnType = resultEnum.value; } else { return resultEnum; }
             break;
         default:
             throw new Error(`Unimplemented yet for ${e.kind}`);
@@ -845,13 +806,12 @@ export function resolveExpressionInterpolation(
                 interpolationFound = false;
                 const repr = pad(current, s.location.first_line - 1, s.location.first_column + previousIndex);
                 const parseResult = parseCode({content: repr + " @EOF", filename: ""}, CURRENT_SOURCE_CODE());
-                if(!isOK(parseResult)) {
+                if (!isOK(parseResult)) {
                     return parseResult;
                 }
                 let expr = parseResult.value as Expression;
                 const type = fillUpExpressionTypeInfo(expr, symbols, vartab);
-                if(isOK(type))  [expr, symbols] = type.value; 
-                else return type;
+                if (isOK(type)) {  [expr, symbols] = type.value; } else { return type; }
                 if (isStringType(expr.returnType)) {
                     result.expressions.push(expr);
                     current = "";
@@ -914,8 +874,7 @@ export function substituteStructGeneric(t: StructType, s: StructDeclaration): St
 export function fillUpTupleTypeInfo(t: TupleExpression, symbols: SymbolTable, vartab: VariableTable)
 : Maybe<[TupleExpression, SymbolTable], ErrorDetail> {
     const result = fillUpElementsType(t.elements, symbols, vartab);
-    if(isOK(result)) [t.elements, symbols] = result.value;
-    else return result;
+    if (isOK(result)) { [t.elements, symbols] = result.value; } else { return result; }
     t.returnType = getTupleReturnType(t);
     return ok([t, symbols] as [TupleExpression, SymbolTable]);
 }
@@ -1023,7 +982,7 @@ export function fillUpKeyValueListTypeInfo(kvs: KeyValue[], symbols: SymbolTable
 : Maybe<[KeyValue[], SymbolTable], ErrorDetail> {
     for (let i = 0; i < kvs.length; i++) {
         const result = fillUpExpressionTypeInfo(kvs[i].expression, symbols, vartab);
-        if(isOK(result)) {
+        if (isOK(result)) {
             [kvs[i].expression, symbols] = result.value;
         } else {
             return result;
@@ -1035,8 +994,7 @@ export function fillUpKeyValueListTypeInfo(kvs: KeyValue[], symbols: SymbolTable
 export function fillUpVariableTypeInfo(e: Variable, vartab: VariableTable)
 : Maybe<Variable, ErrorDetail> {
     const matching = findVariable(e, vartab, false);
-    if(isOK(matching))  e.returnType = matching.value.returnType;  
-    else return matching; 
+    if (isOK(matching)) {  e.returnType = matching.value.returnType; } else { return matching; }
     return ok(e);
 }
 
@@ -1049,12 +1007,11 @@ export function fillUpSimpleTypeInfo(e: SimpleExpression, name: BuiltinTypename)
     };
 }
 
-export function fillUpFunctionCallTypeInfo(e: FunctionCall, symbols: SymbolTable, vartab: VariableTable): 
+export function fillUpFunctionCallTypeInfo(e: FunctionCall, symbols: SymbolTable, vartab: VariableTable):
 Maybe<[FunctionCall, FunctionTable], ErrorDetail> {
     for (let i = 0; i < e.parameters.length; i++) {
         const result = fillUpExpressionTypeInfo(e.parameters[i], symbols, vartab);
-        if(result.kind === "OK") [e.parameters[i], symbols] = result.value;
-        else return result;
+        if (result.kind === "OK") { [e.parameters[i], symbols] = result.value; } else { return result; }
     }
     return getFuncSignature(e, symbols.funcTab, symbols.typeTree);
 }
@@ -1065,7 +1022,7 @@ export function getFuncSignature(f: FunctionCall, functab: FunctionTable, typetr
     if (key in functab) {
         const matchingFunctions = functab[key].filter((x) => x.parameters.length === f.parameters.length);
         const result = getClosestFunction(f, matchingFunctions, typetree);
-        if(result.kind === "Fail") return result;
+        if (result.kind === "Fail") { return result; }
         const closestFunction = result.value;
         // This step is necessary to fix parent type E.g., changing (Number -> Number)
         // to (Any -> Number)
@@ -1243,12 +1200,10 @@ export function fillUpArrayTypeInfo(e: ListExpression, symbols: SymbolTable, var
 : Maybe<[ListExpression, SymbolTable], ErrorDetail> {
     if (e.elements !== null) {
         const result = fillUpElementsType(e.elements, symbols, vartab);
-        if(isOK(result)) [e.elements, symbols] = result.value;
-        else return result;
+        if (isOK(result)) { [e.elements, symbols] = result.value; } else { return result; }
 
         const elementType = getElementsType(e.elements);
-        if(isOK(elementType)) e.returnType = elementType.value;
-        else return elementType;
+        if (isOK(elementType)) { e.returnType = elementType.value; } else { return elementType; }
     } else {
         throw new Error("impossible");
     }
@@ -1259,8 +1214,7 @@ export function fillUpElementsType(exprs: Expression[], symbols: SymbolTable, va
 : Maybe<[Expression[], SymbolTable], ErrorDetail> {
     for (let i = 0; i < exprs.length; i++) {
         const result = fillUpExpressionTypeInfo(exprs[i], symbols, vartab);
-        if(isOK(result)) [exprs[i], symbols] = result.value;
-        else return result;
+        if (isOK(result)) { [exprs[i], symbols] = result.value; } else { return result; }
     }
     return ok([exprs, symbols] as [Expression[], SymbolTable]);
 }
@@ -1268,7 +1222,7 @@ export function fillUpElementsType(exprs: Expression[], symbols: SymbolTable, va
 export function getElementsType(elements: Expression[])
 : Maybe<BuiltinType, ErrorDetail> {
     const result = checkIfAllElementTypeAreHomogeneous(elements);
-    if(result.kind === "Fail") {
+    if (result.kind === "Fail") {
         return result;
     } else {
         const types = elements.map((x) => x.returnType);
@@ -1310,7 +1264,7 @@ export function resolveGenericsType(genericList: GenericList, symbols: SymbolTab
     }
     for (let i = 0; i < genericList.length; i++) {
         const result = resolveType(genericList[i], symbols);
-        if(result.kind === "OK") {
+        if (result.kind === "OK") {
             genericList[i] = result.value;
         } else {
             return result;

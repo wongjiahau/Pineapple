@@ -1,7 +1,7 @@
 import { AtomicToken, GenericList, TokenLocation, TypeExpression } from "../ast";
 import { SourceCode } from "../interpret";
 
-export type ErrorDetail = {
+export interface ErrorDetail {
     code: string;
     name: string;
     message: string;
@@ -11,7 +11,7 @@ export type ErrorDetail = {
 }
 
 export function stringifyGenericList(gs: GenericList): string {
-    if(gs.length === 0) {
+    if (gs.length === 0) {
         return "";
     } else {
         return "{" + gs.map(stringifyTypeReadable).join(",") + "}";

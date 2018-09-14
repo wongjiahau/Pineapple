@@ -1,6 +1,6 @@
 import { testTranspile } from "../../testUtil";
 
-testTranspile("enum declaration", 
+testTranspile("enum declaration",
 `
 def Color
     #red

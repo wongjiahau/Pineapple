@@ -23,4 +23,4 @@ $$pass$$();
 function _main_(){
 const $result = _$plus_Number_Number(_mul_Number_Number((1),(2)),_mul_Number_Number((3),(6)));
 }
-`)
+`);

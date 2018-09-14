@@ -1,6 +1,6 @@
 import { testTranspile } from "../../testUtil";
 
-testTranspile("array slicing", 
+testTranspile("array slicing",
 `
 def (this List{T}).(start Integer to end Integer) -> T
     pass
@@ -22,4 +22,4 @@ function _main_(){
 const $x = [(1),(2),(3)];
 const $y = _$period_to_ListOfInteger_Integer_Integer($x,(0),(1));
 }
-`)
+`);

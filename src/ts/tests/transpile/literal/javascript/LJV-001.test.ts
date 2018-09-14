@@ -14,4 +14,4 @@ function _print_String($this){
 console.log($this);
 // </javascript>
 }
-`)
+`);

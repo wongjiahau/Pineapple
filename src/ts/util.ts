@@ -42,8 +42,7 @@ export function copy < T >(x: T): T {
     return JSON.parse(JSON.stringify(x));
 }
 
-
-export function endsWith(s: String, suffixes: string): boolean {
+export function endsWith(s: string, suffixes: string): boolean {
     return s.slice(-suffixes.length) === suffixes;
 }
 

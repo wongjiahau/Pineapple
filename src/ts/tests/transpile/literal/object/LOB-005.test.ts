@@ -16,4 +16,4 @@ $kind: "People",
 name : "John",
 };
 }
-`)
+`);

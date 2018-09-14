@@ -1,6 +1,6 @@
 import { testTranspile } from "../../../testUtil";
 
-testTranspile("object literals with string key", 
+testTranspile("object literals with string key",
 `
 def ().main
     let y = 6
@@ -29,4 +29,4 @@ yo" : (123),
 };
 const $x = (5);
 }
-`)
+`);

@@ -1,5 +1,5 @@
-import { ErrorDetail } from "./errorUtil";
 import { StringExpression } from "../ast";
+import { ErrorDetail } from "./errorUtil";
 
 export function ErrorImportFail(
     filename: StringExpression
@@ -9,7 +9,7 @@ export function ErrorImportFail(
         code: "0030",
         message: `Cannot import ${filename.repr}`,
         relatedLocation: filename.location,
-        hint: 
+        hint:
 `Several possible reasons:
 
     1. The file does not exist

@@ -10,4 +10,4 @@ def (this Number).squeeze(that Number)
 function _squeeze_Number_Number($this,$that){
 $$pass$$();
 }
-`)
+`);

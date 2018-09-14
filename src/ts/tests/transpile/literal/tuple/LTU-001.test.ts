@@ -11,4 +11,4 @@ function _main_(){
 const $tuple = [(1),"2",(3)];
 }
 `
-)
+);
