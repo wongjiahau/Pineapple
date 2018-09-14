@@ -1,4 +1,4 @@
-import { testTranspile, testTranspileSkip } from "../../testUtil";
+import { testTranspileSkip } from "../../testUtil";
 
 testTranspileSkip("importing file from github",
 `

@@ -49,7 +49,7 @@ let x = ().pi
     For example,
 
     ```pine
-    def .showMyName // no need to put -> here
+    def ().showMyName // no need to put -> here
         pass
     ```
 <hr>

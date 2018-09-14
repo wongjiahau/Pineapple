@@ -1,8 +1,8 @@
 # A Basic Pineapple Program
-Every Pineapple program is executed via the `.main` method.  
+Every Pineapple program is executed via the `().main` method.  
 For example,
 ```py
-def .main
+def ().main
     'hello world'.show
     'bye'.show
 ```
