@@ -23,7 +23,7 @@ export function interpret(
     loadPreludeLibrary: boolean
 ): Maybe<string, ErrorDetail> {
     if (loadPreludeLibrary) {
-        source.content = `import "$pine/prelude/*"\n` + source.content;
+        source.content = source.content + `\nimport "$pine/prelude/*"`;
     }
     const initialCache: SyntaxTreeCache = {};
     const parsedCode = parseCodeToSyntaxTree(source);
