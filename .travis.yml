@@ -2,6 +2,10 @@ language: node_js
 node_js:
   - "7"
 
+install:
+  - npm install -g codecov
+  
+
 cache:
   directories:
     - "./src/node_modules"
@@ -16,3 +20,7 @@ script:
   - ./genparser.sh
   - ./build.sh 0
   - ./test.sh 0
+
+after_script:
+  - ./node_modules/jest/bin/jest.js --coverage
+  - codecov
