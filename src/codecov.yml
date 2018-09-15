@@ -1,0 +1,2 @@
+fixes:
+  - "ts/::src/ts/"  # Actually this is still not working, need to fix this soon

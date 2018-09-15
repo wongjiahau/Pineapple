@@ -1,42 +1,64 @@
 {
-  "name": "pinelang",
-  "version": "0.0.9",
-  "gypfile": true,
-  "description": "```The interpreter of Pineapple```",
-  "main": "./js/interpreter.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "url": "https://github.com/wongjiahau/Pineapple",
-  "repository": {
-    "url": "https://github.com/wongjiahau/Pineapple"
-  },
-  "author": "Wong Jia Hau",
-  "license": "Apache-2.0",
-  "dependencies": {
-    "boxen": "^1.3.0",
-    "chalk": "^2.4.1",
-    "clear": "^0.1.0",
-    "commander": "^2.15.1",
-    "fast-levenshtein": "^2.0.6",
-    "number-to-words": "^1.2.4",
-    "toposort": "^2.0.2"
-  },
-  "devDependencies": {
-    "@types/chai": "^4.1.4",
-    "@types/mocha": "^5.2.0",
-    "@types/node": "^10.9.4",
-    "@types/string": "0.0.29",
-    "chai": "^4.1.2",
-    "colors": "^1.3.2",
-    "diff": "^3.5.0",
-    "jest": "^23.6.0",
-    "jison": "^0.4.18",
-    "nexe": "^2.0.0-rc.34",
-    "typescript": "^3.0.3"
-  },
-  "bin": {
-    "pine": "./bin/pine.js"
-  },
-  "preferGlobal": true
+    "name": "pinelang",
+    "version": "0.0.9",
+    "gypfile": true,
+    "description": "```The interpreter of Pineapple```",
+    "main": "./js/interpreter.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "url": "https://github.com/wongjiahau/Pineapple",
+    "repository": {
+        "url": "https://github.com/wongjiahau/Pineapple"
+    },
+    "author": "Wong Jia Hau",
+    "license": "Apache-2.0",
+    "dependencies": {
+        "boxen": "^1.3.0",
+        "chalk": "^2.4.1",
+        "clear": "^0.1.0",
+        "commander": "^2.15.1",
+        "fast-levenshtein": "^2.0.6",
+        "number-to-words": "^1.2.4",
+        "toposort": "^2.0.2"
+    },
+    "devDependencies": {
+        "@types/chai": "^4.1.4",
+        "@types/jest": "^23.3.2",
+        "@types/mocha": "^5.2.0",
+        "@types/node": "^10.9.4",
+        "@types/string": "0.0.29",
+        "chai": "^4.1.2",
+        "codecov": "^3.1.0",
+        "colors": "^1.3.2",
+        "diff": "^3.5.0",
+        "jest": "^23.6.0",
+        "jison": "^0.4.18",
+        "nexe": "^2.0.0-rc.34",
+        "ts-jest": "^23.1.4",
+        "typescript": "^3.0.3"
+    },
+    "bin": {
+        "pine": "./bin/pine.js"
+    },
+    "preferGlobal": true,
+    "jest": {
+        "transform": {
+            "^.+\\.tsx?$": "ts-jest"
+        },
+        "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(tsx?)$",
+        "moduleFileExtensions": [
+            "ts",
+            "tsx",
+            "js",
+            "jsx",
+            "json",
+            "node"
+        ],
+        "globals": {
+            "ts-jest": {
+                "tsConfigFile": "./ts/tsconfig.json"
+            }
+        }
+    }
 }
