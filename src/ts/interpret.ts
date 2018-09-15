@@ -29,6 +29,9 @@ export function interpret(
     const parsedCode = parseCodeToSyntaxTree(source);
     if (isFail(parsedCode)) { return parsedCode; }
     const ast = parsedCode.value;
+
+    // console.log(JSON.stringify(ast.declarations,null,2));
+
     initialCache[source.filename] = ast;
     const extractResult = extractImports(ast, initialCache);
     if (isFail(extractResult)) { return extractResult; }

@@ -434,7 +434,37 @@ MultilineExpr
     : MultilineObject
     | MulitilineDictionary
     | MultilineList
+    | MultilineFunctionChaining 
     | SinglelineExpr NEWLINE
+    ;
+
+MultilineFunctionChaining
+    : MultilineFunctionChainingHead PartialFunctionCalls DEDENT 
+        {
+            // This code is to make sure the MultilineFunctionChainingHead will be inserted
+            // to the innermost function
+            let current = $2;
+            while(current.parameters !== undefined 
+                && current.parameters[0].parameters !== undefined) {
+                current = current.parameters[0];
+            }
+            current.parameters[0]=$1; $$=$2;
+        }
+    ;
+
+MultilineFunctionChainingHead
+    : SinglelineExpr NEWLINE INDENT PartialFuncCall NEWLINE { $4.parameters[0]=$1; $$=$4; }
+    ;
+
+PartialFunctionCalls
+    : PartialFuncCall NEWLINE PartialFunctionCalls  {$3.parameters[0]=$1; $$=$3;}
+    | PartialFuncCall NEWLINE  {$$=$1;}
+    ;
+
+PartialFuncCall
+    : PartialMonoFuncCall
+    | PartialBiFuncCall 
+    | PartialTriFuncCall 
     ;
 
 SinglelineExpr
@@ -460,21 +490,36 @@ AtomicFuncCall
     ;
 
 NulliFuncCall
-    : LeftParenthesis RightParenthesis FuncAtom  {$$=_FunctionCall("Nulli",[$3],[],this._$)}
+    : LeftParenthesis RightParenthesis PartialNulliFuncCall {$$=$3}  
+    ;
+
+PartialNulliFuncCall
+    : FuncAtom {$$=_FunctionCall("Nulli",[$1],[{}],this._$)}
     ;
 
 MonoFuncCall
-    : AtomicExpr FuncAtom {$$=_FunctionCall("Mono",[$2],[$1],this._$)}
+    : AtomicExpr PartialMonoFuncCall {$2.parameters[0]=$1; $$=$2}
+    ;
+
+PartialMonoFuncCall
+    : FuncAtom {$$=_FunctionCall("Mono",[$1],[{}],this._$)}
     ;
 
 BiFuncCall
-    : AtomicExpr FuncAtom LeftParenthesis SinglelineExpr RightParenthesis  
-        {$$=_FunctionCall("Bi",[$2],[$1,$4],this._$)}
+    : AtomicExpr PartialBiFuncCall {$2.parameters[0]=$1; $$=$2}
+    ;
+
+PartialBiFuncCall
+    : FuncAtom LeftParenthesis SinglelineExpr RightParenthesis {$$=_FunctionCall("Bi",[$1],[{},$3],this._$)}
     ;
 
 TriFuncCall
-    : AtomicExpr FuncAtom LeftParenthesis SinglelineExpr VariableAtom SinglelineExpr RightParenthesis  
-        {$$=_FunctionCall("Tri",[$2,$5],[$1,$4,$6],this._$)}
+    : AtomicExpr PartialTriFuncCall {$2.parameters[0]=$1; $$=$2}
+    ;
+
+PartialTriFuncCall
+    : FuncAtom LeftParenthesis SinglelineExpr VariableAtom SinglelineExpr RightParenthesis  
+        {$$=_FunctionCall("Tri",[$1,$4],[null,$3,$5],this._$)}
     ;
 
 AtomicExpr 

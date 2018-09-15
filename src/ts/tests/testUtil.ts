@@ -7,6 +7,7 @@ declare var it: any;
 // @ts-ignore
 import { mocha } from "mocha";
 import { interpret, SourceCode } from "../interpret";
+import { renderError } from "../errorType/renderError";
 const jsdiff = require("diff");
 
 export function assertEquals(actual: string, expected: string) {
@@ -76,7 +77,8 @@ export function testTranspile(description: string, input: string, expectedOutput
             if (result.kind === "OK") {
                 assertEquals(result.value.trim(), expectedOutput.trim());
             } else {
-                throw new Error("Caught error ");
+                console.log(result.error.message);
+                throw new Error("Caught error " + renderError(result.error));
             }
         });
     });

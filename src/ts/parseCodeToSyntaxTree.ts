@@ -53,7 +53,8 @@ export function parseCode(
             lexError.source = preprocessedSourceCode;
             return fail(lexError);
         } else {
-            return fail(UnkwownError(""));
+            console.log(error);
+            return fail(UnkwownError(error.message));
         }
     }
 }
