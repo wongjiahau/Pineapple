@@ -21,6 +21,5 @@ script:
   - ./build.sh 0
   - ./test.sh 0
 
-after_script:
-  - ./node_modules/jest/bin/jest.js --coverage
+after_success:
   - codecov
