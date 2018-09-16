@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.10
+
+Added support for multiple line function chaining.
+
 ## 0.0.9
 
 - Breaking changes: Updated nullifunc syntax.

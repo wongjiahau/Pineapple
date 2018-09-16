@@ -1,6 +1,6 @@
 {
     "name": "pinelang",
-    "version": "0.0.9",
+    "version": "0.0.10",
     "gypfile": true,
     "description": "```The interpreter of Pineapple```",
     "main": "./js/interpreter.js",
