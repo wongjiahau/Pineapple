@@ -209,6 +209,8 @@ export function containsAsyncFunction(e: Expression | null): boolean {
             }
         case "List":
             return e.elements.some(containsAsyncFunction);
+        case "ObjectExpression":
+            return e.keyValueList.some((x) => containsAsyncFunction(x.expression));
         default: // TODO: Add code handler for other types of expression
             return false;
     }

@@ -494,7 +494,7 @@ NulliFuncCall
     ;
 
 PartialNulliFuncCall
-    : FuncAtom {$$=_FunctionCall("Nulli",[$1],[{}],this._$)}
+    : FuncAtom {$$=_FunctionCall("Nulli",[$1],[],this._$)}
     ;
 
 MonoFuncCall
