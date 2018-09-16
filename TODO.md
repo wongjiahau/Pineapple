@@ -7,7 +7,9 @@
 - [] update docs about types
 - [x] implement dictionary type
 - [x] write docs about keywords
-- [] type checking for table type
-- [] variable optimization
-- [] add docs about importing files
-- [] add support for importing modules from github
+- [] Type checking for table type
+- [] Variable optimization
+- [] Add docs about importing files
+- [] Add support for importing modules from github
+- [x] Add docs about multiple line function chaining
+- [] Add call-stack reporting feature (using a global function table and try catch at main module)

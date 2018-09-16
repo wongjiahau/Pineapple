@@ -183,6 +183,67 @@ let x = "Hello world".replace(0 to 4 with "Hi")
     Polyfunc is not implemented yet.
 
 <hr>
+
+## Function chaining
+
+Sometimes you might want to pass a data through multiple functions.  
+
+So, instead of using many variables, for example,
+
+```pine
+// Using many variables to store intermediate results
+def (this Point).distanceTo(that Point) -> Number
+    let xDistance = this:x- that:x
+    let yDistance = this:y - that:y
+    let xDistanceSquared = xDistance.square
+    let yDistanceSquared = yDistance.square
+    let sum = xDistanceSquared + yDistanceSquared
+    let distance = sum.squareRoot
+```
+
+You can use ==function chaining==, as the following,
+
+```pine
+// Using function chaining
+def (this Point).distanceTo(that Point) -> Number
+    return ((this:x - that:x).square + (this:y - that:y).square).squareRoot
+```
+
+### Multiple line function chaining
+
+If you think you cannot fit all the functions you want to call in a single line, you can also use multiple line function chaining, for example,
+
+```pine
+def Color
+    :red    Number
+    :green  Number
+    :blue   Number
+
+// multiple line function chaining
+def (this Color) == (that Color) -> Boolean
+    return  (this:red   == that:red)
+        .and(this:green == that:green)
+        .and(this:blue  == that:blue)
+```
+
+!!! info "Warning"
+    When using multiple line function chaining(MLFC), indentation is important. The following are examples of invalid MLFC.
+
+    ```pine
+    // Error
+    def (this Color) == (that Color) -> Boolean
+        return  (this:red   == that:red)
+        .and(this:green == that:green) // Should have one indentation here
+        .and(this:blue  == that:blue)
+
+    // Error
+    def (this Color) == (that Color) -> Boolean
+        return  (this:red   == that:red)
+                .and(this:green == that:green) // Too much indentation here
+                .and(this:blue  == that:blue)
+    ```
+
+
 ## What's the difference of Pineapple function with named parameters?
 Look at the following example to understand the difference.
 ```python
