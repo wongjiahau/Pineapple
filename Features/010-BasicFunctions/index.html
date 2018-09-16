@@ -445,6 +445,26 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#function-chaining" title="Function chaining" class="md-nav__link">
+    Function chaining
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#multiple-line-function-chaining" title="Multiple line function chaining" class="md-nav__link">
+    Multiple line function chaining
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#whats-the-difference-of-pineapple-function-with-named-parameters" title="What's the difference of Pineapple function with named parameters?" class="md-nav__link">
     What's the difference of Pineapple function with named parameters?
   </a>
@@ -668,6 +688,26 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#function-chaining" title="Function chaining" class="md-nav__link">
+    Function chaining
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#multiple-line-function-chaining" title="Multiple line function chaining" class="md-nav__link">
+    Multiple line function chaining
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#whats-the-difference-of-pineapple-function-with-named-parameters" title="What's the difference of Pineapple function with named parameters?" class="md-nav__link">
     What's the difference of Pineapple function with named parameters?
   </a>
@@ -763,21 +803,21 @@
 <h2 id="nullifunc-0-parameter">Nullifunc (0 parameter)<a class="headerlink" href="#nullifunc-0-parameter" title="Permanent link">&para;</a></h2>
 <p>Nullifunc is a function that do not need any parameters, for example:
 <div class="codehilite"><pre><span></span><span class="c1">// Here&#39;s how you define a nullifunc</span>
-<span class="kd">def</span> <span class="p">.</span><span class="nx">pi</span> <span class="o">-&gt;</span> <span class="nb">Number</span>
+<span class="kd">def</span> <span class="p">().</span><span class="nx">pi</span> <span class="o">-&gt;</span> <span class="nb">Number</span>
     <span class="k">return</span> <span class="kc">3</span><span class="mi">.</span><span class="kc">142</span>
 
 <span class="c1">// Here&#39;s how you call a nullifunc</span>
-<span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="p">.</span><span class="nx">pi</span>
+<span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="p">().</span><span class="nx">pi</span>
 </pre></div></p>
 <div class="admonition info">
 <p class="admonition-title">Note</p>
-<p><code class="codehilite"><span class="o">-&gt;</span> <span class="nb">Number</span></code> means that the <code class="codehilite"><span class="p">.</span><span class="nx">pi</span></code> function will return a <code class="codehilite"><span class="nb">Number</span></code> type.</p>
+<p><code class="codehilite"><span class="o">-&gt;</span> <span class="nb">Number</span></code> means that the <code class="codehilite"><span class="p">().</span><span class="nx">pi</span></code> function will return a <code class="codehilite"><span class="nb">Number</span></code> type.</p>
 </div>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
 <p>If you want to declare a function that does not return anything, just don't put the arrow symbol. </p>
 <p>For example,</p>
-<div class="codehilite"><pre><span></span><span class="kd">def</span> <span class="p">.</span><span class="nx">showMyName</span> <span class="c1">// no need to put -&gt; here</span>
+<div class="codehilite"><pre><span></span><span class="kd">def</span> <span class="p">().</span><span class="nx">showMyName</span> <span class="c1">// no need to put -&gt; here</span>
     <span class="kd">pass</span>
 </pre></div>
 
@@ -909,6 +949,56 @@ Example of usage:
 </div>
 <hr>
 
+<h2 id="function-chaining">Function chaining<a class="headerlink" href="#function-chaining" title="Permanent link">&para;</a></h2>
+<p>Sometimes you might want to pass a data through multiple functions.  </p>
+<p>So, instead of using many variables, for example,</p>
+<div class="codehilite"><pre><span></span><span class="c1">// Using many variables to store intermediate results</span>
+<span class="kd">def</span> <span class="p">(</span><span class="nx">this</span> <span class="nb">Point</span><span class="p">).</span><span class="nx">distanceTo</span><span class="p">(</span><span class="nx">that</span> <span class="nb">Point</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">Number</span>
+    <span class="kd">let</span> <span class="nx">xDistance</span> <span class="o">=</span> <span class="nx">this</span><span class="o">:</span><span class="nx">x</span><span class="o">-</span> <span class="nx">that</span><span class="o">:</span><span class="nx">x</span>
+    <span class="kd">let</span> <span class="nx">yDistance</span> <span class="o">=</span> <span class="nx">this</span><span class="o">:</span><span class="nx">y</span> <span class="o">-</span> <span class="nx">that</span><span class="o">:</span><span class="nx">y</span>
+    <span class="kd">let</span> <span class="nx">xDistanceSquared</span> <span class="o">=</span> <span class="nx">xDistance</span><span class="mi">.square</span>
+    <span class="kd">let</span> <span class="nx">yDistanceSquared</span> <span class="o">=</span> <span class="nx">yDistance</span><span class="mi">.square</span>
+    <span class="kd">let</span> <span class="nx">sum</span> <span class="o">=</span> <span class="nx">xDistanceSquared</span> <span class="o">+</span> <span class="nx">yDistanceSquared</span>
+    <span class="kd">let</span> <span class="nx">distance</span> <span class="o">=</span> <span class="nx">sum</span><span class="mi">.squareRoot</span>
+</pre></div>
+
+<p>You can use <mark>function chaining</mark>, as the following,</p>
+<div class="codehilite"><pre><span></span><span class="c1">// Using function chaining</span>
+<span class="kd">def</span> <span class="p">(</span><span class="nx">this</span> <span class="nb">Point</span><span class="p">).</span><span class="nx">distanceTo</span><span class="p">(</span><span class="nx">that</span> <span class="nb">Point</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">Number</span>
+    <span class="k">return</span> <span class="p">((</span><span class="nx">this</span><span class="o">:</span><span class="nx">x</span> <span class="o">-</span> <span class="nx">that</span><span class="o">:</span><span class="nx">x</span><span class="p">).</span><span class="nx">square</span> <span class="o">+</span> <span class="p">(</span><span class="nx">this</span><span class="o">:</span><span class="nx">y</span> <span class="o">-</span> <span class="nx">that</span><span class="o">:</span><span class="nx">y</span><span class="p">).</span><span class="nx">square</span><span class="p">).</span><span class="nx">squareRoot</span>
+</pre></div>
+
+<h3 id="multiple-line-function-chaining">Multiple line function chaining<a class="headerlink" href="#multiple-line-function-chaining" title="Permanent link">&para;</a></h3>
+<p>If you think you cannot fit all the functions you want to call in a single line, you can also use multiple line function chaining, for example,</p>
+<div class="codehilite"><pre><span></span><span class="kd">def</span> <span class="nb">Color</span>
+    <span class="o">:</span><span class="nx">red</span>    <span class="nb">Number</span>
+    <span class="o">:</span><span class="nx">green</span>  <span class="nb">Number</span>
+    <span class="o">:</span><span class="nx">blue</span>   <span class="nb">Number</span>
+
+<span class="c1">// multiple line function chaining</span>
+<span class="kd">def</span> <span class="p">(</span><span class="nx">this</span> <span class="nb">Color</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="nx">that</span> <span class="nb">Color</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">Boolean</span>
+    <span class="k">return</span>  <span class="p">(</span><span class="nx">this</span><span class="o">:</span><span class="nx">red</span>   <span class="o">==</span> <span class="nx">that</span><span class="o">:</span><span class="nx">red</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">and</span><span class="p">(</span><span class="nx">this</span><span class="o">:</span><span class="nx">green</span> <span class="o">==</span> <span class="nx">that</span><span class="o">:</span><span class="nx">green</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">and</span><span class="p">(</span><span class="nx">this</span><span class="o">:</span><span class="nx">blue</span>  <span class="o">==</span> <span class="nx">that</span><span class="o">:</span><span class="nx">blue</span><span class="p">)</span>
+</pre></div>
+
+<div class="admonition info">
+<p class="admonition-title">Warning</p>
+<p>When using multiple line function chaining(MLFC), indentation is important. The following are examples of invalid MLFC.</p>
+<div class="codehilite"><pre><span></span><span class="c1">// Error</span>
+<span class="kd">def</span> <span class="p">(</span><span class="nx">this</span> <span class="nb">Color</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="nx">that</span> <span class="nb">Color</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">Boolean</span>
+    <span class="k">return</span>  <span class="p">(</span><span class="nx">this</span><span class="o">:</span><span class="nx">red</span>   <span class="o">==</span> <span class="nx">that</span><span class="o">:</span><span class="nx">red</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">and</span><span class="p">(</span><span class="nx">this</span><span class="o">:</span><span class="nx">green</span> <span class="o">==</span> <span class="nx">that</span><span class="o">:</span><span class="nx">green</span><span class="p">)</span> <span class="c1">// Should have one indentation here</span>
+    <span class="p">.</span><span class="nx">and</span><span class="p">(</span><span class="nx">this</span><span class="o">:</span><span class="nx">blue</span>  <span class="o">==</span> <span class="nx">that</span><span class="o">:</span><span class="nx">blue</span><span class="p">)</span>
+
+<span class="c1">// Error</span>
+<span class="kd">def</span> <span class="p">(</span><span class="nx">this</span> <span class="nb">Color</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="nx">that</span> <span class="nb">Color</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">Boolean</span>
+    <span class="k">return</span>  <span class="p">(</span><span class="nx">this</span><span class="o">:</span><span class="nx">red</span>   <span class="o">==</span> <span class="nx">that</span><span class="o">:</span><span class="nx">red</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">and</span><span class="p">(</span><span class="nx">this</span><span class="o">:</span><span class="nx">green</span> <span class="o">==</span> <span class="nx">that</span><span class="o">:</span><span class="nx">green</span><span class="p">)</span> <span class="c1">// Too much indentation here</span>
+            <span class="p">.</span><span class="nx">and</span><span class="p">(</span><span class="nx">this</span><span class="o">:</span><span class="nx">blue</span>  <span class="o">==</span> <span class="nx">that</span><span class="o">:</span><span class="nx">blue</span><span class="p">)</span>
+</pre></div>
+
+</div>
 <h2 id="whats-the-difference-of-pineapple-function-with-named-parameters">What's the difference of Pineapple function with named parameters?<a class="headerlink" href="#whats-the-difference-of-pineapple-function-with-named-parameters" title="Permanent link">&para;</a></h2>
 <p>Look at the following example to understand the difference.
 <div class="codehilite"><pre><span></span><span class="c1"># Python</span>
