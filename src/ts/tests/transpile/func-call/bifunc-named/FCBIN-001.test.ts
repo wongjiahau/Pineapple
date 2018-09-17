@@ -14,6 +14,8 @@ $$pass$$();
 }
 
 function _main_(){
-const $result = _add_Number_Number((1),(2));
+const $result = _add_Number_Number(
+(1)
+,(2));
 }
 `);

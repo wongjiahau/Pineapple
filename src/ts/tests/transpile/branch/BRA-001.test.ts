@@ -27,11 +27,17 @@ $$pass$$();
 function _main_(){
 const $x = (4);
 const $y = (6);
-if(_$greaterThan_Number_Number($x,$y)){
-if(_$greaterThan_Number_Number($y,$x)){
+if(_$greaterThan_Number_Number(
+$x
+,$y)){
+if(_$greaterThan_Number_Number(
+$y
+,$x)){
 const $a = "yes";
 }
-}else if(_$greaterThan_Number_Number($y,$x)){
+}else if(_$greaterThan_Number_Number(
+$y
+,$x)){
 const $b = "no";
 }else {
 const $c = "oops";

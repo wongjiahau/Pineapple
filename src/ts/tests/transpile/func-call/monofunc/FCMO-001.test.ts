@@ -14,7 +14,8 @@ $$pass$$();
 }
 
 function _main_(){
-_show_String("hello world");
+_show_String(
+"hello world");
 }
 
 `);

@@ -22,7 +22,11 @@ $$pass$$();
 }
 
 function _main_(){
-const $x = _$plus_Number_Number((1),(2.0));
-const $y = _$plus_Integer_Integer((1),(2));
+const $x = _$plus_Number_Number(
+(1)
+,(2.0));
+const $y = _$plus_Integer_Integer(
+(1)
+,(2));
 }
 `);

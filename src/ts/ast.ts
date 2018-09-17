@@ -231,6 +231,7 @@ export interface FunctionCall {
     returnType: TypeExpression;
     location: TokenLocation;
     isAsync: boolean;
+    callingFile: string;
 }
 
 export interface VariableDeclaration {

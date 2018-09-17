@@ -18,6 +18,10 @@ $$pass$$();
 }
 
 function _$period$period$lessThan_Integer_Integer($this,$that){
-return _$plus$plus_ListOfInteger_ListOfInteger([(0)],_$period$period$lessThan_Integer_Integer((1),$that));
+return _$plus$plus_ListOfInteger_ListOfInteger(
+[(0)]
+,_$period$period$lessThan_Integer_Integer(
+(1)
+,$that));
 }
 `);

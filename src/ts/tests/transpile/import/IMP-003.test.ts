@@ -13,7 +13,8 @@ $$pass$$();
 }
 
 function _main_(){
-_dummy_();
+_dummy_(
+);
 }
 
 `);

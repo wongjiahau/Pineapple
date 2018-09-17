@@ -18,6 +18,8 @@ $$pass$$();
 function _main_(){
 const $x = (4);
 const $y = (6);
-const $result = _$plus_Number_Number($x,$y);
+const $result = _$plus_Number_Number(
+$x
+,$y);
 }
 `);

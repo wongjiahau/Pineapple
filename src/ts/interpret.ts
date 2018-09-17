@@ -1,4 +1,4 @@
-import { ImportDeclaration, StringExpression, SyntaxTree, FunctionDeclaration } from "./ast";
+import { ImportDeclaration, StringExpression, SyntaxTree, FunctionDeclaration, TokenLocation } from "./ast";
 import { ErrorImportFail } from "./errorType/E0030-ImportFail";
 import { ErrorDetail } from "./errorType/ErrorDetail";
 import { fail, isFail, isOK, Maybe, ok } from "./maybeMonad";
@@ -7,6 +7,7 @@ import { parseCodeToSyntaxTree } from "./parseCodeToSyntaxTree";
 import { tpDeclaration, transpile } from "./transpile";
 import { endsWith, startsWith } from "./util";
 import { SymbolTable } from "./fillUpTypeInformation";
+import { removeHiddenToken } from "./errorType/renderError";
 
 const fs       = require("fs");
 const path     = require("path");
@@ -14,15 +15,35 @@ const toposort = require("toposort");
 
 interface SyntaxTreeCache {[filename: string]: SyntaxTree; }
 
-type CodeExecuter = (code: string, ir?: IntermediateRepresentation) => string;
+type CodeExecuter = (code: string, ir?: IntermediateRepresentation) => any;
 
 export type ErrorHandler = (e: Error) => void;
+
+export type ErrorStackTrace = {
+    name: "ErrorStackTrace";
+    stack: ErrorTrace[];
+}
+
+
+export interface ErrorTrace extends TokenLocation {
+    callingFile: string;
+    lineContent: string;
+}
+
+export function isErrorDetail(e: ErrorStackTrace | ErrorDetail): e is ErrorDetail {
+    return e.name !== "ErrorStackTrace";
+}
+
+export function isErrorStackTrace(e: ErrorStackTrace | ErrorDetail): e is ErrorStackTrace {
+    return e.name === "ErrorStackTrace";
+}
 
 export function interpret(
     source: SourceCode,
     execute: CodeExecuter,
-    loadPreludeLibrary: boolean
-): Maybe<string, ErrorDetail> {
+    loadPreludeLibrary: boolean,
+    generateSourceMap: boolean
+): Maybe<string, ErrorDetail | ErrorStackTrace> {
     if (loadPreludeLibrary) {
         source.content = source.content + `\nimport "$pine/prelude/*"`;
     }
@@ -44,9 +65,39 @@ export function interpret(
     if (isOK(result)) {
         const ir = result.value; // ir means intermediate representation
         const funcDeclarations = getFunctionDeclarations(ir);
-        const transpiledCode = transpile(funcDeclarations);
-        // console.log(transpiledCode);
-        return ok(execute(transpiledCode, ir));
+        const transpiledCode = transpile(funcDeclarations, generateSourceMap);
+        const output = execute(transpiledCode, ir);
+        if(output === undefined) {
+            return ok("");
+        }
+        if(!output.stack) { // if output is ok
+            return ok(output);
+        } else {
+            const errorStack = output.stack.split("\n") as string[];
+            const mappedStack = [];
+    
+            // start from 2, because 0 to 1 is the error message
+            for(let i = 2; i < errorStack.length; i++) {
+                const trace = errorStack[i].trim().split(" ");
+                const lineNumber = parseInt(trace[2].split(":")[1]);
+                mappedStack.push(transpiledCode.split("\n")[lineNumber - 2].split("##")[1])
+                if(trace[1] === "_main_") {
+                    break;
+                }
+            }
+            const locations = mappedStack.map((x) => JSON.parse(x));
+            const stackTrace = locations.map((x) => ({
+                ...x,
+                lineContent: removeHiddenToken(
+                    updatedCache[x.callingFile].source.content.split("\n")[x.first_line - 1]
+                )
+            }));
+            const errorStackTrace: ErrorStackTrace = {
+                name: "ErrorStackTrace",
+                stack: stackTrace
+            };
+            return fail(errorStackTrace);
+        }
     } else {
         return result;
     }

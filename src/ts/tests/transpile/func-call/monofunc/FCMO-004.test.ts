@@ -21,6 +21,8 @@ $$pass$$();
 }
 
 function _main_(){
-_reverse_String(_capitalize_String("Hello"));
+_reverse_String(
+_capitalize_String(
+"Hello"));
 }
 `);

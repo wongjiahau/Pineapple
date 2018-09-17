@@ -14,6 +14,9 @@ $$pass$$();
 }
 
 function _main_(){
-const $x = _replace_with_String_String_String("1,2,3",",",".");
+const $x = _replace_with_String_String_String(
+"1,2,3"
+,","
+,".");
 }
 `);

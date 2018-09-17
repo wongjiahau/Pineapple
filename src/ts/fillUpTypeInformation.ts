@@ -992,6 +992,7 @@ export function fillUpSimpleTypeInfo(e: SimpleExpression, name: BuiltinTypename)
 
 export function fillUpFunctionCallTypeInfo(e: FunctionCall, symbols: SymbolTable, vartab: VariableTable):
 Maybe<[FunctionCall, FunctionTable], ErrorDetail> {
+    e.callingFile = CURRENT_SOURCE_CODE().filename;
     for (let i = 0; i < e.parameters.length; i++) {
         const result = fillUpExpressionTypeInfo(e.parameters[i], symbols, vartab);
         if (result.kind === "OK") { [e.parameters[i], symbols] = result.value; } else { return result; }

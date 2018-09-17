@@ -1,5 +1,5 @@
 import { renderError } from "./errorType/renderError";
-import { interpret, loadFile } from "./interpret";
+import { interpret, loadFile, isErrorStackTrace, isErrorDetail, ErrorStackTrace } from "./interpret";
 import { isFail } from "./maybeMonad";
 import { executeCode } from "./executeCode";
 
@@ -26,11 +26,20 @@ program.args.forEach((arg: string) => {
         if (file === null) {
             throw new Error(`Cannot open file ${arg}`);
         }
-        const result = interpret(file, executeCode, true);
+        const result = interpret(file, executeCode, true, true);
         if (isFail(result)) {
-            console.log(renderError(result.error));
+            const error = result.error;
+            if(isErrorStackTrace(error)) {
+                console.log(renderErrorStackTrace(error));
+            } else if(isErrorDetail) {
+                console.log(renderError(error));
+            }
         }
     } else {
         console.log(`Cannot open file '${arg}'.`);
     }
 });
+
+export function renderErrorStackTrace(e: ErrorStackTrace): string {
+    return JSON.stringify(e, null, 2);
+}

@@ -13,7 +13,8 @@ $$pass$$();
 }
 
 function _main_(){
-_show_String("Hello world");
+_show_String(
+"Hello world");
 }
 
 `);

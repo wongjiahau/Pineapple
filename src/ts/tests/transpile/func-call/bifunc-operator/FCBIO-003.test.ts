@@ -14,6 +14,8 @@ $$pass$$();
 }
 
 function _main_(){
-const $y = _$plus$plus_String_String("pine","apple");
+const $y = _$plus$plus_String_String(
+"pine"
+,"apple");
 }
 `);

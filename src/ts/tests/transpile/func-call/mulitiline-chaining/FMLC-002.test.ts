@@ -23,16 +23,28 @@ def (this Color) == (that Color) -> Boolean
 `
 ,
 `
+
 function _$equal$equal_Integer_Integer($this,$that){
 $$pass$$();
 }
 
 function _$equal$equal_Color_Color($this,$that){
-return _and_Boolean_Boolean(_and_Boolean_Boolean(_$equal$equal_Integer_Integer($this.red,$that.red),_$equal$equal_Integer_Integer($this.green,$that.green)),_$equal$equal_Integer_Integer($this.blue,$that.blue));
+return _and_Boolean_Boolean(
+_and_Boolean_Boolean(
+_$equal$equal_Integer_Integer(
+$this.red
+,$that.red)
+,_$equal$equal_Integer_Integer(
+$this.green
+,$that.green))
+,_$equal$equal_Integer_Integer(
+$this.blue
+,$that.blue));
 }
 
 function _and_Boolean_Boolean($this,$that){
 $$pass$$();
 }
+
 
 `)

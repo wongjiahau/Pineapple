@@ -21,6 +21,7 @@ $$pass$$();
 }
 
 function _main_(){
-_show_String("Hello");
+_show_String(
+"Hello");
 }
 `);

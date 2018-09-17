@@ -14,6 +14,7 @@ $$pass$$();
 }
 
 function _main_(){
-_show_Any("Hello");
+_show_Any(
+"Hello");
 }
 `);

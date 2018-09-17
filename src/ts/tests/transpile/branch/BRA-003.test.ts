@@ -20,7 +20,9 @@ $$pass$$();
 }
 
 function _main_(){
-if(_$greaterThan_Number_Number((5),(6))){
+if(_$greaterThan_Number_Number(
+(5)
+,(6))){
 return "ok";
 }else {
 return "no";

@@ -5,6 +5,11 @@ def - (this Number) -> Number
     return - $this;
     </javascript>
 
+def - (this Integer) -> Integer
+    <javascript>
+    return - $this;
+    </javascript>
+
 def (this Number) + (that Number) -> Number
     <javascript>
     return $this + $that;
@@ -30,12 +35,17 @@ def (this Number) * (that Number) -> Number
     return $this * $that;
     </javascript>
 
+def (this Integer) * (that Integer) -> Integer
+    <javascript>
+    return $this * $that;
+    </javascript>
+
 def (this Number) / (that Number) -> Number
     <javascript>
     return $this / $that;
     </javascript>
 
-def (this Number) % (that Number) -> Number
+def (this Integer) % (that Integer) -> Number
     <javascript>
     return $this % $that;
     </javascript>

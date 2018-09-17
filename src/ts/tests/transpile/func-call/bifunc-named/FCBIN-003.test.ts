@@ -14,6 +14,8 @@ $$pass$$();
 }
 
 function _append_ListOfGeneric$T_Generic$T($this,$that){
-return _$plus$plus_ListOfGeneric$T_ListOfGeneric$T($this,[$that]);
+return _$plus$plus_ListOfGeneric$T_ListOfGeneric$T(
+$this
+,[$that]);
 }
 `);

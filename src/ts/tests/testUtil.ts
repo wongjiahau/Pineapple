@@ -6,13 +6,13 @@ declare var it: any;
 
 // @ts-ignore
 import { mocha } from "mocha";
-import { interpret, SourceCode } from "../interpret";
+import { interpret, SourceCode, ErrorStackTrace, isErrorDetail } from "../interpret";
 import { renderError } from "../errorType/renderError";
 import { isOK } from "../maybeMonad";
 import { executeCode } from "../executeCode";
 const jsdiff = require("diff");
 
-export function assertEquals(actual: string, expected: string) {
+export function assertEquals(actual: string, expected: string, logDiff: boolean) {
     if (actual.trim() !== expected.trim()) {
         // const diff = jsdiff.diffLines(actual, expected);
         const diff = jsdiff.diffChars(actual, expected);
@@ -25,7 +25,9 @@ export function assertEquals(actual: string, expected: string) {
 
             return (part.value[color]);
         }).join("");
-        console.log(result);
+        if(logDiff) {
+            console.log(result);
+        }
         throw new Error("Failed");
     }
 }
@@ -41,20 +43,22 @@ export function catchError(f: () => void): Error {
     }
 }
 
-export function  testInterpret(
+export function  testRuntimeError(
     description:string,
     input: string, 
-    expectedMessage: string): any {
+    expectedStackTrace: ErrorStackTrace
+): any {
     const source: SourceCode = {
         content: input,
         filename: "<UNIT_TEST>"
     };
     describe(description, () => {
         it("", () => {
-            const result = interpret(source, executeCode, false);
+            const result = interpret(source, executeCode, false, true);
             if(isOK(result)) {
-                console.log(result.value);
-                expect(result.value).to.eq(expectedMessage);
+                throw new Error("No error is caught.");
+            } else {
+                expect(result.error).to.deep.eq(expectedStackTrace);
             }
         });
         
@@ -73,7 +77,7 @@ export function testError(
                 content: input,
                 filename: "<UNIT_TEST>"
             };
-            const result = interpret(source, (x) => x, false);
+            const result = interpret(source, (x) => x, false, false);
             if (isOK(result)) {
                 throw new Error("No error is caught");
             } else {
@@ -84,8 +88,12 @@ export function testError(
                 expect(error).to.not.equal(null);
                 if (error !== null) {
                     expect(error.name).to.eq(expectedErrorName);
-                    if(expectedMessage) {
-                        expect(error.message).to.eq(expectedMessage);
+                    if(isErrorDetail(error)) {
+                        if(expectedMessage) {
+                            expect(error.message).to.eq(expectedMessage);
+                        }
+                    } else {
+                        throw new Error("Failed");
                     }
                 }
             }
@@ -100,11 +108,11 @@ export function testTranspile(description: string, input: string, expectedOutput
                 content: input,
                 filename: "<UNIT_TEST>"
             };
-            const result = interpret(source, (x) => x, false);
+            const result = interpret(source, (x) => x, false, false);
             if (result.kind === "OK") {
-                assertEquals(result.value.trim(), expectedOutput.trim());
+                assertEquals(result.value.trim(), expectedOutput.trim(), true);
             } else {
-                console.log(result.error.message);
+                console.log(result.error);
                 throw new Error("Caught error " + renderError(result.error));
             }
         });

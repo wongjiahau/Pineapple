@@ -31,6 +31,12 @@ $$pass$$();
 }
 
 function _main_(){
-const $result = _isBetween_and_Number_Number_Number(_plus_Number_Number(_double_Number((9)),(77)),(3),(5));
+const $result = _isBetween_and_Number_Number_Number(
+_plus_Number_Number(
+_double_Number(
+(9))
+,(77))
+,(3)
+,(5));
 }
 `)

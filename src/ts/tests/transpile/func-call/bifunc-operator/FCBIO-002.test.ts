@@ -14,6 +14,10 @@ $$pass$$();
 }
 
 function _main_(){
-const $y = _$plus_Number_Number(_$plus_Number_Number((6),(7)),(8));
+const $y = _$plus_Number_Number(
+_$plus_Number_Number(
+(6)
+,(7))
+,(8));
 }
 `);

@@ -20,6 +20,8 @@ $$pass$$();
 
 function _main_(){
 const $x = [(1),(2),(3)];
-const $y = _$period_ListOfInteger_Number($x,(0));
+const $y = _$period_ListOfInteger_Number(
+$x
+,(0));
 }
 `);

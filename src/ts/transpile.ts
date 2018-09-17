@@ -132,10 +132,9 @@ export function tpReturnStatement(r: ReturnStatement): string {
 export function tpFunctionCall(f: FunctionCall): string {
     const funcSignature = stringifyFunction(f);
     const params = f.parameters.map((x) => tpExpression(x));
-    let result = `${f.isAsync ? "await " : ""}${funcSignature}(${params.join(",")})`;
-    if(GENERATE_SOURCE_MAP) {
-        result += `/*<${JSON.stringify(f.location)}>*/`;
-    }
+    let result = `${f.isAsync ? "await " : ""}${funcSignature}(` + 
+                 `${GENERATE_SOURCE_MAP ? `/*##${JSON.stringify({...f.location, callingFile: f.callingFile})}##*/` : ""}` +
+                 `\n${params.join("\n,")})`;
     if (f.isAsync) {
         return "(" + result + ")";
     } else {

@@ -12,15 +12,24 @@ def Color
     :green  Integer
     :blue   Integer
 
-    
 def ().main
-    ().throwError
+    (-1).factorial.show
 
-def ().throwError
+def (this Integer).factorial -> Integer
+    (this > 0).ensure
+    let result mutable = 1
+    for i in 1..< (this + 1)
+        result = result * i
+    return result
+
+def (this Boolean).ensure
     <javascript>
-    throw new Error("Hello")
-    </javascript>
+    if($this) {
 
+    } else {
+        throw new Error()
+    }
+    </javascript>
 
 
 def (this Color) == (that Color) -> Boolean

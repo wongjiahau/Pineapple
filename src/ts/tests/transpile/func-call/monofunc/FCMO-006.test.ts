@@ -15,7 +15,8 @@ $$pass$$();
 }
 
 function _main_(){
-const $x = _$minus_Number((123));
+const $x = _$minus_Number(
+(123));
 }
 
 `);

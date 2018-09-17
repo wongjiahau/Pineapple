@@ -10,7 +10,8 @@ def (this String).show
 `,
 `
 function _main_(){
-_show_String("Hello");
+_show_String(
+"Hello");
 }
 
 function _show_String($this){

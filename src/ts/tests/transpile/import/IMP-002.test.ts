@@ -18,7 +18,9 @@ $$pass$$();
 }
 
 function _main_(){
-_cFunc_();
-_dFunc_();
+_cFunc_(
+);
+_dFunc_(
+);
 }
 `);

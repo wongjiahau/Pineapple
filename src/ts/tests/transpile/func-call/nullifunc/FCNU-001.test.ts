@@ -11,10 +11,12 @@ def ().pi -> Number
 ,
 `
 function _main_(){
-const $x = _pi_();
+const $x = _pi_(
+);
 }
 
 function _pi_(){
 $$pass$$();
 }
+
 `);
