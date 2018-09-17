@@ -8,6 +8,8 @@ declare var it: any;
 import { mocha } from "mocha";
 import { interpret, SourceCode } from "../interpret";
 import { renderError } from "../errorType/renderError";
+import { isOK } from "../maybeMonad";
+import { executeCode } from "../executeCode";
 const jsdiff = require("diff");
 
 export function assertEquals(actual: string, expected: string) {
@@ -39,26 +41,51 @@ export function catchError(f: () => void): Error {
     }
 }
 
-const testerInterpret = (s: SourceCode) => interpret(s, (x) => x, false);
+export function  testInterpret(
+    description:string,
+    input: string, 
+    expectedMessage: string): any {
+    const source: SourceCode = {
+        content: input,
+        filename: "<UNIT_TEST>"
+    };
+    describe(description, () => {
+        it("", () => {
+            const result = interpret(source, executeCode, false);
+            if(isOK(result)) {
+                console.log(result.value);
+                expect(result.value).to.eq(expectedMessage);
+            }
+        });
+        
+    });
+}
 
-export function testError(expectedErrorName: string, input: string, logError = false) {
+export function testError(
+    expectedErrorName: string, 
+    input: string, 
+    expectedMessage: string | undefined = undefined,
+    logError = false
+) {
     describe("", () => {
         it(expectedErrorName, () => {
             const source: SourceCode = {
                 content: input,
                 filename: "<UNIT_TEST>"
             };
-            const result = testerInterpret(source);
-            if (result.kind === "OK") {
+            const result = interpret(source, (x) => x, false);
+            if (isOK(result)) {
                 throw new Error("No error is caught");
             } else {
                 const error = result.error;
                 if (logError) {
                     console.log(error);
-                } else {
-                    expect(error).to.not.equal(null);
-                    if (error !== null) {
-                        expect(error.name).to.eq(expectedErrorName);
+                }
+                expect(error).to.not.equal(null);
+                if (error !== null) {
+                    expect(error.name).to.eq(expectedErrorName);
+                    if(expectedMessage) {
+                        expect(error.message).to.eq(expectedMessage);
                     }
                 }
             }
@@ -73,7 +100,7 @@ export function testTranspile(description: string, input: string, expectedOutput
                 content: input,
                 filename: "<UNIT_TEST>"
             };
-            const result = testerInterpret(source);
+            const result = interpret(source, (x) => x, false);
             if (result.kind === "OK") {
                 assertEquals(result.value.trim(), expectedOutput.trim());
             } else {

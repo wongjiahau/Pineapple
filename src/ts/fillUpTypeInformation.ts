@@ -62,7 +62,7 @@ import {stringifyTypeReadable} from "./errorType/errorUtil";
 import { ErrorDetail } from "./errorType/ErrorDetail";
 import { SourceCode } from "./interpret";
 import { parseCode } from "./parseCodeToSyntaxTree";
-import {stringifyFuncSignature} from "./transpile";
+import {stringifyFunction} from "./transpile";
 import {
     BaseStructType,
     childOf,
@@ -85,7 +85,7 @@ let CURRENT_SOURCE_CODE: () => SourceCode;
 export function fillUpTypeInformation(
     syntaxTree: SyntaxTree,
     symbols: SymbolTable
-): Maybe<[Declaration[], SymbolTable], ErrorDetail> {
+): Maybe<[SyntaxTree, SymbolTable], ErrorDetail> {
     CURRENT_SOURCE_CODE = () => syntaxTree.source;
     // Complete the function and struct table This step is to allow programmer to
     // define function anywhere without needing to adhere to strict top-down or
@@ -167,7 +167,7 @@ export function fillUpTypeInformation(
                 break;
         }
     }
-    return ok([decls, symbols] as [Declaration[], SymbolTable]);
+    return ok([syntaxTree, symbols] as [SyntaxTree, SymbolTable]);
 }
 
 export function isCallingAysncFunction(s: Statement | null): boolean {
@@ -384,8 +384,12 @@ export function newStructTab(s: StructDeclaration, structTab: StructTable)
     return ok(structTab);
 }
 
+export function getFunctionSignature(f: FunctionDeclaration | FunctionCall): string {
+    return f.signature.map((x) => x.repr).join("_");
+}
+
 export function newFunctionTable(newFunc: FunctionDeclaration, previousFuncTab: FunctionTable, ): FunctionTable {
-    const key = stringifyFuncSignature(newFunc.signature);
+    const key = getFunctionSignature(newFunc);
     if (newFunc.returnType === null) {
         newFunc.returnType = VoidType();
     }
@@ -413,7 +417,7 @@ export function verifyFunctionDeclaration(f: FunctionDeclaration): Maybe<null, E
 }
 
 export function functionEqual(x: FunctionDeclaration, y: FunctionDeclaration): boolean {
-    if (stringifyFuncSignature(x.signature) !== stringifyFuncSignature(y.signature)) {
+    if (stringifyFunction(x) !== stringifyFunction(y)) {
         return false;
     } else if (x.parameters.length !== y.parameters.length) {
         return false;
@@ -992,12 +996,12 @@ Maybe<[FunctionCall, FunctionTable], ErrorDetail> {
         const result = fillUpExpressionTypeInfo(e.parameters[i], symbols, vartab);
         if (result.kind === "OK") { [e.parameters[i], symbols] = result.value; } else { return result; }
     }
-    return getFuncSignature(e, symbols.funcTab, symbols.typeTree);
+    return getMatchingFunction(e, symbols.funcTab, symbols.typeTree);
 }
 
-export function getFuncSignature(f: FunctionCall, functab: FunctionTable, typetree: Tree < TypeExpression >)
+export function getMatchingFunction(f: FunctionCall, functab: FunctionTable, typetree: Tree < TypeExpression >)
 : Maybe<[FunctionCall, FunctionTable], ErrorDetail> {
-    const key = stringifyFuncSignature(f.signature);
+    const key = getFunctionSignature(f);
     if (key in functab) {
         const matchingFunctions = functab[key].filter((x) => x.parameters.length === f.parameters.length);
         const result = getClosestFunction(f, matchingFunctions, typetree);

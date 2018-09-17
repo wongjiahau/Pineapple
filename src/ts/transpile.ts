@@ -30,10 +30,13 @@ import {
     WhileStatement
 } from "./ast";
 
+let GENERATE_SOURCE_MAP = false;
+
 // Note: tp means transpile
 // Example: tpDeclaration means transpileDeclaration
-export function transpile(decls: Declaration[]): string {
-    return decls.map((x) => tpDeclaration(x)).join("");
+export function transpile(decls: Declaration[], generateSourceMap = false): string {
+    GENERATE_SOURCE_MAP = generateSourceMap;
+    return decls.map((x) => tpDeclaration(x)).join("\n");
 }
 
 export function tpDeclaration(input: Declaration): string {
@@ -72,11 +75,10 @@ export function tpImportDeclaration(i: ImportDeclaration): string {
 }
 
 export function tpFunctionDeclaration(f: FunctionDeclaration): string {
-    const funcSignature = stringifyFuncSignature(f.signature);
-    const typeSignature = f.parameters.map((x) => stringifyType(x.typeExpected)).join("_");
+    const funcSignature = stringifyFunction(f);
     const params = tpParameters(f.parameters);
     const statements = tpStatements(f.statements);
-    return `${f.isAsync ? "async " : ""}function ${funcSignature}_${typeSignature}(${params}){\n${statements}}\n`;
+    return `${f.isAsync ? "async " : ""}function ${funcSignature}(${params}){\n${statements}}\n`;
 }
 
 export function tpStatements(statements: Statement[]): string {
@@ -128,10 +130,12 @@ export function tpReturnStatement(r: ReturnStatement): string {
 }
 
 export function tpFunctionCall(f: FunctionCall): string {
-    const funcSignature = stringifyFuncSignature(f.signature);
-    const typeSignature = f.parameters.map((x) => stringifyType(x.returnType)).join("_");
+    const funcSignature = stringifyFunction(f);
     const params = f.parameters.map((x) => tpExpression(x));
-    const result = `${f.isAsync ? "await " : ""}${funcSignature}_${typeSignature}(${params.join(",")})`;
+    let result = `${f.isAsync ? "await " : ""}${funcSignature}(${params.join(",")})`;
+    if(GENERATE_SOURCE_MAP) {
+        result += `/*<${JSON.stringify(f.location)}>*/`;
+    }
     if (f.isAsync) {
         return "(" + result + ")";
     } else {
@@ -139,8 +143,16 @@ export function tpFunctionCall(f: FunctionCall): string {
     }
 }
 
-export function stringifyFuncSignature(signature: AtomicToken[]): string {
-    return "_" + signature.map((x) => getName(x.repr)).join("_");
+export function stringifyFunction(f: FunctionCall | FunctionDeclaration): string {
+    const signature = f.signature;
+    const typeSignature = (function() {
+        if(f.kind === "FunctionCall") {
+            return f.parameters.map((x) => stringifyType(x.returnType)).join("_");
+        } else {
+            return f.parameters.map((x) => stringifyType(x.typeExpected)).join("_");
+        }
+    })();
+    return "_" + signature.map((x) => getName(x.repr)).join("_") + "_" + typeSignature;
 }
 
 export function getName(funcSignature: string): string {

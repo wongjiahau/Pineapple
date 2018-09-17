@@ -1,13 +1,13 @@
-import { Declaration, SyntaxTree } from "./ast";
+import { SyntaxTree } from "./ast";
 import { ErrorDetail } from "./errorType/ErrorDetail";
 import { fillUpTypeInformation, SymbolTable } from "./fillUpTypeInformation";
 import { initTypeTree } from "./typeTree";
 import { Maybe, ok } from "./maybeMonad";
 
-export function getIntermediateForm(
+export function getIntermediateRepresentation(
     ast: SyntaxTree,
-    prevIntermediate: IntermediateForm,
-): Maybe<IntermediateForm, ErrorDetail> {
+    prevIntermediate: IntermediateRepresentation,
+): Maybe<IntermediateRepresentation, ErrorDetail> {
     const result = fillUpTypeInformation(
         ast,
         prevIntermediate.symbolTable
@@ -24,7 +24,7 @@ export function getIntermediateForm(
     }
 }
 
-export function initialIntermediateForm(): IntermediateForm {
+export function initialIntermediateForm(): IntermediateRepresentation {
     return {
         syntaxTrees: [],
         symbolTable: {
@@ -37,8 +37,8 @@ export function initialIntermediateForm(): IntermediateForm {
     };
 }
 
-export interface IntermediateForm {
-    syntaxTrees: Declaration[];
+export interface IntermediateRepresentation {
+    syntaxTrees: SyntaxTree[];
     symbolTable: SymbolTable;
     importedFiles: string[];
 }

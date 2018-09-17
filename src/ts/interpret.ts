@@ -1,11 +1,12 @@
-import { Declaration, ImportDeclaration, StringExpression, SyntaxTree } from "./ast";
+import { ImportDeclaration, StringExpression, SyntaxTree, FunctionDeclaration } from "./ast";
 import { ErrorImportFail } from "./errorType/E0030-ImportFail";
 import { ErrorDetail } from "./errorType/ErrorDetail";
 import { fail, isFail, isOK, Maybe, ok } from "./maybeMonad";
-import { getIntermediateForm, initialIntermediateForm } from "./getIntermediateForm";
+import { getIntermediateRepresentation, initialIntermediateForm, IntermediateRepresentation } from "./getIntermediateRepresentation";
 import { parseCodeToSyntaxTree } from "./parseCodeToSyntaxTree";
-import { tpDeclaration } from "./transpile";
+import { tpDeclaration, transpile } from "./transpile";
 import { endsWith, startsWith } from "./util";
+import { SymbolTable } from "./fillUpTypeInformation";
 
 const fs       = require("fs");
 const path     = require("path");
@@ -13,7 +14,7 @@ const toposort = require("toposort");
 
 interface SyntaxTreeCache {[filename: string]: SyntaxTree; }
 
-type CodeExecuter = (code: string) => string;
+type CodeExecuter = (code: string, ir?: IntermediateRepresentation) => string;
 
 export type ErrorHandler = (e: Error) => void;
 
@@ -39,11 +40,13 @@ export function interpret(
 
     const sortedDependencies = sortDependency(dependencies);
     const sortedSyntaxTrees = sortedDependencies.map((x) => updatedCache[x]).filter((x) => x !== undefined);
-    const result = loadSource(sortedSyntaxTrees); // ir means intermediate representation
+    const result = loadSource(sortedSyntaxTrees);
     if (isOK(result)) {
-        const ir = result.value;
-        const transpiledCode = ir.map(tpDeclaration).join("\n");
-        return ok(execute(transpiledCode));
+        const ir = result.value; // ir means intermediate representation
+        const funcDeclarations = getFunctionDeclarations(ir);
+        const transpiledCode = transpile(funcDeclarations);
+        // console.log(transpiledCode);
+        return ok(execute(transpiledCode, ir));
     } else {
         return result;
     }
@@ -143,13 +146,13 @@ function sortDependency(dependencies: Dependencies): string[] {
 }
 
 function loadSource(syntaxTrees: SyntaxTree[])
-: Maybe<Declaration[], ErrorDetail> {
+: Maybe<IntermediateRepresentation, ErrorDetail> {
     let ir = initialIntermediateForm();
     for (let i = 0; i < syntaxTrees.length; i++) {
         const s = syntaxTrees[i];
         if (s !== null) {
-            const result = getIntermediateForm(s, ir);
-            if (result.kind === "OK") {
+            const result = getIntermediateRepresentation(s, ir);
+            if (isOK(result)) {
                 ir = result.value;
             } else {
                 result.error.source = s.source;
@@ -157,13 +160,17 @@ function loadSource(syntaxTrees: SyntaxTree[])
             }
         }
     }
-    let declarations: Declaration[] = [];
+    return ok(ir);
+}
+
+function getFunctionDeclarations(ir: IntermediateRepresentation): FunctionDeclaration[]{
+    let declarations: FunctionDeclaration[] = [];
     for (const key in ir.symbolTable.funcTab) {
         if (ir.symbolTable.funcTab.hasOwnProperty(key)) {
             declarations = declarations.concat(ir.symbolTable.funcTab[key]);
         }
     }
-    return ok(declarations);
+    return declarations;
 }
 
 type Dependencies = string[][]; // Example: [["a.pine", "b.pine"]] means "a.pine" depends on "b.pine"

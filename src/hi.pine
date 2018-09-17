@@ -5,20 +5,30 @@
 //     def (this T) != (that T) -> Boolean
 //         return (this == that).not
     
+// def (this List{T}).sort -> List{T} where T IsComparable
+
 def Color
     :red    Integer
     :green  Integer
     :blue   Integer
 
-// def (this List{T}).sort -> List{T} where T IsComparable
     
+def ().main
+    ().throwError
+
+def ().throwError
+    <javascript>
+    throw new Error("Hello")
+    </javascript>
+
+
 
 def (this Color) == (that Color) -> Boolean
     return  (this:red   == that:red)
         .and(this:green == that:green)
         .and(this:blue  == that:blue)
 
-def ().main
+def ().compareColor
     let colors mutable = List{Color}
     for i in 0..<2
         "Enter color $((i+1).toString)".show
@@ -33,16 +43,15 @@ def ().main
     else
         "They are not same".show
 
-    // let age = "How old are you?".ask.toInteger
-    // if age > 50
-    //     "You are old".show
-    // else
-    //     "You are young".show
+def ().askAge
+    let age = "How old are you?".ask.toInteger
+    if age > 50
+        "You are old".show
+    else
+        "You are young".show
 
-    // if #false
-    //     let str = "Enter a string > ".ask
-    //     let old = "Which old char you want to replace > ".ask
-    //     let new = "Replace with? > ".ask
-    //     let result = str.replace(old with new)
-    //     "The result is '$(result)'".show
-    // else 
+    let str = "Enter a string > ".ask
+    let old = "Which old char you want to replace > ".ask
+    let new = "Replace with? > ".ask
+    let result = str.replace(old with new)
+    "The result is '$(result)'".show

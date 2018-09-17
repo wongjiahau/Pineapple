@@ -1,9 +1,9 @@
 import { renderError } from "./errorType/renderError";
 import { interpret, loadFile } from "./interpret";
 import { isFail } from "./maybeMonad";
+import { executeCode } from "./executeCode";
 
 const fs = require("fs");
-const vm = require("vm");
 const VERSION = require("../package.json").version;
 const program = require("commander");
 
@@ -26,7 +26,7 @@ program.args.forEach((arg: string) => {
         if (file === null) {
             throw new Error(`Cannot open file ${arg}`);
         }
-        const result = interpret(file, execute, true);
+        const result = interpret(file, executeCode, true);
         if (isFail(result)) {
             console.log(renderError(result.error));
         }
@@ -34,20 +34,3 @@ program.args.forEach((arg: string) => {
         console.log(`Cannot open file '${arg}'.`);
     }
 });
-
-function execute(javascriptCode: string): string {
-    // use strict is added to improve performance
-    // See https://github.com/petkaantonov/bluebird/wiki/Optimization-killers
-    let code = `"use strict";`;
-
-    // This step is necessary because `require` is not defined, so we need to pass in the context
-    // Refer https://nodejs.org/api/vm.html#vm_example_running_an_http_server_within_a_vm
-    code += `((require) => {
-        ${javascriptCode}
-        if(typeof _main_ === 'function') {
-            _main_();
-        }
-    })`;
-
-    return vm.runInThisContext(code)(require);
-}
