@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.11
+
+- Added support for stack traces and ensurance (a.k.a assertion)
+
+- Known bug: Ensurance wouln't work when calling async functions
+
 ## 0.0.10
 
 Added support for multiple line function chaining.

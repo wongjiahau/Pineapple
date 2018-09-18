@@ -12,10 +12,17 @@ def Color
     :green  Integer
     :blue   Integer
 
+def (this Number).divide(that Number) -> Number
+    ensure that != 0
+    return this / that
+
 def ().main
-    for i in 0.to(99)
-        i.show
+    let y = 4.divide(0)
+    ().passed
     let x = 12.isBetween(13 and 14)
+
+def ().passed
+    pass
 
 def (this Number).isBetween(left Number and right Number) -> Boolean
     (-1).factorial.show
