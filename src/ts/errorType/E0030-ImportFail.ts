@@ -1,5 +1,5 @@
+import { StringExpression } from "../ast";
 import { ErrorDetail } from "./ErrorDetail";
-import { ErrorDetail } from "./errorUtil";
 
 export function ErrorImportFail(
     filename: StringExpression

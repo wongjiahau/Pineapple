@@ -1,4 +1,4 @@
-import { testError, testRuntimeError } from "../../testUtil";
+import { testRuntimeError } from "../../testUtil";
 
 testRuntimeError("handling calling passed function",
 `

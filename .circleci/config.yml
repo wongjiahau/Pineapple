@@ -33,12 +33,12 @@ jobs:
       - save_cache:
           paths:
             - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
+          key: v1-dependencies-{{ checksum "./src/package.json" }}
         
       - run: 
           name: Build
-          command: cd src && ./build.sh
+          command: cd src && ./build.sh 0
       - run: 
           name: Test
-          command: cd src && ./test.sh
+          command: cd src && ./test.sh 0
 

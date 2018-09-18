@@ -19,7 +19,7 @@ describe("logTree", () => {
         4
     6
 `;
-        assertEquals(result, expected);
+        assertEquals(result, expected, true);
     });
 
 });

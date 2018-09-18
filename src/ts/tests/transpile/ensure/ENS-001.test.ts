@@ -18,7 +18,6 @@ $$pass$$();
 function _main_(){
 $$ensure$$(_$greaterThan_Number_Number(
 (1)
-,(2)))
+,(2))) 
 }
-
 `);

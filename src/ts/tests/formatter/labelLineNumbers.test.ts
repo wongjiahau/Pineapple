@@ -26,7 +26,7 @@ def ().main
             |   | ^^^^^
             | 4 |     "bye".show
 `;
-        assertEquals(result.trim(), expected.trim());
+        assertEquals(result.trim(), expected.trim(), true);
     });
 
     it("case 2", () => {
@@ -67,7 +67,7 @@ def ().main
             | 14 |     print: "14"
 
 `.trim();
-        assertEquals(result, expected);
+        assertEquals(result, expected, true);
     });
 
 });

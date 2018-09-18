@@ -3,7 +3,6 @@ import {
     BranchStatement,
     BuiltinType,
     BuiltinTypename,
-    Declaration,
     EmptyList,
     EmptyTable,
     EnumDeclaration,

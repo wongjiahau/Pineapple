@@ -4,9 +4,8 @@ import { ErrorDetail } from "./errorType/ErrorDetail";
 import { fail, isFail, isOK, Maybe, ok } from "./maybeMonad";
 import { getIntermediateRepresentation, initialIntermediateForm, IntermediateRepresentation } from "./getIntermediateRepresentation";
 import { parseCodeToSyntaxTree } from "./parseCodeToSyntaxTree";
-import { tpDeclaration, transpile } from "./transpile";
+import { transpile } from "./transpile";
 import { endsWith, startsWith } from "./util";
-import { SymbolTable } from "./fillUpTypeInformation";
 import { removeHiddenToken } from "./errorType/renderError";
 
 const fs       = require("fs");

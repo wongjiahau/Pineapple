@@ -8,7 +8,7 @@ fi
 
 cd ts
 # If passed in 0, don't launch watch mode
-if [ "$1" -eq 0 ]; then
+if [ "$1" = "0" ]; then
     echo "Transpiling . . ."
     ../node_modules/typescript/bin/tsc || exit 0 # exit 0 so that Travic CI don't fail the build
 else

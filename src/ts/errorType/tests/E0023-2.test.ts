@@ -5,4 +5,4 @@ testError("ErrorUsingUndefinedType",
 def People
     :name Strj
 `
-, false);
+);

@@ -3,7 +3,6 @@
  */
 import {
     AssignmentStatement,
-    AtomicToken,
     BranchStatement,
     Declaration,
     EnumDeclaration,

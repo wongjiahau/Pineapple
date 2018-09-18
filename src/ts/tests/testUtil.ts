@@ -121,6 +121,8 @@ export function testTranspile(description: string, input: string, expectedOutput
 }
 
 export function testTranspileSkip(description: string, input: string, expectedOutput: string) {
+    console.log(input);
+    console.log(expectedOutput);
     describe("", () => {
         it.skip(description, () => {
 
