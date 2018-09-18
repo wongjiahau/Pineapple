@@ -61,6 +61,7 @@ export interface EnsureStatement {
     kind: "EnsureStatement";
     expression: Expression;
     location: TokenLocation;
+    callingFile: string;
 }
 
 export interface ImportDeclaration {
@@ -71,6 +72,8 @@ export interface ImportDeclaration {
 
 export interface PassStatement {
     kind: "PassStatement";
+    location: TokenLocation;
+    callingFile: string;
 }
 
 export interface WhileStatement {

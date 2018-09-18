@@ -45,7 +45,7 @@ export function renderErrorStackTrace(e: ErrorStackTrace): string {
     const path = require("path");
     const chalk = require("chalk");
     const boxen = require("boxen");
-    let result = chalk.bold("Ensurance failed:\n\n");
+    let result = chalk.bold(e.errorType + ":\n\n");
     const numberOfSpaces = 4;
     const numbering = (content: string, arrow = false) => 
         `     ${arrow ? "> " : "  "}| ${justifyLeft(content, numberOfSpaces)} | `;

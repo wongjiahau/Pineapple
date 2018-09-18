@@ -562,10 +562,13 @@ export function fillUp(statements: Statement[], symbols: SymbolTable, vartab: Va
             break;
         }
         case "PassStatement":
+            s.callingFile = CURRENT_SOURCE_CODE().filename;
+            break;
         case "JavascriptCode":
             // do nothing
             break;
         case "EnsureStatement":
+            s.callingFile = CURRENT_SOURCE_CODE().filename;
             const resultAS = fillUpExpressionTypeInfo(s.expression, symbols, vartab);
             if(isOK(resultAS)) { [s.expression, symbols] = resultAS.value} else { return resultAS; }
             break;

@@ -3,7 +3,7 @@
 %{
 const _LinkedNode = (current, next) => ({current, next});
 
-const _PassStatement = () => ({ kind: "PassStatement" });
+const _PassStatement = (location) => ({ kind: "PassStatement", location});
 
 const _ReturnStatement = (expression,location) => ({ kind: "ReturnStatement", expression, location});
 
@@ -346,7 +346,6 @@ TriFuncDeclaration
 Block
     : NEWLINE INDENT StatementList DEDENT {$$=$3}
     | NEWLINE INDENT JavascriptCodeAtom NEWLINE DEDENT {$$=[$3]}
-    | NEWLINE INDENT PASS NEWLINE DEDENT {$$=[_PassStatement()]}
     ;
 
 StatementList
@@ -364,10 +363,15 @@ Statement
     | ForStatement
     | WhileStatement
     | EnsureStatement
+    | PassStatement           NEWLINE {$$=$1}
+    ;
+
+PassStatement
+    : PASS {$$=_PassStatement(this._$)}
     ;
 
 EnsureStatement
-    : ENSURE MultilineExpr {$$=_EnsureStatement($2, this._$)}
+    : ENSURE MultilineExpr {$$=_EnsureStatement($2, $2.location)}
     ;
 
 ReturnStatement

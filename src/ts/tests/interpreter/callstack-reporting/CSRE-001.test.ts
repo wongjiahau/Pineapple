@@ -13,7 +13,9 @@ def ().bye
     throw new Error("Hello world");
     </javascript>
 `,
-{ name: 'ErrorStackTrace',
+{ 
+    name: 'ErrorStackTrace',
+    errorType: "Error",
     stack:
     [ { first_line: 6,
         last_line: 6,

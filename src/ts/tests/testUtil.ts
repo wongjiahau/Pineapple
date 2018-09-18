@@ -58,6 +58,7 @@ export function  testRuntimeError(
             if(isOK(result)) {
                 throw new Error("No error is caught.");
             } else {
+                // console.log(result.error);
                 expect(result.error).to.deep.eq(expectedStackTrace);
             }
         });

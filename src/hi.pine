@@ -17,11 +17,11 @@ def (this Number).divide(that Number) -> Number
     return this / that
 
 def ().main
+    ().doSometing
     let y = 4.divide(0)
-    ().passed
     let x = 12.isBetween(13 and 14)
 
-def ().passed
+def ().doSometing
     pass
 
 def (this Number).isBetween(left Number and right Number) -> Boolean

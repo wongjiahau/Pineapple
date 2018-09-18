@@ -28,8 +28,10 @@ import {
     TypeExpression,
     VariableDeclaration,
     WhileStatement,
-    EnsureStatement
+    EnsureStatement,
+    PassStatement
 } from "./ast";
+import { ErrorTrace } from "./interpret";
 
 let GENERATE_SOURCE_MAP = false;
 
@@ -94,7 +96,7 @@ export function tpStatements(statements: Statement[]): string {
             case "BranchStatement":     result += tpBranchStatement(s)    ; break;
             case "ForStatement":        result += tpForStatement(s)       ; break;
             case "WhileStatement":      result += tpWhileStatement(s)     ; break;
-            case "PassStatement":       result += "$$pass$$();";          ; break;
+            case "PassStatement":       result += tpPassStatement(s);     ; break;
             case "EnsureStatement":     result += tpEnsureStatement(s)    ; break;
         }
         result += "\n";
@@ -102,9 +104,23 @@ export function tpStatements(statements: Statement[]): string {
     return result;
 }
 
-export function tpEnsureStatement(a: EnsureStatement): string {
-    return `$$ensure$$(${tpExpression(a.expression)})`;
+export function tpPassStatement(p: PassStatement): string {
+    return `$$pass$$();${GENERATE_SOURCE_MAP ? generateSourceMap({
+        ...p.location,
+        callingFile: p.callingFile,
+        lineContent: "",
+        insideWhichFunction: ""
+    }): ""}`;
 }
+
+export function tpEnsureStatement(a: EnsureStatement): string {
+    return `$$ensure$$(${GENERATE_SOURCE_MAP ? 
+        generateSourceMap({
+            ...a.location, 
+            callingFile: a.callingFile, 
+            lineContent: "",
+            insideWhichFunction: ""
+        }) + "\n" : ""}${tpExpression(a.expression)}) ` }
 
 export function tpWhileStatement(w: WhileStatement): string {
     return "" +
@@ -139,13 +155,22 @@ export function tpFunctionCall(f: FunctionCall): string {
     const funcSignature = stringifyFunction(f);
     const params = f.parameters.map((x) => tpExpression(x));
     let result = `${f.isAsync ? "await " : ""}${funcSignature}(` + 
-                 `${GENERATE_SOURCE_MAP ? `/*##${JSON.stringify({...f.location, callingFile: f.callingFile})}##*/` : ""}` +
+                 `${GENERATE_SOURCE_MAP ? generateSourceMap({
+                     ...f.location, 
+                     callingFile: f.callingFile, 
+                     lineContent: "", 
+                     insideWhichFunction: ""
+                }): ""}` +
                  `\n${params.join("\n,")})`;
     if (f.isAsync) {
         return "(" + result + ")";
     } else {
         return result;
     }
+}
+
+export function generateSourceMap(x: ErrorTrace): string {
+    return `/*##${JSON.stringify(x)}##*/`;
 }
 
 export function stringifyFunction(f: FunctionCall | FunctionDeclaration): string {

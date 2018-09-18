@@ -21,6 +21,7 @@ export type ErrorHandler = (e: Error) => void;
 
 export type ErrorStackTrace = {
     name: "ErrorStackTrace";
+    errorType: string ; // "Ensurance Failed" | "Not Implemented Error" | "OtherError";
     stack: ErrorTrace[];
 }
 
@@ -78,12 +79,13 @@ export function interpret(
             // involve async functions such as readline
             return ok(output);
         } else {
-            if(output.name === "EnsuranceFailed") {
-                const rawErrorTrace = output.stack.split("\n") as string[];
-                return fail(extractErrorStackTrace(rawErrorTrace, updatedCache, transpiledCode));
-            } else {
-                return fail(output);
-            }
+            const rawErrorTrace = output.stack.split("\n") as string[];
+            return fail(extractErrorStackTrace(
+                output.name,
+                rawErrorTrace, 
+                updatedCache, 
+                transpiledCode
+            ));
         }
     } else {
         return result;
@@ -91,6 +93,7 @@ export function interpret(
 }
 
 function extractErrorStackTrace(
+    type: string,
     rawErrorTrace: string[], 
     updatedCache: SyntaxTreeCache,
     transpiledCode: string
@@ -116,6 +119,7 @@ function extractErrorStackTrace(
     }
     const errorStackTrace: ErrorStackTrace = {
         name: "ErrorStackTrace",
+        errorType: type as any,
         stack: errorTrace
     };
     return errorStackTrace;

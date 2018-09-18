@@ -15,3 +15,4 @@
 - [] Add call-stack reporting feature (using a global function table and try catch at main module)
 - [x] implement render stack trace function
 - [] Fix bug regarding async function cannot return error stack trace
+- [] Ensurance expression should be boolean

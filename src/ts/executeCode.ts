@@ -18,9 +18,15 @@ export function executeCode(javascriptCode: string, ir?: IntermediateRepresentat
         function $$ensure$$(bool) {
             if(!bool) {
                 const e = new Error();
-                e.name = "EnsuranceFailed";
+                e.name = "Ensurance Failed";
                 throw e;
             }
+        }
+
+        function $$pass$$() {
+            const e = new Error();
+            e.name = "Not implemented error";
+            throw e;
         }
 
         // run if ().main function exist
