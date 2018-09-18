@@ -9,12 +9,12 @@ def ().main
     let x = "1,2,3".replace("," with ".")
 `,
 `
-function _replace_with_String_String_String($this,$old,$that){
+function _replace$with_String_String_String($this,$old,$that){
 $$pass$$();
 }
 
 function _main_(){
-const $x = _replace_with_String_String_String(
+const $x = _replace$with_String_String_String(
 "1,2,3"
 ,","
 ,".");

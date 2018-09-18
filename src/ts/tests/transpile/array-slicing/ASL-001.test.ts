@@ -10,17 +10,17 @@ def ().main
     let y = x.(0 to 1)
 `,
 `
-function _$period_to_ListOfGeneric$T_Integer_Integer($this,$start,$end){
+function _$period$to_ListOfGeneric$T_Integer_Integer($this,$start,$end){
 $$pass$$();
 }
 
-function _$period_to_ListOfInteger_Integer_Integer($this,$start,$end){
+function _$period$to_ListOfInteger_Integer_Integer($this,$start,$end){
 $$pass$$();
 }
 
 function _main_(){
 const $x = [(1),(2),(3)];
-const $y = _$period_to_ListOfInteger_Integer_Integer(
+const $y = _$period$to_ListOfInteger_Integer_Integer(
 $x
 ,(0)
 ,(1));

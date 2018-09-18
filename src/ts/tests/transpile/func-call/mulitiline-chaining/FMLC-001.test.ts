@@ -26,12 +26,12 @@ function _plus_Number_Number($this,$that){
 $$pass$$();
 }
 
-function _isBetween_and_Number_Number_Number($this,$left,$right){
+function _isBetween$and_Number_Number_Number($this,$left,$right){
 $$pass$$();
 }
 
 function _main_(){
-const $result = _isBetween_and_Number_Number_Number(
+const $result = _isBetween$and_Number_Number_Number(
 _plus_Number_Number(
 _double_Number(
 (9))

@@ -20,11 +20,13 @@ def ().bye
         first_column: 6,
         last_column: 10,
         callingFile: '<UNIT_TEST>',
+        insideWhichFunction: '.yo',
         lineContent: '    ().bye' },
         { first_line: 3,
         last_line: 3,
         first_column: 6,
         last_column: 9,
         callingFile: '<UNIT_TEST>',
+        insideWhichFunction: '.main',
         lineContent: '    ().yo' } ] }
 );
