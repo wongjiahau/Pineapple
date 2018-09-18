@@ -44,17 +44,21 @@ program.args.forEach((arg: string) => {
 export function renderErrorStackTrace(e: ErrorStackTrace): string {
     const path = require("path");
     const chalk = require("chalk");
-    let result = "Error at:\n\n";
+    const boxen = require("boxen");
+    let result = chalk.bold("Ensurance failed:\n\n");
     const numberOfSpaces = 4;
-    const numbering = (content: string) => `        | ${justifyLeft(content, numberOfSpaces)} | `;
+    const numbering = (content: string, arrow = false) => 
+        `     ${arrow ? "> " : "  "}| ${justifyLeft(content, numberOfSpaces)} | `;
     const mainScriptPath = extractFolderName(e.stack[e.stack.length - 1].callingFile);
     for (let i = 0; i < e.stack.length; i++) {
         const s = e.stack[i];
-        const location = `[${path.relative(mainScriptPath, s.callingFile)}:${chalk.yellow(s.first_line)}:${chalk.yellow(s.first_column)}]`;
-        result += ` ${chalk.grey(location)} ${chalk.cyan(s.insideWhichFunction)} \n\n`;
-        result += `${numbering((s.first_line).toString())}${s.lineContent}\n`;
-        result += numbering("") + chalk.red(underline(s.first_column, s.last_column, "~")) + "\n\n\n\n";
+        const location = ` [${chalk.yellow(path.relative(mainScriptPath, s.callingFile))}:${s.first_line}:${s.first_column}]`;
+        result += `  at  ${chalk.cyan(s.insideWhichFunction)} ${chalk.grey(location)}\n\n`;
+        result += `${numbering((s.first_line).toString(), true)}${s.lineContent}\n`;
+        result += numbering("") + chalk.red(underline(s.first_column, s.last_column, "~"))
+        if(i < e.stack.length - 1)
+            result  += "\n\n\n\n";
         
     }
-    return result;
+    return boxen(result, {padding: 1, borderColor: "grey", margin: 1});
 }

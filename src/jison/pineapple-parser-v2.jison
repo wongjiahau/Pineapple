@@ -36,6 +36,8 @@ const _MemberDefinition = (name, expectedType) => ({
     expectedType
 })
 
+const _EnsureStatement = (expression, location) =>  ({ kind: "EnsureStatement", expression, location });
+
 const _WhileStatement = (test,body) => ({ kind: "WhileStatement", test, body });
 
 const _ForStatement = (iterator,expression,body) => ({
@@ -161,19 +163,20 @@ const _AnonymousExpression = (location) => ({
 \/\/.*      /* skip comment */
 
 // Keywords
-"let"       return 'LET'
-"def"       return 'DEF'
+"ensure"    return 'ENSURE'
 "async"     return 'ASYNC'
-"return"    return 'RETURN'
-"if"        return 'IF'
+"def"       return 'DEF'
 "elif"      return 'ELIF'
 "else"      return 'ELSE'
 "for"       return 'FOR' 
+"if"        return 'IF'
+"import"    return 'IMPORT'
 "in"        return 'IN'
-"while"     return 'WHILE'
+"let"       return 'LET'
 "mutable"   return 'MUTABLE'
 "pass"      return 'PASS'
-"import"    return 'IMPORT'
+"return"    return 'RETURN'
+"while"     return 'WHILE'
 
 // Inivisible token
 "@NEWLINE"       %{
@@ -360,6 +363,11 @@ Statement
     | IfStatement                     {$$=$1}
     | ForStatement
     | WhileStatement
+    | EnsureStatement
+    ;
+
+EnsureStatement
+    : ENSURE MultilineExpr {$$=_EnsureStatement($2, this._$)}
     ;
 
 ReturnStatement

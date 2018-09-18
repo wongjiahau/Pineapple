@@ -14,6 +14,15 @@ export function executeCode(javascriptCode: string, ir?: IntermediateRepresentat
     // Refer https://nodejs.org/api/vm.html#vm_example_running_an_http_server_within_a_vm
     code += `((require) => {
         ${javascriptCode}
+
+        function $$ensure$$(bool) {
+            if(!bool) {
+                const e = new Error();
+                e.name = "EnsuranceFailed";
+                throw e;
+            }
+        }
+
         // run if ().main function exist
         if(typeof _main_ === 'function') {
             try {

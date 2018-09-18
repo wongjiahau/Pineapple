@@ -22,7 +22,7 @@ def (this Number).isBetween(left Number and right Number) -> Boolean
     return (this >= left).and(this <= right)
 
 def (this Integer).factorial -> Integer
-    (this > 0).ensure
+    ensure this >= 0
     let result mutable = 1
     for i in 1.to(this)
         result = result * i

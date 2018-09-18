@@ -54,7 +54,14 @@ export type Statement
     | ForStatement
     | WhileStatement
     | PassStatement
+    | EnsureStatement
     ;
+
+export interface EnsureStatement {
+    kind: "EnsureStatement";
+    expression: Expression;
+    location: TokenLocation;
+}
 
 export interface ImportDeclaration {
     kind: "ImportDeclaration";

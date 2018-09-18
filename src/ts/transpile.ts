@@ -27,7 +27,8 @@ import {
     TupleExpression,
     TypeExpression,
     VariableDeclaration,
-    WhileStatement
+    WhileStatement,
+    EnsureStatement
 } from "./ast";
 
 let GENERATE_SOURCE_MAP = false;
@@ -93,11 +94,16 @@ export function tpStatements(statements: Statement[]): string {
             case "BranchStatement":     result += tpBranchStatement(s)    ; break;
             case "ForStatement":        result += tpForStatement(s)       ; break;
             case "WhileStatement":      result += tpWhileStatement(s)     ; break;
-            case "PassStatement":       result += "$$pass$$();";
+            case "PassStatement":       result += "$$pass$$();";          ; break;
+            case "EnsureStatement":     result += tpEnsureStatement(s)    ; break;
         }
         result += "\n";
     }
     return result;
+}
+
+export function tpEnsureStatement(a: EnsureStatement): string {
+    return `$$ensure$$(${tpExpression(a.expression)})`;
 }
 
 export function tpWhileStatement(w: WhileStatement): string {

@@ -78,8 +78,12 @@ export function interpret(
             // involve async functions such as readline
             return ok(output);
         } else {
-            const rawErrorTrace = output.stack.split("\n") as string[];
-            return fail(extractErrorStackTrace(rawErrorTrace, updatedCache, transpiledCode));
+            if(output.name === "EnsuranceFailed") {
+                const rawErrorTrace = output.stack.split("\n") as string[];
+                return fail(extractErrorStackTrace(rawErrorTrace, updatedCache, transpiledCode));
+            } else {
+                return fail(output);
+            }
         }
     } else {
         return result;

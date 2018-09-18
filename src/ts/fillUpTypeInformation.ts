@@ -540,26 +540,37 @@ export function fillUp(statements: Statement[], symbols: SymbolTable, vartab: Va
             break;
         case "FunctionCall":
             const resultFC = fillUpFunctionCallTypeInfo(s, symbols, vartab);
-            if (resultFC.kind === "OK") { [statements[i], symbols.funcTab] = resultFC.value; } else { return resultFC; }
+            if (isOK(resultFC)) { [statements[i], symbols.funcTab] = resultFC.value; } else { return resultFC; }
             if (s.returnType.kind !== "VoidType") {
                 return fail(ErrorNonVoidExprNotAssignedToVariable(s));
             }
             break;
         case "BranchStatement":
             const resultBS = fillUpBranchTypeInfo(s, symbols, vartab);
-            if (resultBS.kind === "OK") { [statements[i], symbols] = resultBS.value; } else { return resultBS; }
+            if (isOK(resultBS)) { [statements[i], symbols] = resultBS.value; } else { return resultBS; }
             break;
         case "ForStatement":
             const resultFS = fillUpForStmtTypeInfo(s, symbols, vartab);
-            if (resultFS.kind === "OK") { [statements[i], symbols, vartab] = resultFS.value; } else { return resultFS; }
+            if (isOK(resultFS)) { [statements[i], symbols, vartab] = resultFS.value; } else { return resultFS; }
             break;
-        case "WhileStatement":
+        case "WhileStatement": {
             const resultWS1 = fillUpTestExprTypeInfo(s.test, symbols, vartab);
-            if (resultWS1.kind === "OK") { [s.test, symbols] = resultWS1.value; } else { return resultWS1; }
+            if (isOK(resultWS1)) { [s.test, symbols] = resultWS1.value; } else { return resultWS1; }
 
             const resultWS2 = fillUp(s.body, symbols, vartab);
-            if (resultWS2.kind === "OK") { [s.body, symbols] = resultWS2.value; } else { return resultWS2; }
+            if (isOK(resultWS2)) { [s.body, symbols] = resultWS2.value; } else { return resultWS2; }
             break;
+        }
+        case "PassStatement":
+        case "JavascriptCode":
+            // do nothing
+            break;
+        case "EnsureStatement":
+            const resultAS = fillUpExpressionTypeInfo(s.expression, symbols, vartab);
+            if(isOK(resultAS)) { [s.expression, symbols] = resultAS.value} else { return resultAS; }
+            break;
+        default: 
+            throw new Error(`Cannot handle ${s.kind} yet`)
     }}
     return ok([statements, symbols] as [Statement[], SymbolTable]);
 }
