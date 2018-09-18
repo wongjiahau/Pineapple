@@ -13,12 +13,18 @@ def Color
     :blue   Integer
 
 def ().main
+    for i in 0.to(99)
+        i.show
+    let x = 12.isBetween(13 and 14)
+
+def (this Number).isBetween(left Number and right Number) -> Boolean
     (-1).factorial.show
+    return (this >= left).and(this <= right)
 
 def (this Integer).factorial -> Integer
     (this > 0).ensure
     let result mutable = 1
-    for i in 1..< (this + 1)
+    for i in 1.to(this)
         result = result * i
     return result
 
@@ -39,7 +45,7 @@ def (this Color) == (that Color) -> Boolean
 
 def ().compareColor
     let colors mutable = List{Color}
-    for i in 0..<2
+    for i in 1.to(2)
         "Enter color $((i+1).toString)".show
         let color = Color
             :red   = "Enter red > ".ask.toInteger

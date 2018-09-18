@@ -1,7 +1,8 @@
-import { renderError } from "./errorType/renderError";
+import { renderError, extractFolderName } from "./errorType/renderError";
 import { interpret, loadFile, isErrorStackTrace, isErrorDetail, ErrorStackTrace } from "./interpret";
 import { isFail } from "./maybeMonad";
 import { executeCode } from "./executeCode";
+import { justifyLeft, underline } from "./labelLineNumbers";
 
 const fs = require("fs");
 const VERSION = require("../package.json").version;
@@ -41,5 +42,19 @@ program.args.forEach((arg: string) => {
 });
 
 export function renderErrorStackTrace(e: ErrorStackTrace): string {
-    return JSON.stringify(e, null, 2);
+    const path = require("path");
+    const chalk = require("chalk");
+    let result = "Error at:\n\n";
+    const numberOfSpaces = 4;
+    const numbering = (content: string) => `        | ${justifyLeft(content, numberOfSpaces)} | `;
+    const mainScriptPath = extractFolderName(e.stack[e.stack.length - 1].callingFile);
+    for (let i = 0; i < e.stack.length; i++) {
+        const s = e.stack[i];
+        const location = `[${path.relative(mainScriptPath, s.callingFile)}:${chalk.yellow(s.first_line)}:${chalk.yellow(s.first_column)}]`;
+        result += ` ${chalk.grey(location)} ${chalk.cyan(s.insideWhichFunction)} \n\n`;
+        result += `${numbering((s.first_line).toString())}${s.lineContent}\n`;
+        result += numbering("") + chalk.red(underline(s.first_column, s.last_column, "~")) + "\n\n\n\n";
+        
+    }
+    return result;
 }

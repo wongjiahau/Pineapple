@@ -13,3 +13,4 @@
 - [] Add support for importing modules from github
 - [x] Add docs about multiple line function chaining
 - [] Add call-stack reporting feature (using a global function table and try catch at main module)
+- [x] implement render stack trace function

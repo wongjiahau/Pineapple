@@ -151,7 +151,7 @@ export function stringifyFunction(f: FunctionCall | FunctionDeclaration): string
             return f.parameters.map((x) => stringifyType(x.typeExpected)).join("_");
         }
     })();
-    return "_" + signature.map((x) => getName(x.repr)).join("_") + "_" + typeSignature;
+    return "_" + signature.map((x) => getName(x.repr)).join("$") + "_" + typeSignature;
 }
 
 export function getName(funcSignature: string): string {

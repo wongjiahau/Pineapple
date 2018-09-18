@@ -31,7 +31,7 @@ export function renderError(
     }
     // tslint:disable-next-line:max-line-length
     const filename = chalk.underline(extractFilename(sourceCode.filename));
-    const pathname = chalk.underline(extractPathname(sourceCode.filename));
+    const pathname = chalk.underline(extractFolderName(sourceCode.filename));
     result += `\nThe error is located at ${filename} from ${pathname} at line ${errorDetail.relatedLocation.first_line}.`;
 
     return result
@@ -45,7 +45,7 @@ export function extractFilename(path: string): string {
     return path.split("/").slice(-1)[0];
 }
 
-export function extractPathname(path: string): string {
+export function extractFolderName(path: string): string {
     return path.split("/").slice(0, -1).join("/");
 }
 

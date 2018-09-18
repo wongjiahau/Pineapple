@@ -28,6 +28,7 @@ export type ErrorStackTrace = {
 export interface ErrorTrace extends TokenLocation {
     callingFile: string;
     lineContent: string;
+    insideWhichFunction: string;
 }
 
 export function isErrorDetail(e: ErrorStackTrace | ErrorDetail): e is ErrorDetail {
@@ -67,40 +68,53 @@ export function interpret(
         const funcDeclarations = getFunctionDeclarations(ir);
         const transpiledCode = transpile(funcDeclarations, generateSourceMap);
         const output = execute(transpiledCode, ir);
-        if(output === undefined) {
+
+        if(output === undefined) { // This will happen when the VM is waiting input
             return ok("");
         }
+
         if(!output.stack) { // if output is ok
+            //TODO: This current implementation cannot handle error stack trace when the main function 
+            // involve async functions such as readline
             return ok(output);
         } else {
-            const errorStack = output.stack.split("\n") as string[];
-            const mappedStack = [];
-    
-            // start from 2, because 0 to 1 is the error message
-            for(let i = 2; i < errorStack.length; i++) {
-                const trace = errorStack[i].trim().split(" ");
-                const lineNumber = parseInt(trace[2].split(":")[1]);
-                mappedStack.push(transpiledCode.split("\n")[lineNumber - 2].split("##")[1])
-                if(trace[1] === "_main_") {
-                    break;
-                }
-            }
-            const locations = mappedStack.map((x) => JSON.parse(x));
-            const stackTrace = locations.map((x) => ({
-                ...x,
-                lineContent: removeHiddenToken(
-                    updatedCache[x.callingFile].source.content.split("\n")[x.first_line - 1]
-                )
-            }));
-            const errorStackTrace: ErrorStackTrace = {
-                name: "ErrorStackTrace",
-                stack: stackTrace
-            };
-            return fail(errorStackTrace);
+            const rawErrorTrace = output.stack.split("\n") as string[];
+            return fail(extractErrorStackTrace(rawErrorTrace, updatedCache, transpiledCode));
         }
     } else {
         return result;
     }
+}
+
+function extractErrorStackTrace(
+    rawErrorTrace: string[], 
+    updatedCache: SyntaxTreeCache,
+    transpiledCode: string
+    ): ErrorStackTrace {
+    const errorTrace: ErrorTrace[] = [];
+
+    // start from 2, because 0 to 1 is the error message
+    for(let i = 2; i < rawErrorTrace.length; i++) {
+        const trace = rawErrorTrace[i].trim().split(" ");
+        const lineNumber = parseInt(trace[2].split(":")[1]);
+        const x = JSON.parse(transpiledCode.split("\n")[lineNumber - 2].split("##")[1]);
+        const lineContent = removeHiddenToken( 
+            updatedCache[x.callingFile].source.content.split("\n")[x.first_line - 1]
+        );
+        errorTrace.push({
+            ...x,
+            lineContent: lineContent,
+            insideWhichFunction: "." + trace[1].split("_")[1].split("$").join(" ")
+        });
+        if(trace[1] === "_main_") {
+            break;
+        }
+    }
+    const errorStackTrace: ErrorStackTrace = {
+        name: "ErrorStackTrace",
+        stack: errorTrace
+    };
+    return errorStackTrace;
 }
 
 function extractImports(ast: SyntaxTree, cache: SyntaxTreeCache)

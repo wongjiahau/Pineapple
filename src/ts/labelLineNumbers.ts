@@ -22,7 +22,7 @@ export function labelLineNumbers(
         line = line.trimRight() + "\n";
         if (pointingWhichLine - startLine - 1 === i) {
             line = chalk.bgRed("    ERROR >>" + line);
-            line += marginLeft + numbering("") + chalk.redBright(renderPointer(location)) + "\n";
+            line += marginLeft + numbering("") + chalk.redBright(underline(location.first_column, location.last_column)) + "\n";
         } else {
             line = marginLeft + line;
         }
@@ -31,11 +31,11 @@ export function labelLineNumbers(
     return result;
 }
 
-function renderPointer(location: TokenLocation): string {
+export function underline(first_column: number, last_column: number, marker = "^"): string {
     let result = "";
-    for (let i = 0; i < location.last_column; i++) {
-        if (i > location.first_column - 1) {
-            result += "^" ;
+    for (let i = 0; i < last_column; i++) {
+        if (i > first_column - 1) {
+            result += marker ;
         } else {
             result += " ";
         }
@@ -43,7 +43,10 @@ function renderPointer(location: TokenLocation): string {
     return result;
 }
 
-function justifyLeft(input: string, numberOfSpaces: number): string {
+export function justifyLeft(input: string, numberOfSpaces: number): string {
+    if(numberOfSpaces < input.length) {
+        throw new Error("Input length should be more than or equal number of spaces.");
+    }
     let result = input;
     for (let i = input.length; i < numberOfSpaces; i++) {
        result = " " + result;

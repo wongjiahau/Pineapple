@@ -31,11 +31,13 @@ def (this List{T}).append(that T) -> List{T}
 def (this List{T}).prepend(that T) -> List{T}
     return [that] ++ this
 
-def (this Integer) ..< (that Integer) -> List{Integer}
-    if this == (that - 1)
-        return [this]
-    else
-        return [this] ++ ((this + 1) ..< that)
+def (this Integer).to(that Integer) -> List{Integer}
+    let result mutable = List{Integer}
+    let i mutable = this
+    while i <= that
+        result = result.append(i)
+        i = i + 1
+    return result
 
 def (this List{T}).at(index Integer put value T) -> List{T}
     <javascript>
