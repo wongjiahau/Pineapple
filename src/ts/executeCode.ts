@@ -1,7 +1,12 @@
 import { IntermediateRepresentation } from "./getIntermediateRepresentation";
+import { InterpreterOptions } from "./interpret";
 const vm = require("vm");
 
-export function executeCode(javascriptCode: string, ir?: IntermediateRepresentation): string {
+export function executeCode(
+    javascriptCode: string, 
+    options: InterpreterOptions, 
+    ir?: IntermediateRepresentation
+): string {
     let functionTable = "";
     if(ir) {
         functionTable = JSON.stringify(ir.symbolTable.funcTab);
@@ -29,13 +34,37 @@ export function executeCode(javascriptCode: string, ir?: IntermediateRepresentat
             throw e;
         }
 
-        // run if ().main function exist
-        if(typeof _main_ === 'function') {
-            try {
-                _main_();
-            } catch (error) {
-                return error;
+        function $$runExamples$$() {
+            // $$examples$$ is populated by tranpsile.ts
+            for(let i = 0; i < $$examples$$.length; i ++) {
+                $$examples$$[i]();
             }
+        }
+
+        function $$handleExample$$(left, right, file, location) {
+            const where = file + " at line " + location.first_line;
+            if(left === right) {
+                console.log("Example ok at " + where);
+            } else {
+                console.log("Example failed at " + where);
+            }
+        }
+
+        try {
+            switch("${options.run}") {
+                case "Program":
+                    // run if ().main function exist
+                    if(typeof _main_ === 'function') {
+                        _main_();
+                    }
+                    break;
+                case "RunExample":
+                    $$runExamples$$();
+                    break;
+            }
+        } catch (error) {
+            console.log(error)
+            return error;
         }
     })`;
 

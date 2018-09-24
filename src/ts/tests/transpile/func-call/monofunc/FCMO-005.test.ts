@@ -13,12 +13,13 @@ function _show_Generic$T($this){
 $$pass$$();
 }
 
-function _show_String($this){
-$$pass$$();
-}
-
 function _main_(){
 _show_String(
 "Hello");
 }
+
+function _show_String($this){
+$$pass$$();
+}
+
 `);

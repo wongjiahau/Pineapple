@@ -7,6 +7,12 @@ const _PassStatement = (location) => ({ kind: "PassStatement", location});
 
 const _ReturnStatement = (expression,location) => ({ kind: "ReturnStatement", expression, location});
 
+const _ExampleDeclaration = (description, statements) => ({
+    kind: "ExampleDeclaration",
+    description,
+    statements,
+});
+
 const _FunctionDeclaration = (signature,returnType,parameters,statements,affix) => ({
     kind: "FunctionDeclaration",
     signature,
@@ -54,6 +60,13 @@ const _BranchStatement = (test,body,elseBranch) => ({
 const _ImportDeclaration = (filename) => ({
     kind: "ImportDeclaration",
     filename,
+});
+
+const _ExampleStatement = (left, right, location) => ({
+    kind: "ExampleStatement",
+    left,
+    right,
+    location
 });
 
 const _AssignmentStatement = (variable, isDeclaration, expression) => ({
@@ -177,6 +190,7 @@ const _AnonymousExpression = (location) => ({
 "pass"      return 'PASS'
 "return"    return 'RETURN'
 "while"     return 'WHILE'
+"example"   return 'EXAMPLE'
 
 // Inivisible token
 "@NEWLINE"       %{
@@ -247,12 +261,21 @@ DeclarationList
     | Declaration {$$=[$1]} 
     ;
 
-
 Declaration
     : StructDeclaration
     | FunctionDeclaration
     | ImportDeclaration
     | EnumDeclaration
+    | ExampleDeclaration 
+    ;
+
+ExampleDeclaration
+    : EXAMPLE ExampleStatement {$$=_ExampleDeclaration(null, [$2])}
+    | EXAMPLE StringAtom Block {$$=_ExampleDeclaration($1, $3)}
+    ;
+
+ExampleStatement 
+    : SinglelineExpr Arrow SinglelineExpr NEWLINE {$$=_ExampleStatement($1, $3, this._$)}
     ;
 
 EnumDeclaration
@@ -364,6 +387,7 @@ Statement
     | WhileStatement
     | EnsureStatement
     | PassStatement           NEWLINE {$$=$1}
+    | ExampleStatement
     ;
 
 PassStatement

@@ -1,4 +1,4 @@
-import { ImportDeclaration, StringExpression, SyntaxTree, FunctionDeclaration, TokenLocation } from "./ast";
+import { ImportDeclaration, StringExpression, SyntaxTree, FunctionDeclaration, TokenLocation, Declaration, TestStatement } from "./ast";
 import { ErrorImportFail } from "./errorType/E0030-ImportFail";
 import { ErrorDetail } from "./errorType/ErrorDetail";
 import { fail, isFail, isOK, Maybe, ok } from "./maybeMonad";
@@ -14,7 +14,11 @@ const toposort = require("toposort");
 
 interface SyntaxTreeCache {[filename: string]: SyntaxTree; }
 
-type CodeExecuter = (code: string, ir?: IntermediateRepresentation) => any;
+type CodeExecuter = (
+    code: string, 
+    options: InterpreterOptions,
+    ir?: IntermediateRepresentation
+) => any;
 
 export type ErrorHandler = (e: Error) => void;
 
@@ -39,13 +43,19 @@ export function isErrorStackTrace(e: ErrorStackTrace | ErrorDetail): e is ErrorS
     return e.name === "ErrorStackTrace";
 }
 
+export interface InterpreterOptions {
+    loadPreludeLibrary: boolean;
+    generateSourceMap: boolean;
+    run: "Program" | "RunExample";
+    optimize: boolean; // optimized means ensurance code and type cast checking code will not be generated
+}
+
 export function interpret(
     source: SourceCode,
     execute: CodeExecuter,
-    loadPreludeLibrary: boolean,
-    generateSourceMap: boolean
+    options: InterpreterOptions
 ): Maybe<string, ErrorDetail | ErrorStackTrace> {
-    if (loadPreludeLibrary) {
+    if (options.loadPreludeLibrary) {
         source.content = source.content + `\nimport "$pine/prelude/*"`;
     }
     const initialCache: SyntaxTreeCache = {};
@@ -62,12 +72,12 @@ export function interpret(
 
     const sortedDependencies = sortDependency(dependencies);
     const sortedSyntaxTrees = sortedDependencies.map((x) => updatedCache[x]).filter((x) => x !== undefined);
-    const result = loadSource(sortedSyntaxTrees);
+    const result = loadSource(sortedSyntaxTrees, options);
     if (isOK(result)) {
         const ir = result.value; // ir means intermediate representation
-        const funcDeclarations = getFunctionDeclarations(ir);
-        const transpiledCode = transpile(funcDeclarations, generateSourceMap);
-        const output = execute(transpiledCode, ir);
+        let declarations = getDeclarations(ir) as Declaration[];
+        const transpiledCode = transpile(declarations, options);
+        const output = execute(transpiledCode, options, ir);
 
         if(output === undefined) { // This will happen when the VM is waiting input
             return ok("");
@@ -107,6 +117,10 @@ function extractErrorStackTrace(
         const lineContent = removeHiddenToken( 
             updatedCache[x.callingFile].source.content.split("\n")[x.first_line - 1]
         );
+        const nextTrace = rawErrorTrace[i + 1].trim().split(" ")[1];
+        if(nextTrace == "$$test$$") {
+            break;
+        }
         errorTrace.push({
             ...x,
             lineContent: lineContent,
@@ -217,13 +231,13 @@ function sortDependency(dependencies: Dependencies): string[] {
     return toposort(dependencies).reverse();
 }
 
-function loadSource(syntaxTrees: SyntaxTree[])
+function loadSource(syntaxTrees: SyntaxTree[], options: InterpreterOptions)
 : Maybe<IntermediateRepresentation, ErrorDetail> {
     let ir = initialIntermediateForm();
     for (let i = 0; i < syntaxTrees.length; i++) {
         const s = syntaxTrees[i];
         if (s !== null) {
-            const result = getIntermediateRepresentation(s, ir);
+            const result = getIntermediateRepresentation(s, ir, options);
             if (isOK(result)) {
                 ir = result.value;
             } else {
@@ -235,14 +249,8 @@ function loadSource(syntaxTrees: SyntaxTree[])
     return ok(ir);
 }
 
-function getFunctionDeclarations(ir: IntermediateRepresentation): FunctionDeclaration[]{
-    let declarations: FunctionDeclaration[] = [];
-    for (const key in ir.symbolTable.funcTab) {
-        if (ir.symbolTable.funcTab.hasOwnProperty(key)) {
-            declarations = declarations.concat(ir.symbolTable.funcTab[key]);
-        }
-    }
-    return declarations;
+function getDeclarations(ir: IntermediateRepresentation): Declaration[]{
+    return ir.syntaxTrees.map(x => x.declarations).reduce((x, y) => (x.concat(y)))
 }
 
 type Dependencies = string[][]; // Example: [["a.pine", "b.pine"]] means "a.pine" depends on "b.pine"

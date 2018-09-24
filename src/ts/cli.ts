@@ -1,5 +1,5 @@
 import { renderError, extractFolderName } from "./errorType/renderError";
-import { interpret, loadFile, isErrorStackTrace, isErrorDetail, ErrorStackTrace } from "./interpret";
+import { interpret, loadFile, isErrorStackTrace, isErrorDetail, ErrorStackTrace, InterpreterOptions } from "./interpret";
 import { isFail } from "./maybeMonad";
 import { executeCode } from "./executeCode";
 import { justifyLeft, underline } from "./labelLineNumbers";
@@ -8,18 +8,33 @@ const fs = require("fs");
 const VERSION = require("../package.json").version;
 const program = require("commander");
 
+const options: InterpreterOptions = {
+    loadPreludeLibrary: true,
+    run: "Program",
+    optimize: false,
+    generateSourceMap: true
+}
+
 program
     .version(VERSION)
     .option("-l, --log", "Log output")
+    .option("-e, --runExamples", "Run examples only")
     .parse(process.argv);
 
 if (program.log) {
     console.log("Logging");
 }
 
+if(program.runExamples) {
+    options.run = "RunExample";
+    console.log("Validating examples . . .");
+}
+
 if (program.args.length === 0) {
     console.log(`Pineapple ${VERSION}`);
 }
+
+
 
 program.args.forEach((arg: string) => {
     if (fs.existsSync(arg)) {
@@ -27,7 +42,7 @@ program.args.forEach((arg: string) => {
         if (file === null) {
             throw new Error(`Cannot open file ${arg}`);
         }
-        const result = interpret(file, executeCode, true, true);
+        const result = interpret(file, executeCode, options);
         if (isFail(result)) {
             const error = result.error;
             if(isErrorStackTrace(error)) {

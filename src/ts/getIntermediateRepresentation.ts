@@ -3,14 +3,17 @@ import { ErrorDetail } from "./errorType/ErrorDetail";
 import { fillUpTypeInformation, SymbolTable } from "./fillUpTypeInformation";
 import { initTypeTree } from "./typeTree";
 import { Maybe, ok } from "./maybeMonad";
+import { InterpreterOptions } from "./interpret";
 
 export function getIntermediateRepresentation(
     ast: SyntaxTree,
     prevIntermediate: IntermediateRepresentation,
+    options: InterpreterOptions
 ): Maybe<IntermediateRepresentation, ErrorDetail> {
     const result = fillUpTypeInformation(
         ast,
-        prevIntermediate.symbolTable
+        prevIntermediate.symbolTable,
+        options
     );
     if (result.kind === "OK") {
         const [newAst, symbolTable] = result.value;

@@ -16,3 +16,5 @@
 - [x] implement render stack trace function
 - [] Fix bug regarding async function cannot return error stack trace
 - [] Ensurance expression should be boolean
+- [x] implement builtin unit testing feature (a.k.a example-driven development)
+- [] write doc about EDD (example-driven development)

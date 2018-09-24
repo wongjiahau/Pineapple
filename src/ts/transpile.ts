@@ -28,17 +28,24 @@ import {
     VariableDeclaration,
     WhileStatement,
     EnsureStatement,
-    PassStatement
+    PassStatement,
+    ExampleDeclaration,
+    ExampleStatement,
 } from "./ast";
-import { ErrorTrace } from "./interpret";
+import { ErrorTrace, InterpreterOptions } from "./interpret";
 
 let GENERATE_SOURCE_MAP = false;
 
 // Note: tp means transpile
 // Example: tpDeclaration means transpileDeclaration
-export function transpile(decls: Declaration[], generateSourceMap = false): string {
-    GENERATE_SOURCE_MAP = generateSourceMap;
-    return decls.map((x) => tpDeclaration(x)).join("\n");
+export function transpile(decls: Declaration[], options: InterpreterOptions): string {
+    GENERATE_SOURCE_MAP = options.generateSourceMap;
+    let result = ""; 
+    if(options.run === "RunExample") { // this condition is needed so that old unit tests won't break
+        result += "const $$examples$$ = [];"; // this is need to store tests
+    }
+    result += decls.map((x) => tpDeclaration(x)).join("\n");
+    return result; 
 }
 
 export function tpDeclaration(input: Declaration): string {
@@ -49,12 +56,21 @@ export function tpDeclaration(input: Declaration): string {
         case "FunctionDeclaration":
             return tpFunctionDeclaration(input);
         case "ImportDeclaration":
-            return tpImportDeclaration(input);
+            return "";
+            // return tpImportDeclaration(input);
         case "StructDeclaration":
-            return tpStructDeclaration(input);
+            return "";
+            // return tpStructDeclaration(input);
         case "EnumDeclaration":
-            return tpEnumDeclaration(input);
+            return "";
+            // return tpEnumDeclaration(input);
+        case "ExampleDeclaration":
+            return tpExampleDeclaration(input);
     }
+}
+
+export function tpExampleDeclaration(e: ExampleDeclaration): string {
+    return `$$examples$$.push(function(){${tpStatements(e.statements)}});`;
 }
 
 export function tpEnumDeclaration(e: EnumDeclaration): string {
@@ -97,10 +113,22 @@ export function tpStatements(statements: Statement[]): string {
             case "WhileStatement":      result += tpWhileStatement(s)     ; break;
             case "PassStatement":       result += tpPassStatement(s);     ; break;
             case "EnsureStatement":     result += tpEnsureStatement(s)    ; break;
+            case "ExampleStatement":    result += tpExampleStatement(s)   ; break;
+            default: throw new Error(`Cannot handle ${s.kind} yet`)
         }
         result += "\n";
     }
     return result;
+}
+
+export function tpExampleStatement(e: ExampleStatement): string {
+    const originFile = JSON.stringify(e.originFile);
+    const location = JSON.stringify(e.location);
+    /**
+     * $$handleExample$$ is defined in executeCode.ts
+     */
+    return `$$handleExample$$(${tpExpression(e.left)},${tpExpression(e.right)},${originFile},${location});`; 
+
 }
 
 export function tpPassStatement(p: PassStatement): string {

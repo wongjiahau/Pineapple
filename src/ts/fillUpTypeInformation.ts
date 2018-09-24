@@ -59,7 +59,7 @@ import { ErrorInterpolatedExpressionIsNotString } from "./errorType/E0026-Inpero
 import { ErrorMissingClosingBracket } from "./errorType/E0027-MissingClosingBracket";
 import {stringifyTypeReadable} from "./errorType/errorUtil";
 import { ErrorDetail } from "./errorType/ErrorDetail";
-import { SourceCode } from "./interpret";
+import { SourceCode, InterpreterOptions } from "./interpret";
 import { parseCode } from "./parseCodeToSyntaxTree";
 import {stringifyFunction} from "./transpile";
 import {
@@ -83,7 +83,8 @@ import { Maybe, isOK, isFail, ok, fail } from "./maybeMonad";
 let CURRENT_SOURCE_CODE: () => SourceCode;
 export function fillUpTypeInformation(
     syntaxTree: SyntaxTree,
-    symbols: SymbolTable
+    symbols: SymbolTable,
+    options: InterpreterOptions
 ): Maybe<[SyntaxTree, SymbolTable], ErrorDetail> {
     CURRENT_SOURCE_CODE = () => syntaxTree.source;
     // Complete the function and struct table This step is to allow programmer to
@@ -91,36 +92,35 @@ export function fillUpTypeInformation(
     // bottom-up structure
     const decls = syntaxTree.declarations;
     for (let i = 0; i < decls.length; i++) {
-        const currentDecl = decls[i];
-        currentDecl.originFile = CURRENT_SOURCE_CODE().filename;
-        switch (currentDecl.kind) {
+        const d = decls[i];
+        switch (d.kind) {
             case "FunctionDeclaration":
-                for (let j = 0; j < currentDecl.parameters.length; j++) {
-                    const result1 = resolveType(currentDecl.parameters[j].typeExpected, symbols);
+                for (let j = 0; j < d.parameters.length; j++) {
+                    const result1 = resolveType(d.parameters[j].typeExpected, symbols);
                     if (isOK(result1)) {
-                        currentDecl.parameters[j].typeExpected = result1.value;
+                        d.parameters[j].typeExpected = result1.value;
                     } else {
                         return result1;
                     }
                 }
-                const result2 = resolveType(currentDecl.returnType, symbols);
-                if (result2.kind === "OK") { currentDecl.returnType = result2.value; } else { return result2; }
-                symbols.funcTab = newFunctionTable(currentDecl, symbols.funcTab);
+                const result2 = resolveType(d.returnType, symbols);
+                if (result2.kind === "OK") { d.returnType = result2.value; } else { return result2; }
+                symbols.funcTab = newFunctionTable(d, symbols.funcTab);
                 break;
             case "StructDeclaration":
                 // check if the struct is declared already or not
-                const tempStructTab  = newStructTab(currentDecl, copy(symbols.structTab));
+                const tempStructTab  = newStructTab(d, copy(symbols.structTab));
                 if (isFail(tempStructTab)) { return tempStructTab; }
 
                 const tempSymbols = copy(symbols);
                 tempSymbols.typeTree = insertChild<TypeExpression> (
-                    newStructType(currentDecl, currentDecl.genericList),
+                    newStructType(d, d.genericList),
                     BaseStructType(),
                     tempSymbols.typeTree,
                     typeEquals
                 );
 
-                const result = validateStruct(currentDecl, tempSymbols);
+                const result = validateStruct(d, tempSymbols);
                 if (isFail(result)) { return result; }
                 const validatedStruct = result.value;
 
@@ -137,13 +137,23 @@ export function fillUpTypeInformation(
                 );
                 break;
             case "EnumDeclaration":
-                const result3 = newEnumTab(currentDecl, symbols.enumTab);
+                const result3 = newEnumTab(d, symbols.enumTab);
                 if (result3.kind === "OK") {
                     symbols.enumTab = result3.value;
-                    symbols.typeTree = insertChild(currentDecl, EnumType(), symbols.typeTree, typeEquals);
+                    symbols.typeTree = insertChild(d, EnumType(), symbols.typeTree, typeEquals);
                 } else {
                     return result3;
                 }
+                break;
+            case "ExampleDeclaration":
+                const result4 = fillUpStatementsTypeInfo(d.statements, symbols, {});
+                if(isFail(result4)) return result4;
+                else [d.statements, symbols] = result4.value;
+                break;
+            case "ImportDeclaration":
+                break;
+            default: 
+                throw new Error(`Cannot handle ${d.kind} yet`)
         }
     }
 
@@ -152,7 +162,7 @@ export function fillUpTypeInformation(
         switch (currentDecl.kind) {
             case "FunctionDeclaration":
                 const vartab = getVariableTable(currentDecl.parameters);
-                const result = fillUp(currentDecl.statements, symbols, vartab);
+                const result = fillUpStatementsTypeInfo(currentDecl.statements, symbols, vartab);
                 if (result.kind === "Fail") { return result; } else {
                     const [statements, newSymbols] = result.value;
                     currentDecl.statements = statements;
@@ -467,7 +477,7 @@ function updateVariableTable(vtab: VariableTable, variable: Variable)
     return ok(vtab);
 }
 
-export function fillUp(statements: Statement[], symbols: SymbolTable, vartab: VariableTable)
+export function fillUpStatementsTypeInfo(statements: Statement[], symbols: SymbolTable, vartab: VariableTable)
 : Maybe<[Statement[], SymbolTable], ErrorDetail> {
     for (let i = 0; i < statements.length; i++) {
         const s = statements[i];
@@ -556,7 +566,7 @@ export function fillUp(statements: Statement[], symbols: SymbolTable, vartab: Va
             const resultWS1 = fillUpTestExprTypeInfo(s.test, symbols, vartab);
             if (isOK(resultWS1)) { [s.test, symbols] = resultWS1.value; } else { return resultWS1; }
 
-            const resultWS2 = fillUp(s.body, symbols, vartab);
+            const resultWS2 = fillUpStatementsTypeInfo(s.body, symbols, vartab);
             if (isOK(resultWS2)) { [s.body, symbols] = resultWS2.value; } else { return resultWS2; }
             break;
         }
@@ -571,10 +581,29 @@ export function fillUp(statements: Statement[], symbols: SymbolTable, vartab: Va
             const resultAS = fillUpExpressionTypeInfo(s.expression, symbols, vartab);
             if(isOK(resultAS)) { [s.expression, symbols] = resultAS.value} else { return resultAS; }
             break;
+        case "ExampleStatement":
+            s.originFile = CURRENT_SOURCE_CODE().filename;
+            const resultLeft = fillUpExpressionTypeInfo(s.left, symbols, vartab);
+            if(isOK(resultLeft)) [s.left , symbols] = resultLeft.value; else return resultLeft;
+            const resultRight = fillUpExpressionTypeInfo(s.right, symbols, vartab);
+            if(isOK(resultRight)) [s.right , symbols] = resultRight.value; else return resultRight;
+            if(!typeEquals(s.left.returnType, s.right.returnType)) {
+                return fail(ErrorYetToBeDefined("Return type of left and right should be equal", s.location));
+            }
+            break;
         default: 
             throw new Error(`Cannot handle ${s.kind} yet`)
     }}
     return ok([statements, symbols] as [Statement[], SymbolTable]);
+}
+
+export function ErrorYetToBeDefined(message: string, location: TokenLocation): ErrorDetail {
+    return {
+        code: "???",
+        name: "Error that is yet to be defined",
+        message: message,
+        relatedLocation: location
+    };
 }
 
 function findVariable(v: Variable, vartab: VariableTable, isAssignment: boolean)
@@ -610,7 +639,7 @@ export function fillUpForStmtTypeInfo(f: ForStatement, symbols: SymbolTable, var
     } else {
         return fail(ErrorForExprNotArray(f.expression));
     }
-    const result2 = fillUp(f.body, symbols, vartab);
+    const result2 = fillUpStatementsTypeInfo(f.body, symbols, vartab);
     if (result2.kind === "OK") {  [f.body, symbols] = result2.value; } else { return result2; }
     return ok([f, symbols, vartab] as [ForStatement, SymbolTable, VariableTable]);
 }
@@ -638,7 +667,7 @@ export function assertReturnTypeIsBoolean(e: Expression): Maybe<boolean, ErrorDe
 
 export function fillUpBranchTypeInfo(b: BranchStatement, symbols: SymbolTable, vartab: VariableTable)
 : Maybe<[BranchStatement, SymbolTable], ErrorDetail> {
-    const result = fillUp(b.body, symbols, vartab);
+    const result = fillUpStatementsTypeInfo(b.body, symbols, vartab);
     if (result.kind === "OK") { [b.body, symbols] = result.value; } else { return result; }
     if (b.test !== null) {
         const result2 = fillUpTestExprTypeInfo(b.test, symbols, vartab);

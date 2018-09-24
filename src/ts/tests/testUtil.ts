@@ -6,7 +6,7 @@ declare var it: any;
 
 // @ts-ignore
 import { mocha } from "mocha";
-import { interpret, SourceCode, ErrorStackTrace, isErrorDetail } from "../interpret";
+import { interpret, SourceCode, ErrorStackTrace, isErrorDetail, InterpreterOptions } from "../interpret";
 import { renderError } from "../errorType/renderError";
 import { isOK } from "../maybeMonad";
 import { executeCode } from "../executeCode";
@@ -54,7 +54,13 @@ export function  testRuntimeError(
     };
     describe(description, () => {
         it("", () => {
-            const result = interpret(source, executeCode, false, true);
+            const options: InterpreterOptions = {
+                generateSourceMap: true,
+                loadPreludeLibrary: false,
+                run: "Program",
+                optimize: false
+            }
+            const result = interpret(source, executeCode, options);
             if(isOK(result)) {
                 throw new Error("No error is caught.");
             } else {
@@ -78,7 +84,13 @@ export function testError(
                 content: input,
                 filename: "<UNIT_TEST>"
             };
-            const result = interpret(source, (x) => x, false, false);
+            const options: InterpreterOptions = {
+                optimize: false,
+                loadPreludeLibrary: false,
+                generateSourceMap: false,
+                run: "Program"
+            }
+            const result = interpret(source, (x) => x, options);
             if (isOK(result)) {
                 throw new Error("No error is caught");
             } else {
@@ -109,7 +121,13 @@ export function testTranspile(description: string, input: string, expectedOutput
                 content: input,
                 filename: "<UNIT_TEST>"
             };
-            const result = interpret(source, (x) => x, false, false);
+            const options: InterpreterOptions = {
+                optimize: false,
+                loadPreludeLibrary: false,
+                generateSourceMap: false,
+                run: "Program"
+            }
+            const result = interpret(source, (x) => x, options); 
             if (result.kind === "OK") {
                 assertEquals(result.value.trim(), expectedOutput.trim(), true);
             } else {

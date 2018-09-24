@@ -1,3 +1,8 @@
+import "core"
+
+def (this String).indexOf(that String) -> Integer
+    pass
+
 def (this String).replace(old String with new String) -> String
     return this.splitBy(old).joinBy(new)
 

@@ -15,10 +15,18 @@ export type Declaration
     | StructDeclaration
     | ImportDeclaration
     | EnumDeclaration
+    | ExampleDeclaration
     // TODO: To be implemented soon
     // | InterfaceDeclaration
     // | ImplementionDeclaration
     ;
+
+export interface ExampleDeclaration {
+    kind: "ExampleDeclaration";
+    description: string | null;
+    statements: Statement[];
+    location: TokenLocation;
+}
 
 export interface FunctionDeclaration {
     kind: "FunctionDeclaration";
@@ -55,7 +63,16 @@ export type Statement
     | WhileStatement
     | PassStatement
     | EnsureStatement
+    | ExampleStatement
     ;
+
+export interface ExampleStatement {
+    kind: "ExampleStatement";
+    left: Expression;
+    right: Expression;
+    location: TokenLocation;
+    originFile: string;
+}
 
 export interface EnsureStatement {
     kind: "EnsureStatement";
