@@ -8,13 +8,6 @@ def ().main
     let x = "Hello world"
 `,
 `
-function _main_(){
-_show_String(
-"Hello world");
-}
 
-function _show_String($this){
-$$pass$$();
-}
 
 `);

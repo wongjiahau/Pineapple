@@ -5,23 +5,20 @@ testTranspile("recursive bifunc",
 def (this List{T}) ++ (that List{T}) -> List{T}
     pass
 
-def (this Integer) ..< (that Integer) -> List{Integer}
-    return [0] ++ (1 ..< that)
+def (this Integer).to(that Integer) -> List{Integer}
+    return [0] ++ (1.to(that))
 `,
-`
+`    
 function _$plus$plus_ListOfGeneric$T_ListOfGeneric$T($this,$that){
 $$pass$$();
 }
 
-function _$plus$plus_ListOfInteger_ListOfInteger($this,$that){
-$$pass$$();
-}
-
-function _$period$period$lessThan_Integer_Integer($this,$that){
-return _$plus$plus_ListOfInteger_ListOfInteger(
+function _to_Integer_Integer($this,$that){
+return _$plus$plus_ListOfGeneric$T_ListOfGeneric$T(
 [(0)]
-,_$period$period$lessThan_Integer_Integer(
+,_to_Integer_Integer(
 (1)
 ,$that));
 }
+
 `);

@@ -14,12 +14,8 @@ $$pass$$();
 }
 
 function _main_(){
-_show_String(
+_show_Generic$T(
 "Hello");
-}
-
-function _show_String($this){
-$$pass$$();
 }
 
 `);

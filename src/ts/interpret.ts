@@ -250,7 +250,7 @@ function loadSource(syntaxTrees: SyntaxTree[], options: InterpreterOptions)
 }
 
 function getDeclarations(ir: IntermediateRepresentation): Declaration[]{
-    return ir.syntaxTrees.map(x => x.declarations).reduce((x, y) => (x.concat(y)))
+    return ir.syntaxTrees.map(x => x.declarations).reduce((x, y) => (x.concat(y)));
 }
 
 type Dependencies = string[][]; // Example: [["a.pine", "b.pine"]] means "a.pine" depends on "b.pine"

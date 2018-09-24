@@ -1048,25 +1048,26 @@ export function getMatchingFunction(f: FunctionCall, functab: FunctionTable, typ
     if (key in functab) {
         const matchingFunctions = functab[key].filter((x) => x.parameters.length === f.parameters.length);
         const result = getClosestFunction(f, matchingFunctions, typetree);
-        if (result.kind === "Fail") { return result; }
-        const closestFunction = result.value;
-        // This step is necessary to fix parent type E.g., changing (Number -> Number)
-        // to (Any -> Number)
-        for (let j = 0; j < f.parameters.length; j++) {
-            f.parameters[j].returnType = closestFunction.parameters[j].typeExpected;
+        if (result.kind === "Fail") { 
+            return result; 
+        } else {
+            const closestFunction = result.value;
+            // This step is necessary to fix parent type E.g., changing (Number -> Number)
+            // to (Any -> Number)
+            for (let j = 0; j < f.parameters.length; j++) {
+                f.parameters[j].returnType = closestFunction.parameters[j].typeExpected;
+            }
+    
+            f.returnType = closestFunction.returnType;
+    
+            // this step is needed for generic substituted function
+            functab = newFunctionTable(closestFunction, functab);
+    
+            if (closestFunction.isAsync) {
+                f.isAsync = true;
+            }
+            return ok([f, functab] as [FunctionCall, FunctionTable]);
         }
-
-        // @ts-ignore
-        f.returnType = closestFunction.returnType;
-
-        // this step is needed for generic substituted function
-        functab = newFunctionTable(closestFunction, functab);
-
-        if (closestFunction.isAsync) {
-            f.isAsync = true;
-        }
-
-        return ok([f, functab] as [FunctionCall, FunctionTable]);
     } else {
         return fail(ErrorUsingUnknownFunction(f));
     }
@@ -1095,29 +1096,30 @@ export function getClosestFunction(
     }
 
     // If can't find exactly matching function, find the closest function
-    let closestFunction: FunctionDeclaration | null = null;
+    let closestFunction: FunctionDeclaration & {originalFunction?: FunctionDeclaration} | null = null;
     let minimumDistance = Number.MAX_VALUE;
     const errors: Array < {
         paramPosition: number
     } > = [];
     const relatedFuncs: FunctionDeclaration[] = [];
     for (let i = 0; i < matchingFunctions.length; i++) {
-        const currentFunc = copy(matchingFunctions[i]);
+        const currentFunc : FunctionDeclaration & {originalFunction?: FunctionDeclaration} 
+            = copy(matchingFunctions[i]);
         const matchingParams = f.parameters;
         if (containsGeneric(currentFunc.parameters)) {
+            
+            // this line is needed, because we dont need to transpile substituted generic function
+            currentFunc.originalFunction = matchingFunctions[i];
             const genericsBinding = extractGenericBinding(currentFunc.parameters, f.parameters);
             if (genericsBinding !== null) {
                 for (let j = 0; j < currentFunc.parameters.length; j++) {
                     currentFunc.parameters[j].typeExpected =
                         substituteGeneric(currentFunc.parameters[j].typeExpected, genericsBinding);
                 }
-
-                // @ts-ignore
                 currentFunc.returnType = substituteGeneric(currentFunc.returnType, genericsBinding);
             }
         }
-        const [distance,
-            error] = paramTypesConforms(currentFunc.parameters, matchingParams, typeTree);
+        const [distance, error] = paramTypesConforms(currentFunc.parameters, matchingParams, typeTree);
         if (error === null) {
             if (distance < minimumDistance) {
                 closestFunction = currentFunc;
@@ -1136,7 +1138,13 @@ export function getClosestFunction(
             relatedFuncs.map((x) => x.parameters[farthestMatchingParamPosition].typeExpected)
         ));
     } else {
-        return ok(closestFunction);
+        if(closestFunction.originalFunction !== undefined) { // means that the closestFunction is a generic function
+            const result = closestFunction.originalFunction;
+            result.returnType = closestFunction.returnType; // this line is needed to pass FCBIO-007
+            return ok(result)
+        } else {
+            return ok(closestFunction);
+        }
     }
 }
 

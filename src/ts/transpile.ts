@@ -41,9 +41,6 @@ let GENERATE_SOURCE_MAP = false;
 export function transpile(decls: Declaration[], options: InterpreterOptions): string {
     GENERATE_SOURCE_MAP = options.generateSourceMap;
     let result = ""; 
-    if(options.run === "RunExample") { // this condition is needed so that old unit tests won't break
-        result += "const $$examples$$ = [];"; // this is need to store tests
-    }
     result += decls.map((x) => tpDeclaration(x)).join("\n");
     return result; 
 }

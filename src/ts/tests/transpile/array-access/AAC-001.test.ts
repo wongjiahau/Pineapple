@@ -14,13 +14,9 @@ function _$period_ListOfGeneric$T_Number($this,$that){
 $$pass$$();
 }
 
-function _$period_ListOfInteger_Number($this,$that){
-$$pass$$();
-}
-
 function _main_(){
 const $x = [(1),(2),(3)];
-const $y = _$period_ListOfInteger_Number(
+const $y = _$period_ListOfGeneric$T_Number(
 $x
 ,(0));
 }

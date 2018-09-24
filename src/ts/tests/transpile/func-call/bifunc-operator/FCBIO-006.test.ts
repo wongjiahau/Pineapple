@@ -10,18 +10,14 @@ def (this List{T}).append(that T) -> List{T}
 `,
 `
 function _main_(){
-const $x = _append_ListOfInteger_Integer(
-_append_ListOfInteger_Integer(
+const $x = _append_ListOfGeneric$T_Generic$T(
+_append_ListOfGeneric$T_Generic$T(
 [(1),(2),(3)]
 ,(1))
 ,(3));
 }
 
 function _append_ListOfGeneric$T_Generic$T($this,$that){
-$$pass$$();
-}
-
-function _append_ListOfInteger_Integer($this,$that){
 $$pass$$();
 }
 `);
