@@ -9,6 +9,7 @@ def ().main
     ().dFunc
 `,
 `
+
 function _dFunc_(){
 $$pass$$();
 }
@@ -17,10 +18,12 @@ function _cFunc_(){
 $$pass$$();
 }
 
+
 function _main_(){
 _cFunc_(
 );
 _dFunc_(
 );
 }
+
 `);
