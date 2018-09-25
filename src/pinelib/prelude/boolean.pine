@@ -2,17 +2,43 @@ def Boolean
     #true
     #false
 
-def (this Boolean).or(that Boolean) -> Boolean
+def (this Boolean) == (that Boolean) -> Boolean
     <javascript>
-    return $this || $that;
-    </javascript> 
+    return $this == $that;
+    </javascript>
+
+example #true == #true   -> #true
+example #false == #false -> #true
+
+def (this Boolean).or(that Boolean) -> Boolean
+    if this == #true
+        return #true
+    elif that == #true
+        return #true
+    else 
+        return #false
+
+example #true.or(#true)   -> #true
+example #false.or(#true)  -> #true
+example #true.or(#false)  -> #true
+example #false.or(#false) -> #false
 
 def (this Boolean).and(that Boolean) -> Boolean
-    <javascript>
-    return $this && $that;
-    </javascript>
+    if this == #true 
+        if that == #true
+            return #true
+    return #false
+
+example #true.and(#true)   -> #true
+example #true.and(#false)  -> #false
+example #false.and(#true)  -> #false
+example #false.and(#false) -> #false
 
 def (this Boolean).not -> Boolean
-    <javascript>
-    return ! $this;
-    </javascript>
+    if this == #true 
+        return #false
+    else
+        return #true
+
+example #true.not  -> #false
+example #false.not -> #true
