@@ -54,7 +54,7 @@ count = 1 // Error
 If you wish to make a variable mutable, you need to use the `mutable` keyword.
 
 ```js
-let x mutable = 0
+let mutable x = 0
 x = 1 // No error
 ```
 
@@ -68,7 +68,7 @@ x = 1 // No error
 By default, you cannot assign `#!pine #nil` to a mutable variable.
 
 ```pine
-let x mutable = 0
+let mutable x = 0
 x = #nil // Error
 ```
 
@@ -78,7 +78,7 @@ x = #nil // Error
 If you want to assign `#!pine #nil` to a variable, you need to declare it explicitly by using nilable types (which is to add a question mark behind the type name).
 
 ```pine
-let x Int? mutable = 0
+let mutable x Int? = 0
 x = #nil // No error
 ```
 

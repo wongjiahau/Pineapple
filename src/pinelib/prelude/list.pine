@@ -32,8 +32,8 @@ def (this List{T}).prepend(that T) -> List{T}
     return [that] ++ this
 
 def (this Integer).to(that Integer) -> List{Integer}
-    let result mutable = List{Integer}
-    let i mutable = this
+    let mutable result = List{Integer}
+    let mutable i = this
     while i <= that
         result = result.append(i)
         i = i + 1

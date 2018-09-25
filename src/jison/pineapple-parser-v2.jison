@@ -433,9 +433,9 @@ AssignmentStatement
 
 VarDecl /* Variable declaration */
     : VariableAtom                          {$$=_VariableDeclaration($1,null)}
-    | VariableAtom MUTABLE                  {$$=_VariableDeclaration($1,null,true)}
+    | MUTABLE VariableAtom                  {$$=_VariableDeclaration($2,null,true)}
     | VariableAtom TypeExpression           {$$=_VariableDeclaration($1,$2)}
-    | VariableAtom TypeExpression MUTABLE   {$$=_VariableDeclaration($1,$2,true)}
+    | MUTABLE VariableAtom TypeExpression   {$$=_VariableDeclaration($2,$3,true)}
     | LeftParenthesis VariableAtom RightParenthesis                  {$$=_VariableDeclaration($2,null)}
     | LeftParenthesis VariableAtom TypeExpression RightParenthesis   {$$=_VariableDeclaration($2,$3)}
     ;
