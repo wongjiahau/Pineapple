@@ -3,7 +3,7 @@ import { testTranspile } from "../../testUtil";
 testTranspile("mutable variable",
 `
 def ().main
-    let x mutable = 1
+    let mutable x = 1
     x = 2
 `,
 `

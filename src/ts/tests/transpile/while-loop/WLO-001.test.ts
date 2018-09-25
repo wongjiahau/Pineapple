@@ -12,7 +12,7 @@ def (this Number) + (that Number) -> Number
     pass
 
 def ().main
-    let x mutable = 0.0
+    let mutable x = 0.0
     while x < 10.0
         x = x + 1
 `
