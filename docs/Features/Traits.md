@@ -165,11 +165,10 @@ However, there are one major differences that makes Pineapple's trait stands out
 
 ==Using trait in Pineapple will not break existing code.==
 
-Suppose we have a data type called `Animal` which is defined in a file named `Animal.XXX`, and a function named `isMoreThan` is also defined.
+Suppose we have a data type called `Animal` and a function named `isMoreThan`.
 
 ```java
 // Language:  Java
-// File name: Animal.java
 public class Animal {
     public String name;
     public int weight;
@@ -182,7 +181,6 @@ public class Animal {
 
 ```hs
 -- Language:  Haskell
--- File name: Animal.hs
 data Animal = Animal {
     name   :: String,
     weight :: Int
@@ -194,7 +192,6 @@ isHeavierThan x y = (weight x) > (weight y)
 
 ```pine
 // Language:  Pineapple
-// File name: Animal.pine
 def Animal
     :name    String
     :weight  Integer
@@ -203,16 +200,82 @@ def (this Animal).isHeavierThan(that Animal) -> Boolean
     return this:weight > that:weight
 ```
 
----
+Imagine that during development, we suddenly realize we need a `Comparable` interface/typeclasses/trait for the `Animal` type. So, we coded it:
 
+```java
+// Java
+public interface Comparable<T> {
+    public boolean isHeavierThan(T other);
+}
+```
+
+```hs
+-- Haskell
+class Comparable a where
+    isHeavierThan :: a -> a -> Bool
+```
 
 ```pine
+// Pineapple
+def T is Comparable
+
+def (this T).isHeavierThan(that T) -> Boolean
+    if T is Comparable
+```
+
+However, to implement `Comparable` for `Animal` type, we need to modify the previous code as such (modification are those highlighted lines):
+
+```java hl_lines="2"
+// Language:  Java
+public class Animal implements Comparable<Animal> {
+    public String name;
+    public int weight;
+
+    public boolean isHeavierThan(Animal other) {
+        return this.weight > other.weight;
+    }
+}
+```
+
+```hs hl_lines="7 8"
+-- Language:  Haskell
+data Animal = Animal {
+    name   :: String,
+    weight :: Int
+}
+
+instance Comparable Animal where
+    isHeavierThan x y = (weight x) > (weight y)
+```
+
+But, no modification is needed in the Pineapple's code!
+
+```pine
+// Language:  Pineapple
+def Animal
+    :name    String
+    :weight  Integer
+
+def (this Animal).isHeavierThan(that Animal) -> Boolean
+    return this:weight > that:weight
+```
+
+One advantages of such feature is that Pineapple allows an easier incremental design approach, where you do not need to think of the future too much.
+
+---
+
+## Other features
+
+### Trait extension
+
+You can extend a trait by using the `extends` keyword. For example,
+
+```pine hl_lines="11"
 // Define a trait named Equatable
 def T is Equatable
 
 def (this T) == (that T) -> Boolean
-    where T is Equatable
-    pass
+    if T is Equatable
 
 def (this T) != (that T) -> Boolean 
     where T is Equatable
@@ -221,23 +284,56 @@ def (this T) != (that T) -> Boolean
 def T is Comparable extends T is Equatable
 
 def (this T) > (that T) -> Boolean
-    where T is Comparable
-    pass
+    if T is Comparable
 
 def (this T) < (that T) -> Boolean
     where T is Comparable
     return ((this > that).not).and((this == that).not)
 
+```
 
-def Color
-    red     Number
-    green   Number
-    blue    Number
+### Using trait in data structures
 
-def (this Color) == (that Color) -> Boolean
-    return  (this:red   == that:red  )
-        .and(this:green == that:green)
-        .and(this:blue  == that:blue )
+Another application of trait is for creating generic data structure.  For example, a BinaryTree:
 
-// Now, you can use != on Color
+```pine
+def BinaryTree{T}
+    where T is Comparable
+    :current  T
+    :left     BinaryTree{T}?
+    :right    BinaryTree{T}?
+
+def (this BinaryTree{T}?).insert(element T) -> BinaryTree{T}
+    where T is Comparable
+
+    if this == #nil
+        this = BinaryTree{T}
+            :current = element
+            :left    = #nil
+            :right   = #nil
+
+    elif element >= this:current
+        this:right = this:right.insert(element)
+
+    elif element < this:current
+        this:left = this:left.insert(element)
+
+    return this
+```
+
+### Multiple type parameters trait
+
+To define a trait with more than one type parameter, you need to use the following format:
+
+```pine
+def T1 is <TRAIT_NAME> T2
+```
+
+For example,
+
+```pine
+def T1 is ComparableTo T2
+
+def (this T1) > (that T2) -> Boolean
+    if T1 is ComparableTo T2
 ```
