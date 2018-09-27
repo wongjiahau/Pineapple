@@ -626,8 +626,8 @@
 
 
   <li class="md-nav__item">
-    <a href="../Traits/" title="Traits" class="md-nav__link">
-      Traits
+    <a href="../Traits/" title="Trait" class="md-nav__link">
+      Trait
     </a>
   </li>
 
@@ -814,13 +814,19 @@
 
 <h2 id="nullifunc-0-parameter">Nullifunc (0 parameter)<a class="headerlink" href="#nullifunc-0-parameter" title="Permanent link">&para;</a></h2>
 <p>Nullifunc is a function that do not need any parameters, for example:
-<div class="codehilite"><pre><span></span><span class="c1">// Here&#39;s how you define a nullifunc</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3
+4
+5
+6</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="c1">// Here&#39;s how you define a nullifunc</span>
 <span class="kd">def</span> <span class="p">().</span><span class="nx">pi</span> <span class="o">-&gt;</span> <span class="nb">Number</span>
     <span class="k">return</span> <span class="kc">3</span><span class="mi">.</span><span class="kc">142</span>
 
 <span class="c1">// Here&#39;s how you call a nullifunc</span>
 <span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="p">().</span><span class="nx">pi</span>
-</pre></div></p>
+</pre></div>
+</td></tr></table></p>
 <div class="admonition info">
 <p class="admonition-title">Note</p>
 <p><code class="codehilite"><span class="o">-&gt;</span> <span class="nb">Number</span></code> means that the <code class="codehilite"><span class="p">().</span><span class="nx">pi</span></code> function will return a <code class="codehilite"><span class="nb">Number</span></code> type.</p>
@@ -829,9 +835,11 @@
 <p class="admonition-title">Tip</p>
 <p>If you want to declare a function that does not return anything, just don't put the arrow symbol. </p>
 <p>For example,</p>
-<div class="codehilite"><pre><span></span><span class="kd">def</span> <span class="p">().</span><span class="nx">showMyName</span> <span class="c1">// no need to put -&gt; here</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="kd">def</span> <span class="p">().</span><span class="nx">showMyName</span> <span class="c1">// no need to put -&gt; here</span>
     <span class="kd">pass</span>
 </pre></div>
+</td></tr></table>
 
 </div>
 <hr>
@@ -839,7 +847,15 @@
 <h2 id="monofunc-1-parameter">Monofunc (1 parameter)<a class="headerlink" href="#monofunc-1-parameter" title="Permanent link">&para;</a></h2>
 <p>Monofunc is a function that takes only 1 parameter.<br />
 Note that the parameter must be at front. For example:
-<div class="codehilite"><pre><span></span><span class="c1">// here&#39;s how you declare a monofunc</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3
+4
+5
+6
+7
+8
+9</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="c1">// here&#39;s how you declare a monofunc</span>
 <span class="kd">def</span> <span class="p">(</span><span class="nx">this</span> <span class="nb">Number</span><span class="p">).</span><span class="nx">square</span> <span class="o">-&gt;</span> <span class="nb">Number</span>
     <span class="k">return</span> <span class="nx">this</span> <span class="o">*</span> <span class="nx">this</span>
 
@@ -848,7 +864,8 @@ Note that the parameter must be at front. For example:
 
 <span class="c1">// you can chain it!</span>
 <span class="kd">let</span> <span class="nx">y</span> <span class="o">=</span> <span class="kc">2</span><span class="mi">.square.square.square</span>
-</pre></div></p>
+</pre></div>
+</td></tr></table></p>
 <div class="admonition info">
 <p class="admonition-title">Note</p>
 <p><code class="codehilite"><span class="nx">this</span></code> is not a keyword, it is just a variable name!</p>
@@ -859,13 +876,19 @@ Note that the parameter must be at front. For example:
 <p>Bifunc is a function that takes 2 parameters.<br />
 Since you cannot separate parameters with comma, the only way is to put the name in the middle.</p>
 <p>For example:</p>
-<div class="codehilite"><pre><span></span><span class="c1">// here&#39;s how you define a bifunc</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3
+4
+5
+6</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="c1">// here&#39;s how you define a bifunc</span>
 <span class="kd">def</span> <span class="p">(</span><span class="nx">this</span> <span class="nb">Number</span><span class="p">).</span><span class="nx">plus</span><span class="p">(</span><span class="nx">that</span> <span class="nb">Number</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">Number</span>
     <span class="k">return</span> <span class="nx">this</span> <span class="o">+</span> <span class="nx">that</span>
 
 <span class="c1">// here&#39;s how you call a bifunc</span>
 <span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="kc">99</span><span class="mi">.plus</span><span class="p">(</span><span class="kc">99</span><span class="p">).</span><span class="nx">plus</span><span class="p">(</span><span class="kc">22</span><span class="p">)</span>
 </pre></div>
+</td></tr></table>
 
 <hr>
 
@@ -874,37 +897,53 @@ Since you cannot separate parameters with comma, the only way is to put the name
 As mentioned before, you cannot separate parameters with comma.<br />
 So, you should separate them with an identifier.<br />
 For example,
-<div class="codehilite"><pre><span></span><span class="c1">// Here&#39;s how you define a trifunc</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3
+4
+5
+6</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="c1">// Here&#39;s how you define a trifunc</span>
 <span class="kd">def</span> <span class="p">(</span><span class="nx">this</span> <span class="nb">String</span><span class="p">).</span><span class="nx">replace</span><span class="p">(</span><span class="nx">old</span> <span class="nb">String</span> <span class="nx">with</span> <span class="k">new</span> <span class="nb">String</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">String</span>
     <span class="kd">pass</span>
 
 <span class="c1">// Here&#39;s how you call a trifunc</span>
 <span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="sb">&quot;Hello world&quot;</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sb">&quot;world&quot;</span> <span class="nx">with</span> <span class="sb">&quot;baby&quot;</span><span class="p">)</span>
-</pre></div></p>
+</pre></div>
+</td></tr></table></p>
 <div class="admonition info">
 <p class="admonition-title">Note</p>
 <p><code class="codehilite"><span class="nx">with</span></code> is not a keyword, it is a <em>sub function identifier</em>, it means that you can use any word you like as long as it is a single alphabetical word without spaces!  </p>
 </div>
 <p>Just to make it clear, let see another Trifunc example:
-<div class="codehilite"><pre><span></span><span class="c1">// Defining a trifunc</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3
+4
+5
+6</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="c1">// Defining a trifunc</span>
 <span class="kd">def</span> <span class="p">(</span><span class="nx">this</span> <span class="nb">Socket</span><span class="p">).</span><span class="nx">send</span><span class="p">(</span><span class="nx">message</span> <span class="nb">String</span> <span class="nx">to</span> <span class="nx">portNumber</span> <span class="nb">Integer</span><span class="p">)</span>
     <span class="kd">pass</span>
 
 <span class="c1">// Here&#39;s how you use it</span>
 <span class="nx">mySocket</span><span class="mi">.send</span><span class="p">(</span><span class="sb">&quot;Hello world&quot;</span> <span class="nx">to</span> <span class="kc">8080</span><span class="p">)</span>
 </pre></div>
+</td></tr></table>
 In this case, <code>to</code> is the <em>sub function identifier</em>.  </p>
 <div class="admonition faq">
 <p class="admonition-title">Why is the <em>sub function identifier</em> necessary?</p>
 <p>Pineapple enforces this rules so that every function can be understood better.<br />
 Compare the following functions:</p>
-<div class="codehilite"><pre><span></span><span class="c1">// Javascript</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="c1">// Javascript</span>
 <span class="nx">replace</span><span class="p">(</span><span class="sb">&quot;Hello&quot;</span><span class="p">,</span> <span class="sb">&quot;el&quot;</span><span class="p">,</span> <span class="sb">&quot;lo&quot;</span><span class="p">)</span> <span class="c1">// Hmm, is it replacing &quot;el&quot; or &quot;lo&quot; ?</span>
 </pre></div>
+</td></tr></table>
 
-<div class="codehilite"><pre><span></span><span class="c1">// Pineapple</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="c1">// Pineapple</span>
 <span class="sb">&quot;Hello&quot;</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sb">&quot;el&quot;</span> <span class="nx">with</span> <span class="sb">&quot;lo&quot;</span><span class="p">)</span> <span class="c1">// I am very sure it is replacing &quot;el&quot; with &quot;lo&quot;!</span>
 </pre></div>
+</td></tr></table>
 
 <p>There are at least 2 advantages with it:  </p>
 <ul>
@@ -922,13 +961,19 @@ Compare the following functions:</p>
 <p>Polyfunc is a function that takes 4 or more parameters.<br />
 It is similar as Trifunc, but it needs 2 or more <em>sub function identifiers</em>.<br />
 For example,
-<div class="codehilite"><pre><span></span><span class="c1">// Here&#39;s how you define a Polyfunc with 4 parameters</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3
+4
+5
+6</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="c1">// Here&#39;s how you define a Polyfunc with 4 parameters</span>
 <span class="kd">def</span> <span class="p">(</span><span class="nx">this</span> <span class="nb">String</span><span class="p">).</span><span class="nx">replace</span><span class="p">(</span><span class="nx">startIndex</span> <span class="nb">Integer</span> <span class="nx">to</span> <span class="nx">endIndex</span> <span class="nb">Integer</span> <span class="nx">with</span> <span class="k">new</span> <span class="nb">String</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">String</span>
     <span class="kd">pass</span>
 
 <span class="c1">// Here&#39;s how you call it</span>
 <span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="sb">&quot;Hello world&quot;</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="kc">0</span> <span class="nx">to</span> <span class="kc">4</span> <span class="nx">with</span> <span class="sb">&quot;Hi&quot;</span><span class="p">)</span>
 </pre></div>
+</td></tr></table>
 <hr></p>
 <div class="admonition tip">
 <p class="admonition-title">Tips</p>
@@ -936,7 +981,14 @@ For example,
 In such case, defining functions like this would be dreadful.<br />
 So, you should pack those parameters into a single structure.<br />
 For example,
-<div class="codehilite"><pre><span></span><span class="kd">def</span> <span class="nb">RequestParam</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3
+4
+5
+6
+7
+8</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="kd">def</span> <span class="nb">RequestParam</span>
     <span class="o">:</span><span class="nx">url</span>    <span class="nb">String</span>
     <span class="o">:</span><span class="nx">method</span> <span class="nb">String</span>
     <span class="o">:</span><span class="nx">body</span>   <span class="nb">String</span>
@@ -945,15 +997,23 @@ For example,
 <span class="kd">def</span> <span class="p">(</span><span class="nx">this</span> <span class="nb">Server</span><span class="p">).</span><span class="nx">send</span><span class="p">(</span><span class="nx">that</span> <span class="nb">RequestParam</span><span class="p">)</span>
     <span class="kd">pass</span>
 </pre></div>
+</td></tr></table>
 Example of usage:
-<div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">param</span> <span class="o">=</span> <span class="nb">RequestParam</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3
+4
+5
+6
+7</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">param</span> <span class="o">=</span> <span class="nb">RequestParam</span>
     <span class="o">:</span><span class="nx">url</span>    <span class="o">=</span> <span class="sb">&quot;192.168.0.0/api/people&quot;</span>
     <span class="o">:</span><span class="nx">method</span> <span class="o">=</span> <span class="sb">&quot;POST&quot;</span>
     <span class="o">:</span><span class="nx">body</span>   <span class="o">=</span> <span class="err">&#39;</span><span class="p">{</span><span class="sb">&quot;name&quot;</span><span class="o">:</span> <span class="sb">&quot;Johnny&quot;</span><span class="p">,</span> <span class="sb">&quot;age&quot;</span><span class="o">:</span> <span class="kc">999</span><span class="p">}</span><span class="err">&#39;</span>
     <span class="o">:</span><span class="nx">schema</span> <span class="o">=</span> <span class="sb">&quot;FREE&quot;</span>
 
 <span class="nx">myServer</span><span class="mi">.send</span><span class="p">(</span><span class="nx">param</span><span class="p">)</span>
-</pre></div></p>
+</pre></div>
+</td></tr></table></p>
 </div>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
@@ -964,7 +1024,14 @@ Example of usage:
 <h2 id="function-chaining">Function chaining<a class="headerlink" href="#function-chaining" title="Permanent link">&para;</a></h2>
 <p>Sometimes you might want to pass a data through multiple functions.  </p>
 <p>So, instead of using many variables, for example,</p>
-<div class="codehilite"><pre><span></span><span class="c1">// Using many variables to store intermediate results</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3
+4
+5
+6
+7
+8</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="c1">// Using many variables to store intermediate results</span>
 <span class="kd">def</span> <span class="p">(</span><span class="nx">this</span> <span class="nb">Point</span><span class="p">).</span><span class="nx">distanceTo</span><span class="p">(</span><span class="nx">that</span> <span class="nb">Point</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">Number</span>
     <span class="kd">let</span> <span class="nx">xDistance</span> <span class="o">=</span> <span class="nx">this</span><span class="o">:</span><span class="nx">x</span><span class="o">-</span> <span class="nx">that</span><span class="o">:</span><span class="nx">x</span>
     <span class="kd">let</span> <span class="nx">yDistance</span> <span class="o">=</span> <span class="nx">this</span><span class="o">:</span><span class="nx">y</span> <span class="o">-</span> <span class="nx">that</span><span class="o">:</span><span class="nx">y</span>
@@ -973,16 +1040,29 @@ Example of usage:
     <span class="kd">let</span> <span class="nx">sum</span> <span class="o">=</span> <span class="nx">xDistanceSquared</span> <span class="o">+</span> <span class="nx">yDistanceSquared</span>
     <span class="kd">let</span> <span class="nx">distance</span> <span class="o">=</span> <span class="nx">sum</span><span class="mi">.squareRoot</span>
 </pre></div>
+</td></tr></table>
 
 <p>You can use <mark>function chaining</mark>, as the following,</p>
-<div class="codehilite"><pre><span></span><span class="c1">// Using function chaining</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="c1">// Using function chaining</span>
 <span class="kd">def</span> <span class="p">(</span><span class="nx">this</span> <span class="nb">Point</span><span class="p">).</span><span class="nx">distanceTo</span><span class="p">(</span><span class="nx">that</span> <span class="nb">Point</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">Number</span>
     <span class="k">return</span> <span class="p">((</span><span class="nx">this</span><span class="o">:</span><span class="nx">x</span> <span class="o">-</span> <span class="nx">that</span><span class="o">:</span><span class="nx">x</span><span class="p">).</span><span class="nx">square</span> <span class="o">+</span> <span class="p">(</span><span class="nx">this</span><span class="o">:</span><span class="nx">y</span> <span class="o">-</span> <span class="nx">that</span><span class="o">:</span><span class="nx">y</span><span class="p">).</span><span class="nx">square</span><span class="p">).</span><span class="nx">squareRoot</span>
 </pre></div>
+</td></tr></table>
 
 <h3 id="multiple-line-function-chaining">Multiple line function chaining<a class="headerlink" href="#multiple-line-function-chaining" title="Permanent link">&para;</a></h3>
 <p>If you think you cannot fit all the functions you want to call in a single line, you can also use multiple line function chaining, for example,</p>
-<div class="codehilite"><pre><span></span><span class="kd">def</span> <span class="nb">Color</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="kd">def</span> <span class="nb">Color</span>
     <span class="o">:</span><span class="nx">red</span>    <span class="nb">Number</span>
     <span class="o">:</span><span class="nx">green</span>  <span class="nb">Number</span>
     <span class="o">:</span><span class="nx">blue</span>   <span class="nb">Number</span>
@@ -993,11 +1073,22 @@ Example of usage:
         <span class="p">.</span><span class="nx">and</span><span class="p">(</span><span class="nx">this</span><span class="o">:</span><span class="nx">green</span> <span class="o">==</span> <span class="nx">that</span><span class="o">:</span><span class="nx">green</span><span class="p">)</span>
         <span class="p">.</span><span class="nx">and</span><span class="p">(</span><span class="nx">this</span><span class="o">:</span><span class="nx">blue</span>  <span class="o">==</span> <span class="nx">that</span><span class="o">:</span><span class="nx">blue</span><span class="p">)</span>
 </pre></div>
+</td></tr></table>
 
 <div class="admonition info">
 <p class="admonition-title">Warning</p>
 <p>When using multiple line function chaining(MLFC), indentation is important. The following are examples of invalid MLFC.</p>
-<div class="codehilite"><pre><span></span><span class="c1">// Error</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="c1">// Error</span>
 <span class="kd">def</span> <span class="p">(</span><span class="nx">this</span> <span class="nb">Color</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="nx">that</span> <span class="nb">Color</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">Boolean</span>
     <span class="k">return</span>  <span class="p">(</span><span class="nx">this</span><span class="o">:</span><span class="nx">red</span>   <span class="o">==</span> <span class="nx">that</span><span class="o">:</span><span class="nx">red</span><span class="p">)</span>
     <span class="p">.</span><span class="nx">and</span><span class="p">(</span><span class="nx">this</span><span class="o">:</span><span class="nx">green</span> <span class="o">==</span> <span class="nx">that</span><span class="o">:</span><span class="nx">green</span><span class="p">)</span> <span class="c1">// Should have one indentation here</span>
@@ -1009,16 +1100,21 @@ Example of usage:
             <span class="p">.</span><span class="nx">and</span><span class="p">(</span><span class="nx">this</span><span class="o">:</span><span class="nx">green</span> <span class="o">==</span> <span class="nx">that</span><span class="o">:</span><span class="nx">green</span><span class="p">)</span> <span class="c1">// Too much indentation here</span>
             <span class="p">.</span><span class="nx">and</span><span class="p">(</span><span class="nx">this</span><span class="o">:</span><span class="nx">blue</span>  <span class="o">==</span> <span class="nx">that</span><span class="o">:</span><span class="nx">blue</span><span class="p">)</span>
 </pre></div>
+</td></tr></table>
 
 </div>
 <h2 id="whats-the-difference-of-pineapple-function-with-named-parameters">What's the difference of Pineapple function with named parameters?<a class="headerlink" href="#whats-the-difference-of-pineapple-function-with-named-parameters" title="Permanent link">&para;</a></h2>
 <p>Look at the following example to understand the difference.
-<div class="codehilite"><pre><span></span><span class="c1"># Python</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="c1"># Python</span>
 <span class="n">replace</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="s2">&quot;Hello world&quot;</span><span class="p">,</span> <span class="n">old</span><span class="o">=</span><span class="s2">&quot;lo&quot;</span><span class="p">,</span> <span class="n">new</span><span class="o">=</span><span class="s2">&quot;wo&quot;</span><span class="p">)</span>
 </pre></div>
-<div class="codehilite"><pre><span></span><span class="c1">// Pineapple</span>
+</td></tr></table>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="c1">// Pineapple</span>
 <span class="sb">&quot;Hello world&quot;</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sb">&quot;lo&quot;</span> <span class="nx">with</span> <span class="sb">&quot;wo&quot;</span><span class="p">)</span>
 </pre></div>
+</td></tr></table>
 Obviously, the Pineapple's version is much more clearer than Python's version.<br />
 Moreover, it is also shorter!</p>
 <p>Actually, the Pineapple's way of defining function is also known as <strong>mixfix</strong> function, and that's how it is different from <strong>named parameters</strong>.</p>

@@ -618,8 +618,8 @@
 
 
   <li class="md-nav__item">
-    <a href="../Features/Traits/" title="Traits" class="md-nav__link">
-      Traits
+    <a href="../Features/Traits/" title="Trait" class="md-nav__link">
+      Trait
     </a>
   </li>
 
@@ -784,12 +784,17 @@
 </div>
 <h3 id="hard-to-create-understandable-functions">Hard to create understandable functions<a class="headerlink" href="#hard-to-create-understandable-functions" title="Permanent link">&para;</a></h3>
 <p>The main reason that prevented programmers to create understandble functions easily is that most programming languages still bares similarity with Assembly Code.</p>
-<div class="codehilite"><pre><span></span><span class="c1"># Assembly</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3
+4
+5</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="c1"># Assembly</span>
 <span class="n">MOV</span> <span class="n">A</span><span class="p">,</span> <span class="n">B</span>
 
 <span class="c1"># Python</span>
 <span class="n">send</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
 </pre></div>
+</td></tr></table>
 
 <p>From the code above, we can see that both Assembly and Python does not differ much. They both have the following characteristics:</p>
 <ul>
@@ -805,16 +810,26 @@
 </ul>
 <p><mark>In short, it is unnatural.</mark> Because we don't speak in such manner.</p>
 <p>In general, all our instructive sentences have the following structure:</p>
-<div class="codehilite"><pre><span></span><span class="nt">&lt;subject&gt;</span> | <span class="nt">&lt;verb&gt;</span> | <span class="nt">&lt;object&gt;</span>  | <span class="nt">&lt;preposition&gt;</span> | <span class="nt">&lt;object&gt;</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nt">&lt;subject&gt;</span> | <span class="nt">&lt;verb&gt;</span> | <span class="nt">&lt;object&gt;</span>  | <span class="nt">&lt;preposition&gt;</span> | <span class="nt">&lt;object&gt;</span>
 </pre></div>
+</td></tr></table>
 
 <p>For example:</p>
-<div class="codehilite"><pre><span></span><span class="nt">&lt;subject&gt;</span> | <span class="nt">&lt;verb&gt;</span> | <span class="nt">&lt;object&gt;</span>  | <span class="nt">&lt;preposition&gt;</span> | <span class="nt">&lt;object&gt;</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nt">&lt;subject&gt;</span> | <span class="nt">&lt;verb&gt;</span> | <span class="nt">&lt;object&gt;</span>  | <span class="nt">&lt;preposition&gt;</span> | <span class="nt">&lt;object&gt;</span>
 John,     | bring  | the apple | to            | kitchen.
 </pre></div>
+</td></tr></table>
 
 <p>There are several ways to emulate the sentence above in programming languages, but none of them are as clear and concise as the English sentence.</p>
-<div class="codehilite"><pre><span></span><span class="c1"># procedural</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3
+4
+5
+6
+7
+8</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="c1"># procedural</span>
 <span class="n">bring</span><span class="p">(</span><span class="n">john</span><span class="p">,</span> <span class="n">apple</span><span class="p">,</span> <span class="n">kitchen</span><span class="p">)</span>
 
 <span class="c1"># object-oriented</span>
@@ -823,14 +838,17 @@ John,     | bring  | the apple | to            | kitchen.
 <span class="c1"># name parameters</span>
 <span class="n">bring</span><span class="p">(</span><span class="n">person</span><span class="o">=</span><span class="n">john</span><span class="p">,</span> <span class="n">food</span><span class="o">=</span><span class="n">apple</span><span class="p">,</span> <span class="n">destination</span><span class="o">=</span><span class="n">kitchen</span><span class="p">)</span>
 </pre></div>
+</td></tr></table>
 
 <p>That's why sometimes, no matter how much you cook your brain juice, you just can't figure out a name that is good enough for your function.</p>
 <h4 id="solution">Solution<a class="headerlink" href="#solution" title="Permanent link">&para;</a></h4>
 <p>The solution to this problem is <mark>mixfix function</mark>. Mixfix means that the name of the function can be separated into many parts.  </p>
 <p>For example:
-<div class="codehilite"><pre><span></span><span class="c1">// Pineapple</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="c1">// Pineapple</span>
 <span class="nx">john</span><span class="p">.</span><span class="nx">bring</span><span class="p">(</span><span class="nx">apple</span> <span class="nx">to</span> <span class="nx">kitchen</span><span class="p">)</span>
-</pre></div></p>
+</pre></div>
+</td></tr></table></p>
 <p>In this case, the names of the function is <code>bring..to</code>. </p>
 <div class="admonition info">
 <p class="admonition-title">Facts</p>
@@ -856,7 +874,14 @@ John,     | bring  | the apple | to            | kitchen.
 </ul>
 <p>Although it might seems good, it actually creates inconsistencies, which is against Human-Computer Interaction principles<sup id="fnref:8"><a class="footnote-ref" href="#fn:8" rel="footnote">8</a></sup><sup id="fnref:9"><a class="footnote-ref" href="#fn:9" rel="footnote">9</a></sup>. In layman term, the programming languages will become less user-friendly.</p>
 <p>For example, in Javascript:</p>
-<div class="codehilite"><pre><span></span><span class="c1">// To convert Integer to String</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3
+4
+5
+6
+7
+8</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="c1">// To convert Integer to String</span>
 <span class="p">(</span><span class="mi">123</span><span class="p">).</span><span class="nx">toString</span><span class="p">()</span>
 
 <span class="c1">// To conver String to Integer?</span>
@@ -865,10 +890,18 @@ John,     | bring  | the apple | to            | kitchen.
 <span class="c1">// The correct way is:</span>
 <span class="nb">parseInt</span><span class="p">(</span><span class="s2">&quot;123&quot;</span><span class="p">)</span> <span class="c1">// &lt;- WTF?!</span>
 </pre></div>
+</td></tr></table>
 
 <p>Such inconsistencies can increase the learning curve, moreover when we decides to create a new function, we might hesitate, because we are not sure which construct to use.  </p>
 <p>Furthermore, this causes weird looking code:</p>
-<div class="codehilite"><pre><span></span><span class="c1"># decoding a JSON data</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3
+4
+5
+6
+7
+8</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="c1"># decoding a JSON data</span>
 <span class="n">result</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span> <span class="c1"># is json an object or namespace?  </span>
 
 <span class="c1"># it could be better if it looks like this</span>
@@ -877,6 +910,7 @@ John,     | bring  | the apple | to            | kitchen.
 <span class="c1"># OR</span>
 <span class="n">result</span> <span class="o">=</span> <span class="n">toJson</span><span class="p">(</span><span class="n">encode</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
 </pre></div>
+</td></tr></table>
 
 <h4 id="solution_1">Solution<a class="headerlink" href="#solution_1" title="Permanent link">&para;</a></h4>
 <p>Due to the consequences of having too many ways to create functions, Pineapple only provide one way to create functions, which is using <a href="../Features/010-BasicFunctions/"><em>free functions</em></a>.</p>

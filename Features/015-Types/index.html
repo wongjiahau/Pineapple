@@ -645,8 +645,8 @@
 
 
   <li class="md-nav__item">
-    <a href="../Traits/" title="Traits" class="md-nav__link">
-      Traits
+    <a href="../Traits/" title="Trait" class="md-nav__link">
+      Trait
     </a>
   </li>
 
@@ -818,25 +818,34 @@
 <hr />
 <h2 id="boolean">Boolean<a class="headerlink" href="#boolean" title="Permanent link">&para;</a></h2>
 <p>Boolean types in Pineapple can be declared using <code class="codehilite"><span class="kc">#true</span></code> and <code class="codehilite"><span class="kc">#false</span></code>.  </p>
-<div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">isHappy</span> <span class="o">=</span> <span class="kc">#true</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">isHappy</span> <span class="o">=</span> <span class="kc">#true</span>
 <span class="kd">let</span> <span class="nx">isSad</span>   <span class="o">=</span> <span class="kc">#false</span>
 </pre></div>
+</td></tr></table>
 
 <p>Boolean type is necessary for using <a href="../025-ControlFlowStatements/">control statements</a> such as <code>if-else</code> or <code>while</code> loop.</p>
 <p>For example,</p>
-<div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">isMad</span> <span class="o">=</span> <span class="kc">#true</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3
+4
+5
+6</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">isMad</span> <span class="o">=</span> <span class="kc">#true</span>
 
 <span class="k">if</span> <span class="nx">isMad</span>
     <span class="sb">&quot;Oh my goodness&quot;</span><span class="p">.</span><span class="nx">show</span>
 <span class="k">else</span>
     <span class="sb">&quot;Thank goodness&quot;</span><span class="p">.</span><span class="nx">show</span>
 </pre></div>
+</td></tr></table>
 
 <hr />
 <h2 id="nil">Nil<a class="headerlink" href="#nil" title="Permanent link">&para;</a></h2>
 <p>Nil type is useful when you are not sure what to assign for a variable.</p>
-<div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">car</span> <span class="o">=</span> <span class="kc">#nil</span> <span class="c1">// This means that you dont have a car</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">car</span> <span class="o">=</span> <span class="kc">#nil</span> <span class="c1">// This means that you dont have a car</span>
 </pre></div>
+</td></tr></table>
 
 <div class="admonition info">
 <p class="admonition-title">Note</p>
@@ -844,9 +853,11 @@
 </div>
 <hr />
 <h2 id="number-and-integer">Number and Integer<a class="headerlink" href="#number-and-integer" title="Permanent link">&para;</a></h2>
-<div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="kc">123</span> <span class="c1">// Will be inferred as Integer</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="kc">123</span> <span class="c1">// Will be inferred as Integer</span>
 <span class="kd">let</span> <span class="nx">y</span> <span class="o">=</span> <span class="kc">123</span><span class="mi">.</span><span class="kc">4</span> <span class="c1">// Will be inferred as Number</span>
 </pre></div>
+</td></tr></table>
 
 <div class="admonition info">
 <p class="admonition-title">Info</p>
@@ -855,78 +866,108 @@
 <hr />
 <h2 id="string">String<a class="headerlink" href="#string" title="Permanent link">&para;</a></h2>
 <p>In Pineapple, strings are enquoted using double quotes.</p>
-<div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">message</span> <span class="o">=</span> <span class="sb">&quot;Hello world&quot;</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">message</span> <span class="o">=</span> <span class="sb">&quot;Hello world&quot;</span>
 </pre></div>
+</td></tr></table>
 
 <h3 id="string-interpolation">String interpolation<a class="headerlink" href="#string-interpolation" title="Permanent link">&para;</a></h3>
 <p>You can also interpolate expressions into string using <code>$()</code>. </p>
-<div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">fruit</span> <span class="o">=</span> <span class="sb">&quot;Pineapple&quot;</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3
+4
+5
+6</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">fruit</span> <span class="o">=</span> <span class="sb">&quot;Pineapple&quot;</span>
 <span class="kd">let</span> <span class="nx">howMany</span>  <span class="o">=</span> <span class="kc">5</span> <span class="o">+</span> <span class="kc">9</span>
 
 <span class="kd">let</span> <span class="nx">message</span> <span class="o">=</span> <span class="sb">&quot;I like to eat </span><span class="si">$(</span><span class="nx">fruit</span><span class="si">)</span><span class="sb"> every </span><span class="si">$(</span><span class="nx">howMany</span><span class="mi">.toString</span><span class="si">)</span><span class="sb"> days&quot;</span>
 
 <span class="nx">message</span><span class="mi">.show</span> <span class="c1">// I like to eat Pineapple 5 days</span>
 </pre></div>
+</td></tr></table>
 
 <div class="admonition info">
 <p class="admonition-title">Note</p>
 <p>Every interpolated expression must have type of String, if not the Pineapple compiler will complain about it.  </p>
 <p>For example,</p>
-<div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="kc">23</span><span class="mi">.</span><span class="kc">4</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="kc">23</span><span class="mi">.</span><span class="kc">4</span>
 <span class="kd">let</span> <span class="nx">message</span> <span class="o">=</span> <span class="sb">&quot;My number is </span><span class="si">$(</span><span class="nx">x</span><span class="si">)</span><span class="sb">&quot;</span> <span class="c1">// Error, `x` should be String, but it is Number</span>
 </pre></div>
+</td></tr></table>
 
 <p>To prevent such problem, you have to use the <code class="codehilite"><span class="p">.</span><span class="nx">toString</span></code> function.</p>
 </div>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>Interpolated expression cannot be raw string. For example,</p>
-<div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">y</span> <span class="o">=</span> <span class="sb">&quot;</span><span class="si">$(</span><span class="sb">&quot;yo&quot;</span><span class="si">)</span><span class="sb">&quot;</span> <span class="c1">// Syntax error</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">y</span> <span class="o">=</span> <span class="sb">&quot;</span><span class="si">$(</span><span class="sb">&quot;yo&quot;</span><span class="si">)</span><span class="sb">&quot;</span> <span class="c1">// Syntax error</span>
 </pre></div>
+</td></tr></table>
 
 </div>
 <hr />
 <h2 id="list">List<a class="headerlink" href="#list" title="Permanent link">&para;</a></h2>
 <p>List are useful for storing more than one elements. To create a list in Pineapple, you need to use square brackets <code>[</code> <code>]</code> and comma <code>,</code> .</p>
-<div class="codehilite"><pre><span></span><span class="c1">// Create list of integers</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3
+4
+5
+6</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="c1">// Create list of integers</span>
 <span class="kd">let</span> <span class="nx">xs</span> <span class="o">=</span> <span class="p">[</span><span class="kc">1</span><span class="p">,</span><span class="kc">2</span><span class="p">,</span><span class="kc">3</span><span class="p">,</span><span class="kc">4</span><span class="p">]</span>
 
 <span class="c1">// You can pass in any expression as element</span>
 <span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="kc">99</span>
 <span class="kd">let</span> <span class="nx">numbers</span> <span class="o">=</span> <span class="p">[.</span><span class="nx">pi</span><span class="p">,</span> <span class="kc">3</span> <span class="o">+</span> <span class="kc">3</span><span class="p">,</span> <span class="kc">7</span><span class="mi">.square</span><span class="p">,</span> <span class="nx">x</span><span class="p">]</span>
 </pre></div>
+</td></tr></table>
 
 <p>List in Pineapple are homogeneous, it means that all elements within a list must be the same type. For example,</p>
-<div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="p">[</span><span class="kc">1</span><span class="p">,</span> <span class="sb">&quot;2&quot;</span><span class="p">]</span> <span class="c1">// Error, the second element should be Integer</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="p">[</span><span class="kc">1</span><span class="p">,</span> <span class="sb">&quot;2&quot;</span><span class="p">]</span> <span class="c1">// Error, the second element should be Integer</span>
 </pre></div>
+</td></tr></table>
 
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>You cannot create an empty list by using <code>[]</code>. Instead you need to use the <code class="codehilite"><span class="nb">List</span></code> constructor.</p>
-<div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">xs</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1">// error</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">xs</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1">// error</span>
 
 <span class="kd">let</span> <span class="nx">ys</span> <span class="o">=</span> <span class="nb">List</span><span class="p">{</span><span class="nb">Integer</span><span class="p">}</span> <span class="c1">// No error</span>
 </pre></div>
+</td></tr></table>
 
 </div>
 <h3 id="multiline-list">Multiline List<a class="headerlink" href="#multiline-list" title="Permanent link">&para;</a></h3>
 <p>Sometimes your list might contains too many elements to be fit in a single line. In such situation you will need to use multiline list. For example,</p>
-<div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">fruits</span> <span class="o">=</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3
+4
+5
+6</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">fruits</span> <span class="o">=</span>
     <span class="k">o</span> <span class="sb">&quot;Apple&quot;</span>
     <span class="k">o</span> <span class="sb">&quot;Banana&quot;</span>
     <span class="k">o</span> <span class="sb">&quot;Pineapple&quot;</span>
     <span class="k">o</span> <span class="sb">&quot;Durian&quot;</span>
     <span class="k">o</span> <span class="sb">&quot;Hello&quot;</span>
 </pre></div>
+</td></tr></table>
 
 <div class="admonition info">
 <p class="admonition-title">Note</p>
 <p>The indentation is necessary. So, the following is invalid in Pineapple:</p>
-<div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">fruits</span> <span class="o">=</span> 
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3
+4</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">fruits</span> <span class="o">=</span> 
 <span class="k">o</span> <span class="sb">&quot;Apple&quot;</span>
 <span class="k">o</span> <span class="sb">&quot;Banana&quot;</span>
 <span class="c1">// Error</span>
 </pre></div>
+</td></tr></table>
 
 </div>
 <div class="admonition tldr">
@@ -937,7 +978,14 @@
 <h2 id="table">Table<a class="headerlink" href="#table" title="Permanent link">&para;</a></h2>
 <p>Table is also known as Dictionary or HashMap. It is useful when you need to store a list of key-value data.<br />
 For example, let say you want to store phone numbers:</p>
-<div class="codehilite"><pre><span></span><span class="c1">// note that the indentation is necessary</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3
+4
+5
+6
+7
+8</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="c1">// note that the indentation is necessary</span>
 <span class="kd">let</span> <span class="nx">phoneNumbers</span> <span class="o">=</span>
     <span class="sb">&quot;john&quot;</span> <span class="o">=</span> <span class="sb">&quot;0123456&quot;</span>
     <span class="sb">&quot;babe&quot;</span> <span class="o">=</span> <span class="sb">&quot;3333222&quot;</span>
@@ -946,12 +994,15 @@ For example, let say you want to store phone numbers:</p>
 
 <span class="nx">phoneNumbers</span><span class="mi">.</span><span class="p">(</span><span class="sb">&quot;john&quot;</span><span class="p">).</span><span class="nx">show</span> <span class="c1">// &quot;0123456&quot;</span>
 </pre></div>
+</td></tr></table>
 
 <h3 id="empty-table">Empty table<a class="headerlink" href="#empty-table" title="Permanent link">&para;</a></h3>
 <p>To create an empty table, use the <code>Table</code> constructor.</p>
-<div class="codehilite"><pre><span></span>                        <span class="c1">// key , value</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2</pre></div></td><td class="code"><div class="codehilite"><pre><span></span>                        <span class="c1">// key , value</span>
 <span class="kd">let</span> <span class="nx">phoneNumbers</span> <span class="o">=</span> <span class="nb">Table</span><span class="p">{</span><span class="nb">String</span><span class="p">,</span> <span class="nb">String</span><span class="p">}</span>
 </pre></div>
+</td></tr></table>
                 
                   
                 

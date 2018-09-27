@@ -585,8 +585,8 @@
 
 
   <li class="md-nav__item">
-    <a href="../Traits/" title="Traits" class="md-nav__link">
-      Traits
+    <a href="../Traits/" title="Trait" class="md-nav__link">
+      Trait
     </a>
   </li>
 
@@ -775,13 +775,19 @@
 <p>Prefix means <em>in front</em>, unary means <em>single</em>. </p>
 <p>So, a prefix unary operator is an operator that will be placed <em>in front</em> of a <em>single</em> argument.</p>
 <p>The code below is an example of defining a <mark>prefix minus operator</mark>.</p>
-<div class="codehilite"><pre><span></span><span class="c1">// Here&#39;s how you declare a prefix unary operator function</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3
+4
+5
+6</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="c1">// Here&#39;s how you declare a prefix unary operator function</span>
 <span class="kd">def</span> <span class="o">-</span> <span class="p">(</span><span class="nx">this</span> <span class="nb">Number</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">Number</span>
     <span class="kd">pass</span>
 
 <span class="c1">// Here&#39;s how you use it</span>
 <span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="o">-</span> <span class="kc">12</span>
 </pre></div>
+</td></tr></table>
 
 <div class="admonition info">
 <p class="admonition-title">Note</p>
@@ -792,9 +798,11 @@
 <div class="admonition tldr">
 <p class="admonition-title">How it works?</p>
 <p>The code above will actually be translated into the following code(although not exactly):</p>
-<div class="codehilite"><pre><span></span><span class="c1">// JavaScript</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="c1">// JavaScript</span>
 <span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="nx">minus</span><span class="p">(</span><span class="mi">12</span><span class="p">);</span>
 </pre></div>
+</td></tr></table>
 
 </div>
 <hr />
@@ -802,7 +810,13 @@
 <p>Infix means <em>in between</em>, binary means <em>two</em>.</p>
 <p>So, an infix binary operator is an operator that will be place <em>in between</em> <em>two</em> arguments.</p>
 <p>The code below is an example of defining an <mark>infix exponent operator</mark>.</p>
-<div class="codehilite"><pre><span></span><span class="c1">// Here&#39;s how you define an infix binary operator</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3
+4
+5
+6
+7</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="c1">// Here&#39;s how you define an infix binary operator</span>
 <span class="kd">def</span> <span class="p">(</span><span class="nx">this</span> <span class="nb">Integer</span><span class="p">)</span> <span class="o">^</span> <span class="p">(</span><span class="nx">that</span> <span class="nb">Integer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">List</span><span class="p">{</span><span class="nb">Number</span><span class="p">}</span>
     <span class="kd">pass</span>
 
@@ -810,12 +824,14 @@
 <span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="kc">2</span> <span class="o">^</span> <span class="kc">3</span> 
 <span class="nx">x</span><span class="mi">.show</span> <span class="c1">// 8</span>
 </pre></div>
+</td></tr></table>
 
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
 <p>Infix binary operator is chainable, it means that the following code is valid in Pineapple.</p>
-<div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="kc">23</span> <span class="o">+</span> <span class="kc">99</span> <span class="o">+</span> <span class="kc">100</span> <span class="c1">// No error!</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="kc">23</span> <span class="o">+</span> <span class="kc">99</span> <span class="o">+</span> <span class="kc">100</span> <span class="c1">// No error!</span>
 </pre></div>
+</td></tr></table>
 
 </div>
 <hr />
@@ -849,10 +865,13 @@
 </table>
 <p>When both constructs with the same precedence appear at the same time, the <mark>most left one will be computed first</mark>.</p>
 <p>For example,</p>
-<div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="kc">1</span> <span class="o">+</span> <span class="kc">1</span> <span class="o">*</span> <span class="kc">0</span> <span class="c1">// Result is 0, because 1 + 1 will be computed first</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="kc">1</span> <span class="o">+</span> <span class="kc">1</span> <span class="o">*</span> <span class="kc">0</span> <span class="c1">// Result is 0, because 1 + 1 will be computed first</span>
 
 <span class="kd">let</span> <span class="nx">y</span> <span class="o">=</span> <span class="kc">2</span> <span class="o">+</span> <span class="kc">4</span><span class="mi">.square</span> <span class="c1">// Result is 18, because 4.square is computed first</span>
 </pre></div>
+</td></tr></table>
 
 <p>Because of this, you don't have to memorize all those operator precedence rules anymore!</p>
 <hr />

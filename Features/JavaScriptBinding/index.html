@@ -564,8 +564,8 @@
 
 
   <li class="md-nav__item">
-    <a href="../Traits/" title="Traits" class="md-nav__link">
-      Traits
+    <a href="../Traits/" title="Trait" class="md-nav__link">
+      Trait
     </a>
   </li>
 
@@ -639,7 +639,18 @@
 </li>
 </ul>
 <p>For example:</p>
-<div class="codehilite"><pre><span></span><span class="c1">// Example 1</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="c1">// Example 1</span>
 <span class="kd">def</span> <span class="p">(</span><span class="nx">this</span> <span class="nb">Any</span><span class="p">).</span><span class="nx">show</span>
     <span class="o">&lt;</span><span class="nx">javascript</span><span class="o">&gt;</span>
     <span class="nx">console</span><span class="mi">.lo</span><span class="nx">g</span><span class="p">(</span><span class="err">$</span><span class="nx">this</span><span class="p">)</span>
@@ -652,21 +663,42 @@
     <span class="nb">Math</span><span class="mi">.po</span><span class="nx">w</span><span class="p">(</span><span class="err">$</span><span class="nx">this</span><span class="p">,</span> <span class="err">$</span><span class="nx">that</span><span class="p">)</span>
     <span class="o">&lt;</span><span class="err">/javascript&gt;</span>
 </pre></div>
+</td></tr></table>
 
 <p>Not only that, it is also possible to use Node's <code class="codehilite"><span class="nx">require</span></code> to import 3<sup>rd</sup> party modules.</p>
-<div class="codehilite"><pre><span></span><span class="kd">def</span> <span class="p">(</span><span class="nx">filename</span> <span class="nb">String</span><span class="p">).</span><span class="nx">open</span> <span class="o">-&gt;</span> <span class="nb">String</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3
+4
+5</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="kd">def</span> <span class="p">(</span><span class="nx">filename</span> <span class="nb">String</span><span class="p">).</span><span class="nx">open</span> <span class="o">-&gt;</span> <span class="nb">String</span>
     <span class="o">&lt;</span><span class="nx">javascript</span><span class="o">&gt;</span>
     <span class="nx">const</span> <span class="nx">fs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="sb">&quot;fs&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="nx">fs</span><span class="mi">.readFileSync</span><span class="p">(</span><span class="err">$</span><span class="nx">filename</span><span class="p">);</span>
     <span class="o">&lt;</span><span class="err">/javascript&gt;</span>
 </pre></div>
+</td></tr></table>
 
 <hr />
 <h2 id="binding-asynchronous-functions">Binding asynchronous functions<a class="headerlink" href="#binding-asynchronous-functions" title="Permanent link">&para;</a></h2>
 <p>To bind to a callback function, you need to use the <code class="codehilite"><span class="kd">async</span></code> keyword.<br />
 Furthermore, you must return a Promise.</p>
 <p>For example,</p>
-<div class="codehilite"><pre><span></span><span class="kd">def</span> <span class="kd">async</span> <span class="p">(</span><span class="nx">question</span> <span class="nb">String</span><span class="p">).</span><span class="nx">ask</span> <span class="o">-&gt;</span> <span class="nb">String</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="kd">def</span> <span class="kd">async</span> <span class="p">(</span><span class="nx">question</span> <span class="nb">String</span><span class="p">).</span><span class="nx">ask</span> <span class="o">-&gt;</span> <span class="nb">String</span>
     <span class="o">&lt;</span><span class="nx">javascript</span><span class="o">&gt;</span>
     <span class="nx">const</span> <span class="nx">readline</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="err">&#39;</span><span class="nx">readline</span><span class="err">&#39;</span><span class="p">);</span>
 
@@ -683,12 +715,16 @@ Furthermore, you must return a Promise.</p>
     <span class="p">})</span>
     <span class="o">&lt;</span><span class="err">/javascript&gt;</span>
 </pre></div>
+</td></tr></table>
 
 <p>And to use it, you don't need to use <code>async</code> or <code>await</code> keyword, just treat it as a normal function!</p>
-<div class="codehilite"><pre><span></span><span class="kd">def</span> <span class="p">.</span><span class="nx">main</span> <span class="c1">// no need to annotate `async` here</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="kd">def</span> <span class="p">.</span><span class="nx">main</span> <span class="c1">// no need to annotate `async` here</span>
     <span class="kd">let</span> <span class="nx">name</span> <span class="o">=</span> <span class="sb">&quot;What is your name? &quot;</span><span class="p">.</span><span class="nx">ask</span> <span class="c1">// no need to annotate it with `await`</span>
     <span class="sb">&quot;Hello </span><span class="si">$(</span><span class="nx">name</span><span class="si">)</span><span class="sb">!&quot;</span><span class="p">.</span><span class="nx">show</span>
 </pre></div>
+</td></tr></table>
                 
                   
                 

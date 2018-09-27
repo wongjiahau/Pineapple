@@ -571,8 +571,8 @@
 
 
   <li class="md-nav__item">
-    <a href="../Traits/" title="Traits" class="md-nav__link">
-      Traits
+    <a href="../Traits/" title="Trait" class="md-nav__link">
+      Trait
     </a>
   </li>
 
@@ -652,18 +652,35 @@
 <h2 id="how-to-use-ensurance">How to use ensurance?<a class="headerlink" href="#how-to-use-ensurance" title="Permanent link">&para;</a></h2>
 <p>To use ensurance, just use the <code class="codehilite"><span class="k">ensure</span></code> keyword.</p>
 <p>For example,</p>
-<div class="codehilite"><pre><span></span><span class="kd">def</span> <span class="p">(</span><span class="nx">this</span> <span class="nb">Number</span><span class="p">).</span><span class="nx">divide</span><span class="p">(</span><span class="nx">that</span> <span class="nb">Number</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">Number</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="kd">def</span> <span class="p">(</span><span class="nx">this</span> <span class="nb">Number</span><span class="p">).</span><span class="nx">divide</span><span class="p">(</span><span class="nx">that</span> <span class="nb">Number</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">Number</span>
     <span class="k">ensure</span> <span class="nx">that</span> <span class="o">!=</span> <span class="kc">0</span>
     <span class="c1">// performs division</span>
 </pre></div>
+</td></tr></table>
 
 <p>Then, suppose we have the following program,</p>
-<div class="codehilite"><pre><span></span><span class="kd">def</span> <span class="p">.</span><span class="nx">main</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="kd">def</span> <span class="p">.</span><span class="nx">main</span>
     <span class="kd">let</span> <span class="nx">y</span> <span class="o">=</span> <span class="kc">4</span><span class="mi">.divide</span><span class="p">(</span><span class="kc">0</span><span class="p">)</span>
 </pre></div>
+</td></tr></table>
 
 <p>When we run the program, we will get the following error message:</p>
-<div class="codehilite"><pre><span></span>Ensurance failed:                         
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13</pre></div></td><td class="code"><div class="codehilite"><pre><span></span>Ensurance failed:                         
 
         at  .divide  [example.pine:16:11]            
 
@@ -677,6 +694,7 @@
            &gt; |    1 |     let y = 4.divide(0)   
              |      |             ~~~~~~~~~~~   
 </pre></div>
+</td></tr></table>
                 
                   
                 

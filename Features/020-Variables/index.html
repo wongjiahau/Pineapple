@@ -598,8 +598,8 @@
 
 
   <li class="md-nav__item">
-    <a href="../Traits/" title="Traits" class="md-nav__link">
-      Traits
+    <a href="../Traits/" title="Trait" class="md-nav__link">
+      Trait
     </a>
   </li>
 
@@ -697,39 +697,51 @@
                 
                 <h1 id="variables">Variables<a class="headerlink" href="#variables" title="Permanent link">&para;</a></h1>
 <p>To create a variable, you need to use the <code class="codehilite"><span class="kd">let</span></code> keyword:</p>
-<div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">myVariable</span> <span class="o">=</span> <span class="sb">&quot;Hello World!&quot;</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">myVariable</span> <span class="o">=</span> <span class="sb">&quot;Hello World!&quot;</span>
 </pre></div>
+</td></tr></table>
 
 <div class="admonition info">
 <p class="admonition-title">Note</p>
 <p>Every variable in Pineapple must start with <mark>lowercase letter</mark> and cannot contain any spaces or underscore.<br />
 The following are invalid variable names:</p>
-<div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nb">Message</span> <span class="o">=</span> <span class="sb">&quot;Yo&quot;</span> <span class="c1">// Invalid, cannot start with uppercase letter</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3
+4
+5</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nb">Message</span> <span class="o">=</span> <span class="sb">&quot;Yo&quot;</span> <span class="c1">// Invalid, cannot start with uppercase letter</span>
 
 <span class="kd">let</span> <span class="nx">my</span> <span class="nx">name</span> <span class="o">=</span> <span class="sb">&quot;Wong&quot;</span> <span class="c1">// Invalid, cannot contain spaces</span>
 
 <span class="kd">let</span> <span class="err">my_</span><span class="nx">pet</span> <span class="o">=</span> <span class="sb">&quot;Cat&quot;</span> <span class="c1">// Invalid, cannot contain underscore</span>
 </pre></div>
+</td></tr></table>
 
 </div>
 <hr />
 <h2 id="type-inference">Type inference<a class="headerlink" href="#type-inference" title="Permanent link">&para;</a></h2>
 <p>The type of each variables are resolved automatically by the Pineapple compiler, so you don't need to provide any type annotation.<br />
 For example:</p>
-<div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="sb">&quot;yo&quot;</span>    <span class="c1">// x has type of String</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="sb">&quot;yo&quot;</span>    <span class="c1">// x has type of String</span>
 <span class="kd">let</span> <span class="nx">y</span> <span class="o">=</span> <span class="kc">0</span>       <span class="c1">// y has type of Integer</span>
 <span class="kd">let</span> <span class="nx">z</span> <span class="o">=</span> <span class="p">[</span><span class="kc">1</span><span class="p">,</span><span class="kc">2</span><span class="p">,</span><span class="kc">3</span><span class="p">]</span> <span class="c1">// z has type of List{Integer}</span>
 </pre></div>
+</td></tr></table>
 
 <p>Although unnessecary, it is also possible to annotate variables with type manually:</p>
-<p><div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">x</span> <span class="nb">String</span> <span class="o">=</span> <span class="sb">&quot;yo&quot;</span>
+<p><table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">x</span> <span class="nb">String</span> <span class="o">=</span> <span class="sb">&quot;yo&quot;</span>
 </pre></div>
+</td></tr></table>
 <hr></p>
 <h2 id="default-immutability">Default immutability<a class="headerlink" href="#default-immutability" title="Permanent link">&para;</a></h2>
 <p>By default, <mark>all variables in Pineapple are immutable</mark>, it means that you cannot assign a new value to it after you declare it.</p>
-<div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">count</span> <span class="o">=</span> <span class="kc">0</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">count</span> <span class="o">=</span> <span class="kc">0</span>
 <span class="nx">count</span> <span class="o">=</span> <span class="kc">1</span> <span class="c1">// Error</span>
 </pre></div>
+</td></tr></table>
 
 <div class="admonition info">
 <p class="admonition-title">Info</p>
@@ -737,9 +749,11 @@ For example:</p>
 <em>Immutable</em> means <em>not changeable</em>.</p>
 </div>
 <p>If you wish to make a variable mutable, you need to use the <code>mutable</code> keyword.</p>
-<div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">x</span> <span class="nx">mutable</span> <span class="o">=</span> <span class="mi">0</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">mutable</span> <span class="nx">x</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="nx">x</span> <span class="o">=</span> <span class="mi">1</span> <span class="c1">// No error</span>
 </pre></div>
+</td></tr></table>
 
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
@@ -748,25 +762,37 @@ So, instead of creating one variables and change it all the time, <mark>create a
 </div>
 <h2 id="default-non-nullablility">Default non-nullablility<a class="headerlink" href="#default-non-nullablility" title="Permanent link">&para;</a></h2>
 <p>By default, you cannot assign <code class="codehilite"><span class="kc">#nil</span></code> to a mutable variable.</p>
-<div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">x</span> <span class="k">mutable</span> <span class="o">=</span> <span class="kc">0</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="k">mutable</span> <span class="nx">x</span> <span class="o">=</span> <span class="kc">0</span>
 <span class="nx">x</span> <span class="o">=</span> <span class="kc">#nil</span> <span class="c1">// Error</span>
 </pre></div>
+</td></tr></table>
 
 <div class="admonition question">
 <p class="admonition-title">What is nil?</p>
 <p>Nil is actually same as null, just that <em>nil</em> is easier to type, so <em>nil</em> is adapted in Pineapple.</p>
 </div>
 <p>If you want to assign <code class="codehilite"><span class="kc">#nil</span></code> to a variable, you need to declare it explicitly by using nilable types (which is to add a question mark behind the type name).</p>
-<div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">x</span> <span class="nb">Int</span><span class="o">?</span> <span class="k">mutable</span> <span class="o">=</span> <span class="kc">0</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="k">mutable</span> <span class="nx">x</span> <span class="nb">Int</span><span class="o">?</span> <span class="o">=</span> <span class="kc">0</span>
 <span class="nx">x</span> <span class="o">=</span> <span class="kc">#nil</span> <span class="c1">// No error</span>
 </pre></div>
+</td></tr></table>
 
 <hr>
 
 <h2 id="pass-by-value">Pass by value<a class="headerlink" href="#pass-by-value" title="Permanent link">&para;</a></h2>
 <p>When you try to assign the value of one variable to another variable, the value is copied, instead of copying its reference.  </p>
 <p>For example,
-<div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">john</span> <span class="o">=</span> <span class="nx">People</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3
+4
+5
+6
+7
+8
+9</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">john</span> <span class="o">=</span> <span class="nx">People</span>
     <span class="o">:</span><span class="nx">name</span> <span class="o">=</span> <span class="s2">&quot;John&quot;</span>
     <span class="o">:</span><span class="nx">age</span>  <span class="o">=</span> <span class="mi">99</span>
 
@@ -775,7 +801,8 @@ So, instead of creating one variables and change it all the time, <mark>create a
 <span class="nx">newJohn</span><span class="o">:</span><span class="nx">name</span> <span class="o">=</span> <span class="s2">&quot;Johnny Bravo&quot;</span>
 
 <span class="nx">john</span><span class="o">:</span><span class="nx">name</span><span class="p">.</span><span class="nx">show</span> <span class="c1">// Still &quot;John&quot;</span>
-</pre></div></p>
+</pre></div>
+</td></tr></table></p>
 <div class="admonition question">
 <p class="admonition-title">Why?</p>
 <p>This feature is to prevent programmer from facing crazy bugs caused by pass-by-reference.</p>
@@ -786,16 +813,23 @@ So, instead of creating one variables and change it all the time, <mark>create a
 <p>Of course, pass-by-value is expensive, thus it might slows down the program performance.<br />
 Fortunately, the Pineapple compiler will use pass-by-reference whenever possible.  </p>
 <p>For example:
-<div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="mi">10</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="mi">10</span>
 <span class="kd">let</span> <span class="nx">y</span> <span class="o">=</span> <span class="nx">x</span> <span class="c1">// x&#39;s value is pass-by-reference since it is not used afterwards</span>
 <span class="nx">y</span><span class="p">.</span><span class="nx">show</span>
-</pre></div></p>
+</pre></div>
+</td></tr></table></p>
 <p>Another example:
-<div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="mi">10</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3
+4</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="mi">10</span>
 <span class="kd">let</span> <span class="nx">y</span> <span class="o">=</span> <span class="nx">x</span> <span class="c1">// x&#39;s value is pass-by-value, since it is still in used after this line</span>
 <span class="nx">x</span><span class="p">.</span><span class="nx">show</span>
 <span class="nx">y</span><span class="p">.</span><span class="nx">show</span>
-</pre></div></p>
+</pre></div>
+</td></tr></table></p>
                 
                   
                 

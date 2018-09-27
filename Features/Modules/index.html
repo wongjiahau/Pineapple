@@ -578,8 +578,8 @@
 
 
   <li class="md-nav__item">
-    <a href="../Traits/" title="Traits" class="md-nav__link">
-      Traits
+    <a href="../Traits/" title="Trait" class="md-nav__link">
+      Trait
     </a>
   </li>
 
@@ -662,39 +662,56 @@
 </div>
 <h2 id="importing-code-from-other-files">Importing code from other files<a class="headerlink" href="#importing-code-from-other-files" title="Permanent link">&para;</a></h2>
 <p>Suppose the following file structure:
-<div class="codehilite"><pre><span></span>- myFoler
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3</pre></div></td><td class="code"><div class="codehilite"><pre><span></span>- myFoler
     - math.pine
     - app.pine
-</pre></div></p>
-<div class="codehilite"><pre><span></span><span class="c1">// File math.pine</span>
+</pre></div>
+</td></tr></table></p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3
+4
+5
+6</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="c1">// File math.pine</span>
 <span class="kd">def</span> <span class="p">(</span><span class="nx">this</span> <span class="nb">Number</span><span class="p">).</span><span class="nx">square</span> <span class="o">-&gt;</span> <span class="nb">Number</span>
     <span class="kd">pass</span>
 
 <span class="kd">def</span> <span class="p">(</span><span class="nx">this</span> <span class="nb">Number</span><span class="p">).</span><span class="nx">inverse</span> <span class="o">-&gt;</span> <span class="nb">Number</span>
     <span class="kd">pass</span>
 </pre></div>
+</td></tr></table>
 
-<div class="codehilite"><pre><span></span><span class="c1">// File app.pine</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3
+4
+5</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="c1">// File app.pine</span>
 <span class="kd">import</span> <span class="sb">&quot;./math.pine&quot;</span>
 
 <span class="kd">def</span> <span class="p">.</span><span class="nx">main</span> 
     <span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="kc">2</span><span class="mi">.square</span>
 </pre></div>
+</td></tr></table>
 
 <p>Every function defined in <code>math.pine</code> is now exposed in <code>app.pine</code>.</p>
 <hr />
 <h2 id="importing-code-from-github">Importing code from Github<a class="headerlink" href="#importing-code-from-github" title="Permanent link">&para;</a></h2>
 <p>You must specify the version.</p>
-<div class="codehilite"><pre><span></span><span class="kd">import</span> <span class="sb">&quot;github.com/wongjiahau/yaml/v2.0.0&quot;</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="kd">import</span> <span class="sb">&quot;github.com/wongjiahau/yaml/v2.0.0&quot;</span>
 </pre></div>
+</td></tr></table>
 
 <hr />
 <h2 id="default-encapsulation">Default encapsulation<a class="headerlink" href="#default-encapsulation" title="Permanent link">&para;</a></h2>
 <p>By default, the imported modules of an imported module will not be exposed to the importer.</p>
 <p>Consider the following scenario</p>
-<div class="codehilite"><pre><span></span><span class="c1">// Filename: math.pine</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="c1">// Filename: math.pine</span>
 <span class="kd">def</span> 
 </pre></div>
+</td></tr></table>
 
 <div class="admonition info">
 <p class="admonition-title">Note</p>
