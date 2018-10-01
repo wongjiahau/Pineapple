@@ -16,10 +16,24 @@ export type Declaration
     | ImportDeclaration
     | EnumDeclaration
     | ExampleDeclaration
+    | GroupDeclaration
+    | GroupBindingDeclaration
     // TODO: To be implemented soon
     // | InterfaceDeclaration
     // | ImplementionDeclaration
     ;
+
+export interface GroupBindingDeclaration {
+    kind: "GroupBindingDeclaration";
+    childType: TypeExpression;
+    parentType: TypeExpression;
+}
+
+
+export interface GroupDeclaration {
+    kind: "GroupDeclaration";
+    name: AtomicToken;
+}
 
 export interface ExampleDeclaration {
     kind: "ExampleDeclaration";
@@ -37,6 +51,13 @@ export interface FunctionDeclaration {
     statements: Statement[];
     originFile: string;
     isAsync: boolean;
+    typeConstraint ?: TypeConstraint;
+}
+
+export interface TypeConstraint {
+    kind: "TypeConstraint";
+    traitName: AtomicToken;
+    genericList: GenericList;
 }
 
 export interface StructDeclaration {
@@ -137,6 +158,7 @@ export type ResolvedType
     | EnumDeclaration
     | StructType
     | BuiltinType
+    | GroupDeclaration
     ;
 
 export interface BuiltinType {

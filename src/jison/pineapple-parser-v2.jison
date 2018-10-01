@@ -7,6 +7,23 @@ const _PassStatement = (location) => ({ kind: "PassStatement", location});
 
 const _ReturnStatement = (expression,location) => ({ kind: "ReturnStatement", expression, location});
 
+const _GroupDeclaration  = (name) => ({
+    kind: "GroupDeclaration",
+    name,
+});
+
+const _GroupBindingDeclaration = (childType, parentType) => ({
+    kind: "GroupBindingDeclaration",
+    childType,
+    parentType
+});
+
+const _TypeConstraint = (genericList, traitName) => ({
+    kind: "TypeConstraint",
+    traitName,
+    genericList
+});
+
 const _ExampleDeclaration = (description, statements) => ({
     kind: "ExampleDeclaration",
     description,
@@ -191,6 +208,9 @@ const _AnonymousExpression = (location) => ({
 "return"    return 'RETURN'
 "while"     return 'WHILE'
 "example"   return 'EXAMPLE'
+"is"        return 'IS'
+"where"     return 'WHERE'
+"group"     return 'GROUP'
 
 // Inivisible token
 "@NEWLINE"       %{
@@ -267,6 +287,25 @@ Declaration
     | ImportDeclaration
     | EnumDeclaration
     | ExampleDeclaration 
+    | GroupDeclaration 
+    | GroupBindingDeclaration
+    ;
+
+GroupBindingDeclaration
+    : DEF TypenameAtom IS TypenameAtom NEWLINE {
+        let child  = _UnresolvedType($2,[],false);
+        let parent = _UnresolvedType($4,[],false);
+        $$=_GroupBindingDeclaration(child,parent);
+    }
+    ;
+
+GroupDeclaration 
+    : DEF GROUP TypenameAtom NEWLINE {$$=_GroupDeclaration($3)}
+    ;
+
+FunctionDeclarationList
+    : FunctionDeclaration FunctionDeclarationList {$$=[$1].concat($2)}
+    | FunctionDeclaration {$$=[$1]}
     ;
 
 ExampleDeclaration
@@ -321,49 +360,58 @@ MemberDefinition
 
 FunctionDeclaration
     : DEF FunctionDecls {$$=$2}
-    | DEF ASYNC FunctionDecls {$3.isAsync = true;$$=$3;}
+    | DEF ASYNC FunctionDecls {$3.isAsync=true; $$=$3;}
     ;
 
 FunctionDecls
-    : NulliFuncDeclaration
-    | MonoFuncDeclaration 
-    | BiFuncDeclaration   
-    | TriFuncDeclaration  
+    : FunctionDeclarationHead Block {$$.statements=$2}
+    | FunctionDeclarationHead NEWLINE INDENT TypeConstraintStatement StatementList DEDENT 
+        {$$.statements=$5; $$.typeConstraint=$4}
+    | FunctionDeclarationHead NEWLINE INDENT TraitBindingStatement DEDENT {$$.statements=[]}
     ;
 
-NulliFuncDeclaration
-    : LeftParenthesis RightParenthesis FuncAtom Arrow TypeExpression Block 
-        {$$=_FunctionDeclaration([$3],$5,[],$6,"Nulli")}
-    | LeftParenthesis RightParenthesis FuncAtom Block {$$=_FunctionDeclaration([$3],null,[],$4,"Nulli")}
+TraitBindingStatement
+    : IF GenericAtom IS TypenameAtom NEWLINE
     ;
 
-MonoFuncDeclaration
-    : VarDecl FuncAtom Arrow TypeExpression Block 
-        {$$=_FunctionDeclaration([$2],$4,[$1],$5,"Mono")}
-    | VarDecl FuncAtom Block 
-        {$$=_FunctionDeclaration([$2],null,[$1],$3,"Mono")}
+// TODO: Consider enabling multiple type constraint statement?
+TypeConstraintStatement 
+    : WHERE GenericAtom IS TypenameAtom NEWLINE {$$=_TypeConstraint([$2],$4)}
+    ;
+
+FunctionDeclarationHead 
+    : NulliFuncDeclarationHead
+    | MonoFuncDeclarationHead
+    | BiFuncDeclarationHead
+    | TriFuncDeclarationHead
+    ;
+
+NulliFuncDeclarationHead
+    : LeftParenthesis RightParenthesis FuncAtom Arrow TypeExpression {$$=_FunctionDeclaration([$3],$5,[],null,"Nulli")}
+    | LeftParenthesis RightParenthesis FuncAtom                      {$$=_FunctionDeclaration([$3],null,[],null,"Nulli")}
+    ;
+
+MonoFuncDeclarationHead
+    : VarDecl FuncAtom Arrow TypeExpression      {$$=_FunctionDeclaration([$2],$4,[$1],null,"Mono")}
+    | VarDecl FuncAtom                           {$$=_FunctionDeclaration([$2],null,[$1],null,"Mono")}
     
     /* prefix unary operator function */
-    | OperatorAtom VarDecl Arrow TypeExpression Block 
-        {$$=_FunctionDeclaration([$1],$4,[$2],$5,"Mono")}
+    | OperatorAtom VarDecl Arrow TypeExpression  {$$=_FunctionDeclaration([$1],$4,[$2],null,"Mono")}
     ;
 
-BiFuncDeclaration
-    : VarDecl FuncAtom VarDecl Arrow TypeExpression Block 
-        {$$=_FunctionDeclaration([$2],$5,[$1,$3],$6,"Bi")}
-    | VarDecl FuncAtom VarDecl Block 
-        {$$=_FunctionDeclaration([$2],null,[$1,$3],$4,"Bi")}
+BiFuncDeclarationHead
+    : VarDecl FuncAtom VarDecl Arrow TypeExpression  {$$=_FunctionDeclaration([$2],$5,[$1,$3],null,"Bi")}
+    | VarDecl FuncAtom VarDecl                       {$$=_FunctionDeclaration([$2],null,[$1,$3],null,"Bi")}
     
     /* binary operator function */
-    | VarDecl OperatorAtom VarDecl Arrow TypeExpression Block
-        {$$=_FunctionDeclaration([$2],$5,[$1,$3],$6,"Bi")}
+    | VarDecl OperatorAtom VarDecl Arrow TypeExpression {$$=_FunctionDeclaration([$2],$5,[$1,$3],null,"Bi")}
     ;
 
-TriFuncDeclaration
-    : VarDecl FuncAtom LeftParenthesis VarDecl VariableAtom  VarDecl RightParenthesis Arrow TypeExpression Block
-        {$$=_FunctionDeclaration([$2,$5],$9,[$1,$4,$6],$10,"Tri")}
-    | VarDecl FuncAtom LeftParenthesis VarDecl VariableAtom  VarDecl RightParenthesis Block
-        {$$=_FunctionDeclaration([$2,$5],null,[$1,$4,$6],$8,"Tri")}
+TriFuncDeclarationHead
+    : VarDecl FuncAtom LeftParenthesis VarDecl VariableAtom VarDecl RightParenthesis Arrow TypeExpression 
+        {$$=_FunctionDeclaration([$2,$5],$9,[$1,$4,$6],null,"Tri")}
+    | VarDecl FuncAtom LeftParenthesis VarDecl VariableAtom VarDecl RightParenthesis 
+        {$$=_FunctionDeclaration([$2,$5],null,[$1,$4,$6],null,"Tri")}
     ;
 
 Block

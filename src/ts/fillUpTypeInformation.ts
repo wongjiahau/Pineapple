@@ -28,7 +28,8 @@ import {
     TypeExpression,
     UnresolvedType,
     Variable,
-    VariableDeclaration
+    VariableDeclaration,
+    GroupDeclaration
 } from "./ast";
 
 import {ErrorAccessingInexistentMember} from "./errorType/E0001-AccessingInexistentMember";
@@ -94,19 +95,12 @@ export function fillUpTypeInformation(
     for (let i = 0; i < decls.length; i++) {
         const d = decls[i];
         switch (d.kind) {
-            case "FunctionDeclaration":
-                for (let j = 0; j < d.parameters.length; j++) {
-                    const result1 = resolveType(d.parameters[j].typeExpected, symbols);
-                    if (isOK(result1)) {
-                        d.parameters[j].typeExpected = result1.value;
-                    } else {
-                        return result1;
-                    }
-                }
-                const result2 = resolveType(d.returnType, symbols);
-                if (result2.kind === "OK") { d.returnType = result2.value; } else { return result2; }
-                symbols.funcTab = newFunctionTable(d, symbols.funcTab);
+            case "FunctionDeclaration": {
+                const result = fillUpFunctionDeclarationTypeInfo(d, symbols);
+                if(isOK(result)) [decls[i], symbols] = result.value;
+                else return result;
                 break;
+            }
             case "StructDeclaration":
                 // check if the struct is declared already or not
                 const tempStructTab  = newStructTab(d, copy(symbols.structTab));
@@ -152,7 +146,22 @@ export function fillUpTypeInformation(
                 break;
             case "ImportDeclaration":
                 break;
+            case "GroupDeclaration": {
+                symbols.typeTree = insertChild(d, newBuiltinType("Any"), symbols.typeTree, typeEquals);
+                break;
+            }
+            case "GroupBindingDeclaration": {
+                const childType = resolveType(d.childType, symbols);
+                if(isFail(childType)) return childType;
+
+                const parentType = resolveType(d.parentType, symbols);
+                if(isFail(parentType)) return parentType;
+
+                symbols.typeTree = insertChild(childType.value, parentType.value, symbols.typeTree, typeEquals);
+                break;
+            }
             default: 
+                console.log("hi");
                 throw new Error(`Cannot handle ${d.kind} yet`)
         }
     }
@@ -177,6 +186,25 @@ export function fillUpTypeInformation(
         }
     }
     return ok([syntaxTree, symbols] as [SyntaxTree, SymbolTable]);
+}
+
+export function fillUpFunctionDeclarationTypeInfo(d: FunctionDeclaration, symbols: SymbolTable)
+: Maybe<[FunctionDeclaration, SymbolTable], ErrorDetail> {
+    for (let j = 0; j < d.parameters.length; j++) {
+        const result1 = resolveType(d.parameters[j].typeExpected, symbols);
+        if (isOK(result1)) {
+            d.parameters[j].typeExpected = result1.value;
+        } else {
+            return result1;
+        }
+    }
+    const result2 = resolveType(d.returnType, symbols);
+    if (result2.kind === "OK") { d.returnType = result2.value; } else { return result2; }
+
+    const insertResult = newFunctionTable(d, symbols.funcTab);
+    if(isOK(insertResult)) symbols.funcTab = insertResult.value; else return insertResult;
+
+    return ok([d, symbols] as [FunctionDeclaration, SymbolTable]);
 }
 
 export function isCallingAysncFunction(s: Statement | null): boolean {
@@ -376,6 +404,7 @@ export function resolveType(t: TypeExpression | null, symbols: SymbolTable)
             case "StructType":
                 return name === y.reference.name.repr;
             case "EnumDeclaration":
+            case "GroupDeclaration":
                 return name === y.name.repr;
             default:
                 throw new Error(`Cannot handle ${y.kind} yet`);
@@ -397,7 +426,8 @@ export function getFunctionSignature(f: FunctionDeclaration | FunctionCall): str
     return f.signature.map((x) => x.repr).join("_");
 }
 
-export function newFunctionTable(newFunc: FunctionDeclaration, previousFuncTab: FunctionTable, ): FunctionTable {
+export function newFunctionTable(newFunc: FunctionDeclaration, previousFuncTab: FunctionTable, )
+: Maybe<FunctionTable, ErrorDetail> {
     const key = getFunctionSignature(newFunc);
     if (newFunc.returnType === null) {
         newFunc.returnType = VoidType();
@@ -406,11 +436,11 @@ export function newFunctionTable(newFunc: FunctionDeclaration, previousFuncTab: 
         previousFuncTab[key] = [];
     }
     if (previousFuncTab[key].some((x) => functionEqual(x, newFunc))) {
-        // dont append the new function into the function table
+        return fail(ErrorYetToBeDefined("Function duplicated", newFunc.signature[0].location))
     } else {
         previousFuncTab[key].push(newFunc);
     }
-    return previousFuncTab;
+    return ok(previousFuncTab);
 }
 
 export function verifyFunctionDeclaration(f: FunctionDeclaration): Maybe<null, ErrorDetail> {
@@ -1059,9 +1089,6 @@ export function getMatchingFunction(f: FunctionCall, functab: FunctionTable, typ
             }
     
             f.returnType = closestFunction.returnType;
-    
-            // this step is needed for generic substituted function
-            functab = newFunctionTable(closestFunction, functab);
     
             if (closestFunction.isAsync) {
                 f.isAsync = true;

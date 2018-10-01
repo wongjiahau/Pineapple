@@ -177,7 +177,7 @@ export function initTypeTree(): Tree<TypeExpression> {
     tree     = inserts(structType,  tableType);
     tree     = inserts(listType,    anyType);
     tree     = inserts(dateType,    anyType);
-    tree     = inserts(stringType,  listType);
+    tree     = inserts(stringType,  anyType);
     return tree;
 }
 
@@ -187,6 +187,10 @@ export function BaseStructType(): TypeExpression {
 
 export function EnumType(): TypeExpression {
     return newBuiltinType("Enum");
+}
+
+export function AnyType(): TypeExpression {
+    return newBuiltinType("Any");
 }
 
 export function newListType(of: TypeExpression): TypeExpression {
