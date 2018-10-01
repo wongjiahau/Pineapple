@@ -1,8 +1,8 @@
-# Trait 
+# Group 
 
-Trait is a feature that allows you to reduce code duplication.
+Group is a feature that allows you to reduce code duplication by grouping different types into the same group.
 
-## Why do we need trait?
+## Why do we need group?
 
 Suppose we have two type of structure, which is `#!pine People` and `#!pine Fruit`,
 
@@ -53,11 +53,11 @@ In general, there are two ways for solving the code duplicaiton problem:
 
 1. Using lambdas (a.k.a first-class functions)
 
-2. Using trait
+2. Using group
 
 ### Using lambda
 
-To understand why **trait** is necessary, let us first look at how lambda can solve the problem, as shown below.
+To understand why **group** is necessary, let us first look at how lambda can solve the problem, as shown below.
 
 ```pine
 // Declare the max function which takes a lambda/function
@@ -85,35 +85,35 @@ So, what's the problem with using lambdas?
 3. Reusing the same function requires more typing (implying minor code duplication)
 
 !!! info "Note"
-    Despite the disadvantages described above, there are one major benefit of using lambdas, which is *flexibility*.  So, in a situation where *flexibility* is more favorable, you should use lambdas instead of traits.
+    Despite the disadvantages described above, there are one major benefit of using lambdas, which is *flexibility*.  So, in a situation where *flexibility* is more favorable, you should use lambdas instead of groups.
 
 ---
 
-### Using trait
+### Using group
 
-In general, we need 4 steps to use trait:
+In general, we need 4 steps to use group:
 
-1. Define a trait with some name
+1. Define a group with some name
     - Usually, the name should be an adjective which ends with the **-able** suffix.
 
     - For example, Comparable, Eatable, Reversible etc.
 
-2. Define a body-less function which uses the trait defined in step 1.
+2. Define a body-less function which uses the group defined in step 1.
 
-3. Define some non-body-less function which uses the trait defined in step 1.
+3. Define some non-body-less function which uses the group defined in step 1.
 
-4. Implement the required function needed by the traits for the data type we want 
+4. Implement the required function needed by the groups for the data type we want 
 
-The following code demonstrates how to use trait in Pineapple.
+The following code demonstrates how to use group in Pineapple.
 
 ```pine
-// First, define the trait
+// First, define the group
 // Note that it is always in this format: 
-//      def T is <TRAIT_NAME>
-def T is Comparable
+//      def group <GROUP_NAME>
+def group Comparable
 
 
-// Second, define a body-less function which uses the Comparable trait
+// Second, define a body-less function which uses the Comparable group
 // To achieve this, we need to use the `if` keyword
 // This is like saying 
 // we need to define a function for T called `.isMoreThan`
@@ -122,7 +122,7 @@ def (this T).isMoreThan(that T) -> Boolean
     if T is Comparable
 
 
-// Thirdly, define the .max function which uses the Comparable trait
+// Thirdly, define the .max function which uses the Comparable group
 // We will use the `where` keyword here
 def (this List{T}).max -> T
     where T is Comparable
@@ -138,12 +138,16 @@ So, now we only left the last step. But, before that let's see what will happen 
 ```pine
 let peoples = List{People}
 let eldest = peoples.max 
-// Error: `People` has not implemented the `Comparable` trait
+// Error: `People` has not implemented the `Comparable` group
 ```
 
 We will get an error as described in line 3, because the `#!pine People` type have not implemented the function we defined in step 2.  And here's how we can implement it.
 
 ```pine
+// Declare that People is under the Comparable group
+def People is Comparable
+
+// Implement the function needed by Comparable
 def (this People).isMoreThan(that People) -> Boolean
     // if People is Comparable <-- This line is not needed!
     return this:age > that:age
@@ -159,11 +163,11 @@ No more copy and paste!
 
 ## Differences with other languages
 
-In fact, Pineapple's trait is a featured inpsired by Java/C#'s Interfaces, Haskell's Type Classes and Scala's Trait. 
+In fact, Pineapple's group is a featured inpsired by Java/C#'s Interfaces, Haskell's Type Classes and Scala's Trait. 
 
-However, there are one major differences that makes Pineapple's trait stands out:
+However, there are one major differences that makes Pineapple's group stands out:
 
-==Using trait in Pineapple will not break existing code.==
+==Using group in Pineapple will not break existing code.==
 
 Suppose we have a data type called `Animal` and a function named `isMoreThan`.
 
@@ -217,7 +221,7 @@ class Comparable a where
 
 ```pine
 // Pineapple
-def T is Comparable
+def group Comparable
 
 def (this T).isHeavierThan(that T) -> Boolean
     if T is Comparable
@@ -266,13 +270,13 @@ One advantages of such feature is that Pineapple allows an easier incremental de
 
 ## Other features
 
-### Trait extension
+### group extension
 
-You can extend a trait by using the `extends` keyword. For example,
+You can extend a group by using the `extends` keyword. For example,
 
 ```pine hl_lines="11"
-// Define a trait named Equatable
-def T is Equatable
+// Define a group named Equatable
+def group Equatable
 
 def (this T) == (that T) -> Boolean
     if T is Equatable
@@ -292,12 +296,12 @@ def (this T) < (that T) -> Boolean
 
 ```
 
-### Using trait in data structures
+### Using group in data structures
 
-Another application of trait is for creating generic data structure.  For example, a BinaryTree:
+Another application of group is for creating generic data structure.  For example, a BinaryTree:
 
 ```pine
-def BinaryTree{T}
+def BinaryTree{T} 
     where T is Comparable
     :current  T
     :left     BinaryTree{T}?
@@ -321,12 +325,12 @@ def (this BinaryTree{T}?).insert(element T) -> BinaryTree{T}
     return this
 ```
 
-### Multiple type parameters trait
+### Multiple type parameters group
 
-To define a trait with more than one type parameter, you need to use the following format:
+To define a group with more than one type parameter, you need to use the following format:
 
 ```pine
-def T1 is <TRAIT_NAME> T2
+def T1 is <group_NAME> T2
 ```
 
 For example,
