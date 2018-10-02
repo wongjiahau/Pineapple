@@ -18,7 +18,17 @@ def Addition
 def Addition is Expression
 
 def (this Addition).print -> String
-    return "$(this:left.print) + $(this:right.print)"
+    return "[$(this:left.print) + $(this:right.print)]"
 
 def ().main
     "Hello".show
+    let x = Addition
+        :left = Constant
+            :value = "123"
+        :right = Addition
+            :left = Constant
+                :value = "567"
+            :right = Constant
+                :value = "567"
+
+    x.print.show

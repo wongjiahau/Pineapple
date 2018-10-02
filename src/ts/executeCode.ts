@@ -20,6 +20,14 @@ export function executeCode(
     code += `((require) => { const $$examples$$ = []; /*this is need to store tests*/ const $$GROUP$$={};
         ${javascriptCode}
 
+        function $$typeof$$(x) {
+            switch(typeof x) {
+                case "number": return "Number";
+                case "string": return "String";
+                case "object": return x.$kind; // this is injected by transpile.ts
+            }
+        }
+
         function $$ensure$$(bool) {
             if(!bool) {
                 const e = new Error();

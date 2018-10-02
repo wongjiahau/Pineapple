@@ -76,9 +76,9 @@ export function tpDeclaration(input: Declaration): string {
 
 export function tpGroupDeclaration(g: GroupDeclaration) {
     const x = g.name.repr;
-    let result =  `$$GROUP$$["${x}"] = [];\n`;
+    let result =  `$$GROUP$$["${x}"] = {};\n`;
     for (let i = 0; i < g.bindingFunctions.length; i++) {
-        result += `$$GROUP$$["${x}"].push(${getFullFunctionName(g.bindingFunctions[i])})\n`;
+        result += `$$GROUP$$["${x}"]["${stringifyType(g.bindingFunctions[i].parameters[0].typeExpected)}"]=(${getFullFunctionName(g.bindingFunctions[i])})\n`;
     }
     return result;
 }
@@ -116,7 +116,7 @@ export function tpFunctionDeclaration(f: FunctionDeclaration): string {
         if(f.groupBinding.typeBinded.kind !== "GroupDeclaration") {
             throw new Error(`Should be group declaration type but got ${f.groupBinding.typeBinded.kind}`);
         }
-        result += `\n$$GROUP$$["${f.groupBinding.typeBinded.name.repr}"][$$TYPEOF$$($${f.parameters[0].variable.repr})](${params})`;
+        result += `\nreturn $$GROUP$$["${f.groupBinding.typeBinded.name.repr}"][$$typeof$$($${f.parameters[0].variable.repr})](${params})`;
     }
     result += `\n${statements}}\n`;
     return result;

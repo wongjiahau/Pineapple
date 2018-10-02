@@ -29,12 +29,12 @@ def (this String) ++ (that String) -> String
     pass
 `,
 `
-$$GROUP$$["Expression"] = [];
-$$GROUP$$["Expression"].push(_print_Constant)
-$$GROUP$$["Expression"].push(_print_Addition)
+$$GROUP$$["Expression"] = {};
+$$GROUP$$["Expression"]["Constant"]=(_print_Constant)
+$$GROUP$$["Expression"]["Addition"]=(_print_Addition)
 
 function _print_Expression($this){
-$$GROUP$$["Expression"][$$TYPEOF$$($this)]($this)
+return $$GROUP$$["Expression"][$$typeof$$($this)]($this)
 }
 
 function _print_Constant($this){
