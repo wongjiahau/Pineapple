@@ -12,12 +12,10 @@ function _show_String($this){
 $$pass$$();
 }
 
-
 function _hello_(){
 _show_String(
 "Hello world");
 }
-
 
 function _main_(){
 const $x = "Hello world";

@@ -1,10 +1,24 @@
-def group Animal
+def group Expression
 
-def ().yo -> Animal
-    return Cat
-        :name = "Jo"
+def (this T).print -> String
+    if T is Expression
 
-def Cat
-    :name String
+def Constant
+    :value String
 
-def Cat is Animal
+def Constant is Expression
+
+def (this Constant).print -> String
+    return this:value
+
+def Addition
+    :left   Expression
+    :right  Expression
+
+def Addition is Expression
+
+def (this Addition).print -> String
+    return "$(this:left.print) + $(this:right.print)"
+
+def ().main
+    "Hello".show

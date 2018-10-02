@@ -18,7 +18,6 @@ function _cFunc_(){
 $$pass$$();
 }
 
-
 function _main_(){
 _cFunc_(
 );

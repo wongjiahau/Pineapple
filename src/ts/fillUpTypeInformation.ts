@@ -244,6 +244,7 @@ export function fillUpGroupDeclarationTypeInfo(
     const allFunctions = decls.filter((x) => x.kind === "FunctionDeclaration") as FunctionDeclaration[];
     for (let i = 0; i < bindingTypes.length; i++) {
         const relatedFunctions = allFunctions
+            .filter((x) => x.parameters.length > 0)
             .filter((x) => typeEquals(x.parameters[0].typeExpected, bindingTypes[i]))
             .sort(byFunctionName);
         
