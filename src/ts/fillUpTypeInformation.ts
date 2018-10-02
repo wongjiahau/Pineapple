@@ -95,7 +95,20 @@ export function fillUpTypeInformation(
     // Complete the function and struct table This step is to allow programmer to
     // define function anywhere without needing to adhere to strict top-down or
     // bottom-up structure
-    const decls = syntaxTree.declarations;
+
+    const decls = syntaxTree.declarations
+        // Shift all GroupBindingDeclaration to the front
+        .sort((x, y) =>  x.kind === "GroupBindingDeclaration" ? -1 : y.kind === "GroupBindingDeclaration" ? 1 : 0) 
+
+        // Shift all StructDeclaration to the front
+        .sort((x, y) =>  x.kind === "StructDeclaration" ? -1 : y.kind === "StructDeclaration" ? 1 : 0)
+
+        // Shift all GroupDeclaration to the front
+        .sort((x, y) =>  x.kind === "GroupDeclaration" ? -1 : y.kind === "GroupDeclaration" ? 1 : 0) 
+
+
+        // Refer https://stackoverflow.com/questions/23921683/javascript-move-an-item-of-an-array-to-the-front
+
     for (let i = 0; i < decls.length; i++) {
         const d = decls[i];
         switch (d.kind) {
@@ -240,6 +253,11 @@ export function fillUpGroupDeclarationTypeInfo(
         })
         .sort(byFunctionName);
     
+    if(requiredFunctions.length === 0) {
+        // Then, no need to checking
+        return ok([g, symbols] as [GroupDeclaration, SymbolTable]);
+    }
+    
     
     const allFunctions = decls.filter((x) => x.kind === "FunctionDeclaration") as FunctionDeclaration[];
     for (let i = 0; i < bindingTypes.length; i++) {
@@ -261,7 +279,7 @@ export function fillUpGroupDeclarationTypeInfo(
                 found = true;
                 
                 // Start the comparison
-                for (let k = 0; k < requiredFunctions.length; k++) {
+                for (let k = 0; k < requiredFunctions.length && relatedFunctions.length; k++) {
                     // TODO: Generic pattern matching checking
                     if(getPartialFunctionName(relatedFunctions[k + j]) !== getPartialFunctionName(requiredFunctions[k])) {
                         return fail(ErrorUnimplementedFunction(requiredFunctions[k], bindingTypes[i]))

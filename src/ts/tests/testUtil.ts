@@ -129,6 +129,7 @@ export function testTranspile(description: string, input: string, expectedOutput
             }
             const result = interpret(source, (x) => x, options); 
             if (result.kind === "OK") {
+                // console.log(result.value.trim());
                 assertEquals(result.value.trim(), expectedOutput.trim(), true);
             } else {
                 console.log(result.error);

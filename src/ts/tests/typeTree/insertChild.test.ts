@@ -1,6 +1,6 @@
 import {expect} from "chai";
 import {
-    findParentOf,
+    findParentsOf,
     insertChild,
     newTree
 } from "../../typeTree";
@@ -13,8 +13,8 @@ describe("insertChild", () => {
         tree = insertChild(3, 2, tree, numberComparer);
         tree = insertChild(4, 2, tree, numberComparer);
         tree = insertChild(5, 1, tree, numberComparer);
-        const parent = findParentOf(3, tree, numberComparer);
-        expect(parent).eq(2);
+        const parent = findParentsOf(3, tree, numberComparer);
+        expect(parent).to.deep.eq([2]);
     });
 
     it("case 2", () => {
@@ -22,8 +22,8 @@ describe("insertChild", () => {
         tree = insertChild(2, 1, tree, numberComparer);
         tree = insertChild(3, 1, tree, numberComparer);
         tree = insertChild(4, 2, tree, numberComparer);
-        const parent = findParentOf(4, tree, numberComparer);
-        expect(parent).eq(2);
+        const parent = findParentsOf(4, tree, numberComparer);
+        expect(parent).to.deep.eq([2]);
     });
 
     it.skip("inserting element as child of unexisting parent", () => {

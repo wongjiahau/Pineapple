@@ -525,10 +525,10 @@ TypeExprList
 
 
 MultilineExpr
-    : MultilineObject
-    | MulitilineDictionary
-    | MultilineList
-    | MultilineFunctionChaining 
+    : MultilineObject            {$$.location=this._$}
+    | MulitilineDictionary       {$$.location=this._$}
+    | MultilineList              {$$.location=this._$}
+    | MultilineFunctionChaining  {$$.location=this._$}
     | SinglelineExpr NEWLINE
     ;
 

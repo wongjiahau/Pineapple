@@ -50,39 +50,40 @@ export function childOf<T>(
     if (comparer(child, parent)) {
         return 0;
     }
-    const matchingParent = findParentOf(child, tree, comparer);
-    if (matchingParent === null) {
+    const matchingParents = findParentsOf(child, tree, comparer);
+    if (matchingParents.length === 0) {
         return null;
-    } else if (comparer(matchingParent, parent)) {
+    } else if (matchingParents.some(x => comparer(x, parent))) {
         return 1;
     } else {
-        const score = childOf(matchingParent, parent, tree, comparer);
-        if (score === null) {
-            return score;
+        const scores: (number|null)[] = [];
+        for (let i = 0; i < matchingParents.length; i++) {
+            scores.push(childOf(matchingParents[i], parent, tree, comparer));
+            
+        }
+        if (scores.every((x) => x === null)) {
+            return null;
         } else {
-            return 1 + score;
+            return 1 + (scores.filter((x) => x!== null) as number[]).sort()[0];
         }
     }
 }
 
 export type Comparer<T> =  (x: T, y: T) => boolean;
 
-export function findParentOf<T>(
+export function findParentsOf<T>(
     child: T, /*in*/
     tree: Tree<T>,
     comparer: Comparer<T>
-): T | null {
+): T[] {
+    let result: T[] = [];
     if (tree.children.some((x) => comparer(x.current, child))) {
-        return tree.current;
-    } else {
-        for (let i = 0; i < tree.children.length; i++) {
-            const parent = findParentOf(child, tree.children[i], comparer);
-            if (parent !== null) {
-                return parent;
-            }
-        }
-        return null;
+        result.push(tree.current);
     }
+    for (let i = 0; i < tree.children.length; i++) {
+        result = result.concat(findParentsOf(child, tree.children[i], comparer));
+    }
+    return result;
 }
 
 export function findElement<T>(
