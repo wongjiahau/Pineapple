@@ -1,8 +1,16 @@
 # Group 
 
-Group is a feature that allows you to reduce code duplication by grouping different types into the same group.
+Group is a feature that allows you to do polymorphism by grouping different types into the same group.  
 
-## Why do we need group?
+By doing so, the following benefits can be reaped:
+
+1. Reduced code duplication
+
+2. Increased code extensibility (require less effort to add new features)
+
+Nonetheless, this feature actually tackles the [**Expression Problem**](http://wiki.c2.com/?ExpressionProblem), which states that in object-oriented languages, it is easy to add new data types; while in functional languages, it is easy to add new operation, but none of them allows both to be done trivially.
+
+## How grouping reduces code duplication?
 
 Suppose we have two type of structure, which is `#!pine People` and `#!pine Fruit`,
 
@@ -160,6 +168,67 @@ So, if you ever need to use the `#!pine max` function on your custom data type, 
 No more copy and paste!
 
 --- 
+
+## How grouping improve code extensibility?
+
+Suppose we have two type of structure, namely `#!pine Person` and `#!pine Dog`:
+
+```pine
+def Person
+    :name   String
+    :dogs   List{Dog}
+
+def Dog
+    :name   String
+
+def (this Dog).shout -> String
+    return "Woof"
+```
+
+Everything looks fine, but what if some `#!pine Person` also wanted cats as their pets?
+
+The most easiest way is to add a `#!pine :cats` property on `#!pine Person`:
+
+```pine
+def Person
+    :name   String
+    :dogs   List{Dog}
+    :cats   List{Cat}
+```
+
+But, when time goes on, this will be problematic (a.k.a [software rotting](https://en.wikipedia.org/wiki/Software_rot)).  
+
+Why is it so? Because *you need to modify previous code whenever you want to add new features*.  
+
+Now, let us define code extensibility: ==if your code is extensible, you can add new features easily without making large changes to previously written code==.
+
+And here's how **grouping** can make your code more extensible:
+
+```
+// First, create a group named Pet
+def group Pet
+
+// Then, define the dog and cat structure
+def Cat
+    :cuteness   Integer
+
+def Dog
+    :loudness   Integer
+
+// And here's the magic!
+// Both of the following lines says that Cat and Dog are subtype of Pet
+def Cat is Pet
+def Dog is Pet
+
+// Lastly, you can use the group Pet as a data type
+def Person
+    :name   String
+    :pets   List{Pet}
+```
+
+By using groups, you can add new kinds of pet easily without modifying previous code. And this is how it solves the data-type extensibility problem
+
+---
 
 ## Differences with other languages
 
