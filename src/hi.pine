@@ -1,79 +1,10 @@
-// def T IsComparable
-//     def (this T) == (that T) -> Boolean
-//         pass
-    
-//     def (this T) != (that T) -> Boolean
-//         return (this == that).not
-    
-// def (this List{T}).sort -> List{T} where T IsComparable
+def group Animal
 
-def Color
-    :red    Integer
-    :green  Integer
-    :blue   Integer
+def ().yo -> Animal
+    return Cat
+        :name = "Jo"
 
-def (this Number).divide(that Number) -> Number
-    ensure that != 0
-    return this / that
+def Cat
+    :name String
 
-def ().main
-    ().doSometing
-    let y = 4.divide(0)
-    let x = 12.isBetween(13 and 14)
-
-def ().doSometing
-    pass
-
-def (this Number).isBetween(left Number and right Number) -> Boolean
-    (-1).factorial.show
-    return (this >= left).and(this <= right)
-
-def (this Integer).factorial -> Integer
-    ensure this >= 0
-    let result mutable = 1
-    for i in 1.to(this)
-        result = result * i
-    return result
-
-def (this Boolean).ensure
-    <javascript>
-    if($this) {
-
-    } else {
-        throw new Error()
-    }
-    </javascript>
-
-
-def (this Color) == (that Color) -> Boolean
-    return  (this:red   == that:red)
-        .and(this:green == that:green)
-        .and(this:blue  == that:blue)
-
-def ().compareColor
-    let colors mutable = List{Color}
-    for i in 1.to(2)
-        "Enter color $((i+1).toString)".show
-        let color = Color
-            :red   = "Enter red > ".ask.toInteger
-            :green = "Enter green > ".ask.toInteger
-            :blue  = "Enter blue > ".ask.toInteger
-        colors = colors.append(color)
-        
-    if colors.(0) == colors.(1)
-        "The two color are the same".show
-    else
-        "They are not same".show
-
-def ().askAge
-    let age = "How old are you?".ask.toInteger
-    if age > 50
-        "You are old".show
-    else
-        "You are young".show
-
-    let str = "Enter a string > ".ask
-    let old = "Which old char you want to replace > ".ask
-    let new = "Replace with? > ".ask
-    let result = str.replace(old with new)
-    "The result is '$(result)'".show
+def Cat is Animal

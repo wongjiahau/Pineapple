@@ -1,4 +1,3 @@
-import { GroupBindingStatement, AtomicToken, FunctionDeclaration } from './ast';
 /**
  * This file is to transpile Pineapple code to Javascript code
  */
@@ -33,7 +32,6 @@ import {
     ExampleDeclaration,
     ExampleStatement,
     GroupDeclaration,
-    GroupBindingDeclaration,
 } from "./ast";
 import { ErrorTrace, InterpreterOptions } from "./interpret";
 
@@ -62,12 +60,12 @@ export function tpDeclaration(input: Declaration): string {
         case "ImportDeclaration":
         case "StructDeclaration":
         case "EnumDeclaration":
+        case "GroupBindingDeclaration":
             // No need to be transpiled
             // As they are only needed for static analysis
             return "";
-        case "GroupBindingDeclaration":
         case "GroupDeclaration":
-            // NOTE: GroupBindingDeclaration and GroupDeclaration is handled at top level
+            // NOTE: GroupDeclaration is handled at top level
             return "";
         case "FunctionDeclaration":
             return tpFunctionDeclaration(input);
@@ -77,7 +75,12 @@ export function tpDeclaration(input: Declaration): string {
 }
 
 export function tpGroupDeclaration(g: GroupDeclaration) {
-    return `$$GROUP$$["${g.name.repr}"] = []`;
+    const x = g.name.repr;
+    let result =  `$$GROUP$$["${x}"] = [];\n`;
+    for (let i = 0; i < g.bindingFunctions.length; i++) {
+        result += `$$GROUP$$["${x}"].push(${getFullFunctionName(g.bindingFunctions[i])})\n`;
+    }
+    return result;
 }
 
 export function tpExampleDeclaration(e: ExampleDeclaration): string {
@@ -104,10 +107,11 @@ export function tpImportDeclaration(i: ImportDeclaration): string {
 }
 
 export function tpFunctionDeclaration(f: FunctionDeclaration): string {
-    const funcSignature = stringifyFunction(f);
+    const funcSignature = getFullFunctionName(f);
     const params = tpParameters(f.parameters);
     const statements = tpStatements(f.statements);
     let result = `${f.isAsync ? "async " : ""}function ${funcSignature}(${params}){`;
+
     if(f.groupBinding) {
         if(f.groupBinding.typeBinded.kind !== "GroupDeclaration") {
             throw new Error(`Should be group declaration type but got ${f.groupBinding.typeBinded.kind}`);
@@ -198,7 +202,7 @@ export function tpReturnStatement(r: ReturnStatement): string {
 }
 
 export function tpFunctionCall(f: FunctionCall): string {
-    const funcSignature = stringifyFunction(f);
+    const funcSignature = getFullFunctionName(f);
     const params = f.parameters.map((x) => tpExpression(x));
     let result = `${f.isAsync ? "await " : ""}${funcSignature}(` + 
                  `${GENERATE_SOURCE_MAP ? generateSourceMap({
@@ -219,8 +223,8 @@ export function generateSourceMap(x: ErrorTrace): string {
     return `/*##${JSON.stringify(x)}##*/`;
 }
 
-export function stringifyFunction(f: FunctionCall | FunctionDeclaration): string {
-    const signature = f.signature;
+// Full means type signature is included
+export function getFullFunctionName(f: FunctionCall | FunctionDeclaration): string {
     const typeSignature = (function() {
         if(f.kind === "FunctionCall") {
             return f.parameters.map((x) => stringifyType(x.returnType)).join("_");
@@ -228,10 +232,11 @@ export function stringifyFunction(f: FunctionCall | FunctionDeclaration): string
             return f.parameters.map((x) => stringifyType(x.typeExpected)).join("_");
         }
     })();
-    return "_" + getFunctionName(f) + "_" + typeSignature;
+    return "_" + getPartialFunctionName(f) + "_" + typeSignature;
 }
 
-export function getFunctionName(f: FunctionCall | FunctionDeclaration): string {
+// Partial means type signature is not includeed
+export function getPartialFunctionName(f: FunctionCall | FunctionDeclaration): string {
     return f.signature.map((x) => getName(x.repr)).join("$");
 }
 

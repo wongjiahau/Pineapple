@@ -64,7 +64,7 @@ import {stringifyTypeReadable} from "./errorType/errorUtil";
 import { ErrorDetail } from "./errorType/ErrorDetail";
 import { SourceCode, InterpreterOptions } from "./interpret";
 import { parseCode } from "./parseCodeToSyntaxTree";
-import {stringifyFunction, getFunctionName, getName} from "./transpile";
+import {getFullFunctionName, getPartialFunctionName, getName} from "./transpile";
 import {
     BaseStructType,
     childOf,
@@ -77,7 +77,8 @@ import {
     newStructType,
     newTupleType,
     Tree,
-    VoidType
+    VoidType,
+    logTree
 } from "./typeTree";
 import {copy, find} from "./util";
 import { Maybe, isOK, isFail, ok, fail } from "./maybeMonad";
@@ -171,10 +172,10 @@ export function fillUpTypeInformation(
                 else return childType;
 
                 const parentType = resolveType(d.parentType, symbols);
-                if(isOK(parentType)) d.childType = childType.value;
+                if(isOK(parentType)) d.parentType = parentType.value;
                 else return parentType;
 
-                symbols.typeTree = insertChild(childType.value, parentType.value, symbols.typeTree, typeEquals);
+                symbols.typeTree = insertChild(d.childType, d.parentType, symbols.typeTree, typeEquals);
                 break;
             }
             default: 
@@ -195,7 +196,7 @@ export function fillUpTypeInformation(
                         currentDecl.isAsync = currentDecl.statements.some(isCallingAysncFunction);
                     }
                     symbols = newSymbols;
-                    const verification = verifyFunctionDeclaration(currentDecl);
+                    const verification = verifyFunctionDeclaration(currentDecl, symbols);
                     if (verification.kind === "Fail") { return verification; }
                 }
                 break;
@@ -218,6 +219,8 @@ export function fillUpGroupDeclarationTypeInfo(
     decls: Declaration[],
     symbols: SymbolTable
 ) : Maybe<[GroupDeclaration, SymbolTable], ErrorDetail> {
+
+    g.bindingFunctions = [];
 
     const bindingTypes = (decls
         .filter((x) => x.kind === "GroupBindingDeclaration") as GroupBindingDeclaration[])
@@ -253,14 +256,16 @@ export function fillUpGroupDeclarationTypeInfo(
         // Since both of them are sorted previously
         let found = false;
         for (let j = 0; j < relatedFunctions.length; j++) {
-            if (getFunctionName(relatedFunctions[j]) === getFunctionName(requiredFunctions[0])) {
+            if (getPartialFunctionName(relatedFunctions[j]) === getPartialFunctionName(requiredFunctions[0])) {
                 found = true;
                 
                 // Start the comparison
                 for (let k = 0; k < requiredFunctions.length; k++) {
                     // TODO: Generic pattern matching checking
-                    if(getFunctionName(relatedFunctions[k + j]) !== getFunctionName(requiredFunctions[k])) {
+                    if(getPartialFunctionName(relatedFunctions[k + j]) !== getPartialFunctionName(requiredFunctions[k])) {
                         return fail(ErrorUnimplementedFunction(requiredFunctions[k], bindingTypes[i]))
+                    } else {
+                        g.bindingFunctions.push(relatedFunctions[k + j]);
                     }
                 }
                 break;
@@ -271,11 +276,10 @@ export function fillUpGroupDeclarationTypeInfo(
         } 
     }
     
-    
     return ok([g, symbols] as [GroupDeclaration, SymbolTable]);
 
     function byFunctionName(x: FunctionDeclaration, y: FunctionDeclaration): number {
-        return getFunctionName(x).localeCompare(getFunctionName(y));
+        return getPartialFunctionName(x).localeCompare(getPartialFunctionName(y));
     }
 }
 
@@ -563,20 +567,25 @@ export function newFunctionTable(newFunc: FunctionDeclaration, previousFuncTab: 
     return ok(previousFuncTab);
 }
 
-export function verifyFunctionDeclaration(f: FunctionDeclaration): Maybe<null, ErrorDetail> {
+export function verifyFunctionDeclaration(f: FunctionDeclaration, symbols: SymbolTable)
+: Maybe<null, ErrorDetail> {
     // Check if return statements are correct
-    const returnStatements = f.statements.filter((x) => x.kind === "ReturnStatement")as ReturnStatement[];
+    const returnStatements = f.statements
+        .filter((x) => x.kind === "ReturnStatement") as ReturnStatement[];
+
     for (let i = 0; i < returnStatements.length; i++) {
         const r = returnStatements[i];
-        if (!typeEquals(r.expression.returnType, f.returnType)) {
-            return fail(ErrorUnmatchingReturnType(r, f.returnType));
+        if(f.returnType !== null) {
+            if(!isSubtypeOf(r.expression.returnType, f.returnType, symbols.typeTree)) {
+                return fail(ErrorUnmatchingReturnType(r, f.returnType));
+            }
         }
     }
     return ok(null);
 }
 
 export function functionEqual(x: FunctionDeclaration, y: FunctionDeclaration): boolean {
-    if (stringifyFunction(x) !== stringifyFunction(y)) {
+    if (getFullFunctionName(x) !== getFullFunctionName(y)) {
         return false;
     } else if (x.parameters.length !== y.parameters.length) {
         return false;
@@ -665,7 +674,7 @@ export function fillUpStatementsTypeInfo(statements: Statement[], symbols: Symbo
                         s.variable.variable.returnType = s.variable.typeExpected;
                         const exprType = s.expression.returnType;
                         const expectedType = s.variable.typeExpected;
-                        if (!isSubtypeOf(exprType, expectedType, symbols.typeTree, typeEquals)) {
+                        if (!isSubtypeOf(exprType, expectedType, symbols.typeTree)) {
                             return fail(ErrorIncorrectTypeGivenForVariable(
                                 s.variable.variable, s.variable.typeExpected, s.expression));
                         }
@@ -688,7 +697,7 @@ export function fillUpStatementsTypeInfo(statements: Statement[], symbols: Symbo
                         if (resultType.kind === "OK") { [s.expression, symbols] = resultType.value;
                         } else { return resultType; }
 
-                        if (!isSubtypeOf(s.expression.returnType, matching.returnType, symbols.typeTree, typeEquals)) {
+                        if (!isSubtypeOf(s.expression.returnType, matching.returnType, symbols.typeTree)) {
                             return fail(ErrorIncorrectTypeGivenForVariable(
                                 s.variable, matching.returnType, s.expression));
                         } else {
@@ -1088,14 +1097,13 @@ export function isSubtypeOf(
     x: TypeExpression,
     y: TypeExpression,
     tree: Tree < TypeExpression >,
-    comparer: Comparer < TypeExpression >
 ): boolean {
     if (x.nullable && y.kind === "EnumDeclaration" && y.name.repr === "Nil") {
         return true;
     } else if (y.nullable && x.kind === "EnumDeclaration" && x.name.repr === "Nil") {
         return true;
     } else {
-        return typeEquals(x, y) || childOf(x, y, tree, comparer) !== null;
+        return typeEquals(x, y) || childOf(x, y, tree, typeEquals) !== null;
     }
 }
 
@@ -1116,7 +1124,7 @@ export function checkIfKeyValueListConforms(
             // Check if type are equals to expected
             const exprType = kvs[i].expression.returnType;
             const expectedType = matchingMember.expectedType;
-            if (!isSubtypeOf(exprType, expectedType, symbols.typeTree, typeEquals)) {
+            if (!isSubtypeOf(exprType, expectedType, symbols.typeTree)) {
                 return fail(ErrorIncorrectTypeGivenForMember(matchingMember.expectedType, kvs[i]));
             }
         }

@@ -1,6 +1,6 @@
 import { FunctionDeclaration, TypeExpression } from "../ast";
 import { ErrorDetail } from "./ErrorDetail";
-import { getFunctionName } from "../transpile";
+import { getPartialFunctionName } from "../transpile";
 import { stringifyTypeReadable } from "./errorUtil";
 
 export function ErrorUnimplementedFunction(
@@ -10,7 +10,7 @@ export function ErrorUnimplementedFunction(
     return {
         code: "0031",
         name: "ErrorUnimplementedFunction",
-        message: `${getFunctionName(requiredFunction)} is not implemented by ${stringifyTypeReadable(relatedType)}`,
+        message: `${getPartialFunctionName(requiredFunction)} is not implemented by ${stringifyTypeReadable(relatedType)}`,
         relatedLocation: relatedType.location
     };
 }
