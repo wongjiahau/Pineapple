@@ -33,6 +33,7 @@ export interface GroupBindingDeclaration {
 export interface GroupDeclaration {
     kind: "GroupDeclaration";
     name: AtomicToken;
+    nullable: boolean;
 }
 
 export interface ExampleDeclaration {
@@ -52,6 +53,13 @@ export interface FunctionDeclaration {
     originFile: string;
     isAsync: boolean;
     typeConstraint ?: TypeConstraint;
+    groupBinding ?: GroupBindingStatement;
+}
+
+export interface GroupBindingStatement {
+    kind: "GroupBindingStatement";
+    genericList: AtomicToken[];
+    typeBinded: TypeExpression;
 }
 
 export interface TypeConstraint {

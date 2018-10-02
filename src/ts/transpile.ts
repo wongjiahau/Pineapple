@@ -31,6 +31,8 @@ import {
     PassStatement,
     ExampleDeclaration,
     ExampleStatement,
+    GroupDeclaration,
+    GroupBindingDeclaration,
 } from "./ast";
 import { ErrorTrace, InterpreterOptions } from "./interpret";
 
@@ -50,20 +52,24 @@ export function tpDeclaration(input: Declaration): string {
         return "";
     }
     switch (input.kind) {
+        case "ImportDeclaration":
+        case "StructDeclaration":
+        case "EnumDeclaration":
+        case "GroupBindingDeclaration":
+            // No need to be transpiled
+            // As they are only needed for static analysis
+            return "";
         case "FunctionDeclaration":
             return tpFunctionDeclaration(input);
-        case "ImportDeclaration":
-            return "";
-            // return tpImportDeclaration(input);
-        case "StructDeclaration":
-            return "";
-            // return tpStructDeclaration(input);
-        case "EnumDeclaration":
-            return "";
-            // return tpEnumDeclaration(input);
         case "ExampleDeclaration":
             return tpExampleDeclaration(input);
+        case "GroupDeclaration":
+            return tpGroupDeclaration(input);
     }
+}
+
+export function tpGroupDeclaration(g: GroupDeclaration) {
+    return `$$GROUP$$["${g.name.repr}"] = []`;
 }
 
 export function tpExampleDeclaration(e: ExampleDeclaration): string {
@@ -93,7 +99,15 @@ export function tpFunctionDeclaration(f: FunctionDeclaration): string {
     const funcSignature = stringifyFunction(f);
     const params = tpParameters(f.parameters);
     const statements = tpStatements(f.statements);
-    return `${f.isAsync ? "async " : ""}function ${funcSignature}(${params}){\n${statements}}\n`;
+    let result = `${f.isAsync ? "async " : ""}function ${funcSignature}(${params}){`;
+    if(f.groupBinding) {
+        if(f.groupBinding.typeBinded.kind !== "GroupDeclaration") {
+            throw new Error(`Should be group declaration type but got ${f.groupBinding.typeBinded.kind}`);
+        }
+        result += `\n$$GROUP$$["${f.groupBinding.typeBinded.name.repr}"][$$TYPEOF$$($${f.parameters[0].variable.repr})](${params})`;
+    }
+    result += `\n${statements}}\n`;
+    return result;
 }
 
 export function tpStatements(statements: Statement[]): string {
@@ -249,6 +263,7 @@ export function stringifyType(t: TypeExpression): string {
         case "VoidType":
             return `Void`;
         case "EnumDeclaration":
+        case "GroupDeclaration":
             return t.name.repr;
     }
 }

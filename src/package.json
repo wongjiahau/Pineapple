@@ -19,7 +19,6 @@
         "clear": "^0.1.0",
         "commander": "^2.15.1",
         "fast-levenshtein": "^2.0.6",
-        "graphlib": "^2.1.5",
         "number-to-words": "^1.2.4",
         "toposort": "^2.0.2"
     },

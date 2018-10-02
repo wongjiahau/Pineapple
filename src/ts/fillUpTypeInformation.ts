@@ -99,6 +99,14 @@ export function fillUpTypeInformation(
                 const result = fillUpFunctionDeclarationTypeInfo(d, symbols);
                 if(isOK(result)) [decls[i], symbols] = result.value;
                 else return result;
+
+                const result1 = resolveGroupBinding(d, symbols);
+                if(isOK(result1)) [decls[i], symbols] = result.value;
+                else return result1;
+
+                if(d.typeConstraint) {
+                    throw new Error("Cannot handle yet");
+                }
                 break;
             }
             case "StructDeclaration":
@@ -161,7 +169,6 @@ export function fillUpTypeInformation(
                 break;
             }
             default: 
-                console.log("hi");
                 throw new Error(`Cannot handle ${d.kind} yet`)
         }
     }
@@ -186,6 +193,35 @@ export function fillUpTypeInformation(
         }
     }
     return ok([syntaxTree, symbols] as [SyntaxTree, SymbolTable]);
+}
+
+export function resolveGroupBinding(d: FunctionDeclaration, symbols: SymbolTable)
+: Maybe<[FunctionDeclaration, SymbolTable], ErrorDetail> {
+    if(!d.groupBinding) {
+        return ok([d, symbols] as [FunctionDeclaration, SymbolTable]);
+    } else {
+        const g = d.groupBinding;
+        const resolveResult = resolveType(d.groupBinding.typeBinded, symbols);
+        if(isFail(resolveResult)) {
+            return resolveResult;
+        } else {
+            g.typeBinded = resolveResult.value;
+            for (let i = 0; i < d.parameters.length; i++) {
+                const x = d.parameters[i];
+                const t = x.typeExpected;
+                if(t.kind === "GenericTypename") {
+                    if(g.genericList.some((y) => y.repr === t.name.repr)) {
+                        x.typeExpected = g.typeBinded;
+                    } else {
+                        return fail(ErrorYetToBeDefined("Using undeclared generic name", t.location));
+                    };
+                } else {
+                    // do nothing
+                }
+            }
+        }
+    }
+    return ok([d, symbols] as [FunctionDeclaration, SymbolTable]);
 }
 
 export function fillUpFunctionDeclarationTypeInfo(d: FunctionDeclaration, symbols: SymbolTable)
@@ -507,6 +543,7 @@ function updateVariableTable(vtab: VariableTable, variable: Variable)
     return ok(vtab);
 }
 
+
 export function fillUpStatementsTypeInfo(statements: Statement[], symbols: SymbolTable, vartab: VariableTable)
 : Maybe<[Statement[], SymbolTable], ErrorDetail> {
     for (let i = 0; i < statements.length; i++) {
@@ -629,8 +666,8 @@ export function fillUpStatementsTypeInfo(statements: Statement[], symbols: Symbo
 
 export function ErrorYetToBeDefined(message: string, location: TokenLocation): ErrorDetail {
     return {
-        code: "???",
-        name: "Error that is yet to be defined",
+        code: "XXX",
+        name: "Error",
         message: message,
         relatedLocation: location
     };
@@ -1373,6 +1410,8 @@ export function typeEquals(x: TypeExpression, y: TypeExpression | null): boolean
                 return x.reference.name.repr === y.reference.name.repr && genericsEqual(x.genericList, y.genericList);
             case "GenericTypename":
                 return true; // Is this correct?
+            case "GroupDeclaration":
+                return x.name.repr === (y as GroupDeclaration).name.repr;
             default:
                 throw new Error(`Type comparison for ${x.kind} is not implemented yet`);
         }

@@ -30,26 +30,11 @@ export function insertChild<T>(
     tree: Tree<T>,
     comparer: Comparer<T>
 ): Tree<T> {
-    if (findElement(tree, child, comparer) !== null) {
-        throw new Error(`${JSON.stringify(child)} already exist in tree`);
-    }
-    if (findElement(tree, parent, comparer) === null) {
-        throw new Error(`${JSON.stringify(parent)} does not exist in tree`);
-    }
-    return insert(child, parent, tree, comparer);
-}
-
-function insert<T>(
-    child: T,
-    parent: T,
-    tree: Tree<T>,
-    comparer: Comparer<T>
-): Tree<T> {
     if (comparer(parent, tree.current)) {
         tree.children.push(newTree(child));
     } else {
         for (let i = 0; i < tree.children.length; i++) {
-            tree.children[i] = insert(child, parent, tree.children[i], comparer);
+            tree.children[i] = insertChild(child, parent, tree.children[i], comparer);
         }
     }
     return tree;

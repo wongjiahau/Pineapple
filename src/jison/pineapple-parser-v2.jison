@@ -18,6 +18,12 @@ const _GroupBindingDeclaration = (childType, parentType) => ({
     parentType
 });
 
+const _GroupBindingStatement = (genericList, typeBinded) => ({
+    kind: "GroupBindingStatement",
+    genericList,
+    typeBinded
+})
+
 const _TypeConstraint = (genericList, traitName) => ({
     kind: "TypeConstraint",
     traitName,
@@ -367,11 +373,14 @@ FunctionDecls
     : FunctionDeclarationHead Block {$$.statements=$2}
     | FunctionDeclarationHead NEWLINE INDENT TypeConstraintStatement StatementList DEDENT 
         {$$.statements=$5; $$.typeConstraint=$4}
-    | FunctionDeclarationHead NEWLINE INDENT TraitBindingStatement DEDENT {$$.statements=[]}
+    | FunctionDeclarationHead NEWLINE INDENT GroupBindingStatement DEDENT {
+        $$.statements=[];
+        $$.groupBinding = $4;
+    }
     ;
 
-TraitBindingStatement
-    : IF GenericAtom IS TypenameAtom NEWLINE
+GroupBindingStatement
+    : IF GenericAtom IS TypenameAtom NEWLINE {$$=_GroupBindingStatement([$2], _UnresolvedType($4,[],false))}
     ;
 
 // TODO: Consider enabling multiple type constraint statement?
