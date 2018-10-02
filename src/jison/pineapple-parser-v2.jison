@@ -7,9 +7,10 @@ const _PassStatement = (location) => ({ kind: "PassStatement", location});
 
 const _ReturnStatement = (expression,location) => ({ kind: "ReturnStatement", expression, location});
 
-const _GroupDeclaration  = (name) => ({
+const _GroupDeclaration  = (name, location) => ({
     kind: "GroupDeclaration",
     name,
+    location
 });
 
 const _GroupBindingDeclaration = (childType, parentType) => ({
@@ -306,7 +307,7 @@ GroupBindingDeclaration
     ;
 
 GroupDeclaration 
-    : DEF GROUP TypenameAtom NEWLINE {$$=_GroupDeclaration($3)}
+    : DEF GROUP TypenameAtom NEWLINE {$$=_GroupDeclaration($3, this._$)}
     ;
 
 FunctionDeclarationList

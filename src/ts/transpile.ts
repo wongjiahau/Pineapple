@@ -1,3 +1,4 @@
+import { GroupBindingStatement, AtomicToken, FunctionDeclaration } from './ast';
 /**
  * This file is to transpile Pineapple code to Javascript code
  */
@@ -43,9 +44,15 @@ let GENERATE_SOURCE_MAP = false;
 export function transpile(decls: Declaration[], options: InterpreterOptions): string {
     GENERATE_SOURCE_MAP = options.generateSourceMap;
     let result = ""; 
-    result += decls.map((x) => tpDeclaration(x)).join("\n");
+
+    // Initialize GroupDeclarations
+    const groupDecls = decls.filter((x) => x.kind === "GroupDeclaration") as GroupDeclaration[];
+    result += groupDecls.map(tpGroupDeclaration).join("\n") + "\n";
+
+    result += decls.map((x) => tpDeclaration(x)).filter((x) => x != "").join("\n");
     return result; 
 }
+
 
 export function tpDeclaration(input: Declaration): string {
     if (!input) {
@@ -55,16 +62,17 @@ export function tpDeclaration(input: Declaration): string {
         case "ImportDeclaration":
         case "StructDeclaration":
         case "EnumDeclaration":
-        case "GroupBindingDeclaration":
             // No need to be transpiled
             // As they are only needed for static analysis
+            return "";
+        case "GroupBindingDeclaration":
+        case "GroupDeclaration":
+            // NOTE: GroupBindingDeclaration and GroupDeclaration is handled at top level
             return "";
         case "FunctionDeclaration":
             return tpFunctionDeclaration(input);
         case "ExampleDeclaration":
             return tpExampleDeclaration(input);
-        case "GroupDeclaration":
-            return tpGroupDeclaration(input);
     }
 }
 
@@ -220,7 +228,11 @@ export function stringifyFunction(f: FunctionCall | FunctionDeclaration): string
             return f.parameters.map((x) => stringifyType(x.typeExpected)).join("_");
         }
     })();
-    return "_" + signature.map((x) => getName(x.repr)).join("$") + "_" + typeSignature;
+    return "_" + getFunctionName(f) + "_" + typeSignature;
+}
+
+export function getFunctionName(f: FunctionCall | FunctionDeclaration): string {
+    return f.signature.map((x) => getName(x.repr)).join("$");
 }
 
 export function getName(funcSignature: string): string {

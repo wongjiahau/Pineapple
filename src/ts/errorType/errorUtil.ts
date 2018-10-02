@@ -13,18 +13,17 @@ export function stringifyTypeReadable(t: TypeExpression | null): string {
         return `Void`;
     }
     switch (t.kind) {
+        case "UnresolvedType":
+        case "GenericTypename":
+        case "EnumDeclaration":
+        case "GroupDeclaration":
+            return `${t.name.repr}`;
         case "BuiltinType":
             return `${t.name}${stringifyGenericList(t.genericList)}`;
-        case "UnresolvedType":
-            return `${t.name.repr}`;
         case "VoidType":
             return "`Void`";
-        case "GenericTypename":
-            return `${t.name.repr}`;
         case "StructType":
             return `${t.reference.name.repr}${stringifyGenericList(t.genericList)}`;
-        case "EnumDeclaration":
-            return `${t.name.repr}`;
     }
 }
 

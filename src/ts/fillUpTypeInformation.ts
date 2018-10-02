@@ -29,7 +29,9 @@ import {
     UnresolvedType,
     Variable,
     VariableDeclaration,
-    GroupDeclaration
+    GroupDeclaration,
+    Declaration,
+    GroupBindingDeclaration
 } from "./ast";
 
 import {ErrorAccessingInexistentMember} from "./errorType/E0001-AccessingInexistentMember";
@@ -62,7 +64,7 @@ import {stringifyTypeReadable} from "./errorType/errorUtil";
 import { ErrorDetail } from "./errorType/ErrorDetail";
 import { SourceCode, InterpreterOptions } from "./interpret";
 import { parseCode } from "./parseCodeToSyntaxTree";
-import {stringifyFunction} from "./transpile";
+import {stringifyFunction, getFunctionName, getName} from "./transpile";
 import {
     BaseStructType,
     childOf,
@@ -79,6 +81,7 @@ import {
 } from "./typeTree";
 import {copy, find} from "./util";
 import { Maybe, isOK, isFail, ok, fail } from "./maybeMonad";
+import { ErrorUnimplementedFunction } from "./errorType/E0031-UnimplementedFunction";
 
 
 let CURRENT_SOURCE_CODE: () => SourceCode;
@@ -155,15 +158,21 @@ export function fillUpTypeInformation(
             case "ImportDeclaration":
                 break;
             case "GroupDeclaration": {
-                symbols.typeTree = insertChild(d, newBuiltinType("Any"), symbols.typeTree, typeEquals);
+                // Insert the group type into type tree
+                symbols.typeTree = insertChild(d, /*as child of*/ newBuiltinType("Any"), symbols.typeTree, typeEquals);
+
+                // Extra handling is done at the last stage of analysis
+                // So that any other problem is resolved first
                 break;
             }
             case "GroupBindingDeclaration": {
                 const childType = resolveType(d.childType, symbols);
-                if(isFail(childType)) return childType;
+                if(isOK(childType)) d.childType = childType.value;
+                else return childType;
 
                 const parentType = resolveType(d.parentType, symbols);
-                if(isFail(parentType)) return parentType;
+                if(isOK(parentType)) d.childType = childType.value;
+                else return parentType;
 
                 symbols.typeTree = insertChild(childType.value, parentType.value, symbols.typeTree, typeEquals);
                 break;
@@ -192,7 +201,82 @@ export function fillUpTypeInformation(
                 break;
         }
     }
+
+    // Handle GroupDeclarations
+    const gd = decls.filter((x) => x.kind === "GroupDeclaration") as GroupDeclaration[];
+    for (let i = 0; i < gd.length; i++) {
+        const result = fillUpGroupDeclarationTypeInfo(gd[i], decls, symbols);
+        if(isOK(result)) [gd[i], symbols] = result.value;
+        else return result;
+    }
+
     return ok([syntaxTree, symbols] as [SyntaxTree, SymbolTable]);
+}
+
+export function fillUpGroupDeclarationTypeInfo(
+    g: GroupDeclaration, 
+    decls: Declaration[],
+    symbols: SymbolTable
+) : Maybe<[GroupDeclaration, SymbolTable], ErrorDetail> {
+
+    const bindingTypes = (decls
+        .filter((x) => x.kind === "GroupBindingDeclaration") as GroupBindingDeclaration[])
+        .filter((x) => stringifyTypeReadable(x.parentType) === g.name.repr)
+        .map((x) => x.childType);
+        ;
+    
+    const requiredFunctions = (decls
+        .filter((x) => x.kind === "FunctionDeclaration") as FunctionDeclaration[])
+        .filter((x) => x.groupBinding !== undefined)
+        .filter((x) => {
+            if(x.groupBinding) {
+                return stringifyTypeReadable(x.groupBinding.typeBinded) === g.name.repr;
+            } else {
+                throw new Error("Impossible"); // this line is needed because TypeScript cannot handle such cases properly T.T
+            }
+        })
+        .sort(byFunctionName);
+    
+    
+    const allFunctions = decls.filter((x) => x.kind === "FunctionDeclaration") as FunctionDeclaration[];
+    for (let i = 0; i < bindingTypes.length; i++) {
+        const relatedFunctions = allFunctions
+            .filter((x) => typeEquals(x.parameters[0].typeExpected, bindingTypes[i]))
+            .sort(byFunctionName);
+        
+        if(relatedFunctions.length === 0) {
+            return fail(ErrorUnimplementedFunction(requiredFunctions[0], bindingTypes[i]))
+        }
+        
+        // Search for the first relatedFunctions that matches the first requiredFunctions
+        // So that the comparison can be done
+        // Since both of them are sorted previously
+        let found = false;
+        for (let j = 0; j < relatedFunctions.length; j++) {
+            if (getFunctionName(relatedFunctions[j]) === getFunctionName(requiredFunctions[0])) {
+                found = true;
+                
+                // Start the comparison
+                for (let k = 0; k < requiredFunctions.length; k++) {
+                    // TODO: Generic pattern matching checking
+                    if(getFunctionName(relatedFunctions[k + j]) !== getFunctionName(requiredFunctions[k])) {
+                        return fail(ErrorUnimplementedFunction(requiredFunctions[k], bindingTypes[i]))
+                    }
+                }
+                break;
+            }
+        }
+        if(!found) {
+            return fail(ErrorUnimplementedFunction(requiredFunctions[0], bindingTypes[i]));
+        } 
+    }
+    
+    
+    return ok([g, symbols] as [GroupDeclaration, SymbolTable]);
+
+    function byFunctionName(x: FunctionDeclaration, y: FunctionDeclaration): number {
+        return getFunctionName(x).localeCompare(getFunctionName(y));
+    }
 }
 
 export function resolveGroupBinding(d: FunctionDeclaration, symbols: SymbolTable)
