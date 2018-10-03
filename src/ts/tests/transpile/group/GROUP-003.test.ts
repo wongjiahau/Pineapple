@@ -9,7 +9,7 @@ def group Expression
 def Expression is SyntaxNode
 
 def (this T).toJS -> String
-   if T is SyntaxNode
+    if T is SyntaxNode
 
 def Addition
     :left   Number
@@ -17,6 +17,17 @@ def Addition
 
 def Addition is Expression
 
+def (this Addition).toJS -> String
+    pass
+
 `,
 `
+$$GROUP$$["SyntaxNode"] = {};
+
+$$GROUP$$["Expression"] = {};
+
+function _toJS_SyntaxNode($this){
+return $$GROUP$$["SyntaxNode"][$$typeof$$($this)]($this)
+}
+
 `) 

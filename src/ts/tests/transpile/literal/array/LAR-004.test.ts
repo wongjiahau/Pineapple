@@ -4,10 +4,10 @@ testTranspile("will look for lowest common parent type (Execpt Any)",
 `
 def group Animal
 
-def class Cat
+def Cat
     :name String
 
-def class Dog
+def Dog
     :name String
 
 def Cat is Animal

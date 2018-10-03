@@ -86,6 +86,22 @@ export function findParentsOf<T>(
     return result;
 }
 
+export function findAllAncestorsOf<T>(
+    child: T, /*in*/
+    tree: Tree<T>,
+    comparer: Comparer<T>
+): T[] {
+    let result: T[] = [];
+    if (tree.children.some((x) => comparer(x.current, child))) {
+        result.push(tree.current);
+        result = result.concat(findAllAncestorsOf(tree.current, tree, comparer));
+    }
+    for (let i = 0; i < tree.children.length; i++) {
+        result = result.concat(findAllAncestorsOf(child, tree.children[i], comparer));
+    }
+    return result;
+}
+
 export function findElement<T>(
     tree: Tree<T>,
     element: T,

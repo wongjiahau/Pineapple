@@ -18,7 +18,7 @@ def ().main
             :name = "Bobby"
 `,
 `
-$$GROUP$$["Animal"] = [];
+$$GROUP$$["Animal"] = {};
 
 function _main_(){
 const $x = {

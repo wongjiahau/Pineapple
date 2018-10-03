@@ -102,6 +102,7 @@ export function testError(
                 if (error !== null) {
                     expect(error.name).to.eq(expectedErrorName);
                     if(isErrorDetail(error)) {
+                        expect(error.relatedLocation).to.not.eq(undefined);
                         if(expectedMessage) {
                             expect(error.message).to.eq(expectedMessage);
                         }

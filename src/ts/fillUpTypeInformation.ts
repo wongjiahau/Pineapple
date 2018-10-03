@@ -44,7 +44,7 @@ import {ErrorMissingMember} from "./errorType/E0007-ErrorMissingMember";
 import {ErrorNoConformingFunction} from "./errorType/E0008-NoConformingFunction";
 import {ErrorStructRedeclare} from "./errorType/E0009-StructRedeclare";
 import {ErrorUnmatchingReturnType} from "./errorType/E0011-UnmatchingReturnType";
-import { ErrorConditionIsNotBoolean } from "./errorType/E0012-ConditionIsNotBoolean";
+import {ErrorConditionIsNotBoolean } from "./errorType/E0012-ConditionIsNotBoolean";
 import {ErrorUsingUnknownFunction} from "./errorType/E0013-UsingUnknownFunction";
 import {ErrorVariableRedeclare} from "./errorType/E0014-VariableRedeclare";
 import {ErrorEnumRedeclare} from "./errorType/E0015-EnumRedeclare";
@@ -58,12 +58,12 @@ import {ErrorAssigningNullToUnnullableVariable} from "./errorType/E0022-Assignin
 import {ErrorUsingUndefinedType} from "./errorType/E0023-UsingUndefinedType";
 import {ErrorListElementsArentHomogeneous} from "./errorType/E0024-ListElementsArentHomogeneous";
 import {ErrorUsingUndefinedGenericName} from "./errorType/E0025-UsingUndefinedGenericName";
-import { ErrorInterpolatedExpressionIsNotString } from "./errorType/E0026-InperolatedExpressionIsNotString";
-import { ErrorMissingClosingBracket } from "./errorType/E0027-MissingClosingBracket";
+import {ErrorInterpolatedExpressionIsNotString } from "./errorType/E0026-InperolatedExpressionIsNotString";
+import {ErrorMissingClosingBracket } from "./errorType/E0027-MissingClosingBracket";
 import {stringifyTypeReadable} from "./errorType/errorUtil";
-import { ErrorDetail } from "./errorType/ErrorDetail";
-import { SourceCode, InterpreterOptions } from "./interpret";
-import { parseCode } from "./parseCodeToSyntaxTree";
+import {ErrorDetail } from "./errorType/ErrorDetail";
+import {SourceCode, InterpreterOptions } from "./interpret";
+import {parseCode } from "./parseCodeToSyntaxTree";
 import {getFullFunctionName, getPartialFunctionName, getName} from "./transpile";
 import {
     BaseStructType,
@@ -78,7 +78,8 @@ import {
     newTupleType,
     Tree,
     VoidType,
-    logTree
+    logTree,
+    findAllAncestorsOf
 } from "./typeTree";
 import {copy, find} from "./util";
 import { Maybe, isOK, isFail, ok, fail } from "./maybeMonad";
@@ -235,23 +236,12 @@ export function fillUpGroupDeclarationTypeInfo(
 
     g.bindingFunctions = [];
 
-    const bindingTypes = (decls
-        .filter((x) => x.kind === "GroupBindingDeclaration") as GroupBindingDeclaration[])
-        .filter((x) => stringifyTypeReadable(x.parentType) === g.name.repr)
-        .map((x) => x.childType);
-        ;
+    const groupBindingDecls = decls.filter((x) => x.kind === "GroupBindingDeclaration") as GroupBindingDeclaration[]
+    const bindingTypes = getBindingTypes(groupBindingDecls, g);
     
-    const requiredFunctions = (decls
-        .filter((x) => x.kind === "FunctionDeclaration") as FunctionDeclaration[])
-        .filter((x) => x.groupBinding !== undefined)
-        .filter((x) => {
-            if(x.groupBinding) {
-                return stringifyTypeReadable(x.groupBinding.typeBinded) === g.name.repr;
-            } else {
-                throw new Error("Impossible"); // this line is needed because TypeScript cannot handle such cases properly T.T
-            }
-        })
-        .sort(byFunctionName);
+    const functionDecls = decls.filter((x) => x.kind === "FunctionDeclaration") as FunctionDeclaration[];
+      
+    const requiredFunctions = getRequiredFunctions(functionDecls, g, symbols.typeTree);
     
     if(requiredFunctions.length === 0) {
         // Then, no need to checking
@@ -267,7 +257,7 @@ export function fillUpGroupDeclarationTypeInfo(
             .sort(byFunctionName);
         
         if(relatedFunctions.length === 0) {
-            return fail(ErrorUnimplementedFunction(requiredFunctions[0], bindingTypes[i]))
+            return fail(ErrorUnimplementedFunction(requiredFunctions[0], bindingTypes[i], g))
         }
         
         // Search for the first relatedFunctions that matches the first requiredFunctions
@@ -282,7 +272,7 @@ export function fillUpGroupDeclarationTypeInfo(
                 for (let k = 0; k < requiredFunctions.length && relatedFunctions.length; k++) {
                     // TODO: Generic pattern matching checking
                     if(getPartialFunctionName(relatedFunctions[k + j]) !== getPartialFunctionName(requiredFunctions[k])) {
-                        return fail(ErrorUnimplementedFunction(requiredFunctions[k], bindingTypes[i]))
+                        return fail(ErrorUnimplementedFunction(requiredFunctions[k], bindingTypes[i], g))
                     } else {
                         g.bindingFunctions.push(relatedFunctions[k + j]);
                     }
@@ -291,15 +281,54 @@ export function fillUpGroupDeclarationTypeInfo(
             }
         }
         if(!found) {
-            return fail(ErrorUnimplementedFunction(requiredFunctions[0], bindingTypes[i]));
+            return fail(ErrorUnimplementedFunction(requiredFunctions[0], bindingTypes[i], g));
         } 
     }
     
     return ok([g, symbols] as [GroupDeclaration, SymbolTable]);
 
-    function byFunctionName(x: FunctionDeclaration, y: FunctionDeclaration): number {
-        return getPartialFunctionName(x).localeCompare(getPartialFunctionName(y));
+}
+function /*sort*/ byFunctionName(x: FunctionDeclaration, y: FunctionDeclaration): number {
+    return getPartialFunctionName(x).localeCompare(getPartialFunctionName(y));
+}
+
+export function getRequiredFunctions(
+    fs: FunctionDeclaration[], 
+    g: GroupDeclaration,
+    typeTree: Tree<TypeExpression>
+)
+: FunctionDeclaration[] {
+    const allAncestors = findAllAncestorsOf(g, /*in*/ typeTree, typeEquals)
+        .filter((x) => x.kind === "GroupDeclaration") as GroupDeclaration[];
+    
+    return fs
+        .filter((x) => x.groupBinding !== undefined)
+        .filter((x) => {
+            if(x.groupBinding) {
+                return allAncestors.some(y => stringifyTypeReadable(x.groupBinding.typeBinded) === y.name.repr);
+            } else {
+                throw new Error("Impossible"); // this line is needed because TypeScript cannot handle such cases properly T.T
+            }
+        })
+        .sort(byFunctionName);
+}
+
+export function getBindingTypes(originalGbs: GroupBindingDeclaration[], parentGroup: GroupDeclaration)
+    : TypeExpression[] {
+    let result: TypeExpression[] = [];
+    const gbs = originalGbs.filter((x) => stringifyTypeReadable(x.parentType) === parentGroup.name.repr);
+
+    for (let i = 0; i < gbs.length; i++) {
+        const type = gbs[i].childType;
+        if(type.kind === "GroupDeclaration") {
+            // recursively look for binding child
+            result = result.concat(getBindingTypes(originalGbs, type));
+        } else {
+            result.push(gbs[i].childType);
+        }
     }
+
+    return result;
 }
 
 export function resolveGroupBinding(d: FunctionDeclaration, symbols: SymbolTable)

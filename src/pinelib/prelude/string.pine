@@ -1,10 +1,67 @@
 import "core"
+import "math"
+import "list"
+
+// Lookup "JavaScript has a Unicode problem"
+// Pile of Poo Test, to test Unicode compatibility
+// Iñtërnâtiônàlizætiøn☃💩s
+// https://mathiasbynens.be/notes/javascript-unicode
+
+def (this String).length -> Integer
+    <javascript>
+    return $this.length;
+    </javascript>
+
+def (this String).(that Integer) -> String
+    <javascript>
+    return $this[$that]
+    </javascript>
+
+def (this String) == (that String) -> Boolean
+    <javascript>
+    return $this === $that
+    </javascript>
+
+def (this String).indexOf(that String fromIndex start Integer) -> Integer 
+    for i in start.to(this.length - 1)
+        if this.(i) == that.(0)
+            let mutable fail = #false
+            for j in 0.to(that.length - 1)
+                if this.(i + j) != that.(j)
+                    fail = #true
+
+            if fail.not
+                return i
+    return -1
+
+example "baby baby".indexOf("baby" fromIndex 1) -> 5
 
 def (this String).indexOf(that String) -> Integer
+    return this.indexOf(that fromIndex 0)
+
+example "Hello".indexOf("ello") -> 1
+example "Hello".indexOf("yo") -> -1
+
+def (this String).contains(that String) -> Boolean
+    return this.indexOf(that) >= 0
+
+example "Hello world baby".contains("world") -> #true
+example "Yo".contains("Babe") -> #false
+
+def (this String).startsWith(that String) -> Boolean
+    return this.indexOf(that) == 0
+
+example "$hey".startsWith("$") -> #true
+example "#$hey".startsWith("$") -> #false
+
+def (this String).endsWith(that String) -> Boolean
     pass
 
 def (this String).replace(old String with new String) -> String
     return this.splitBy(old).joinBy(new)
+
+example "Hello world".replace("world" with "baby") -> "Hello baby"
+example "Yo guys".replace("banana" with "orange") -> "Yo guys"
 
 def (this String).splitBy(that String) -> String
     <javascript>

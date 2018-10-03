@@ -19,3 +19,4 @@
 - [x] implement builtin unit testing feature (a.k.a example-driven development)
 - [] write doc about EDD (example-driven development)
 - [] change keyword 'ensure' to 'require'
+- [] Implement type def
