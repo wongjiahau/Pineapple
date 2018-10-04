@@ -238,11 +238,11 @@ export function fillUpGroupDeclarationTypeInfo(
 
     const groupBindingDecls = decls.filter((x) => x.kind === "GroupBindingDeclaration") as GroupBindingDeclaration[]
     const bindingTypes = getBindingTypes(groupBindingDecls, g);
-    
+
     const functionDecls = decls.filter((x) => x.kind === "FunctionDeclaration") as FunctionDeclaration[];
       
     const requiredFunctions = getRequiredFunctions(functionDecls, g, symbols.typeTree);
-    
+
     if(requiredFunctions.length === 0) {
         // Then, no need to checking
         return ok([g, symbols] as [GroupDeclaration, SymbolTable]);
@@ -266,6 +266,7 @@ export function fillUpGroupDeclarationTypeInfo(
         let found = false;
         for (let j = 0; j < relatedFunctions.length; j++) {
             if (getPartialFunctionName(relatedFunctions[j]) === getPartialFunctionName(requiredFunctions[0])) {
+                // TODO: Also need to check if return type signature is matching
                 found = true;
                 
                 // Start the comparison
@@ -298,8 +299,10 @@ export function getRequiredFunctions(
     typeTree: Tree<TypeExpression>
 )
 : FunctionDeclaration[] {
-    const allAncestors = findAllAncestorsOf(g, /*in*/ typeTree, typeEquals)
-        .filter((x) => x.kind === "GroupDeclaration") as GroupDeclaration[];
+    const allAncestors = 
+        (findAllAncestorsOf(g, /*in*/ typeTree, typeEquals)
+        .filter((x) => x.kind === "GroupDeclaration") as GroupDeclaration[])
+        .concat([g]);
     
     return fs
         .filter((x) => x.groupBinding !== undefined)
