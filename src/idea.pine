@@ -1,0 +1,16 @@
+// Expression type
+// Expression allows an expression to be evaluated later
+def (this Expression{Boolean}).or(that Expression{Boolean}) -> Boolean
+    if this.evaluate == #true
+        return #true
+    elif this.evaluate == #true
+        return #true
+    else
+        return #false
+
+// Functions related to Expression
+def (this Expression{T}).evaluate -> T
+    internal // internal means it is injected by the compiler
+
+def (this T).asExpression -> Expression{T}
+    internal

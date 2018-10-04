@@ -19,4 +19,7 @@
 - [x] implement builtin unit testing feature (a.k.a example-driven development)
 - [] write doc about EDD (example-driven development)
 - [] change keyword 'ensure' to 'require'
-- [] Implement type def
+- [] Implement type aliasing (so that the initial type tree is not needed)
+- [] (Crazy idea) allow user to define custom lexing rules (for example for parsing and validating IP Address)
+- [] Add support for Expression types (needed for short-circuit evaluation)
+- [] Add support for custom literal (for validating embedded code, for example SQL)
