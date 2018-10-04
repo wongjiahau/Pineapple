@@ -53,12 +53,12 @@ const _EnumDeclaration = (name, enums, location) => ({
     location
 })
 
-const _StructDeclaration = (name, members, genericList, nullable) => ({
+const _StructDeclaration = (name, members, genericList, location) => ({
     kind: "StructDeclaration",
     name,
     members,
     genericList,
-    nullable
+    location
 });
 
 const _MemberDefinition = (name, expectedType) => ({
@@ -339,16 +339,16 @@ ImportDeclaration
 
 StructDeclaration
     : DEF TypenameAtom NEWLINE INDENT MembernameTypeList DEDENT   
-        {$$=_StructDeclaration($2,$5,[])}
+        {$$=_StructDeclaration($2,$5,[],this._$)}
 
     | DEF TypenameAtom NEWLINE INDENT PASS NEWLINE DEDENT         
-        {$$=_StructDeclaration($2,[],[])}
+        {$$=_StructDeclaration($2,[],[],this._$)}
 
     | DEF TypenameAtom LeftCurlyBracket GenericList RightCurlyBracket NEWLINE INDENT MembernameTypeList DEDENT   
-        {$$=_StructDeclaration($2,$8,$4)}
+        {$$=_StructDeclaration($2,$8,$4,this._$)}
 
     | DEF TypenameAtom LeftCurlyBracket GenericList RightCurlyBracket NEWLINE INDENT PASS NEWLINE DEDENT 
-        {$$=_StructDeclaration($2,[],$4)}
+        {$$=_StructDeclaration($2,[],$4,this._$)}
     ;
 
 GenericList
