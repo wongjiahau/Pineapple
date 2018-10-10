@@ -14,3 +14,69 @@ def (this Expression{T}).evaluate -> T
 
 def (this T).asExpression -> Expression{T}
     internal
+
+def (this Any).type -> Type
+    internal
+
+def (this Type) == (that Type) -> Boolean
+    internal
+
+// How to deal with the following case
+def group TypeExpression
+
+def TypeExpression is Equatable
+
+def class StructDeclaration
+    :members  List{Member}
+    :generics Generic
+    :name     Token
+
+def StructDeclaration is TypeExpression
+
+def (this TypeExpression) == (that TypeExpression) -> Boolean
+    return this.type == that.type
+
+def (this StructDeclaration) == (that StructDeclaration) -> Boolean
+    return this:name == that:name 
+
+// lambda
+
+
+// Algebraic effects
+// Terms:
+//  - effect
+//  - handle 
+//  - signal (opposite of handle)
+//      - return are just specialized signal
+//  - resume
+//  - pattern matching
+
+def signal raise
+
+def signal return
+
+def (this Number) / (that Number) return Number raise Exception
+    if (y == 0) 
+        raise "divide by zero".raise
+    else 
+        return x.unsafeDivideBy(y)
+
+def handle raise 
+    handle this
+        if raise x then handler.invoke(x)
+
+def (this Number).zeroDiv(that Number) return Number
+    with catch handle (1 / 2)
+
+
+
+def effect async
+
+def (this Console).readline -> async String
+
+def async handler 
+    // bla bla bla
+
+def handle async
+    // bla bla bla
+
