@@ -59,11 +59,11 @@ class PineappleLexer(RegexLexer):
             (r'0[oO][0-7]+', Number.Oct),
             (r'0[xX][0-9a-fA-F]+', Number.Hex),
             (r'\b([.]([a-zA-Z][a-zA-Z0-9])*)', Number.Integer), # This is actually function name, but I just want to use the color of Number.Integer
-            (r'\.\.\.|=>', Punctuation),
-            (r'\+\+|--|~|&&|\?|:|\|\||\\(?=\n)|'
+            (r'\.\.\.|=>|->', Punctuation),
+            (r'\+\+|--|~|&&|\?|\|\||\\(?=\n)|'
              r'(<<|>>>?|==?|!=?|[-<>+*%&|^/])=?', Operator, 'slashstartsregex'),
             (r'[{(\[;,]', Punctuation, 'slashstartsregex'),
-            (r'[})\].]', Punctuation),
+            (r'[})\]]', Punctuation),
             (r'(for|in|while|do|break|return|continue|if|else|elif|mutable|ensure|'
              r'throw|try|catch|new|o)\b', Keyword, 'slashstartsregex'),
             (r'(def|async|let|function|import|pass|where|is)\b', Keyword.Declaration, 'slashstartsregex'),
@@ -71,7 +71,7 @@ class PineappleLexer(RegexLexer):
             (r'[#][a-zA-Z0-9]+\b', Keyword.Constant),
             (r'[0-9]+', Keyword.Constant), # Integer
             (r'(\.\d+|[0-9]+\.[0-9]*)([eE][-+]?[0-9]+)?', Keyword.Constant), # Float
-            (r'([A-Z][a-zA-Z0-9]*)\b', Name.Builtin),
+            (r'([:][a-zA-Z0-9]+)\b', Name.Builtin), # Data type
             (r'([a-z][a-zA-Z0-9]*)\b', Name.Other), # variable
             # (r'"(\\\\|\\"|[^"])*"', String.Double),
             # (r"'(\\\\|\\'|[^'])*'", String.Single),
