@@ -1,3 +1,9 @@
+def group :expression
+
+def (this :x).print -> :string
+    if :x is :expression
+
+
 def group Expression
 
 def (this T).print -> String

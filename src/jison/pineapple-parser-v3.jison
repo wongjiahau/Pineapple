@@ -1,6 +1,27 @@
-// This jison file is to prove that Pineapple function call can be done without parentheseses
-/* description: Parses and executes mathematical expressions. */
+/*
+
+Author: Wong Jia Hau
+License: Apache 2.0
+Description:
+
+    This file is to describe the grammar of Pineapple language.
+    It will be used by Jison to generate a parser.
+
+Abbreviations:
+
+    Decl    Declaration
+    Func    Function 
+    Expr    Expression
+    Stmt    Statement
+    Op      Operator
+    Sym     Symbol 
+    Lit     Literal
+    Var     Variable
+    Param   Parameter of Function 
+*/
+
 %{
+
 
 const _FuncDecl = (signature,returnType,parameters,statements,affix) => ({
     kind: "FunctionDeclaration",
@@ -84,8 +105,8 @@ const _NumberExpression = (repr,location) => ({kind:"Number", repr, location});
 "@DEDENT"        return 'DEDENT'
 "@EOF"           return 'EOF'
 
-// Custom operator literals that might overlap with built-in symbols
-[=.<>][-!$%^&*_+|~=`;<>.\/]+ return 'OPERATOR'
+// Custom OPSYM literals that might overlap with built-in symbols
+[=.<>][-!$%^&*_+|~=`;<>.\/]+ return 'OPSYM'
 
 // Built-in symbols
 "_"     return '_'
@@ -113,11 +134,11 @@ const _NumberExpression = (repr,location) => ({kind:"Number", repr, location});
 [:][a-z][a-zA-Z0-9]*            return 'TYPESYM'
 [a-z][a-zA-Z0-9]*               return 'VARSYM'
 ['][a-z][a-zA-Z0-9]*            return 'MEMBERNAME'
-[-!$%^&*_+|~=`;<>\/]+           return 'OPERATOR'
+[-!$%^&*_+|~=`;<>\/]+           return 'OPSYM'
 
 /lex
 
-/* operator associations and precedence */
+/* Operator associations and precedence */
 /* the last statement has the highest precedence */
 /* the first statement has the lower precedence */
 // Note: 
@@ -130,19 +151,6 @@ const _NumberExpression = (repr,location) => ({kind:"Number", repr, location});
 
 %% /* language grammar */
 
-/*
-Abbreviations:
-
-    Decl    Declaration
-    Func    Function 
-    Expr    Expression
-    Stmt    Statement
-    Op      Operator
-    Sym     Symbol 
-    Lit     Literal
-    Var     Variable
-    Param   Parameter of Function 
-*/
 
 EntryPoint
     : DeclList       EOF {return $1}
@@ -169,6 +177,7 @@ NulliFuncDecl
 
 MonoFuncDecl
     : DEF ParamDecl FuncSym ReturnDecl Block {$$=_FuncDecl([$3],$4,[$2],$5,"Nulli");}
+    | DEF OpSym ParamDecl ReturnDecl Block   {$$=_FuncDecl([$2],$4,[$3],$5,"Nulli");}
     ;
 
 ParamDecl
@@ -210,14 +219,14 @@ NulliFuncCall
     ;
 
 MonoFuncCall
-    : Expr FuncSym {$$=_FuncCall("Mono",[$2],[$1],this._$)}
-    | Expr OpAtom
-    | OpAtom AtomicExpr
+    : Expr FuncSym      {$$=_FuncCall("Mono",[$2],[$1],this._$)}
+    | Expr OpSym
+    | OpSym AtomicExpr  {$$=_FuncCall("Mono",[$1],[$2],this._$)}
     ;
 
 BiFuncCall
     : Expr FuncSym AtomicExpr
-    | Expr OpAtom  AtomicExpr
+    | Expr OpSym  AtomicExpr
     ;
 
 PolyFuncCall 
@@ -251,6 +260,10 @@ TypeSym
 
 VarSym
     : VARSYM {$$=_Token($1, this._$)}
+    ;
+
+OpSym
+    : OPSYM {$$=_Token($1, this._$)}
     ;
 
 EmbeddedJavascript

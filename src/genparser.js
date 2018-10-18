@@ -16,8 +16,8 @@ function run() {
     const jison = spawnSync( './node_modules/jison/lib/cli.js', 
         [ './jison/pineapple-parser-v3.jison', '--outfile', './jison/pineapple-parser-v3.js' ] );
 
-    console.log( `jison stderr: ${jison.stderr.toString()}` );
-    console.log( `jison stdout: ${jison.stdout.toString()}` );
+    console.log( `jison stderr:\n ${jison.stderr.toString()}` );
+    console.log( `jison stdout:\n ${jison.stdout.toString()}` );
 
     /*
     # The following line is a workaround
@@ -28,8 +28,8 @@ function run() {
     const sed = spawnSync('sed', 
         ['-i', '/Lexical/a loc: this.yylloc,', './jison/pineapple-parser-v3.js']);
 
-    console.log( `sed stderr: ${sed.stderr.toString()}` );
-    console.log( `sed stdout: ${sed.stdout.toString()}` );
+    console.log( `sed stderr:\n ${sed.stderr.toString()}` );
+    console.log( `sed stdout:\n ${sed.stdout.toString()}` );
 
 }
 

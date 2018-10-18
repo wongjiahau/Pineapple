@@ -33,15 +33,15 @@ In general, there are 5 kinds of functions:
 Nullifunc is a function that do not need any parameters, for example:
 ```pine
 // Here's how you define a nullifunc
-def ().pi -> Number
+def .pi -> :number
     return 3.142
  
 // Here's how you call a nullifunc
-let x = ().pi
+let x = .pi
 ```
 
 !!! info "Note"
-    `#!pine -> Number` means that the `#!pine ().pi` function will return a `#!pine Number` type.
+    `#!pine -> :number` means that the `#!pine ().pi` function will return a `#!pine Number` type.
 
 !!! tip
     If you want to declare a function that does not return anything, just don't put the arrow symbol. 
@@ -49,7 +49,7 @@ let x = ().pi
     For example,
 
     ```pine
-    def ().showMyName // no need to put -> here
+    def .showMyName // no need to put -> here
         pass
     ```
 <hr>
@@ -60,7 +60,7 @@ Monofunc is a function that takes only 1 parameter.
 Note that the parameter must be at front. For example:
 ```pine
 // here's how you declare a monofunc
-def (this Number).square -> Number
+def this:number.square -> :number
     return this * this
 
 // here's how you call a monofunc
@@ -82,11 +82,11 @@ For example:
 
 ```pine
 // here's how you define a bifunc
-def (this Number).plus(that Number) -> Number
+def this:number .plus that:number -> :number
     return this + that
 
 // here's how you call a bifunc
-let x = 99.plus(99).plus(22)
+let x = 99.plus 99.plus 22
 ```
 
 <hr>
@@ -97,11 +97,11 @@ So, you should separate them with an identifier.
 For example,
 ```pine
 // Here's how you define a trifunc
-def (this String).replace(old String with new String) -> String
+def this:string .replace old:string with new:string -> :string
     pass
 
 // Here's how you call a trifunc
-let x = "Hello world".replace("world" with "baby")
+let x = "Hello world".replace "world" with "baby"
 ```
 
 !!! info "Note"
