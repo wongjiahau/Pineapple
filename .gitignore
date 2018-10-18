@@ -9,5 +9,6 @@ site
 **/node_modules/**
 pineapple-parser.js
 pineapple-parser-v2.js
+pineapple-parser-v3.js
 src/src
 js

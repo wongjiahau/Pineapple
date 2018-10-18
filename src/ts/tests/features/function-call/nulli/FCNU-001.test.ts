@@ -9,8 +9,5 @@ def .main
     "Hello world".log
 `,
 
-expectedOutput:
-`
-Hello world
-`
+expectedOutput: `Hello world`
 });

@@ -36,6 +36,7 @@ const _UnresolvedType = (name, genericList, nullable) => ({
 const _JavascriptCode = (repr,location) => ({kind:"JavascriptCode",repr, location});
 const _Token = (repr, location) => ({repr, location});
 const _StringExpression = (repr,location) => ({kind:"String", repr, location});
+const _NumberExpression = (repr,location) => ({kind:"Number", repr, location});
 %}
 
 
@@ -103,7 +104,7 @@ const _StringExpression = (repr,location) => ({kind:"String", repr, location});
 // Literals
 ["].*?["]                                   return 'STRINGLIT'
 \<javascript\>(.|[\s\S])*?\<\/javascript\>  return 'JAVASCRIPT'
-\d+([.]\d+)?((e|E)[+-]?\d+)?                return 'NUMBER' 
+\d+([.]\d+)?((e|E)[+-]?\d+)?                return 'NUMBERLIT' 
 [#][a-zA-Z0-9]+                             return 'ENUM'
 
 // Identifiers
@@ -176,7 +177,7 @@ ParamDecl
 
 ReturnDecl
     : /* nothing , means no need to return anything*/ {$$=null;}
-    | Arrow TypeExpr
+    | Arrow TypeExpr {$$=$2}
     ;
 
 TypeExpr
@@ -258,4 +259,8 @@ EmbeddedJavascript
 
 StringLit
     : STRINGLIT {$$=_StringExpression($1, this._$)}
+    ;
+
+NumberLit
+    : NUMBERLIT {$$=_NumberExpression($1, this._$)}
     ;
