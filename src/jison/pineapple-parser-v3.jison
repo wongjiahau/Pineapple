@@ -170,6 +170,7 @@ FuncDecl
     : NulliFuncDecl 
     | MonoFuncDecl
     | BiFuncDecl
+    | PolyFuncDecl
     ;
 
 NulliFuncDecl
@@ -189,6 +190,23 @@ MonoFuncDecl
 BiFuncDecl
     : DEF ParamDecl FuncSym ParamDecl ReturnDecl Block {$$=_FuncDecl([$3],$5,[$2,$4],$6,"Bi")}
     | DEF ParamDecl OpSym   ParamDecl ReturnDecl Block {$$=_FuncDecl([$3],$5,[$2,$4],$6,"Bi")}
+    ;
+
+PolyFuncDecl
+    : DEF ParamDecl FuncSym ParamDecl PolyFuncDeclTail ReturnDecl Block {
+        $$=_FuncDecl([$3],$6,[$2,$4],$7,"Poly");
+        $$.signature  = $$.signature.concat($5[0]);
+        $$.parameters = $$.parameters.concat($5[1]);
+    }
+    ;
+
+PolyFuncDeclTail
+    : VarSym ParamDecl PolyFuncDeclTail {
+        $3[0].push($1);
+        $3[1].push($2);
+        $$=$3;
+    }
+    | VarSym ParamDecl {$$=[[$1],[$2]]}
     ;
 
 ParamDecl
@@ -241,12 +259,20 @@ BiFuncCall
     ;
 
 PolyFuncCall 
-    : Expr FuncSym AtomicExpr PolyFuncCallTail
+    : Expr FuncSym AtomicExpr PolyFuncCallTail {
+        $$=_FuncCall("Poly",[$2],[$1,$3],this._$);
+        $$.signature  = $$.signature.concat($4[0]);
+        $$.parameters = $$.parameters.concat($4[1]);
+    }
     ;
 
 PolyFuncCallTail
-    : VarSym AtomicExpr PolyFuncCallTail
-    | VarSym AtomicExpr
+    : VarSym AtomicExpr PolyFuncCallTail {
+        $3[0].push($1);
+        $3[1].push($2);
+        $$=$3;
+    }
+    | VarSym AtomicExpr {$$=[[$1],[$2]]}
     ;
 
 AtomicExpr 
