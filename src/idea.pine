@@ -80,3 +80,12 @@ def async handler
 def handle async
     // bla bla bla
 
+
+// metaprogramming
+this.sum.toString.log
+
+def this:T.log -> :T
+    if :T is :expression
+
+def this:functionExpression.log -> :functionExpression
+    

@@ -4,6 +4,7 @@ const vm = require("vm");
 
 export function executeCode(
     javascriptCode: string, 
+    interceptor: Interceptor,
     options: InterpreterOptions, 
     ir?: IntermediateRepresentation
 ): string {
@@ -17,7 +18,7 @@ export function executeCode(
 
     // This step is necessary because `require` is not defined, so we need to pass in the context
     // Refer https://nodejs.org/api/vm.html#vm_example_running_an_http_server_within_a_vm
-    code += `((require) => { const $$examples$$ = []; /*this is need to store tests*/ const $$GROUP$$={};
+    code += `((require,$$interceptor$$) => { const $$examples$$ = []; /*this is need to store tests*/ const $$GROUP$$={};
         ${javascriptCode}
 
         function $$typeof$$(x) {
@@ -77,4 +78,9 @@ export function executeCode(
     })`;
 
     return vm.runInThisContext(code)(require);
+}
+
+export interface Interceptor {
+    log(x: any): void;
+    done(): void;
 }
