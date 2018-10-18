@@ -22,7 +22,9 @@ export function labelLineNumbers(
         line = line.trimRight() + "\n";
         if (pointingWhichLine - startLine - 1 === i) {
             line = chalk.bgRed("    ERROR >>" + line);
-            line += marginLeft + numbering("") + chalk.redBright(underline(location.first_column, location.last_column)) + "\n";
+            line += marginLeft
+                + numbering("")
+                + chalk.redBright(underline(location.first_column, location.last_column)) + "\n";
         } else {
             line = marginLeft + line;
         }
@@ -31,6 +33,7 @@ export function labelLineNumbers(
     return result;
 }
 
+// tslint:disable-next-line:variable-name
 export function underline(first_column: number, last_column: number, marker = "^"): string {
     let result = "";
     for (let i = 0; i < last_column; i++) {
@@ -44,7 +47,7 @@ export function underline(first_column: number, last_column: number, marker = "^
 }
 
 export function justifyLeft(input: string, numberOfSpaces: number): string {
-    if(numberOfSpaces < input.length) {
+    if (numberOfSpaces < input.length) {
         throw new Error("Input length should be more than or equal number of spaces.");
     }
     let result = input;

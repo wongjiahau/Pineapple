@@ -6,10 +6,10 @@ declare var it: any;
 
 // @ts-ignore
 import { mocha } from "mocha";
-import { interpret, SourceCode, ErrorStackTrace, isErrorDetail, InterpreterOptions } from "../interpret";
 import { renderError } from "../errorType/renderError";
+import { InterceptorForTesting, InterceptorThatDoNothing } from "../executeCode";
+import { ErrorStackTrace, interpret, InterpreterOptions, isErrorDetail, SourceCode } from "../interpret";
 import { isOK } from "../maybeMonad";
-import { executeCode, InterceptorThatDoNothing, InterceptorForTesting } from "../executeCode";
 const jsdiff = require("diff");
 
 export function assertEquals(actual: string, expected: string, logDiff: boolean) {
@@ -25,7 +25,7 @@ export function assertEquals(actual: string, expected: string, logDiff: boolean)
 
             return (part.value[color]);
         }).join("");
-        if(logDiff) {
+        if (logDiff) {
             console.log(result);
         }
         throw new Error("Failed");
@@ -44,8 +44,8 @@ export function catchError(f: () => void): Error {
 }
 
 export function  testRuntimeError(
-    description:string,
-    input: string, 
+    description: string,
+    input: string,
     expectedStackTrace: ErrorStackTrace
 ): any {
     const source: SourceCode = {
@@ -59,22 +59,22 @@ export function  testRuntimeError(
                 loadPreludeLibrary: false,
                 run: "Program",
                 optimize: false
-            }
+            };
             const result = interpret(source, options, new InterceptorThatDoNothing());
-            if(isOK(result)) {
+            if (isOK(result)) {
                 throw new Error("No error is caught.");
             } else {
                 // console.log(result.error);
                 expect(result.error).to.deep.eq(expectedStackTrace);
             }
         });
-        
+
     });
 }
 
 export function testError(
-    expectedErrorName: string, 
-    input: string, 
+    expectedErrorName: string,
+    input: string,
     expectedMessage: string | undefined = undefined,
     logError = false
 ) {
@@ -89,7 +89,7 @@ export function testError(
                 loadPreludeLibrary: false,
                 generateSourceMap: false,
                 run: "Program"
-            }
+            };
             const result = interpret(source, options, new InterceptorThatDoNothing());
             if (isOK(result)) {
                 throw new Error("No error is caught");
@@ -101,9 +101,9 @@ export function testError(
                 expect(error).to.not.equal(null);
                 if (error !== null) {
                     expect(error.name).to.eq(expectedErrorName);
-                    if(isErrorDetail(error)) {
+                    if (isErrorDetail(error)) {
                         expect(error.relatedLocation).to.not.eq(undefined);
-                        if(expectedMessage) {
+                        if (expectedMessage) {
                             expect(error.message).to.eq(expectedMessage);
                         }
                     } else {
@@ -118,7 +118,7 @@ export function testError(
 export interface TestExecuteParam {
     description: string;
     input: string;
-    expectedOutput: string
+    expectedOutput: string;
 }
 export function testExecute(x: TestExecuteParam) {
     describe("", () => {
@@ -139,12 +139,12 @@ def this:any.log
                 loadPreludeLibrary: false,
                 generateSourceMap: false,
                 run: "Program"
-            }
-            const result = interpret(source, options, 
+            };
+            const result = interpret(source, options,
                 new InterceptorForTesting((actualOutput) => {
                     assertEquals(actualOutput, x.expectedOutput, true);
-            })); 
-            if(result.kind === "Fail") {
+            }));
+            if (result.kind === "Fail") {
                 throw new Error(renderError(result.error));
             }
         });

@@ -29,7 +29,6 @@ export interface GroupBindingDeclaration {
     parentType: TypeExpression;
 }
 
-
 export interface GroupDeclaration {
     kind: "GroupDeclaration";
     name: AtomicToken;
@@ -368,7 +367,7 @@ export function newStringExpression(repr: string, location: TokenLocation): Stri
     return {
         kind: "String",
         repr: repr,
-        returnType: newBuiltinType("String"),
+        returnType: newBuiltinType(":string"),
         location: location
     };
 }

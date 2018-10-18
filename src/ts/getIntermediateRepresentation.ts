@@ -1,9 +1,9 @@
 import { SyntaxTree } from "./ast";
 import { ErrorDetail } from "./errorType/ErrorDetail";
 import { fillUpTypeInformation, SymbolTable } from "./fillUpTypeInformation";
-import { initTypeTree } from "./typeTree";
-import { Maybe, ok } from "./maybeMonad";
 import { InterpreterOptions } from "./interpret";
+import { Maybe, ok } from "./maybeMonad";
+import { initTypeTree } from "./typeTree";
 
 export function getIntermediateRepresentation(
     ast: SyntaxTree,

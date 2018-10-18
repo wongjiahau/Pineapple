@@ -1,7 +1,7 @@
 import {ErrorInvalidIndentation} from "./errorType/E0029-InvalidIndentation";
 import { ErrorDetail } from "./errorType/ErrorDetail";
-import {fail, isFail, Maybe, ok} from "./maybeMonad";
 import { SourceCode } from "./interpret";
+import {fail, isFail, Maybe, ok} from "./maybeMonad";
 
 export function labelIndentation(input: string, sourceCode: SourceCode)
 : Maybe<string, ErrorDetail> {

@@ -1,13 +1,17 @@
-import { ImportDeclaration, StringExpression, SyntaxTree, FunctionDeclaration, TokenLocation, Declaration } from "./ast";
+import { Declaration, ImportDeclaration, StringExpression, SyntaxTree, TokenLocation } from "./ast";
 import { ErrorImportFail } from "./errorType/E0030-ImportFail";
 import { ErrorDetail } from "./errorType/ErrorDetail";
+import { removeHiddenToken } from "./errorType/renderError";
+import { executeCode, Interceptor } from "./executeCode";
+import {
+    getIntermediateRepresentation,
+    initialIntermediateForm,
+    IntermediateRepresentation
+} from "./getIntermediateRepresentation";
 import { fail, isFail, isOK, Maybe, ok } from "./maybeMonad";
-import { getIntermediateRepresentation, initialIntermediateForm, IntermediateRepresentation } from "./getIntermediateRepresentation";
 import { parseCodeToSyntaxTree } from "./parseCodeToSyntaxTree";
 import { transpile } from "./transpile";
 import { endsWith, startsWith } from "./util";
-import { removeHiddenToken } from "./errorType/renderError";
-import { executeCode, Interceptor } from "./executeCode";
 
 const fs       = require("fs");
 const path     = require("path");
@@ -17,12 +21,11 @@ interface SyntaxTreeCache {[filename: string]: SyntaxTree; }
 
 export type ErrorHandler = (e: Error) => void;
 
-export type ErrorStackTrace = {
+export interface ErrorStackTrace {
     name: "ErrorStackTrace";
     errorType: string ; // "Ensurance Failed" | "Not Implemented Error" | "OtherError";
     stack: ErrorTrace[];
 }
-
 
 export interface ErrorTrace extends TokenLocation {
     callingFile: string;
@@ -70,25 +73,25 @@ export function interpret(
     const result = loadSource(sortedSyntaxTrees, options);
     if (isOK(result)) {
         const ir = result.value; // ir means intermediate representation
-        let declarations = getDeclarations(ir) as Declaration[];
+        const declarations = getDeclarations(ir) as Declaration[];
         const transpiledCode = transpile(declarations, options);
         // console.log(transpiledCode);
-        const output = executeCode(transpiledCode, interceptor,options, ir);
+        const output = executeCode(transpiledCode, interceptor, options, ir);
 
-        if(output === undefined) { // This will happen when the VM is waiting input
+        if (output === undefined) { // This will happen when the VM is waiting input
             return ok("");
         }
 
-        if(!output.stack) { // if output is ok
-            //TODO: This current implementation cannot handle error stack trace when the main function 
+        if (!output.stack) { // if output is ok
+            // TODO: This current implementation cannot handle error stack trace when the main function
             // involve async functions such as readline
             return ok(output);
         } else {
             const rawErrorTrace = output.stack.split("\n") as string[];
             return fail(extractErrorStackTrace(
                 output.name,
-                rawErrorTrace, 
-                updatedCache, 
+                rawErrorTrace,
+                updatedCache,
                 transpiledCode
             ));
         }
@@ -99,22 +102,22 @@ export function interpret(
 
 function extractErrorStackTrace(
     type: string,
-    rawErrorTrace: string[], 
+    rawErrorTrace: string[],
     updatedCache: SyntaxTreeCache,
     transpiledCode: string
     ): ErrorStackTrace {
     const errorTrace: ErrorTrace[] = [];
 
     // start from 2, because 0 to 1 is the error message
-    for(let i = 2; i < rawErrorTrace.length; i++) {
+    for (let i = 2; i < rawErrorTrace.length; i++) {
         const trace = rawErrorTrace[i].trim().split(" ");
         const lineNumber = parseInt(trace[2].split(":")[1]);
         const x = JSON.parse(transpiledCode.split("\n")[lineNumber - 2].split("##")[1]);
-        const lineContent = removeHiddenToken( 
+        const lineContent = removeHiddenToken(
             updatedCache[x.callingFile].source.content.split("\n")[x.first_line - 1]
         );
         const nextTrace = rawErrorTrace[i + 1].trim().split(" ")[1];
-        if(nextTrace == "$$test$$") {
+        if (nextTrace === "$$test$$") {
             break;
         }
         errorTrace.push({
@@ -122,7 +125,7 @@ function extractErrorStackTrace(
             lineContent: lineContent,
             insideWhichFunction: "." + trace[1].split("_")[1].split("$").join(" ")
         });
-        if(trace[1] === "_main_") {
+        if (trace[1] === "_main_") {
             break;
         }
     }
@@ -245,8 +248,8 @@ function loadSource(syntaxTrees: SyntaxTree[], options: InterpreterOptions)
     return ok(ir);
 }
 
-function getDeclarations(ir: IntermediateRepresentation): Declaration[]{
-    return ir.syntaxTrees.map(x => x.declarations).reduce((x, y) => (x.concat(y)));
+function getDeclarations(ir: IntermediateRepresentation): Declaration[] {
+    return ir.syntaxTrees.map((x) => x.declarations).reduce((x, y) => (x.concat(y)));
 }
 
 type Dependencies = string[][]; // Example: [["a.pine", "b.pine"]] means "a.pine" depends on "b.pine"

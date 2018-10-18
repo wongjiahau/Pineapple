@@ -1,8 +1,15 @@
-import { renderError, extractFolderName } from "./errorType/renderError";
-import { interpret, loadFile, isErrorStackTrace, isErrorDetail, ErrorStackTrace, InterpreterOptions } from "./interpret";
-import { isFail } from "./maybeMonad";
-import { executeCode, InterceptorThatDoNothing } from "./executeCode";
+import { extractFolderName, renderError } from "./errorType/renderError";
+import { InterceptorThatDoNothing } from "./executeCode";
+import {
+    ErrorStackTrace,
+    interpret,
+    InterpreterOptions,
+    isErrorDetail,
+    isErrorStackTrace,
+    loadFile
+} from "./interpret";
 import { justifyLeft, underline } from "./labelLineNumbers";
+import { isFail } from "./maybeMonad";
 
 const fs = require("fs");
 const VERSION = require("../package.json").version;
@@ -13,7 +20,7 @@ const options: InterpreterOptions = {
     run: "Program",
     optimize: false,
     generateSourceMap: true
-}
+};
 
 program
     .version(VERSION)
@@ -25,7 +32,7 @@ if (program.log) {
     console.log("Logging");
 }
 
-if(program.runExamples) {
+if (program.runExamples) {
     options.run = "RunExample";
     console.log("Validating examples . . .");
 }
@@ -33,8 +40,6 @@ if(program.runExamples) {
 if (program.args.length === 0) {
     console.log(`Pineapple ${VERSION}`);
 }
-
-
 
 program.args.forEach((arg: string) => {
     if (fs.existsSync(arg)) {
@@ -45,9 +50,9 @@ program.args.forEach((arg: string) => {
         const result = interpret(file, options, new InterceptorThatDoNothing());
         if (isFail(result)) {
             const error = result.error;
-            if(isErrorStackTrace(error)) {
+            if (isErrorStackTrace(error)) {
                 console.log(renderErrorStackTrace(error));
-            } else if(isErrorDetail) {
+            } else if (isErrorDetail) {
                 console.log(renderError(error));
             }
         }
@@ -62,7 +67,7 @@ export function renderErrorStackTrace(e: ErrorStackTrace): string {
     const boxen = require("boxen");
     let result = chalk.bold(e.errorType + ":\n\n");
     const numberOfSpaces = 4;
-    const numbering = (content: string, arrow = false) => 
+    const numbering = (content: string, arrow = false) =>
         `     ${arrow ? "> " : "  "}| ${justifyLeft(content, numberOfSpaces)} | `;
     const mainScriptPath = extractFolderName(e.stack[e.stack.length - 1].callingFile);
     for (let i = 0; i < e.stack.length; i++) {
@@ -70,10 +75,11 @@ export function renderErrorStackTrace(e: ErrorStackTrace): string {
         const location = ` [${chalk.yellow(path.relative(mainScriptPath, s.callingFile))}:${s.first_line}:${s.first_column}]`;
         result += `  at  ${chalk.cyan(s.insideWhichFunction)} ${chalk.grey(location)}\n\n`;
         result += `${numbering((s.first_line).toString(), true)}${s.lineContent}\n`;
-        result += numbering("") + chalk.red(underline(s.first_column, s.last_column, "~"))
-        if(i < e.stack.length - 1)
+        result += numbering("") + chalk.red(underline(s.first_column, s.last_column, "~"));
+        if (i < e.stack.length - 1) {
             result  += "\n\n\n\n";
-        
+        }
+
     }
     return boxen(result, {padding: 1, borderColor: "grey", margin: 1});
 }

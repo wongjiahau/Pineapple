@@ -3,6 +3,7 @@ import {
     BranchStatement,
     BuiltinType,
     BuiltinTypename,
+    Declaration,
     EmptyList,
     EmptyTable,
     EnumDeclaration,
@@ -11,6 +12,8 @@ import {
     FunctionCall,
     FunctionDeclaration,
     GenericList,
+    GroupBindingDeclaration,
+    GroupDeclaration,
     KeyValue,
     ListExpression,
     MemberDefinition,
@@ -28,10 +31,7 @@ import {
     TypeExpression,
     UnresolvedType,
     Variable,
-    VariableDeclaration,
-    GroupDeclaration,
-    Declaration,
-    GroupBindingDeclaration
+    VariableDeclaration
 } from "./ast";
 
 import {ErrorAccessingInexistentMember} from "./errorType/E0001-AccessingInexistentMember";
@@ -60,16 +60,18 @@ import {ErrorListElementsArentHomogeneous} from "./errorType/E0024-ListElementsA
 import {ErrorUsingUndefinedGenericName} from "./errorType/E0025-UsingUndefinedGenericName";
 import {ErrorInterpolatedExpressionIsNotString } from "./errorType/E0026-InperolatedExpressionIsNotString";
 import {ErrorMissingClosingBracket } from "./errorType/E0027-MissingClosingBracket";
-import {stringifyTypeReadable} from "./errorType/errorUtil";
+import { ErrorUnimplementedFunction } from "./errorType/E0031-UnimplementedFunction";
 import {ErrorDetail } from "./errorType/ErrorDetail";
-import {SourceCode, InterpreterOptions } from "./interpret";
+import {stringifyTypeReadable} from "./errorType/errorUtil";
+import {SourceCode } from "./interpret";
+import { fail, isFail, isOK, Maybe, ok } from "./maybeMonad";
 import {parseCode } from "./parseCodeToSyntaxTree";
-import {getFullFunctionName, getPartialFunctionName, getName} from "./transpile";
+import {getFullFunctionName, getPartialFunctionName} from "./transpile";
 import {
     BaseStructType,
     childOf,
-    Comparer,
     EnumType,
+    findAllAncestorsOf,
     findElement,
     insertChild,
     newBuiltinType,
@@ -77,21 +79,14 @@ import {
     newStructType,
     newTupleType,
     Tree,
-    VoidType,
-    logTree,
-    findAllAncestorsOf
+    VoidType
 } from "./typeTree";
 import {copy, find} from "./util";
-import { Maybe, isOK, isFail, ok, fail } from "./maybeMonad";
-import { ErrorUnimplementedFunction } from "./errorType/E0031-UnimplementedFunction";
-
 
 let CURRENT_SOURCE_CODE: () => SourceCode;
 export function fillUpTypeInformation(
     syntaxTree: SyntaxTree,
-    symbols: SymbolTable,
-    options: InterpreterOptions
-): Maybe<[SyntaxTree, SymbolTable], ErrorDetail> {
+    symbols: SymbolTable): Maybe<[SyntaxTree, SymbolTable], ErrorDetail> {
     CURRENT_SOURCE_CODE = () => syntaxTree.source;
     // Complete the function and struct table This step is to allow programmer to
     // define function anywhere without needing to adhere to strict top-down or
@@ -99,14 +94,13 @@ export function fillUpTypeInformation(
 
     const decls = syntaxTree.declarations
         // Shift all GroupBindingDeclaration to the front
-        .sort((x, y) =>  x.kind === "GroupBindingDeclaration" ? -1 : y.kind === "GroupBindingDeclaration" ? 1 : 0) 
+        .sort((x, y) =>  x.kind === "GroupBindingDeclaration" ? -1 : y.kind === "GroupBindingDeclaration" ? 1 : 0)
 
         // Shift all StructDeclaration to the front
         .sort((x, y) =>  x.kind === "StructDeclaration" ? -1 : y.kind === "StructDeclaration" ? 1 : 0)
 
         // Shift all GroupDeclaration to the front
-        .sort((x, y) =>  x.kind === "GroupDeclaration" ? -1 : y.kind === "GroupDeclaration" ? 1 : 0) 
-
+        .sort((x, y) =>  x.kind === "GroupDeclaration" ? -1 : y.kind === "GroupDeclaration" ? 1 : 0);
 
         // Refer https://stackoverflow.com/questions/23921683/javascript-move-an-item-of-an-array-to-the-front
 
@@ -115,14 +109,12 @@ export function fillUpTypeInformation(
         switch (d.kind) {
             case "FunctionDeclaration": {
                 const result = fillUpFunctionDeclarationTypeInfo(d, symbols);
-                if(isOK(result)) [decls[i], symbols] = result.value;
-                else return result;
+                if (isOK(result)) { [decls[i], symbols] = result.value; } else { return result; }
 
                 const result1 = resolveGroupBinding(d, symbols);
-                if(isOK(result1)) [decls[i], symbols] = result.value;
-                else return result1;
+                if (isOK(result1)) { [decls[i], symbols] = result.value; } else { return result1; }
 
-                if(d.typeConstraint) {
+                if (d.typeConstraint) {
                     throw new Error("Cannot handle yet");
                 }
                 break;
@@ -167,8 +159,7 @@ export function fillUpTypeInformation(
                 break;
             case "ExampleDeclaration":
                 const result4 = fillUpStatementsTypeInfo(d.statements, symbols, {});
-                if(isFail(result4)) return result4;
-                else [d.statements, symbols] = result4.value;
+                if (isFail(result4)) { return result4; } else { [d.statements, symbols] = result4.value; }
                 break;
             case "ImportDeclaration":
                 break;
@@ -182,18 +173,16 @@ export function fillUpTypeInformation(
             }
             case "GroupBindingDeclaration": {
                 const childType = resolveType(d.childType, symbols);
-                if(isOK(childType)) d.childType = childType.value;
-                else return childType;
+                if (isOK(childType)) { d.childType = childType.value; } else { return childType; }
 
                 const parentType = resolveType(d.parentType, symbols);
-                if(isOK(parentType)) d.parentType = parentType.value;
-                else return parentType;
+                if (isOK(parentType)) { d.parentType = parentType.value; } else { return parentType; }
 
                 symbols.typeTree = insertChild(d.childType, d.parentType, symbols.typeTree, typeEquals);
                 break;
             }
-            default: 
-                throw new Error(`Cannot handle ${d.kind} yet or ${d} yet`)
+            default:
+                throw new Error(`Cannot handle ${d.kind} yet or ${d} yet`);
         }
     }
 
@@ -221,45 +210,43 @@ export function fillUpTypeInformation(
     const gd = decls.filter((x) => x.kind === "GroupDeclaration") as GroupDeclaration[];
     for (let i = 0; i < gd.length; i++) {
         const result = fillUpGroupDeclarationTypeInfo(gd[i], decls, symbols);
-        if(isOK(result)) [gd[i], symbols] = result.value;
-        else return result;
+        if (isOK(result)) { [gd[i], symbols] = result.value; } else { return result; }
     }
 
     return ok([syntaxTree, symbols] as [SyntaxTree, SymbolTable]);
 }
 
 export function fillUpGroupDeclarationTypeInfo(
-    g: GroupDeclaration, 
+    g: GroupDeclaration,
     decls: Declaration[],
     symbols: SymbolTable
-) : Maybe<[GroupDeclaration, SymbolTable], ErrorDetail> {
+): Maybe<[GroupDeclaration, SymbolTable], ErrorDetail> {
 
     g.bindingFunctions = [];
 
-    const groupBindingDecls = decls.filter((x) => x.kind === "GroupBindingDeclaration") as GroupBindingDeclaration[]
+    const groupBindingDecls = decls.filter((x) => x.kind === "GroupBindingDeclaration") as GroupBindingDeclaration[];
     const bindingTypes = getBindingTypes(groupBindingDecls, g);
 
     const functionDecls = decls.filter((x) => x.kind === "FunctionDeclaration") as FunctionDeclaration[];
-      
+
     const requiredFunctions = getRequiredFunctions(functionDecls, g, symbols.typeTree);
 
-    if(requiredFunctions.length === 0) {
+    if (requiredFunctions.length === 0) {
         // Then, no need to checking
         return ok([g, symbols] as [GroupDeclaration, SymbolTable]);
     }
-    
-    
+
     const allFunctions = decls.filter((x) => x.kind === "FunctionDeclaration") as FunctionDeclaration[];
     for (let i = 0; i < bindingTypes.length; i++) {
         const relatedFunctions = allFunctions
             .filter((x) => x.parameters.length > 0)
             .filter((x) => typeEquals(x.parameters[0].typeExpected, bindingTypes[i]))
             .sort(byFunctionName);
-        
-        if(relatedFunctions.length === 0) {
-            return fail(ErrorUnimplementedFunction(requiredFunctions[0], bindingTypes[i], g))
+
+        if (relatedFunctions.length === 0) {
+            return fail(ErrorUnimplementedFunction(requiredFunctions[0], bindingTypes[i], g));
         }
-        
+
         // Search for the first relatedFunctions that matches the first requiredFunctions
         // So that the comparison can be done
         // Since both of them are sorted previously
@@ -268,12 +255,13 @@ export function fillUpGroupDeclarationTypeInfo(
             if (getPartialFunctionName(relatedFunctions[j]) === getPartialFunctionName(requiredFunctions[0])) {
                 // TODO: Also need to check if return type signature is matching
                 found = true;
-                
+
                 // Start the comparison
                 for (let k = 0; k < requiredFunctions.length && relatedFunctions.length; k++) {
                     // TODO: Generic pattern matching checking
-                    if(getPartialFunctionName(relatedFunctions[k + j]) !== getPartialFunctionName(requiredFunctions[k])) {
-                        return fail(ErrorUnimplementedFunction(requiredFunctions[k], bindingTypes[i], g))
+                    if (getPartialFunctionName(relatedFunctions[k + j])
+                        !== getPartialFunctionName(requiredFunctions[k])) {
+                        return fail(ErrorUnimplementedFunction(requiredFunctions[k], bindingTypes[i], g));
                     } else {
                         g.bindingFunctions.push(relatedFunctions[k + j]);
                     }
@@ -281,11 +269,11 @@ export function fillUpGroupDeclarationTypeInfo(
                 break;
             }
         }
-        if(!found) {
+        if (!found) {
             return fail(ErrorUnimplementedFunction(requiredFunctions[0], bindingTypes[i], g));
-        } 
+        }
     }
-    
+
     return ok([g, symbols] as [GroupDeclaration, SymbolTable]);
 
 }
@@ -294,23 +282,24 @@ function /*sort*/ byFunctionName(x: FunctionDeclaration, y: FunctionDeclaration)
 }
 
 export function getRequiredFunctions(
-    fs: FunctionDeclaration[], 
+    fs: FunctionDeclaration[],
     g: GroupDeclaration,
     typeTree: Tree<TypeExpression>
 )
 : FunctionDeclaration[] {
-    const allAncestors = 
+    const allAncestors =
         (findAllAncestorsOf(g, /*in*/ typeTree, typeEquals)
         .filter((x) => x.kind === "GroupDeclaration") as GroupDeclaration[])
         .concat([g]);
-    
+
     return fs
         .filter((x) => x.groupBinding !== undefined)
         .filter((x) => {
-            if(x.groupBinding) {
-                return allAncestors.some(y => stringifyTypeReadable(x.groupBinding.typeBinded) === y.name.repr);
+            if (x.groupBinding) {
+                return allAncestors.some((y) => stringifyTypeReadable(x.groupBinding.typeBinded) === y.name.repr);
             } else {
-                throw new Error("Impossible"); // this line is needed because TypeScript cannot handle such cases properly T.T
+                throw new Error("Impossible");
+                // this line is needed because TypeScript cannot handle such cases properly T.T
             }
         })
         .sort(byFunctionName);
@@ -323,7 +312,7 @@ export function getBindingTypes(originalGbs: GroupBindingDeclaration[], parentGr
 
     for (let i = 0; i < gbs.length; i++) {
         const type = gbs[i].childType;
-        if(type.kind === "GroupDeclaration") {
+        if (type.kind === "GroupDeclaration") {
             // recursively look for binding child
             result = result.concat(getBindingTypes(originalGbs, type));
         } else {
@@ -336,24 +325,24 @@ export function getBindingTypes(originalGbs: GroupBindingDeclaration[], parentGr
 
 export function resolveGroupBinding(d: FunctionDeclaration, symbols: SymbolTable)
 : Maybe<[FunctionDeclaration, SymbolTable], ErrorDetail> {
-    if(!d.groupBinding) {
+    if (!d.groupBinding) {
         return ok([d, symbols] as [FunctionDeclaration, SymbolTable]);
     } else {
         const g = d.groupBinding;
         const resolveResult = resolveType(d.groupBinding.typeBinded, symbols);
-        if(isFail(resolveResult)) {
+        if (isFail(resolveResult)) {
             return resolveResult;
         } else {
             g.typeBinded = resolveResult.value;
             for (let i = 0; i < d.parameters.length; i++) {
                 const x = d.parameters[i];
                 const t = x.typeExpected;
-                if(t.kind === "GenericTypename") {
-                    if(g.genericList.some((y) => y.repr === t.name.repr)) {
+                if (t.kind === "GenericTypename") {
+                    if (g.genericList.some((y) => y.repr === t.name.repr)) {
                         x.typeExpected = g.typeBinded;
                     } else {
                         return fail(ErrorYetToBeDefined("Using undeclared generic name", t.location));
-                    };
+                    }
                 } else {
                     // do nothing
                 }
@@ -377,7 +366,7 @@ export function fillUpFunctionDeclarationTypeInfo(d: FunctionDeclaration, symbol
     if (result2.kind === "OK") { d.returnType = result2.value; } else { return result2; }
 
     const insertResult = newFunctionTable(d, symbols.funcTab);
-    if(isOK(insertResult)) symbols.funcTab = insertResult.value; else return insertResult;
+    if (isOK(insertResult)) { symbols.funcTab = insertResult.value; } else { return insertResult; }
 
     return ok([d, symbols] as [FunctionDeclaration, SymbolTable]);
 }
@@ -611,7 +600,7 @@ export function newFunctionTable(newFunc: FunctionDeclaration, previousFuncTab: 
         previousFuncTab[key] = [];
     }
     if (previousFuncTab[key].some((x) => functionEqual(x, newFunc))) {
-        return fail(ErrorYetToBeDefined("Function duplicated", newFunc.signature[0].location))
+        return fail(ErrorYetToBeDefined("Function duplicated", newFunc.signature[0].location));
     } else {
         previousFuncTab[key].push(newFunc);
     }
@@ -626,8 +615,8 @@ export function verifyFunctionDeclaration(f: FunctionDeclaration, symbols: Symbo
 
     for (let i = 0; i < returnStatements.length; i++) {
         const r = returnStatements[i];
-        if(f.returnType !== null) {
-            if(!isSubtypeOf(r.expression.returnType, f.returnType, symbols.typeTree)) {
+        if (f.returnType !== null) {
+            if (!isSubtypeOf(r.expression.returnType, f.returnType, symbols.typeTree)) {
                 return fail(ErrorUnmatchingReturnType(r, f.returnType));
             }
         }
@@ -686,7 +675,6 @@ function updateVariableTable(vtab: VariableTable, variable: Variable)
     vtab[variable.repr] = variable;
     return ok(vtab);
 }
-
 
 export function fillUpStatementsTypeInfo(statements: Statement[], symbols: SymbolTable, vartab: VariableTable)
 : Maybe<[Statement[], SymbolTable], ErrorDetail> {
@@ -790,20 +778,20 @@ export function fillUpStatementsTypeInfo(statements: Statement[], symbols: Symbo
         case "EnsureStatement":
             s.callingFile = CURRENT_SOURCE_CODE().filename;
             const resultAS = fillUpExpressionTypeInfo(s.expression, symbols, vartab);
-            if(isOK(resultAS)) { [s.expression, symbols] = resultAS.value} else { return resultAS; }
+            if (isOK(resultAS)) { [s.expression, symbols] = resultAS.value; } else { return resultAS; }
             break;
         case "ExampleStatement":
             s.originFile = CURRENT_SOURCE_CODE().filename;
             const resultLeft = fillUpExpressionTypeInfo(s.left, symbols, vartab);
-            if(isOK(resultLeft)) [s.left , symbols] = resultLeft.value; else return resultLeft;
+            if (isOK(resultLeft)) { [s.left , symbols] = resultLeft.value; } else { return resultLeft; }
             const resultRight = fillUpExpressionTypeInfo(s.right, symbols, vartab);
-            if(isOK(resultRight)) [s.right , symbols] = resultRight.value; else return resultRight;
-            if(!typeEquals(s.left.returnType, s.right.returnType)) {
+            if (isOK(resultRight)) { [s.right , symbols] = resultRight.value; } else { return resultRight; }
+            if (!typeEquals(s.left.returnType, s.right.returnType)) {
                 return fail(ErrorYetToBeDefined("Return type of left and right should be equal", s.location));
             }
             break;
-        default: 
-            throw new Error(`Cannot handle ${s.kind} yet`)
+        default:
+            throw new Error(`Cannot handle ${s.kind} yet`);
     }}
     return ok([statements, symbols] as [Statement[], SymbolTable]);
 }
@@ -1258,8 +1246,8 @@ export function getMatchingFunction(f: FunctionCall, functab: FunctionTable, typ
     if (key in functab) {
         const matchingFunctions = functab[key].filter((x) => x.parameters.length === f.parameters.length);
         const result = getClosestFunction(f, matchingFunctions, typetree);
-        if (result.kind === "Fail") { 
-            return result; 
+        if (result.kind === "Fail") {
+            return result;
         } else {
             const closestFunction = result.value;
             // This step is necessary to fix parent type E.g., changing (Number -> Number)
@@ -1267,9 +1255,9 @@ export function getMatchingFunction(f: FunctionCall, functab: FunctionTable, typ
             for (let j = 0; j < f.parameters.length; j++) {
                 f.parameters[j].returnType = closestFunction.parameters[j].typeExpected;
             }
-    
+
             f.returnType = closestFunction.returnType;
-    
+
             if (closestFunction.isAsync) {
                 f.isAsync = true;
             }
@@ -1310,11 +1298,11 @@ export function getClosestFunction(
     } > = [];
     const relatedFuncs: FunctionDeclaration[] = [];
     for (let i = 0; i < matchingFunctions.length; i++) {
-        const currentFunc : FunctionDeclaration & {originalFunction?: FunctionDeclaration} 
+        const currentFunc: FunctionDeclaration & {originalFunction?: FunctionDeclaration}
             = copy(matchingFunctions[i]);
         const matchingParams = f.parameters;
         if (containsGeneric(currentFunc.parameters)) {
-            
+
             // this line is needed, because we dont need to transpile substituted generic function
             currentFunc.originalFunction = matchingFunctions[i];
             const genericsBinding = extractGenericBinding(currentFunc.parameters, f.parameters);
@@ -1345,10 +1333,10 @@ export function getClosestFunction(
             relatedFuncs.map((x) => x.parameters[farthestMatchingParamPosition].typeExpected)
         ));
     } else {
-        if(closestFunction.originalFunction !== undefined) { // means that the closestFunction is a generic function
+        if (closestFunction.originalFunction !== undefined) { // means that the closestFunction is a generic function
             const result = closestFunction.originalFunction;
             result.returnType = closestFunction.returnType; // this line is needed to pass FCBIO-007
-            return ok(result)
+            return ok(result);
         } else {
             return ok(closestFunction);
         }

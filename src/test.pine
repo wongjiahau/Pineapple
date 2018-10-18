@@ -1,2 +1,2 @@
-def ().main
-    "Hello world".show
+def .main
+    "Hello world".log
