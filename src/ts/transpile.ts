@@ -227,9 +227,10 @@ export function generateSourceMap(x: ErrorTrace): string {
 export function getFullFunctionName(f: FunctionCall | FunctionDeclaration): string {
     const typeSignature = (function() {
         if(f.kind === "FunctionCall") {
-            return f.parameters.map((x) => stringifyType(x.returnType)).join("_");
+            // Note: .slice(1) is needed to remove the leading colon symbol
+            return f.parameters.map((x) => stringifyType(x.returnType).slice(1)).join("_");
         } else {
-            return f.parameters.map((x) => stringifyType(x.typeExpected)).join("_");
+            return f.parameters.map((x) => stringifyType(x.typeExpected).slice(1)).join("_");
         }
     })();
     return "_" + getPartialFunctionName(f) + "_" + typeSignature;

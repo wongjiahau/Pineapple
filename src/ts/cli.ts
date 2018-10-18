@@ -1,7 +1,7 @@
 import { renderError, extractFolderName } from "./errorType/renderError";
 import { interpret, loadFile, isErrorStackTrace, isErrorDetail, ErrorStackTrace, InterpreterOptions } from "./interpret";
 import { isFail } from "./maybeMonad";
-import { executeCode } from "./executeCode";
+import { executeCode, InterceptorThatDoNothing } from "./executeCode";
 import { justifyLeft, underline } from "./labelLineNumbers";
 
 const fs = require("fs");
@@ -42,7 +42,7 @@ program.args.forEach((arg: string) => {
         if (file === null) {
             throw new Error(`Cannot open file ${arg}`);
         }
-        const result = interpret(file, executeCode, options);
+        const result = interpret(file, options, new InterceptorThatDoNothing());
         if (isFail(result)) {
             const error = result.error;
             if(isErrorStackTrace(error)) {

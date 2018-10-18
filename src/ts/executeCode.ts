@@ -20,6 +20,8 @@ export function executeCode(
     // Refer https://nodejs.org/api/vm.html#vm_example_running_an_http_server_within_a_vm
     code += `((require,$$interceptor$$) => { const $$examples$$ = []; /*this is need to store tests*/ const $$GROUP$$={};
         ${javascriptCode}
+        _main_(); // Call the main function
+        $$interceptor$$.done();
 
         function $$typeof$$(x) {
             switch(typeof x) {
@@ -77,10 +79,36 @@ export function executeCode(
         }
     })`;
 
-    return vm.runInThisContext(code)(require);
+    return vm.runInThisContext(code)(require, interceptor);
 }
 
 export interface Interceptor {
     log(x: any): void;
     done(): void;
+}
+
+export class InterceptorForTesting implements Interceptor {
+    private output: string = "";
+    private whenDone: (collectedOutput: string) => void;
+    public constructor(whenDone: (collectedOutput: string) => void) {
+        this.whenDone = whenDone;
+    }
+
+    log(x: any): void {
+        this.output += x.toString();
+    }    
+    
+    done(): void {
+        this.whenDone(this.output);
+    }
+}
+
+export class InterceptorThatDoNothing implements Interceptor {
+    log(x: any): void {
+        console.log(x.toString());
+    }    
+    
+    done(): void {
+        // do nothing        
+    }
 }

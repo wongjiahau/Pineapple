@@ -1,4 +1,4 @@
-import { ImportDeclaration, StringExpression, SyntaxTree, FunctionDeclaration, TokenLocation, Declaration, TestStatement } from "./ast";
+import { ImportDeclaration, StringExpression, SyntaxTree, FunctionDeclaration, TokenLocation, Declaration } from "./ast";
 import { ErrorImportFail } from "./errorType/E0030-ImportFail";
 import { ErrorDetail } from "./errorType/ErrorDetail";
 import { fail, isFail, isOK, Maybe, ok } from "./maybeMonad";
@@ -7,18 +7,13 @@ import { parseCodeToSyntaxTree } from "./parseCodeToSyntaxTree";
 import { transpile } from "./transpile";
 import { endsWith, startsWith } from "./util";
 import { removeHiddenToken } from "./errorType/renderError";
+import { executeCode, Interceptor } from "./executeCode";
 
 const fs       = require("fs");
 const path     = require("path");
 const toposort = require("toposort");
 
 interface SyntaxTreeCache {[filename: string]: SyntaxTree; }
-
-type CodeExecuter = (
-    code: string, 
-    options: InterpreterOptions,
-    ir?: IntermediateRepresentation
-) => any;
 
 export type ErrorHandler = (e: Error) => void;
 
@@ -52,8 +47,8 @@ export interface InterpreterOptions {
 
 export function interpret(
     source: SourceCode,
-    execute: CodeExecuter,
-    options: InterpreterOptions
+    options: InterpreterOptions,
+    interceptor: Interceptor
 ): Maybe<string, ErrorDetail | ErrorStackTrace> {
     if (options.loadPreludeLibrary) {
         source.content = source.content + `\nimport "$pine/prelude/*"`;
@@ -63,7 +58,7 @@ export function interpret(
     if (isFail(parsedCode)) { return parsedCode; }
     const ast = parsedCode.value;
 
-    // console.log(JSON.stringify(ast.declarations,null,2));
+    // console.log(JSON.stringify(ast.declarations,null,2)); // Uncomment this line to see full syntax tree
 
     initialCache[source.filename] = ast;
     const extractResult = extractImports(ast, initialCache);
@@ -77,7 +72,7 @@ export function interpret(
         const ir = result.value; // ir means intermediate representation
         let declarations = getDeclarations(ir) as Declaration[];
         const transpiledCode = transpile(declarations, options);
-        const output = execute(transpiledCode, options, ir);
+        const output = executeCode(transpiledCode, interceptor,options, ir);
 
         if(output === undefined) { // This will happen when the VM is waiting input
             return ok("");

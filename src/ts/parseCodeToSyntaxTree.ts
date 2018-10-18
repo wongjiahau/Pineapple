@@ -36,7 +36,7 @@ export function parseCode(
     preprocessedSourceCode: SourceCode,
     originalSourceCode?: SourceCode
 ): Maybe<Declaration[] | Expression, ErrorDetail> {
-    const parser     = require("../jison/pineapple-parser-v2");
+    const parser     = require("../jison/pineapple-parser-v3");
     try {
         return ok(parser.parse(preprocessedSourceCode.content));
     } catch (error) {

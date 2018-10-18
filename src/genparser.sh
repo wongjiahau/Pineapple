@@ -3,12 +3,12 @@
 
 echo "Generating parser using jison . . ."
 cd "./jison"
-../node_modules/jison/lib/cli.js pineapple-parser-v2.jison
+../node_modules/jison/lib/cli.js pineapple-parser-v3.jison
 
 # The following line is a workaround
 # This is to allow lexical error to have location details
 # This line can be removed once the pull request is accepted
 # Refer https://github.com/zaach/jison-lex/pull/24
-sed -i '/Lexical/a loc: this.yylloc,' pineapple-parser-v2.js 
+sed -i '/Lexical/a loc: this.yylloc,' pineapple-parser-v3.js 
 
 cd ..

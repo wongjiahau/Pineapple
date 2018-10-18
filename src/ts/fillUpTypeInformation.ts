@@ -174,7 +174,7 @@ export function fillUpTypeInformation(
                 break;
             case "GroupDeclaration": {
                 // Insert the group type into type tree
-                symbols.typeTree = insertChild(d, /*as child of*/ newBuiltinType("Any"), symbols.typeTree, typeEquals);
+                symbols.typeTree = insertChild(d, /*as child of*/ newBuiltinType(":any"), symbols.typeTree, typeEquals);
 
                 // Extra handling is done at the last stage of analysis
                 // So that any other problem is resolved first
@@ -193,7 +193,7 @@ export function fillUpTypeInformation(
                 break;
             }
             default: 
-                throw new Error(`Cannot handle ${d.kind} yet`)
+                throw new Error(`Cannot handle ${d.kind} yet or ${d} yet`)
         }
     }
 
@@ -836,7 +836,7 @@ export function fillUpForStmtTypeInfo(f: ForStatement, symbols: SymbolTable, var
     const result = fillUpExpressionTypeInfo(f.expression, symbols, vartab);
     if (result.kind === "OK") { [f.expression, symbols] = result.value; } else { return result; }
     const exprType = f.expression.returnType;
-    if (exprType.kind === "BuiltinType" && exprType.name === "List") {
+    if (exprType.kind === "BuiltinType" && exprType.name === ":list") {
         if (exprType.genericList !== null) {
             if (exprType.genericList.length > 1) {
                 throw new Error();
@@ -908,13 +908,13 @@ export function fillUpExpressionTypeInfo(e: Expression, symbols: SymbolTable, va
             break;
         case "Number":
             if (e.repr.indexOf(".") >= 0) {
-                e = fillUpSimpleTypeInfo(e, "Number");
+                e = fillUpSimpleTypeInfo(e, ":number");
             } else {
-                e = fillUpSimpleTypeInfo(e, "Integer");
+                e = fillUpSimpleTypeInfo(e, ":integer");
             }
             break;
         case "String":
-            e = fillUpSimpleTypeInfo(e, "String") as StringExpression;
+            e = fillUpSimpleTypeInfo(e, ":string") as StringExpression;
             const resultStr = resolveExpressionInterpolation(e, symbols, vartab);
             if (isOK(resultStr)) { [e, symbols] = resultStr.value; } else { return resultStr; }
             break;
@@ -941,9 +941,9 @@ export function fillUpExpressionTypeInfo(e: Expression, symbols: SymbolTable, va
                     if (e.keyValueList.length > 0) {
                         throw new Error("List type shouldn't have key value");
                     }
-                    if (e.constructor.name === "List") {
+                    if (e.constructor.name === ":list") {
                         e = EmptyList(e.location, e.constructor);
-                    } else if (e.constructor.name === "Table") {
+                    } else if (e.constructor.name === ":table") {
                         e = EmptyTable(e.location, e.constructor);
                     } else {
                         throw new Error(`Cannot handle ${e.constructor.name} yet`);
@@ -952,7 +952,7 @@ export function fillUpExpressionTypeInfo(e: Expression, symbols: SymbolTable, va
                     throw new Error(`${stringifyTypeReadable(e.constructor)} is neither struct nor builtin.`);
                 }
             } else {
-                e.returnType = newBuiltinType("Table");
+                e.returnType = newBuiltinType(":table");
             }
             break;
         case "ObjectAccess":
@@ -990,7 +990,7 @@ export function resolveExpressionInterpolation(
 
     const result: StringInterpolationExpression = {
         kind: "StringInterpolationExpression",
-        returnType: newBuiltinType("String"),
+        returnType: newBuiltinType(":string"),
         location: s.location,
         expressions: []
     };
@@ -1073,7 +1073,7 @@ function pad(s: string, topPad: number, leftPad: number): string {
 }
 
 export function isStringType(r: TypeExpression): boolean {
-    return r.kind === "BuiltinType" && r.name === "String";
+    return r.kind === "BuiltinType" && r.name === ":string";
 }
 
 export function extractGenericList(t: TypeExpression): GenericList {

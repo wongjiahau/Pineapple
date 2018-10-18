@@ -159,15 +159,15 @@ export function logTree<T>(tree: Tree<T>, stringifier: (x: T) => string, level =
 }
 
 export function initTypeTree(): Tree<TypeExpression> {
-    const anyType       = newBuiltinType("Any");
+    const anyType       = newBuiltinType(":any");
     const enumType      = EnumType();
     const structType    = BaseStructType();
-    const tableType     = newBuiltinType("Table");
+    const tableType     = newBuiltinType(":table");
     const listType      = newListType(newGenericTypename("T"));
-    const numberType    = newBuiltinType("Number");
-    const integerType   = newBuiltinType("Integer");
-    const stringType    = newBuiltinType("String");
-    const dateType      = newBuiltinType("Date");
+    const numberType    = newBuiltinType(":number");
+    const integerType   = newBuiltinType(":integer");
+    const stringType    = newBuiltinType(":string");
+    const dateType      = newBuiltinType(":date");
     const inserts = (x: TypeExpression, parent: TypeExpression) => {
         return insertChild(x, /* as child of */parent, /*in*/ tree, typeEquals);
     };
@@ -184,21 +184,21 @@ export function initTypeTree(): Tree<TypeExpression> {
 }
 
 export function BaseStructType(): TypeExpression {
-    return newBuiltinType("Struct");
+    return newBuiltinType(":struct");
 }
 
 export function EnumType(): TypeExpression {
-    return newBuiltinType("Enum");
+    return newBuiltinType(":enum");
 }
 
 export function AnyType(): TypeExpression {
-    return newBuiltinType("Any");
+    return newBuiltinType(":any");
 }
 
 export function newListType(of: TypeExpression): TypeExpression {
     return {
         kind: "BuiltinType",
-        name: "List",
+        name: ":list",
         genericList: [of],
         nullable: false,
         location: NullTokenLocation()
@@ -208,7 +208,7 @@ export function newListType(of: TypeExpression): TypeExpression {
 export function newTupleType(of: TypeExpression[]): TypeExpression {
     return {
         kind: "BuiltinType",
-        name: "Tuple",
+        name: ":tuple",
         genericList: of,
         nullable: false,
         location: NullTokenLocation()

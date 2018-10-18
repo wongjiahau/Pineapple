@@ -184,16 +184,16 @@ export interface BuiltinType {
     location: TokenLocation;
 }
 export type BuiltinTypename
-    = "Any"
-    | "Number"
-    | "Integer"
-    | "String"
-    | "Date"
-    | "List"
-    | "Table"
-    | "Struct"
-    | "Tuple"
-    | "Enum"
+    = ":any"
+    | ":number"
+    | ":integer"
+    | ":string"
+    | ":date"
+    | ":list"
+    | ":table"
+    | ":struct"
+    | ":tuple"
+    | ":enum"
     ;
 
 export interface StructType {

@@ -9,7 +9,7 @@ import { mocha } from "mocha";
 import { interpret, SourceCode, ErrorStackTrace, isErrorDetail, InterpreterOptions } from "../interpret";
 import { renderError } from "../errorType/renderError";
 import { isOK } from "../maybeMonad";
-import { executeCode } from "../executeCode";
+import { executeCode, InterceptorThatDoNothing, InterceptorForTesting } from "../executeCode";
 const jsdiff = require("diff");
 
 export function assertEquals(actual: string, expected: string, logDiff: boolean) {
@@ -60,7 +60,7 @@ export function  testRuntimeError(
                 run: "Program",
                 optimize: false
             }
-            const result = interpret(source, executeCode, options);
+            const result = interpret(source, options, new InterceptorThatDoNothing());
             if(isOK(result)) {
                 throw new Error("No error is caught.");
             } else {
@@ -90,7 +90,7 @@ export function testError(
                 generateSourceMap: false,
                 run: "Program"
             }
-            const result = interpret(source, (x) => x, options);
+            const result = interpret(source, options, new InterceptorThatDoNothing());
             if (isOK(result)) {
                 throw new Error("No error is caught");
             } else {
@@ -115,11 +115,23 @@ export function testError(
     });
 }
 
-export function testTranspile(description: string, input: string, expectedOutput: string) {
+export interface TestExecuteParam {
+    description: string;
+    input: string;
+    expectedOutput: string
+}
+export function testExecute(x: TestExecuteParam) {
     describe("", () => {
-        it(description, () => {
+        it(x.description, () => {
+            x.input = `
+def this:any.log
+    <javascript>
+    $$interceptor$$.log($this); // Refer executeCode.ts
+    </javascript>
+            ` + x.input;
+
             const source: SourceCode = {
-                content: input,
+                content: x.input,
                 filename: "<UNIT_TEST>"
             };
             const options: InterpreterOptions = {
@@ -128,13 +140,12 @@ export function testTranspile(description: string, input: string, expectedOutput
                 generateSourceMap: false,
                 run: "Program"
             }
-            const result = interpret(source, (x) => x, options); 
-            if (result.kind === "OK") {
-                // console.log(result.value.trim());
-                assertEquals(result.value.trim(), expectedOutput.trim(), true);
-            } else {
-                console.log(result.error);
-                throw new Error("Caught error " + renderError(result.error));
+            const result = interpret(source, options, 
+                new InterceptorForTesting((actualOutput) => {
+                    assertEquals(actualOutput, x.expectedOutput, true);
+            })); 
+            if(result.kind === "Fail") {
+                throw new Error(renderError(result.error));
             }
         });
     });
