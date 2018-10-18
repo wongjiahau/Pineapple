@@ -41,7 +41,7 @@ npm install
 ## 2. Generate the parser
 
 ```
-./genparser.sh
+./genparser.js
 ```
 
 ## 3. Run the typescript transipler 
