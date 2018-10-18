@@ -169,6 +169,7 @@ Decl
 FuncDecl
     : NulliFuncDecl 
     | MonoFuncDecl
+    | BiFuncDecl
     ;
 
 NulliFuncDecl
@@ -177,12 +178,17 @@ NulliFuncDecl
 
 MonoFuncDecl
     : DEF ParamDecl FuncSym ReturnDecl Block {$$=_FuncDecl([$3],$4,[$2],$5,"Nulli");}
-    
+
     /*Unary-prefix-operator*/ 
     | DEF ParamDecl OpSym ReturnDecl Block   {$$=_FuncDecl([$3],$4,[$2],$5,"Nulli");} 
 
     /*Unary-postfix-operator*/
     | DEF OpSym ParamDecl ReturnDecl Block   {$$=_FuncDecl([$2],$4,[$3],$5,"Nulli");}
+    ;
+
+BiFuncDecl
+    : DEF ParamDecl FuncSym ParamDecl ReturnDecl Block {$$=_FuncDecl([$3],$5,[$2,$4],$6,"Bi")}
+    | DEF ParamDecl OpSym   ParamDecl ReturnDecl Block {$$=_FuncDecl([$3],$5,[$2,$4],$6,"Bi")}
     ;
 
 ParamDecl
@@ -230,8 +236,8 @@ MonoFuncCall
     ;
 
 BiFuncCall
-    : Expr FuncSym AtomicExpr
-    | Expr OpSym  AtomicExpr
+    : Expr FuncSym AtomicExpr {$$=_FuncCall("Bi",[$2],[$1,$3],this._$)}
+    | Expr OpSym   AtomicExpr {$$=_FuncCall("Bi",[$2],[$1,$3],this._$)}
     ;
 
 PolyFuncCall 

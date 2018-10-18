@@ -10,9 +10,9 @@ def this:number.add that:number -> :number
     </javascript>
 
 def .main
-    1.add 2.log
+    1.add 2.add 3.log
 
 `,
-expectedOutput: "3"
+expectedOutput: "6"
 }
 )
