@@ -177,6 +177,11 @@ NulliFuncDecl
 
 MonoFuncDecl
     : DEF ParamDecl FuncSym ReturnDecl Block {$$=_FuncDecl([$3],$4,[$2],$5,"Nulli");}
+    
+    /*Unary-prefix-operator*/ 
+    | DEF ParamDecl OpSym ReturnDecl Block   {$$=_FuncDecl([$3],$4,[$2],$5,"Nulli");} 
+
+    /*Unary-postfix-operator*/
     | DEF OpSym ParamDecl ReturnDecl Block   {$$=_FuncDecl([$2],$4,[$3],$5,"Nulli");}
     ;
 
@@ -220,7 +225,7 @@ NulliFuncCall
 
 MonoFuncCall
     : Expr FuncSym      {$$=_FuncCall("Mono",[$2],[$1],this._$)}
-    | Expr OpSym
+    | Expr OpSym        {$$=_FuncCall("Mono",[$2],[$1],this._$)}
     | OpSym AtomicExpr  {$$=_FuncCall("Mono",[$1],[$2],this._$)}
     ;
 
