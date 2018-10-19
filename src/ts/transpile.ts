@@ -334,9 +334,9 @@ export function tpEnumExpression(e: EnumExpression): string {
         return `null`;
     }
     if (["Boolean", "Nil", "Undefined"].indexOf(e.returnType.name.repr) > -1) {
-        return `${e.value.repr.slice(1)}`;
+        return `${e.repr.repr.slice(1)}`;
     }
-    return `{$kind: "_Enum${e.returnType.name.repr}", $value: "${e.value.repr.slice(1)}"}`;
+    return `{$kind: "_Enum${e.returnType.name.repr}", $value: "${e.repr.repr.slice(1)}"}`;
 
 }
 

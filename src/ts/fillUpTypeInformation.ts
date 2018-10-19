@@ -969,7 +969,7 @@ export function fillUpExpressionTypeInfo(e: Expression, symbols: SymbolTable, va
 export function resolveExpressionInterpolation(
     s: StringExpression,
     symbols: SymbolTable,
-    vartab: VariableTable
+    vartab: VariableTablerepr
 ): Maybe<[StringInterpolationExpression | StringExpression, SymbolTable], ErrorDetail> {
     const str = s.repr;
     if (str.indexOf("$(") < 0) {

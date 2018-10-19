@@ -13,6 +13,8 @@ import { isOK } from "../maybeMonad";
 const jsdiff = require("diff");
 
 export function assertEquals(actual: string, expected: string, logDiff: boolean) {
+    console.log("Expected: " + expected);
+    console.log("Actual: " + actual);
     if (actual.trim() !== expected.trim()) {
         // const diff = jsdiff.diffLines(actual, expected);
         const diff = jsdiff.diffChars(actual, expected);
@@ -121,14 +123,19 @@ export interface TestExecuteParam {
     expectedOutput: string;
 }
 export function testExecute(x: TestExecuteParam) {
-    describe("", () => {
-        it(x.description, () => {
-            x.input = `
+    const boilerplateCode = `
 def this:any.log
     <javascript>
     $$interceptor$$.log($this); // Refer executeCode.ts
     </javascript>
-            ` + x.input;
+
+def enum :boolean
+    #true
+    #false
+`;
+    describe("", () => {
+        it(x.description, () => {
+            x.input = boilerplateCode + x.input;
 
             const source: SourceCode = {
                 content: x.input,

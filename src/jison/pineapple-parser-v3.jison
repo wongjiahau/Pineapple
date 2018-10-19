@@ -22,6 +22,12 @@ Abbreviations:
 
 %{
 
+const _EnumDecl = (name, enums, location) => ({
+    kind: "EnumDeclaration",
+    name,
+    enums,
+    location
+})
 
 const _FuncDecl = (signature,returnType,parameters,statements,affix) => ({
     kind: "FunctionDeclaration",
@@ -31,6 +37,8 @@ const _FuncDecl = (signature,returnType,parameters,statements,affix) => ({
     statements, 
     affix,
 });
+
+const _ReturnStatement = (expression,location) => ({ kind: "ReturnStatement", expression, location});
 
 const _VariableDeclaration = (variable, typeExpected, isMutable=false) => ({
     kind: "VariableDeclaration",
@@ -58,6 +66,7 @@ const _JavascriptCode = (repr,location) => ({kind:"JavascriptCode",repr, locatio
 const _Token = (repr, location) => ({repr, location});
 const _StringExpression = (repr,location) => ({kind:"String", repr, location});
 const _NumberExpression = (repr,location) => ({kind:"Number", repr, location});
+const _EnumExpression = (repr,location) => ({ kind: "EnumExpression", repr, location });
 %}
 
 
@@ -91,6 +100,7 @@ const _NumberExpression = (repr,location) => ({kind:"Number", repr, location});
 "is"        return 'IS'
 "where"     return 'WHERE'
 "group"     return 'GROUP'
+"enum"      return 'ENUM'
 
 // Inivisible token
 "@NEWLINE"       %{
@@ -126,7 +136,7 @@ const _NumberExpression = (repr,location) => ({kind:"Number", repr, location});
 ["].*?["]                                   return 'STRINGLIT'
 \<javascript\>(.|[\s\S])*?\<\/javascript\>  return 'JAVASCRIPT'
 \d+([.]\d+)?((e|E)[+-]?\d+)?                return 'NUMBERLIT' 
-[#][a-zA-Z0-9]+                             return 'ENUM'
+[#][a-zA-Z0-9]+                             return 'ENUMLIT'
 
 // Identifiers
 [.]([a-z][a-zA-Z0-9]*)?         return 'FUNCSYM'    
@@ -164,6 +174,16 @@ DeclList
 
 Decl
     : FuncDecl
+    | EnumDecl
+    ;
+
+EnumDecl
+    : DEF ENUM TypeSym NEWLINE INDENT Enums DEDENT {$$=_EnumDecl($3,$6,$3.location)}
+    ;
+
+Enums
+    : EnumLit NEWLINE Enums {$$=[$1].concat($3)}
+    | EnumLit NEWLINE       {$$=[$1]}
     ;
 
 FuncDecl
@@ -234,6 +254,11 @@ Stmts
 
 Stmt 
     : FuncCall NEWLINE {$$=$1;}
+    | ReturnStmt
+    ;
+
+ReturnStmt
+    : RETURN Expr NEWLINE {$$=_ReturnStatement($2,this._$)}
     ;
 
 FuncCall
@@ -296,7 +321,7 @@ TypeSym
     ;
 
 VarSym
-    : VARSYM {$$=_Token($1, this._$)}
+    : VARSYM {$$=_Token($1, this._$); $$.kind="Variable";}
     ;
 
 OpSym
@@ -313,4 +338,8 @@ StringLit
 
 NumberLit
     : NUMBERLIT {$$=_NumberExpression($1, this._$)}
+    ;
+
+EnumLit
+    : ENUMLIT {$$=_EnumExpression($1, this._$)}
     ;

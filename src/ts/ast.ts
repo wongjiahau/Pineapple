@@ -214,7 +214,7 @@ export interface EnumDeclaration {
 
 export interface EnumExpression {
     kind: "EnumExpression";
-    value: AtomicToken;
+    repr: AtomicToken;
     returnType: EnumDeclaration;
     location: TokenLocation;
 }
