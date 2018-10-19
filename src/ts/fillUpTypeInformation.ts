@@ -1255,7 +1255,6 @@ export function getMatchingFunction(f: FunctionCall, functab: FunctionTable, typ
             for (let j = 0; j < f.parameters.length; j++) {
                 f.parameters[j].returnType = closestFunction.parameters[j].typeExpected;
             }
-
             f.returnType = closestFunction.returnType;
 
             if (closestFunction.isAsync) {

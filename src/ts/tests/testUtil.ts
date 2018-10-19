@@ -13,8 +13,7 @@ import { isOK } from "../maybeMonad";
 const jsdiff = require("diff");
 
 export function assertEquals(actual: string, expected: string, logDiff: boolean) {
-    console.log("Expected: " + expected);
-    console.log("Actual: " + actual);
+    const message = (`Expected: ${expected}, but Actual is: ${actual}`);
     if (actual.trim() !== expected.trim()) {
         // const diff = jsdiff.diffLines(actual, expected);
         const diff = jsdiff.diffChars(actual, expected);
@@ -30,7 +29,7 @@ export function assertEquals(actual: string, expected: string, logDiff: boolean)
         if (logDiff) {
             console.log(result);
         }
-        throw new Error("Failed");
+        throw new Error("Failed: " + message);
     }
 }
 
