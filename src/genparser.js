@@ -13,11 +13,11 @@ function run() {
 
     // Generate the parser file using jison
     console.log("Generating parser using jison . . .");
-    const jison = spawnSync( './node_modules/jison/lib/cli.js', 
-        [ './jison/pineapple-parser-v3.jison', '--outfile', './jison/pineapple-parser-v3.js' ] );
-
-    console.log( `jison stderr:\n ${jison.stderr.toString()}` );
-    console.log( `jison stdout:\n ${jison.stdout.toString()}` );
+    
+    const jison = spawnSync( 'node', // Need to call using node as shebang don't work in Windows, refer https://stackoverflow.com/questions/43419893/how-do-i-fix-error-spawn-unknown-with-node-js-v7-8-0-on-windows-10
+        ['./node_modules/jison/lib/cli.js', './jison/pineapple-parser-v3.jison', '--outfile', './jison/pineapple-parser-v3.js' ]);
+    
+    logProcess(jison);
 
     /*
     # The following line is a workaround
@@ -28,9 +28,22 @@ function run() {
     const sed = spawnSync('sed', 
         ['-i', '/Lexical/a loc: this.yylloc,', './jison/pineapple-parser-v3.js']);
 
-    console.log( `sed stderr:\n ${sed.stderr.toString()}` );
-    console.log( `sed stdout:\n ${sed.stdout.toString()}` );
+    logProcess(sed);
 
+}
+
+function logProcess(process) {
+    console.log("Command: " + process.args.join(" "));
+    if(process.error) {
+        console.log(process.error);
+    }
+    if(process.stderr) {
+        console.log("Error: " + process.stderr.toString());
+    }
+    if(process.stdout) {
+        console.log("OK: " + process.stdout.toString());
+    }
+    console.log("\n");
 }
 
 // Run once first before waiting file changes
