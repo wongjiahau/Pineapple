@@ -11,8 +11,7 @@ In general, there are 5 kinds of functions:
 |Nullifunc|Function that don't take any parameters.|
 |Monofunc|Function that only 1 parameters.|
 |Bifunc|Function that only 2 parameters.|
-|Trifunc|Function that only 3 parameters.|
-|Polyfunc|Function that 4 or more parameters.|
+|Polyfunc|Function that 3 or more parameters.|
 
 !!! info "Note"
 
@@ -31,6 +30,7 @@ In general, there are 5 kinds of functions:
 <hr>
 ## Nullifunc (0 parameter)
 Nullifunc is a function that do not need any parameters, for example:
+
 ```pine
 // Here's how you define a nullifunc
 def .pi -> :number
@@ -90,31 +90,32 @@ let x = 99.plus 99.plus 22
 ```
 
 <hr>
-## Trifunc (3 parameters)
-Trifunc is a function that takes 3 parameters.
+## Polyfunc (3 or more parameters)
+Polyfunc is a function that takes 3 or more parameters.
 As mentioned before, you cannot separate parameters with comma.  
 So, you should separate them with an identifier.  
 For example,
+
 ```pine
-// Here's how you define a trifunc
+// Here's how you define a polyfunc
 def this:string .replace old:string with new:string -> :string
     pass
 
-// Here's how you call a trifunc
+// Here's how you call a polyfunc
 let x = "Hello world".replace "world" with "baby"
 ```
 
 !!! info "Note"
     `#!pine with` is not a keyword, it is a *sub function identifier*, it means that you can use any word you like as long as it is a single alphabetical word without spaces!  
 
-Just to make it clear, let see another Trifunc example:
+Just to make it clear, let see another polyfunc example:
 ```pine
-// Defining a trifunc
-def (this Socket).send(message String to portNumber Integer)
+// Defining a polyfunc
+def this:socket.send message:string to portNumber:integer
     pass
 
 // Here's how you use it
-mySocket.send("Hello world" to 8080)
+mySocket.send "Hello world" to 8080
 ```
 In this case, `to` is the *sub function identifier*.  
 
@@ -139,17 +140,18 @@ In this case, `to` is the *sub function identifier*.
     - Secondly, when others read your code, they can understand faster
 
 <hr>
-## Polyfunc (4 or more parameters)
-Polyfunc is a function that takes 4 or more parameters.  
-It is similar as Trifunc, but it needs 2 or more *sub function identifiers*.  
+
+You could also have an infinite amount of parameters.
+
 For example,
+
 ```pine
 // Here's how you define a Polyfunc with 4 parameters
-def (this String).replace(startIndex Integer to endIndex Integer with new String) -> String
+def this:string .replace startIndex:integer to endIndex:integer with new:string -> :string
     pass
 
 // Here's how you call it
-let x = "Hello world".replace(0 to 4 with "Hi")
+let x = "Hello world".replace 0 to 4 with "Hi"
 ```
 <hr>
 
@@ -158,6 +160,7 @@ let x = "Hello world".replace(0 to 4 with "Hi")
     In such case, defining functions like this would be dreadful.  
     So, you should pack those parameters into a single structure.  
     For example,
+
     ```pine
     def RequestParam
         :url    String
@@ -179,9 +182,6 @@ let x = "Hello world".replace(0 to 4 with "Hi")
     myServer.send(param)
     ```
 
-!!! warning
-    Polyfunc is not implemented yet.
-
 <hr>
 
 ## Function chaining
@@ -192,9 +192,9 @@ So, instead of using many variables, for example,
 
 ```pine
 // Using many variables to store intermediate results
-def (this Point).distanceTo(that Point) -> Number
-    let xDistance = this:x- that:x
-    let yDistance = this:y - that:y
+def this:point .distanceTo that:point -> :number
+    let xDistance = this'x- that'x
+    let yDistance = this'y - that'y
     let xDistanceSquared = xDistance.square
     let yDistanceSquared = yDistance.square
     let sum = xDistanceSquared + yDistanceSquared
@@ -205,25 +205,30 @@ You can use ==function chaining==, as the following,
 
 ```pine
 // Using function chaining
-def (this Point).distanceTo(that Point) -> Number
-    return ((this:x - that:x).square + (this:y - that:y).square).squareRoot
+def this:point .distanceTo that:point -> :number
+    return this'x - that'x .square + (this'y - that'y .square).squareRoot
 ```
+
+!!! tips 
+    There is no predefined precedence in Pineapple, so every function is evaluated from left to right!
+
+    
 
 ### Multiple line function chaining
 
 If you think you cannot fit all the functions you want to call in a single line, you can also use multiple line function chaining, for example,
 
 ```pine
-def Color
-    :red    Number
-    :green  Number
-    :blue   Number
+def thing :color
+    'red    :number
+    'green  :number
+    'blue   :number
 
 // multiple line function chaining
-def (this Color) == (that Color) -> Boolean
-    return  (this:red   == that:red)
-        .and(this:green == that:green)
-        .and(this:blue  == that:blue)
+def this:color == that:color -> :boolean
+    return    this:red   == that:red
+        .and (this:green == that:green)
+        .and (this:blue  == that:blue)
 ```
 
 !!! info "Warning"
@@ -231,29 +236,32 @@ def (this Color) == (that Color) -> Boolean
 
     ```pine
     // Error
-    def (this Color) == (that Color) -> Boolean
-        return  (this:red   == that:red)
-        .and(this:green == that:green) // Should have one indentation here
-        .and(this:blue  == that:blue)
+    def this:color == that:color -> :boolean
+        return  (this'red   == that'red)
+        .and(this'green == that'green) // Should have one indentation here
+        .and(this'blue  == that'blue)
 
     // Error
-    def (this Color) == (that Color) -> Boolean
-        return  (this:red   == that:red)
-                .and(this:green == that:green) // Too much indentation here
-                .and(this:blue  == that:blue)
+    def this:color == that:color -> Boolean
+        return  (this'red   == that'red)
+                .and(this'green == that'green) // Too much indentation here
+                .and(this'blue  == that'blue)
     ```
 
 
 ## What's the difference of Pineapple function with named parameters?
 Look at the following example to understand the difference.
+
 ```python
 # Python
 replace(target="Hello world", old="lo", new="wo")
 ```
+
 ```pine
 // Pineapple
-"Hello world".replace("lo" with "wo")
+"Hello world".replace "lo" with "wo"
 ```
+
 Obviously, the Pineapple's version is much more clearer than Python's version.  
 Moreover, it is also shorter!
 
