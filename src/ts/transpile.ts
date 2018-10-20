@@ -5,33 +5,34 @@ import {
     AssignmentStatement,
     BranchStatement,
     Declaration,
+    EnsureStatement,
     EnumDeclaration,
     EnumExpression,
+    ExampleDeclaration,
+    ExampleStatement,
     Expression,
     ForStatement,
     FunctionCall,
     FunctionDeclaration,
+    GroupDeclaration,
     ImportDeclaration,
     JavascriptCode,
     KeyValue,
     ListExpression,
     NumberExpression,
-    ThingAccess,
-    ThingExpr,
+    PassStatement,
     ReturnStatement,
     Statement,
     StringExpression,
     StringInterpolationExpression,
     StructDeclaration,
+    ThingAccess,
+    ThingExpr,
+    ThingUpdate,
     TupleExpression,
     TypeExpression,
     VariableDeclaration,
     WhileStatement,
-    EnsureStatement,
-    PassStatement,
-    ExampleDeclaration,
-    ExampleStatement,
-    GroupDeclaration,
 } from "./ast";
 import { ErrorTrace, InterpreterOptions } from "./interpret";
 
@@ -41,16 +42,15 @@ let GENERATE_SOURCE_MAP = false;
 // Example: tpDeclaration means transpileDeclaration
 export function transpile(decls: Declaration[], options: InterpreterOptions): string {
     GENERATE_SOURCE_MAP = options.generateSourceMap;
-    let result = ""; 
+    let result = "";
 
     // Initialize GroupDeclarations
     const groupDecls = decls.filter((x) => x.kind === "GroupDeclaration") as GroupDeclaration[];
     result += groupDecls.map(tpGroupDeclaration).join("\n") + "\n";
 
-    result += decls.map((x) => tpDeclaration(x)).filter((x) => x != "").join("\n");
-    return result; 
+    result += decls.map((x) => tpDeclaration(x)).filter((x) => x !== "").join("\n");
+    return result;
 }
-
 
 export function tpDeclaration(input: Declaration): string {
     if (!input) {
@@ -112,8 +112,8 @@ export function tpFunctionDeclaration(f: FunctionDeclaration): string {
     const statements = tpStatements(f.statements);
     let result = `${f.isAsync ? "async " : ""}function ${funcSignature}(${params}){`;
 
-    if(f.groupBinding) {
-        if(f.groupBinding.typeBinded.kind !== "GroupDeclaration") {
+    if (f.groupBinding) {
+        if (f.groupBinding.typeBinded.kind !== "GroupDeclaration") {
             throw new Error(`Should be group declaration type but got ${f.groupBinding.typeBinded.kind}`);
         }
         result += `\nreturn $$GROUP$$["${f.groupBinding.typeBinded.name.repr}"][$$typeof$$($${f.parameters[0].variable.repr})](${params})`;
@@ -134,10 +134,10 @@ export function tpStatements(statements: Statement[]): string {
             case "BranchStatement":     result += tpBranchStatement(s)    ; break;
             case "ForStatement":        result += tpForStatement(s)       ; break;
             case "WhileStatement":      result += tpWhileStatement(s)     ; break;
-            case "PassStatement":       result += tpPassStatement(s);     ; break;
+            case "PassStatement":       result += tpPassStatement(s);      break;
             case "EnsureStatement":     result += tpEnsureStatement(s)    ; break;
             case "ExampleStatement":    result += tpExampleStatement(s)   ; break;
-            default: throw new Error(`Cannot handle ${s.kind} yet`)
+            default: throw new Error(`Cannot handle ${s.kind} yet`);
         }
         result += "\n";
     }
@@ -150,7 +150,7 @@ export function tpExampleStatement(e: ExampleStatement): string {
     /**
      * $$handleExample$$ is defined in executeCode.ts
      */
-    return `$$handleExample$$(${tpExpression(e.left)},${tpExpression(e.right)},${originFile},${location});`; 
+    return `$$handleExample$$(${tpExpression(e.left)},${tpExpression(e.right)},${originFile},${location});`;
 
 }
 
@@ -160,17 +160,17 @@ export function tpPassStatement(p: PassStatement): string {
         callingFile: p.callingFile,
         lineContent: "",
         insideWhichFunction: ""
-    }): ""}`;
+    }) : ""}`;
 }
 
 export function tpEnsureStatement(a: EnsureStatement): string {
-    return `$$ensure$$(${GENERATE_SOURCE_MAP ? 
+    return `$$ensure$$(${GENERATE_SOURCE_MAP ?
         generateSourceMap({
-            ...a.location, 
-            callingFile: a.callingFile, 
+            ...a.location,
+            callingFile: a.callingFile,
             lineContent: "",
             insideWhichFunction: ""
-        }) + "\n" : ""}${tpExpression(a.expression)}) ` }
+        }) + "\n" : ""}${tpExpression(a.expression)}) `; }
 
 export function tpWhileStatement(w: WhileStatement): string {
     return "" +
@@ -204,13 +204,13 @@ export function tpReturnStatement(r: ReturnStatement): string {
 export function tpFunctionCall(f: FunctionCall): string {
     const funcSignature = getFullFunctionName(f);
     const params = f.parameters.map((x) => tpExpression(x));
-    let result = `${f.isAsync ? "await " : ""}${funcSignature}(` + 
+    const result = `${f.isAsync ? "await " : ""}${funcSignature}(` +
                  `${GENERATE_SOURCE_MAP ? generateSourceMap({
-                     ...f.location, 
-                     callingFile: f.callingFile, 
-                     lineContent: "", 
+                     ...f.location,
+                     callingFile: f.callingFile,
+                     lineContent: "",
                      insideWhichFunction: ""
-                }): ""}` +
+                }) : ""}` +
                  `\n${params.join("\n,")})`;
     if (f.isAsync) {
         return "(" + result + ")";
@@ -226,7 +226,7 @@ export function generateSourceMap(x: ErrorTrace): string {
 // Full means type signature is included
 export function getFullFunctionName(f: FunctionCall | FunctionDeclaration): string {
     const typeSignature = (function() {
-        if(f.kind === "FunctionCall") {
+        if (f.kind === "FunctionCall") {
             // Note: .slice(1) is needed to remove the leading colon symbol
             return f.parameters.map((x) => stringifyType(x.returnType).slice(1)).join("_");
         } else {
@@ -316,9 +316,17 @@ export function tpExpression(e: Expression): string {
         case "ThingAccess":        return tpObjectAccess(e);
         case "EnumExpression":      return tpEnumExpression(e);
         case "TupleExpression":     return tpTupleExpression(e);
-        case "StringInterpolationExpression": return tpStringInterpolationExpression(e); default:
+        case "StringInterpolationExpression": return tpStringInterpolationExpression(e);
+        case "ThingUpdate":         return tpThingUpdateExpression(e);
+        default:
             throw new Error(`Cannot handle ${e.kind} yet`);
     }
+}
+
+export function tpThingUpdateExpression(e: ThingUpdate): string {
+    return `{...${tpExpression(e.toBeUpdated)},
+        ${tpKeyValueList(e.updatedKeyValues)}
+    }`;
 }
 
 export function tpStringInterpolationExpression(s: StringInterpolationExpression): string {

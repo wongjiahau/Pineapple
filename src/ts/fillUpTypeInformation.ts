@@ -960,6 +960,17 @@ export function fillUpExpressionTypeInfo(e: Expression, symbols: SymbolTable, va
             const resultEnum = findMatchingEnumType(e.value, symbols.enumTab);
             if (isOK(resultEnum)) { e.returnType = resultEnum.value; } else { return resultEnum; }
             break;
+        case "ThingUpdate": {
+            const result = fillUpExpressionTypeInfo(e.toBeUpdated, symbols, vartab);
+            if (isOK(result)) { [e.toBeUpdated, symbols] = result.value; } else { return result; }
+            for (let i = 0; i < e.updatedKeyValues.length; i++) {
+                const kv = e.updatedKeyValues[i];
+                const x = fillUpExpressionTypeInfo(kv.expression, symbols, vartab);
+                if (isOK(x)) { [e.updatedKeyValues[i].expression, symbols] = x.value; } else {return result; }
+            }
+            e.returnType = e.toBeUpdated.returnType;
+            break;
+        }
         default:
             throw new Error(`Unimplemented yet for ${e.kind}`);
     }
@@ -969,7 +980,7 @@ export function fillUpExpressionTypeInfo(e: Expression, symbols: SymbolTable, va
 export function resolveExpressionInterpolation(
     s: StringExpression,
     symbols: SymbolTable,
-    vartab: VariableTablerepr
+    vartab: VariableTable
 ): Maybe<[StringInterpolationExpression | StringExpression, SymbolTable], ErrorDetail> {
     const str = s.repr;
     if (str.indexOf("$(") < 0) {

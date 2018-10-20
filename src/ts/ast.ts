@@ -249,6 +249,7 @@ export type Expression
     | Variable
     | ThingExpr // Pineapple Object Notation (PON)
     | ThingAccess
+    | ThingUpdate
     | ListExpression // a.k.a. Array. To store elements of same type
     | TupleExpression // to store element of different type
     | AnonymousExpression
@@ -339,6 +340,13 @@ export interface ThingAccess {
     key: AtomicToken;
     returnType: TypeExpression;
     location: TokenLocation;
+}
+
+export interface ThingUpdate {
+    kind: "ThingUpdate";
+    toBeUpdated: Expression;
+    updatedKeyValues: KeyValue[];
+    returnType: TypeExpression;
 }
 
 export interface ListExpression {

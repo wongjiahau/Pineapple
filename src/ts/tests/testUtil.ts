@@ -13,9 +13,9 @@ import { isOK } from "../maybeMonad";
 const jsdiff = require("diff");
 
 export function assertEquals(actual: string, expected: string, logDiff: boolean) {
-    console.log("Expected: " + expected);
-    console.log("Actual: " + actual);
     if (actual.trim() !== expected.trim()) {
+        console.log("Expected: " + expected);
+        console.log("Actual: " + actual);
         // const diff = jsdiff.diffLines(actual, expected);
         const diff = jsdiff.diffChars(actual, expected);
         const result = diff.map((part: any) => {

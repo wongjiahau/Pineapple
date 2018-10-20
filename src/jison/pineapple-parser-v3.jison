@@ -48,6 +48,12 @@ const _ThingDecl = (name, members, genericList, location) => ({
     location
 });
 
+const _ThingUpdate = (toBeUpdated, updatedKeyValues) => ({
+    kind: "ThingUpdate",
+    toBeUpdated,
+    updatedKeyValues
+});
+
 const _AssignStmt = (variable, isDeclaration, expression) => ({
     kind: "AssignmentStatement",
     variable,
@@ -141,6 +147,7 @@ const _EnumExpression = (repr,location) => ({ kind: "EnumExpression", repr, loca
 "group"     return 'GROUP'
 "enum"      return 'ENUM'
 "thing"     return 'THING'
+"but"      return 'BUT'
 
 // Inivisible token
 "@NEWLINE"       %{
@@ -235,6 +242,10 @@ ThingAccess
     : Expr MemberSym {$$=_ThingAccess($1,$2)}
     ;
 
+ThingUpdate
+    : Expr BUT NEWLINE INDENT MultilineMemberInits DEDENT {$$=_ThingUpdate($1,$5,this._$)}
+    ;
+
 EnumDecl
     : DEF ENUM TypeSym NEWLINE INDENT Enums DEDENT {$$=_EnumDecl($3,$6,$3.location)}
     ;
@@ -324,6 +335,7 @@ AssignStmt
 MultilineExpr
     : Expr NEWLINE
     | MultilineThing
+    | ThingUpdate
     ;
 
 MultilineThing
