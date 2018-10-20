@@ -18,6 +18,8 @@ Abbreviations:
     Lit     Literal
     Var     Variable
     Param   Parameter of Function 
+    Assign  Assignment
+    Init    Initialization
 */
 
 %{
@@ -38,14 +40,34 @@ const _FuncDecl = (signature,returnType,parameters,statements,affix) => ({
     affix,
 });
 
-const _ReturnStatement = (expression,location) => ({ kind: "ReturnStatement", expression, location});
+const _ThingDecl = (name, members, genericList, location) => ({
+    kind: "ThingDecl",
+    name,
+    members,
+    genericList,
+    location
+});
 
-const _VariableDeclaration = (variable, typeExpected, isMutable=false) => ({
+const _AssignStmt = (variable, isDeclaration, expression) => ({
+    kind: "AssignmentStatement",
+    variable,
+    isDeclaration,
+    expression
+});
+
+const _ReturnStmt = (expression,location) => ({ kind: "ReturnStatement", expression, location});
+
+const _VarDecl = (variable, typeExpected, isMutable=false) => ({
     kind: "VariableDeclaration",
     variable,
     typeExpected,
     isMutable
 });
+
+const _MemberSym = (name, expectedType) => ({
+    name,
+    expectedType
+})
 
 const _FuncCall = (fix,signature,parameters,location) => ({
     kind: "FunctionCall",
@@ -60,6 +82,23 @@ const _UnresolvedType = (name, genericList, nullable) => ({
     name, 
     genericList,
     nullable
+});
+
+const _ThingExpr = (constructor, keyValueList) => ({
+    kind: "ThingExpr",
+    constructor,
+    keyValueList,
+});
+
+const _ThingAccess = (subject, key) => ({
+    kind: "ThingAccess",
+    subject,
+    key
+});
+
+const _KeyValue = (memberName, expression) => ({
+    memberName,
+    expression,
 });
 
 const _JavascriptCode = (repr,location) => ({kind:"JavascriptCode",repr, location});
@@ -101,6 +140,7 @@ const _EnumExpression = (repr,location) => ({ kind: "EnumExpression", repr, loca
 "where"     return 'WHERE'
 "group"     return 'GROUP'
 "enum"      return 'ENUM'
+"thing"     return 'THING'
 
 // Inivisible token
 "@NEWLINE"       %{
@@ -143,7 +183,7 @@ const _EnumExpression = (repr,location) => ({ kind: "EnumExpression", repr, loca
 \b[T][12]?\b                    return 'GENERICTYPENAME'
 [:][a-z][a-zA-Z0-9]*            return 'TYPESYM'
 [a-z][a-zA-Z0-9]*               return 'VARSYM'
-['][a-z][a-zA-Z0-9]*            return 'MEMBERNAME'
+['][a-z][a-zA-Z0-9]*            return 'MEMBERSYM'
 [-!$%^&*_+|~=`;<>\/]+           return 'OPSYM'
 
 /lex
@@ -175,6 +215,24 @@ DeclList
 Decl
     : FuncDecl
     | EnumDecl
+    | ThingDecl
+    ;
+
+ThingDecl
+    : DEF THING TypeSym NEWLINE INDENT MemberDecls DEDENT {$$=_ThingDecl($3,$6,[],this._$)}
+    ;
+
+MemberDecls
+    : MemberDecl NEWLINE MemberDecls   {$$=[$1].concat($3)}
+    | MemberDecl NEWLINE               {$$=[$1]}
+    ;
+
+MemberDecl 
+    : MemberSym TypeExpr {$$=_MemberSym($1,$2)}
+    ;
+
+ThingAccess
+    : Expr MemberSym {$$=_ThingAccess($1,$2)}
     ;
 
 EnumDecl
@@ -230,7 +288,7 @@ PolyFuncDeclTail
     ;
 
 ParamDecl
-    : VarSym TypeExpr {$$=_VariableDeclaration($1,$2)}
+    : VarSym TypeExpr {$$=_VarDecl($1,$2)}
     ;   
 
 ReturnDecl
@@ -253,12 +311,44 @@ Stmts
     ;
 
 Stmt 
-    : FuncCall NEWLINE {$$=$1;}
+    : Expr NEWLINE {$$=$1;}
     | ReturnStmt
+    | AssignStmt
     ;
 
+AssignStmt
+    : LET VarDecl EqualSign MultilineExpr   {$$=_AssignStmt($2,true,$4)}
+    | VarSym EqualSign MultilineExpr        {$$=_AssignStmt($1,false,$3)}
+    ;
+
+MultilineExpr
+    : Expr NEWLINE
+    | MultilineThing
+    ;
+
+MultilineThing
+    : TypeExpr NEWLINE INDENT MultilineMemberInits DEDENT {$$=_ThingExpr($1,$4)}
+    ;
+
+MultilineMemberInits
+    : MultilineMemberInit MultilineMemberInits {$$=[$1].concat($2)}
+    | MultilineMemberInit {$$=[$1]}
+    ;
+
+MultilineMemberInit
+    : MemberSym EqualSign MultilineExpr {$$=_KeyValue($1,$3)}
+    ;
+
+VarDecl 
+    : VarSym                    {$$=_VarDecl($1,null)}
+    | MUTABLE VarSym            {$$=_VarDecl($2,null,true)}
+    | VarSym TypeExpr           {$$=_VarDecl($1,$2)}
+    | MUTABLE VarSym TypeExpr   {$$=_VarDecl($2,$3,true)}
+    ;
+
+
 ReturnStmt
-    : RETURN Expr NEWLINE {$$=_ReturnStatement($2,this._$)}
+    : RETURN Expr NEWLINE {$$=_ReturnStmt($2,this._$)}
     ;
 
 FuncCall
@@ -310,6 +400,7 @@ AtomicExpr
 Expr
     : FuncCall
     | AtomicExpr
+    | ThingAccess
     ;
 
 FuncSym
@@ -322,6 +413,10 @@ TypeSym
 
 VarSym
     : VARSYM {$$=_Token($1, this._$); $$.kind="Variable";}
+    ;
+
+MemberSym
+    : MEMBERSYM {$$=_Token($1,this._$)}
     ;
 
 OpSym

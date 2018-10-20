@@ -97,7 +97,7 @@ export function fillUpTypeInformation(
         .sort((x, y) =>  x.kind === "GroupBindingDeclaration" ? -1 : y.kind === "GroupBindingDeclaration" ? 1 : 0)
 
         // Shift all StructDeclaration to the front
-        .sort((x, y) =>  x.kind === "StructDeclaration" ? -1 : y.kind === "StructDeclaration" ? 1 : 0)
+        .sort((x, y) =>  x.kind === "ThingDecl" ? -1 : y.kind === "ThingDecl" ? 1 : 0)
 
         // Shift all GroupDeclaration to the front
         .sort((x, y) =>  x.kind === "GroupDeclaration" ? -1 : y.kind === "GroupDeclaration" ? 1 : 0);
@@ -119,7 +119,7 @@ export function fillUpTypeInformation(
                 }
                 break;
             }
-            case "StructDeclaration":
+            case "ThingDecl":
                 // check if the struct is declared already or not
                 const tempStructTab  = newStructTab(d, copy(symbols.structTab));
                 if (isFail(tempStructTab)) { return tempStructTab; }
@@ -410,7 +410,7 @@ export function containsAsyncFunction(e: Expression | null): boolean {
             }
         case "List":
             return e.elements.some(containsAsyncFunction);
-        case "ObjectExpression":
+        case "ThingExpr":
             return e.keyValueList.some((x) => containsAsyncFunction(x.expression));
         default: // TODO: Add code handler for other types of expression
             return false;
@@ -910,7 +910,7 @@ export function fillUpExpressionTypeInfo(e: Expression, symbols: SymbolTable, va
             const resultVar = fillUpVariableTypeInfo(e, vartab);
             if (isOK(resultVar)) { e = resultVar.value; } else { return resultVar; }
             break;
-        case "ObjectExpression":
+        case "ThingExpr":
             if (e.constructor !== null) {
                 const typeResult = resolveType(e.constructor, symbols);
                 if (typeResult.kind === "OK") { e.constructor = typeResult.value; } else { return typeResult; }
@@ -943,7 +943,7 @@ export function fillUpExpressionTypeInfo(e: Expression, symbols: SymbolTable, va
                 e.returnType = newBuiltinType(":table");
             }
             break;
-        case "ObjectAccess":
+        case "ThingAccess":
             const resultOA = fillUpExpressionTypeInfo(e.subject, symbols, vartab);
             if (resultOA.kind === "OK") { [e.subject, symbols] = resultOA.value; } else { return resultOA; }
             const subjectReturnType = e.subject.returnType;

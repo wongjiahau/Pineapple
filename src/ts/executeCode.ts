@@ -3,13 +3,13 @@ import { InterpreterOptions } from "./interpret";
 const vm = require("vm");
 
 export function executeCode(
-    javascriptCode: string, 
+    javascriptCode: string,
     interceptor: Interceptor,
-    options: InterpreterOptions, 
+    options: InterpreterOptions,
     ir?: IntermediateRepresentation
 ): string {
     let functionTable = "";
-    if(ir) {
+    if (ir) {
         functionTable = JSON.stringify(ir.symbolTable.funcTab);
     }
     // use strict is added to improve performance
@@ -94,21 +94,21 @@ export class InterceptorForTesting implements Interceptor {
         this.whenDone = whenDone;
     }
 
-    log(x: any): void {
-        this.output += x.toString();
-    }    
-    
-    done(): void {
+    public log(x: any): void {
+        this.output += x.toString() + " ";
+    }
+
+    public done(): void {
         this.whenDone(this.output);
     }
 }
 
 export class InterceptorThatDoNothing implements Interceptor {
-    log(x: any): void {
+    public log(x: any): void {
         console.log(x.toString());
-    }    
-    
-    done(): void {
-        // do nothing        
+    }
+
+    public done(): void {
+        // do nothing
     }
 }

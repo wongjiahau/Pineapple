@@ -16,8 +16,8 @@ import {
     KeyValue,
     ListExpression,
     NumberExpression,
-    ObjectAccess,
-    ObjectExpression,
+    ThingAccess,
+    ThingExpr,
     ReturnStatement,
     Statement,
     StringExpression,
@@ -58,7 +58,7 @@ export function tpDeclaration(input: Declaration): string {
     }
     switch (input.kind) {
         case "ImportDeclaration":
-        case "StructDeclaration":
+        case "ThingDecl":
         case "EnumDeclaration":
         case "GroupBindingDeclaration":
             // No need to be transpiled
@@ -311,9 +311,9 @@ export function tpExpression(e: Expression): string {
         case "String":              return tpStringExpression(e);
         case "Number":              return tpNumberExpression(e);
         case "Variable":            return "$" + e.repr;
-        case "ObjectExpression":    return tpObjectExpression(e);
+        case "ThingExpr":    return tpObjectExpression(e);
         case "List":                return tpArrayExpression(e);
-        case "ObjectAccess":        return tpObjectAccess(e);
+        case "ThingAccess":        return tpObjectAccess(e);
         case "EnumExpression":      return tpEnumExpression(e);
         case "TupleExpression":     return tpTupleExpression(e);
         case "StringInterpolationExpression": return tpStringInterpolationExpression(e); default:
@@ -340,7 +340,7 @@ export function tpEnumExpression(e: EnumExpression): string {
 
 }
 
-export function tpObjectAccess(o: ObjectAccess): string {
+export function tpObjectAccess(o: ThingAccess): string {
     return `${tpExpression(o.subject)}.${o.key.repr.slice(1)}`;
 }
 
@@ -373,7 +373,7 @@ export function tpListElements(e: Expression[]): string {
     return e.map((x) => tpExpression(x)).join(",");
 }
 
-export function tpObjectExpression(e: ObjectExpression): string {
+export function tpObjectExpression(e: ThingExpr): string {
     if (e.keyValueList.length === 0) {
         return "{}";
     }
