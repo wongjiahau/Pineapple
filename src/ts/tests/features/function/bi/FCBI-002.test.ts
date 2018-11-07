@@ -9,8 +9,8 @@ def this:number ^ that:number -> :number
     return Math.pow($this,$that);
     </javascript>
 
-def .main
-    4 ^ 3.log
+def .Main
+    4 ^ 3.Log
 
 `,
 expectedOutput: "64"

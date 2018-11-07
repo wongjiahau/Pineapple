@@ -9,8 +9,8 @@ def - this:number -> :number
     return - $this;
     </javascript>
 
-def .main
-    -99.log
+def .Main
+    -99.Log
 `,
 expectedOutput: "-99"
 }

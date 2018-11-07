@@ -4,13 +4,13 @@ testExecute({
 description: "bifunc",
 input: 
 `
-def this:number.add that:number -> :number
+def this:number.Add that:number -> :number
     <javascript>
     return $this + $that;
     </javascript>
 
-def .main
-    1.add 2.add 3.log
+def .Main
+    1.Add 2.Add 3.Log
 
 `,
 expectedOutput: "6"

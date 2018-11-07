@@ -5,14 +5,14 @@ testExecute({
 description: "4 parameters function",
 input: 
 `
-def this:string.replace from:integer to end:integer with new:string -> :string
+def this:string.Replace from:integer To end:integer With new:string -> :string
     <javascript>
     const s = $this;
     return s.substring(0, $from) + $new + s.substring($end);
     </javascript>
 
-def .main
-    "Hello world".replace 0 to 5 with "Bye" .log
+def .Main
+    "Hello world".Replace 0 To 5 With "Bye" .Log
 
 `,
 expectedOutput: "Bye world"

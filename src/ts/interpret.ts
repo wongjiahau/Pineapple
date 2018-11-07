@@ -125,7 +125,7 @@ function extractErrorStackTrace(
             lineContent: lineContent,
             insideWhichFunction: "." + trace[1].split("_")[1].split("$").join(" ")
         });
-        if (trace[1] === "_main_") {
+        if (trace[1] === "_Main_") {
             break;
         }
     }

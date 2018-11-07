@@ -4,13 +4,13 @@ testExecute({
 description: "monofunc",
 input: 
 `
-def this:number.square -> :number
+def this:number.Square -> :number
     <javascript>
     return $this * $this;
     </javascript>
 
-def .main
-    9.square.log
+def .Main
+    9.Square.Log
 `,
 expectedOutput: "81"
 }

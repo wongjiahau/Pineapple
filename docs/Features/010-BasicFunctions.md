@@ -15,9 +15,9 @@ In general, there are 5 kinds of functions:
 
 !!! info "Note"
 
-    - Function name are always started with a dot. There are no exceptions.
+    - Function name are always started with a dot and must be capitalized. There are no exceptions.
 
-        - For example: `#!pine .show` 
+        - For example: `#!pine .Show` 
 
         - Not only that, `.` is also a valid function name!
 
@@ -33,11 +33,11 @@ Nullifunc is a function that do not need any parameters, for example:
 
 ```pine
 // Here's how you define a nullifunc
-def .pi -> :number
+def .Pi -> :number
     return 3.142
  
 // Here's how you call a nullifunc
-let x = .pi
+let x = .Pi
 ```
 
 !!! info "Note"
@@ -49,7 +49,7 @@ let x = .pi
     For example,
 
     ```pine
-    def .showMyName // no need to put -> here
+    def .ShowMyName // no need to put -> here
         pass
     ```
 <hr>
@@ -60,14 +60,14 @@ Monofunc is a function that takes only 1 parameter.
 Note that the parameter must be at front. For example:
 ```pine
 // here's how you declare a monofunc
-def this:number.square -> :number
+def this:number.Square -> :number
     return this * this
 
 // here's how you call a monofunc
-let x = 99.square
+let x = 99.Square
 
 // you can chain it!
-let y = 2.square.square.square
+let y = 2.Square.Square.Square
 ```
 
 !!! info "Note"
@@ -82,11 +82,11 @@ For example:
 
 ```pine
 // here's how you define a bifunc
-def this:number .plus that:number -> :number
+def this:number .Plus that:number -> :number
     return this + that
 
 // here's how you call a bifunc
-let x = 99.plus 99.plus 22
+let x = 99.Plus 99.Plus 22
 ```
 
 <hr>
@@ -98,11 +98,11 @@ For example,
 
 ```pine
 // Here's how you define a polyfunc
-def this:string .replace old:string with new:string -> :string
+def this:string .Replace old:string With new:string -> :string
     pass
 
 // Here's how you call a polyfunc
-let x = "Hello world".replace "world" with "baby"
+let x = "Hello world".Replace "world" With "baby"
 ```
 
 !!! info "Note"
@@ -111,11 +111,11 @@ let x = "Hello world".replace "world" with "baby"
 Just to make it clear, let see another polyfunc example:
 ```pine
 // Defining a polyfunc
-def this:socket.send message:string to portNumber:integer
+def this:socket.Send message:string To portNumber:integer
     pass
 
 // Here's how you use it
-mySocket.send "Hello world" to 8080
+mySocket.Send "Hello world" To 8080
 ```
 In this case, `to` is the *sub function identifier*.  
 
@@ -130,7 +130,7 @@ In this case, `to` is the *sub function identifier*.
 
     ```pine
     // Pineapple
-    "Hello".replace("el" with "lo") // I am very sure it is replacing "el" with "lo"!
+    "Hello".Replace("el" With "lo") // I am very sure it is replacing "el" with "lo"!
     ```
 
     There are at least 2 advantages with it:  
@@ -147,11 +147,11 @@ For example,
 
 ```pine
 // Here's how you define a Polyfunc with 4 parameters
-def this:string .replace startIndex:integer to endIndex:integer with new:string -> :string
+def this:string .Replace startIndex:integer To endIndex:integer With new:string -> :string
     pass
 
 // Here's how you call it
-let x = "Hello world".replace 0 to 4 with "Hi"
+let x = "Hello world".Replace 0 To 4 With "Hi"
 ```
 <hr>
 
@@ -162,24 +162,24 @@ let x = "Hello world".replace 0 to 4 with "Hi"
     For example,
 
     ```pine
-    def RequestParam
-        :url    String
-        :method String
-        :body   String
-        :schema String
+    def thing :requestParam
+        .url    :string
+        .method :string
+        .body   :string
+        .schema :string
 
-    def (this Server).send(that RequestParam)
+    def this:server.Send that:requestParam
         pass
     ```
     Example of usage:
     ```pine
-    let param = RequestParam
-        :url    = "192.168.0.0/api/people"
-        :method = "POST"
-        :body   = '{"name": "Johnny", "age": 999}'
-        :schema = "FREE"
+    let param = :requestParam
+        .url    = "192.168.0.0/api/people"
+        .method = "POST"
+        .body   = '{"name": "Johnny", "age": 999}'
+        .schema = "FREE"
 
-    myServer.send(param)
+    myServer.Send param
     ```
 
 <hr>
@@ -192,21 +192,21 @@ So, instead of using many variables, for example,
 
 ```pine
 // Using many variables to store intermediate results
-def this:point .distanceTo that:point -> :number
-    let xDistance = this'x- that'x
-    let yDistance = this'y - that'y
-    let xDistanceSquared = xDistance.square
-    let yDistanceSquared = yDistance.square
+def this:point .DistanceTo that:point -> :number
+    let xDistance = this.x - that.x
+    let yDistance = this.y - that.y
+    let xDistanceSquared = xDistance.Square
+    let yDistanceSquared = yDistance.Square
     let sum = xDistanceSquared + yDistanceSquared
-    let distance = sum.squareRoot
+    let distance = sum.SquareRoot
 ```
 
 You can use ==function chaining==, as the following,
 
 ```pine
 // Using function chaining
-def this:point .distanceTo that:point -> :number
-    return this'x - that'x .square + (this'y - that'y .square).squareRoot
+def this:point .DistanceTo that:point -> :number
+    return this.x - that.x .Square + (this.y - that.y .Square).SquareRoot
 ```
 
 !!! tips 
@@ -220,9 +220,9 @@ If you think you cannot fit all the functions you want to call in a single line,
 
 ```pine
 def thing :color
-    'red    :number
-    'green  :number
-    'blue   :number
+    .red    :number
+    .green  :number
+    .blue   :number
 
 // multiple line function chaining
 def this:color == that:color -> :boolean
@@ -259,7 +259,7 @@ replace(target="Hello world", old="lo", new="wo")
 
 ```pine
 // Pineapple
-"Hello world".replace "lo" with "wo"
+"Hello world".Replace "lo" With "wo"
 ```
 
 Obviously, the Pineapple's version is much more clearer than Python's version.  

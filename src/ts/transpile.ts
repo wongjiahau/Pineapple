@@ -242,7 +242,7 @@ export function getPartialFunctionName(f: FunctionCall | FunctionDeclaration): s
 }
 
 export function getName(funcSignature: string): string {
-    if (/[.][a-z][a-zA-Z]*/.test(funcSignature)) {
+    if (/[.][A-Z][a-zA-Z0-9]*/.test(funcSignature)) {
         return funcSignature.slice(1);
     } else if (/[a-z][a-zA-Z]/.test(funcSignature)) {
         return funcSignature;

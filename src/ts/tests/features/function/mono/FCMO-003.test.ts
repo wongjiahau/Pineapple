@@ -13,8 +13,8 @@ def this:number ! -> :number
     return factorial($this);
     </javascript>
 
-def .main
-    5!.log
+def .Main
+    5!.Log
 `,
 expectedOutput: "120"
 }

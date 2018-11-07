@@ -20,7 +20,7 @@ export function executeCode(
     // Refer https://nodejs.org/api/vm.html#vm_example_running_an_http_server_within_a_vm
     code += `((require,$$interceptor$$) => { const $$examples$$ = []; /*this is need to store tests*/ const $$GROUP$$={};
         ${javascriptCode}
-        _main_(); // Call the main function
+        _Main_(); // Call the main function
         $$interceptor$$.done();
 
         function $$typeof$$(x) {
@@ -65,8 +65,8 @@ export function executeCode(
             switch("${options.run}") {
                 case "Program":
                     // run if ().main function exist
-                    if(typeof _main_ === 'function') {
-                        _main_();
+                    if(typeof _Main_ === 'function') {
+                        _Main_();
                     }
                     break;
                 case "RunExample":

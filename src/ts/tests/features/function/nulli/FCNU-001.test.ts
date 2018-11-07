@@ -5,8 +5,8 @@ description: "nulli func",
 
 input:
 `
-def .main
-    "Hello world".log
+def .Main
+    "Hello world".Log
 `,
 
 expectedOutput: `Hello world`

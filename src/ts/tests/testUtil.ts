@@ -123,7 +123,7 @@ export interface TestExecuteParam {
 }
 export function testExecute(x: TestExecuteParam) {
     const boilerplateCode = `
-def this:any.log
+def this:any.Log
     <javascript>
     $$interceptor$$.log($this); // Refer executeCode.ts
     </javascript>

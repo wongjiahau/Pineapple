@@ -9,8 +9,8 @@ def this:number . that:number -> :number
     return $this * $that;
     </javascript>
 
-def .main
-    2 . 3 . 4 .log
+def .Main
+    2 . 3 . 4 .Log
 
 `,
 expectedOutput: "24"

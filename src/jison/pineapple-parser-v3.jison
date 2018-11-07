@@ -140,7 +140,8 @@ const _EnumExpression = (repr,location) => ({ kind: "EnumExpression", repr, loca
 [#][a-zA-Z0-9]+                             return 'ENUMLIT'
 
 // Identifiers
-[.]([a-z][a-zA-Z0-9]*)?         return 'FUNC_ID'    
+[.]([A-Z][a-zA-Z0-9]*)?         return 'FUNC_ID'    
+[A-Z][a-zA-Z0-9]*               return 'SUBFUNC_ID'
 \b[T][12]?\b                    return 'GENERICTYPENAME'
 [:][a-z][a-zA-Z0-9]*            return 'TYPE_ID'
 [a-z][a-zA-Z0-9]*               return 'VAR_ID'
@@ -222,12 +223,12 @@ PolyFuncDecl
     ;
 
 PolyFuncDeclTail
-    : VarId ParamDecl PolyFuncDeclTail {
+    : SubFuncId ParamDecl PolyFuncDeclTail {
         $3[0].push($1);
         $3[1].push($2);
         $$=$3;
     }
-    | VarId ParamDecl {$$=[[$1],[$2]]}
+    | SubFuncId ParamDecl {$$=[[$1],[$2]]}
     ;
 
 ParamDecl
@@ -293,12 +294,12 @@ PolyFuncCall
     ;
 
 PolyFuncCallTail
-    : VarId AtomicExpr PolyFuncCallTail {
+    : SubFuncId AtomicExpr PolyFuncCallTail {
         $3[0].push($1);
         $3[1].push($2);
         $$=$3;
     }
-    | VarId AtomicExpr {$$=[[$1],[$2]]}
+    | SubFuncId AtomicExpr {$$=[[$1],[$2]]}
     ;
 
 AtomicExpr 
@@ -315,6 +316,10 @@ Expr
 
 FuncId
     : FUNC_ID {$$=_Token($1, this._$)}
+    ;
+
+SubFuncId
+    : SUBFUNC_ID {$$=_Token($1, this._$)}
     ;
 
 TypeId

@@ -4,7 +4,7 @@ testExecute({
 description: "bifunc",
 input: 
 `
-def this:number.square -> :number
+def this:number.Square -> :number
     return this * this
 
 def this:number * that:number -> :number
@@ -12,13 +12,13 @@ def this:number * that:number -> :number
     return $this * $that;
     </javascript>
 
-def this:number.isBetween x:number and y:number -> :boolean
+def this:number.IsBetween x:number And y:number -> :boolean
     <javascript>
     return $this >= $x && $this <= $y;
     </javascript>
 
-def .main
-    3.square * 4 .isBetween 35 and 37.log
+def .Main
+    3.Square * 4 .IsBetween 35 And 37.Log
 
 `,
 expectedOutput: "true"
