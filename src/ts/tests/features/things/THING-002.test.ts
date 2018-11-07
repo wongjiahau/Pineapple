@@ -10,28 +10,28 @@ def this:number + that:number -> :number
     </javascript>
 
 def thing :person
-    'name   :string
-    'hobby  :string
-    'age    :integer
+    .name   :string
+    .hobby  :string
+    .age    :integer
 
-def .main
+def .Main
     let me = :person
-        'name   = "Wong"
-        'hobby  = "Dota"
-        'age    = 50
+        .name   = "Wong"
+        .hobby  = "Dota"
+        .age    = 50
 
-    let olderMe = me but
-        'age    = me'age + 10
-        'hobby  = "Tea"
+    let olderMe = me with
+        .age    = me.age + 10
+        .hobby  = "Tea"
 
-    olderMe'name.log
-    olderMe'age.log
-    olderMe'hobby.log
+    olderMe.name.Log
+    olderMe.age.Log
+    olderMe.hobby.Log
 
     // Fields of me should remain the same
-    me'name.log
-    me'age.log
-    me'hobby.log
+    me.name.Log
+    me.age.Log
+    me.hobby.Log
 `,
 expectedOutput: "Wong 60 Tea Wong 50 Dota"
 }

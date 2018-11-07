@@ -5,16 +5,16 @@ description: "thing",
 input:
 `
 def thing :person
-    'name   :string
-    'age    :integer
+    .name   :string
+    .age    :integer
 
-def .main
+def .Main
     let me = :person
-        'name = "Wong"
-        'age = 99
+        .name = "Wong"
+        .age = 99
 
-    me'name.log
-    me'age.log
+    me.name.Log
+    me.age.Log
 `,
 expectedOutput: `Wong 99`
 }

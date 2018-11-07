@@ -148,7 +148,7 @@ const _EnumExpression = (repr,location) => ({ kind: "EnumExpression", repr, loca
 "group"     return 'GROUP'
 "enum"      return 'ENUM'
 "thing"     return 'THING'
-"but"      return 'BUT'
+"with"      return 'WITH'
 
 // Inivisible token
 "@NEWLINE"       %{
@@ -187,12 +187,12 @@ const _EnumExpression = (repr,location) => ({ kind: "EnumExpression", repr, loca
 [#][a-zA-Z0-9]+                             return 'ENUMLIT'
 
 // Identifiers
+[.][a-z][a-zA-Z0-9]*            return 'MEMBER_ID'
 [.]([A-Z][a-zA-Z0-9]*)?         return 'FUNC_ID'    
 [A-Z][a-zA-Z0-9]*               return 'SUBFUNC_ID'
 \b[T][12]?\b                    return 'GENERICTYPENAME'
 [:][a-z][a-zA-Z0-9]*            return 'TYPE_ID'
 [a-z][a-zA-Z0-9]*               return 'VAR_ID'
-['][a-z][a-zA-Z0-9]*            return 'MEMBER_ID'
 [-!$%^&*_+|~=`;<>\/]+           return 'OP_ID'
 
 /lex
@@ -228,7 +228,7 @@ Decl
     ;
 
 ThingDecl
-    : DEF THING TypeSym NEWLINE INDENT MemberDecls DEDENT {$$=_ThingDecl($3,$6,[],this._$)}
+    : DEF THING TypeId NEWLINE INDENT MemberDecls DEDENT {$$=_ThingDecl($3,$6,[],this._$)}
     ;
 
 MemberDecls
@@ -245,7 +245,7 @@ ThingAccess
     ;
 
 ThingUpdate
-    : Expr BUT NEWLINE INDENT MultilineMemberInits DEDENT {$$=_ThingUpdate($1,$5,this._$)}
+    : Expr WITH NEWLINE INDENT MultilineMemberInits DEDENT {$$=_ThingUpdate($1,$5,this._$)}
     ;
 
 EnumDecl
@@ -331,7 +331,7 @@ Stmt
 
 AssignStmt
     : LET VarDecl EqualSign MultilineExpr   {$$=_AssignStmt($2,true,$4)}
-    | VarSym EqualSign MultilineExpr        {$$=_AssignStmt($1,false,$3)}
+    | VarId EqualSign MultilineExpr        {$$=_AssignStmt($1,false,$3)}
     ;
 
 MultilineExpr
@@ -354,10 +354,10 @@ MultilineMemberInit
     ;
 
 VarDecl 
-    : VarSym                    {$$=_VarDecl($1,null)}
-    | MUTABLE VarSym            {$$=_VarDecl($2,null,true)}
-    | VarSym TypeExpr           {$$=_VarDecl($1,$2)}
-    | MUTABLE VarSym TypeExpr   {$$=_VarDecl($2,$3,true)}
+    : VarId                    {$$=_VarDecl($1,null)}
+    | MUTABLE VarId            {$$=_VarDecl($2,null,true)}
+    | VarId TypeExpr           {$$=_VarDecl($1,$2)}
+    | MUTABLE VarId TypeExpr   {$$=_VarDecl($2,$3,true)}
     ;
 
 
