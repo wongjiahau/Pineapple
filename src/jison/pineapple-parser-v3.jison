@@ -14,6 +14,7 @@ Abbreviations:
     Expr    Expression
     Stmt    Statement
     Op      Operator
+    Id      Identifier
     Sym     Symbol 
     Lit     Literal
     Var     Variable
@@ -115,10 +116,10 @@ const _EnumExpression = (repr,location) => ({ kind: "EnumExpression", repr, loca
 "@DEDENT"        return 'DEDENT'
 "@EOF"           return 'EOF'
 
-// Custom OPSYM literals that might overlap with built-in symbols
-[=.<>][-!$%^&*_+|~=`;<>.\/]+ return 'OPSYM'
+// Custom OP_ID literals that might overlap with built-in operators
+[=.<>][-!$%^&*_+|~=`;<>.\/]+ return 'OP_ID'
 
-// Built-in symbols
+// Built-in operators
 "_"     return '_'
 ","     return 'Comma'
 "->"    return 'Arrow'
@@ -139,12 +140,12 @@ const _EnumExpression = (repr,location) => ({ kind: "EnumExpression", repr, loca
 [#][a-zA-Z0-9]+                             return 'ENUMLIT'
 
 // Identifiers
-[.]([a-z][a-zA-Z0-9]*)?         return 'FUNCSYM'    
+[.]([a-z][a-zA-Z0-9]*)?         return 'FUNC_ID'    
 \b[T][12]?\b                    return 'GENERICTYPENAME'
-[:][a-z][a-zA-Z0-9]*            return 'TYPESYM'
-[a-z][a-zA-Z0-9]*               return 'VARSYM'
+[:][a-z][a-zA-Z0-9]*            return 'TYPE_ID'
+[a-z][a-zA-Z0-9]*               return 'VAR_ID'
 ['][a-z][a-zA-Z0-9]*            return 'MEMBERNAME'
-[-!$%^&*_+|~=`;<>\/]+           return 'OPSYM'
+[-!$%^&*_+|~=`;<>\/]+           return 'OP_ID'
 
 /lex
 
@@ -178,7 +179,7 @@ Decl
     ;
 
 EnumDecl
-    : DEF ENUM TypeSym NEWLINE INDENT Enums DEDENT {$$=_EnumDecl($3,$6,$3.location)}
+    : DEF ENUM TypeId NEWLINE INDENT Enums DEDENT {$$=_EnumDecl($3,$6,$3.location)}
     ;
 
 Enums
@@ -194,26 +195,26 @@ FuncDecl
     ;
 
 NulliFuncDecl
-    : DEF FuncSym ReturnDecl Block {$$=_FuncDecl([$2],$3,[],$4,"Nulli");}
+    : DEF FuncId ReturnDecl Block {$$=_FuncDecl([$2],$3,[],$4,"Nulli");}
     ;
 
 MonoFuncDecl
-    : DEF ParamDecl FuncSym ReturnDecl Block {$$=_FuncDecl([$3],$4,[$2],$5,"Nulli");}
+    : DEF ParamDecl FuncId ReturnDecl Block {$$=_FuncDecl([$3],$4,[$2],$5,"Nulli");}
 
     /*Unary-prefix-operator*/ 
-    | DEF ParamDecl OpSym ReturnDecl Block   {$$=_FuncDecl([$3],$4,[$2],$5,"Nulli");} 
+    | DEF ParamDecl OpId ReturnDecl Block   {$$=_FuncDecl([$3],$4,[$2],$5,"Nulli");} 
 
     /*Unary-postfix-operator*/
-    | DEF OpSym ParamDecl ReturnDecl Block   {$$=_FuncDecl([$2],$4,[$3],$5,"Nulli");}
+    | DEF OpId ParamDecl ReturnDecl Block   {$$=_FuncDecl([$2],$4,[$3],$5,"Nulli");}
     ;
 
 BiFuncDecl
-    : DEF ParamDecl FuncSym ParamDecl ReturnDecl Block {$$=_FuncDecl([$3],$5,[$2,$4],$6,"Bi")}
-    | DEF ParamDecl OpSym   ParamDecl ReturnDecl Block {$$=_FuncDecl([$3],$5,[$2,$4],$6,"Bi")}
+    : DEF ParamDecl FuncId ParamDecl ReturnDecl Block {$$=_FuncDecl([$3],$5,[$2,$4],$6,"Bi")}
+    | DEF ParamDecl OpId   ParamDecl ReturnDecl Block {$$=_FuncDecl([$3],$5,[$2,$4],$6,"Bi")}
     ;
 
 PolyFuncDecl
-    : DEF ParamDecl FuncSym ParamDecl PolyFuncDeclTail ReturnDecl Block {
+    : DEF ParamDecl FuncId ParamDecl PolyFuncDeclTail ReturnDecl Block {
         $$=_FuncDecl([$3],$6,[$2,$4],$7,"Poly");
         $$.signature  = $$.signature.concat($5[0]);
         $$.parameters = $$.parameters.concat($5[1]);
@@ -221,16 +222,16 @@ PolyFuncDecl
     ;
 
 PolyFuncDeclTail
-    : VarSym ParamDecl PolyFuncDeclTail {
+    : VarId ParamDecl PolyFuncDeclTail {
         $3[0].push($1);
         $3[1].push($2);
         $$=$3;
     }
-    | VarSym ParamDecl {$$=[[$1],[$2]]}
+    | VarId ParamDecl {$$=[[$1],[$2]]}
     ;
 
 ParamDecl
-    : VarSym TypeExpr {$$=_VariableDeclaration($1,$2)}
+    : VarId TypeExpr {$$=_VariableDeclaration($1,$2)}
     ;   
 
 ReturnDecl
@@ -239,7 +240,7 @@ ReturnDecl
     ;
 
 TypeExpr
-    : TypeSym {$$=_UnresolvedType($1,[],false)}
+    : TypeId {$$=_UnresolvedType($1,[],false)}
     ;
 
 Block
@@ -269,22 +270,22 @@ FuncCall
     ;
 
 NulliFuncCall
-    : FuncSym {$$=_FuncCall("Nulli",[$1],[],this._$)}
+    : FuncId {$$=_FuncCall("Nulli",[$1],[],this._$)}
     ;
 
 MonoFuncCall
-    : Expr FuncSym      {$$=_FuncCall("Mono",[$2],[$1],this._$)}
-    | Expr OpSym        {$$=_FuncCall("Mono",[$2],[$1],this._$)}
-    | OpSym AtomicExpr  {$$=_FuncCall("Mono",[$1],[$2],this._$)}
+    : Expr FuncId      {$$=_FuncCall("Mono",[$2],[$1],this._$)}
+    | Expr OpId        {$$=_FuncCall("Mono",[$2],[$1],this._$)}
+    | OpId AtomicExpr  {$$=_FuncCall("Mono",[$1],[$2],this._$)}
     ;
 
 BiFuncCall
-    : Expr FuncSym AtomicExpr {$$=_FuncCall("Bi",[$2],[$1,$3],this._$)}
-    | Expr OpSym   AtomicExpr {$$=_FuncCall("Bi",[$2],[$1,$3],this._$)}
+    : Expr FuncId AtomicExpr {$$=_FuncCall("Bi",[$2],[$1,$3],this._$)}
+    | Expr OpId   AtomicExpr {$$=_FuncCall("Bi",[$2],[$1,$3],this._$)}
     ;
 
 PolyFuncCall 
-    : Expr FuncSym AtomicExpr PolyFuncCallTail {
+    : Expr FuncId AtomicExpr PolyFuncCallTail {
         $$=_FuncCall("Poly",[$2],[$1,$3],this._$);
         $$.signature  = $$.signature.concat($4[0]);
         $$.parameters = $$.parameters.concat($4[1]);
@@ -292,18 +293,18 @@ PolyFuncCall
     ;
 
 PolyFuncCallTail
-    : VarSym AtomicExpr PolyFuncCallTail {
+    : VarId AtomicExpr PolyFuncCallTail {
         $3[0].push($1);
         $3[1].push($2);
         $$=$3;
     }
-    | VarSym AtomicExpr {$$=[[$1],[$2]]}
+    | VarId AtomicExpr {$$=[[$1],[$2]]}
     ;
 
 AtomicExpr 
     : NumberLit
     | StringLit
-    | VarSym
+    | VarId
     | LeftParenthesis Expr RightParenthesis {$$=$2;}
     ;
 
@@ -312,20 +313,20 @@ Expr
     | AtomicExpr
     ;
 
-FuncSym
-    : FUNCSYM {$$=_Token($1, this._$)}
+FuncId
+    : FUNC_ID {$$=_Token($1, this._$)}
     ;
 
-TypeSym
-    : TYPESYM {$$=_Token($1, this._$)}
+TypeId
+    : TYPE_ID {$$=_Token($1, this._$)}
     ;
 
-VarSym
-    : VARSYM {$$=_Token($1, this._$); $$.kind="Variable";}
+VarId
+    : VAR_ID {$$=_Token($1, this._$); $$.kind="Variable";}
     ;
 
-OpSym
-    : OPSYM {$$=_Token($1, this._$)}
+OpId
+    : OP_ID {$$=_Token($1, this._$)}
     ;
 
 EmbeddedJavascript
