@@ -75,7 +75,7 @@ export interface TypeConstraint {
 }
 
 export interface StructDeclaration {
-    kind: "StructDeclaration";
+    kind: "ThingDecl";
     name: AtomicToken;
     members: MemberDefinition[];
     genericList: GenericTypename[];
@@ -247,8 +247,9 @@ export type Expression
     | NumberExpression
     | EnumExpression
     | Variable
-    | ObjectExpression // Pineapple Object Notation (PON)
-    | ObjectAccess
+    | ThingExpr // Pineapple Object Notation (PON)
+    | ThingAccess
+    | ThingUpdate
     | ListExpression // a.k.a. Array. To store elements of same type
     | TupleExpression // to store element of different type
     | AnonymousExpression
@@ -310,17 +311,17 @@ export interface Variable extends AtomicToken {
     returnType: TypeExpression; // This info should be fill in by type checker
 }
 
-export interface ObjectExpression { // NOTE: Object is also Dictionary/Table
-    kind: "ObjectExpression";
+export interface ThingExpr { // NOTE: Object is also Dictionary/Table
+    kind: "ThingExpr";
     constructor: TypeExpression;
     keyValueList: KeyValue[];
     returnType: TypeExpression;
     location: TokenLocation;
 }
 
-export function EmptyTable(location: TokenLocation, type: TypeExpression): ObjectExpression {
+export function EmptyTable(location: TokenLocation, type: TypeExpression): ThingExpr {
     return {
-        kind: "ObjectExpression",
+        kind: "ThingExpr",
         constructor: type,
         keyValueList: [],
         returnType: type,
@@ -333,12 +334,19 @@ export interface KeyValue {
     expression: Expression;
 }
 
-export interface ObjectAccess {
-    kind: "ObjectAccess";
+export interface ThingAccess {
+    kind: "ThingAccess";
     subject: Expression;
     key: AtomicToken;
     returnType: TypeExpression;
     location: TokenLocation;
+}
+
+export interface ThingUpdate {
+    kind: "ThingUpdate";
+    toBeUpdated: Expression;
+    updatedKeyValues: KeyValue[];
+    returnType: TypeExpression;
 }
 
 export interface ListExpression {

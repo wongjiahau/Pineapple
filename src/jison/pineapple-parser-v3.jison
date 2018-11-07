@@ -19,6 +19,8 @@ Abbreviations:
     Lit     Literal
     Var     Variable
     Param   Parameter of Function 
+    Assign  Assignment
+    Init    Initialization
 */
 
 %{
@@ -39,14 +41,40 @@ const _FuncDecl = (signature,returnType,parameters,statements,affix) => ({
     affix,
 });
 
-const _ReturnStatement = (expression,location) => ({ kind: "ReturnStatement", expression, location});
+const _ThingDecl = (name, members, genericList, location) => ({
+    kind: "ThingDecl",
+    name,
+    members,
+    genericList,
+    location
+});
 
-const _VariableDeclaration = (variable, typeExpected, isMutable=false) => ({
+const _ThingUpdate = (toBeUpdated, updatedKeyValues) => ({
+    kind: "ThingUpdate",
+    toBeUpdated,
+    updatedKeyValues
+});
+
+const _AssignStmt = (variable, isDeclaration, expression) => ({
+    kind: "AssignmentStatement",
+    variable,
+    isDeclaration,
+    expression
+});
+
+const _ReturnStmt = (expression,location) => ({ kind: "ReturnStatement", expression, location});
+
+const _VarDecl = (variable, typeExpected, isMutable=false) => ({
     kind: "VariableDeclaration",
     variable,
     typeExpected,
     isMutable
 });
+
+const _MemberId = (name, expectedType) => ({
+    name,
+    expectedType
+})
 
 const _FuncCall = (fix,signature,parameters,location) => ({
     kind: "FunctionCall",
@@ -61,6 +89,23 @@ const _UnresolvedType = (name, genericList, nullable) => ({
     name, 
     genericList,
     nullable
+});
+
+const _ThingExpr = (constructor, keyValueList) => ({
+    kind: "ThingExpr",
+    constructor,
+    keyValueList,
+});
+
+const _ThingAccess = (subject, key) => ({
+    kind: "ThingAccess",
+    subject,
+    key
+});
+
+const _KeyValue = (memberName, expression) => ({
+    memberName,
+    expression,
 });
 
 const _JavascriptCode = (repr,location) => ({kind:"JavascriptCode",repr, location});
@@ -102,6 +147,8 @@ const _EnumExpression = (repr,location) => ({ kind: "EnumExpression", repr, loca
 "where"     return 'WHERE'
 "group"     return 'GROUP'
 "enum"      return 'ENUM'
+"thing"     return 'THING'
+"but"      return 'BUT'
 
 // Inivisible token
 "@NEWLINE"       %{
@@ -145,7 +192,7 @@ const _EnumExpression = (repr,location) => ({ kind: "EnumExpression", repr, loca
 \b[T][12]?\b                    return 'GENERICTYPENAME'
 [:][a-z][a-zA-Z0-9]*            return 'TYPE_ID'
 [a-z][a-zA-Z0-9]*               return 'VAR_ID'
-['][a-z][a-zA-Z0-9]*            return 'MEMBERNAME'
+['][a-z][a-zA-Z0-9]*            return 'MEMBER_ID'
 [-!$%^&*_+|~=`;<>\/]+           return 'OP_ID'
 
 /lex
@@ -177,6 +224,28 @@ DeclList
 Decl
     : FuncDecl
     | EnumDecl
+    | ThingDecl
+    ;
+
+ThingDecl
+    : DEF THING TypeSym NEWLINE INDENT MemberDecls DEDENT {$$=_ThingDecl($3,$6,[],this._$)}
+    ;
+
+MemberDecls
+    : MemberDecl NEWLINE MemberDecls   {$$=[$1].concat($3)}
+    | MemberDecl NEWLINE               {$$=[$1]}
+    ;
+
+MemberDecl 
+    : MemberId TypeExpr {$$=_MemberId($1,$2)}
+    ;
+
+ThingAccess
+    : Expr MemberId {$$=_ThingAccess($1,$2)}
+    ;
+
+ThingUpdate
+    : Expr BUT NEWLINE INDENT MultilineMemberInits DEDENT {$$=_ThingUpdate($1,$5,this._$)}
     ;
 
 EnumDecl
@@ -232,7 +301,7 @@ PolyFuncDeclTail
     ;
 
 ParamDecl
-    : VarId TypeExpr {$$=_VariableDeclaration($1,$2)}
+    : VarId TypeExpr {$$=_VarDecl($1,$2)}
     ;   
 
 ReturnDecl
@@ -255,12 +324,45 @@ Stmts
     ;
 
 Stmt 
-    : FuncCall NEWLINE {$$=$1;}
+    : Expr NEWLINE {$$=$1;}
     | ReturnStmt
+    | AssignStmt
     ;
 
+AssignStmt
+    : LET VarDecl EqualSign MultilineExpr   {$$=_AssignStmt($2,true,$4)}
+    | VarSym EqualSign MultilineExpr        {$$=_AssignStmt($1,false,$3)}
+    ;
+
+MultilineExpr
+    : Expr NEWLINE
+    | MultilineThing
+    | ThingUpdate
+    ;
+
+MultilineThing
+    : TypeExpr NEWLINE INDENT MultilineMemberInits DEDENT {$$=_ThingExpr($1,$4)}
+    ;
+
+MultilineMemberInits
+    : MultilineMemberInit MultilineMemberInits {$$=[$1].concat($2)}
+    | MultilineMemberInit {$$=[$1]}
+    ;
+
+MultilineMemberInit
+    : MemberId EqualSign MultilineExpr {$$=_KeyValue($1,$3)}
+    ;
+
+VarDecl 
+    : VarSym                    {$$=_VarDecl($1,null)}
+    | MUTABLE VarSym            {$$=_VarDecl($2,null,true)}
+    | VarSym TypeExpr           {$$=_VarDecl($1,$2)}
+    | MUTABLE VarSym TypeExpr   {$$=_VarDecl($2,$3,true)}
+    ;
+
+
 ReturnStmt
-    : RETURN Expr NEWLINE {$$=_ReturnStatement($2,this._$)}
+    : RETURN Expr NEWLINE {$$=_ReturnStmt($2,this._$)}
     ;
 
 FuncCall
@@ -312,6 +414,7 @@ AtomicExpr
 Expr
     : FuncCall
     | AtomicExpr
+    | ThingAccess
     ;
 
 FuncId
@@ -332,6 +435,10 @@ VarId
 
 OpId
     : OP_ID {$$=_Token($1, this._$)}
+    ;
+
+MemberId
+    : MEMBER_ID {$$=_Token($1,this._$)}
     ;
 
 EmbeddedJavascript

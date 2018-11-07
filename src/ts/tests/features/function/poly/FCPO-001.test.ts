@@ -3,7 +3,7 @@ import { testExecute } from "../../../testUtil";
 
 testExecute({
 description: "3 parameters function",
-input: 
+input:
 `
 def this:string.Replace that:string With the:string -> :string
     <javascript>
@@ -16,4 +16,4 @@ def .Main
 `,
 expectedOutput: "Hello babe"
 }
-)
+);

@@ -61,7 +61,7 @@ export function interpret(
     if (isFail(parsedCode)) { return parsedCode; }
     const ast = parsedCode.value;
 
-    // console.log(JSON.stringify(ast.declarations,null,2)); // Uncomment this line to see full syntax tree
+    // console.log(JSON.stringify(removeTokenLocation(ast.declarations), null, 2)); // Uncomment this line to see full syntax tree
 
     initialCache[source.filename] = ast;
     const extractResult = extractImports(ast, initialCache);
@@ -271,4 +271,21 @@ export function loadFile(filename: string): SourceCode | null {
 export interface SourceCode {
     filename: string;
     content: string;
+}
+
+function removeTokenLocation(obj: any) {
+    return obj;
+    if (Array.isArray(obj)) {
+        for (let i = 0; i < obj.length; i++) {
+            removeTokenLocation(obj[i]);
+        }
+    } else {
+        for (const key in obj) {
+            if (key === "location") {
+                delete obj[key];
+            } else {
+                removeTokenLocation(obj[key]);
+            }
+        }
+    }
 }

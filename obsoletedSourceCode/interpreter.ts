@@ -65,7 +65,7 @@ export interface ObjectMemberNode {
 }
 
 export interface ObjectAccessNode {
-    kind: "ObjectAccess";
+    kind: "ThingAccess";
     name: string;
     accessProperty: ObjectAccessNode;
 }
@@ -191,7 +191,7 @@ export function evalutateExpression(statement: CompoundStatement | Statement): a
             return evalElementNode(statement.element, true);
         case "Object":
             return evalObjectMemberNode(statement.memberNode, true);
-        case "ObjectAccess":
+        case "ThingAccess":
             return evalObjectAccessNode(statement);
         case "ArraySlicing":
             return evalArraySlicingNode(statement);

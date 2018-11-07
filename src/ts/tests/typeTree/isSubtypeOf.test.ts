@@ -17,7 +17,7 @@ describe("isSubtypeOf", () => {
         const cat: StructType = {
             kind: "StructType",
             reference: {
-                kind: "StructDeclaration",
+                kind: "ThingDecl",
                 name: newAtomicToken("Cat"),
                 members: [],
                 genericList: [],
