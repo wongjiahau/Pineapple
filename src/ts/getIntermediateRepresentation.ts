@@ -13,7 +13,6 @@ export function getIntermediateRepresentation(
     const result = fillUpTypeInformation(
         ast,
         prevIntermediate.symbolTable,
-        options
     );
     if (result.kind === "OK") {
         const [newAst, symbolTable] = result.value;
@@ -32,7 +31,7 @@ export function initialIntermediateForm(): IntermediateRepresentation {
         syntaxTrees: [],
         symbolTable: {
             funcTab: {},
-            structTab: {},
+            thingTab: {},
             enumTab: {},
             typeTree: initTypeTree(),
         },

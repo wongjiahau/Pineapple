@@ -1,11 +1,11 @@
 import {
     BuiltinTypename,
-    GenericList,
+    InstantiatedTypeParams,
     newAtomicToken,
     newGenericTypename,
     NullTokenLocation,
-    StructDeclaration,
-    StructType,
+    ThingDecl,
+    ThingType,
     TypeExpression,
     VoidType
 } from "./ast";
@@ -161,7 +161,7 @@ export function logTree<T>(tree: Tree<T>, stringifier: (x: T) => string, level =
 export function initTypeTree(): Tree<TypeExpression> {
     const anyType       = newBuiltinType(":any");
     const enumType      = EnumType();
-    const structType    = BaseStructType();
+    const structType    = BaseThingType();
     const tableType     = newBuiltinType(":table");
     const listType      = newListType(newGenericTypename("T"));
     const numberType    = newBuiltinType(":number");
@@ -183,8 +183,8 @@ export function initTypeTree(): Tree<TypeExpression> {
     return tree;
 }
 
-export function BaseStructType(): TypeExpression {
-    return newBuiltinType(":struct");
+export function BaseThingType(): TypeExpression {
+    return newBuiltinType(":thing");
 }
 
 export function EnumType(): TypeExpression {
@@ -199,7 +199,7 @@ export function newListType(of: TypeExpression): TypeExpression {
     return {
         kind: "BuiltinType",
         name: ":list",
-        genericList: [of],
+        typeParams: [of],
         nullable: false,
         location: NullTokenLocation()
     };
@@ -209,7 +209,7 @@ export function newTupleType(of: TypeExpression[]): TypeExpression {
     return {
         kind: "BuiltinType",
         name: ":tuple",
-        genericList: of,
+        typeParams: of,
         nullable: false,
         location: NullTokenLocation()
     };
@@ -224,12 +224,13 @@ export function VoidType(): VoidType {
     };
 }
 
-export function newStructType(s: StructDeclaration, genericList: GenericList): StructType {
+export function newThingType(s: ThingDecl, typeParams: InstantiatedTypeParams): ThingType {
     return {
-        kind: "StructType",
+        kind: "ThingType",
         reference: s,
         nullable: false,
-        genericList: genericList,
+        members: s.members,
+        typeParams: typeParams,
         location: s.location
     };
 }
@@ -239,7 +240,7 @@ export function newBuiltinType(name: BuiltinTypename): TypeExpression {
         kind: "BuiltinType",
         name: name,
         nullable: false,
-        genericList: [],
+        typeParams: [],
         location: NullTokenLocation()
     };
 }

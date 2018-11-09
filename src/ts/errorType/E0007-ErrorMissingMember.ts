@@ -1,9 +1,9 @@
-import { StructDeclaration, TokenLocation } from "../ast";
+import { ThingDecl, TokenLocation } from "../ast";
 import { ErrorDetail } from "./ErrorDetail";
 
 export function ErrorMissingMember(
     missingKey: string,
-    relatedStruct: StructDeclaration,
+    relatedStruct: ThingDecl,
     relatedLocation: TokenLocation
 ): ErrorDetail {
     relatedLocation = {
@@ -13,7 +13,7 @@ export function ErrorMissingMember(
     return {
         code: "0007",
         name: "ErrorMissingMember",
-        message: `Missing member ${missingKey} for ${relatedStruct.name.repr}`,
+        message: `Missing member ${missingKey} for ${relatedStruct.name}`,
         relatedLocation: relatedLocation,
     };
 }

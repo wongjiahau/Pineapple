@@ -1,3 +1,14 @@
+// Fix a bug where logger not showing in console when usin gJest
+// Refer https://github.com/facebook/jest/issues/3853
+export const logg = (s: any) => {
+    console.log("vvvvvvvvvvvvvvvvvvvvvvvvvvvvvv");
+    console.log(s);
+    console.log(s);
+    console.log(s);
+    console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+    process.stdout.write(s + "\n");
+};
+
 import {
     AtomicToken,
     BranchStatement,
@@ -6,12 +17,11 @@ import {
     Declaration,
     EmptyList,
     EmptyTable,
-    EnumDeclaration,
+    EnumDecl,
     Expression,
     ForStatement,
     FunctionCall,
     FunctionDeclaration,
-    GenericList,
     GroupBindingDeclaration,
     GroupDeclaration,
     KeyValue,
@@ -23,15 +33,17 @@ import {
     Statement,
     StringExpression,
     StringInterpolationExpression,
-    StructDeclaration,
-    StructType,
+    ThingDecl,
+    ThingType,
     SyntaxTree,
     TokenLocation,
     TupleExpression,
     TypeExpression,
     UnresolvedType,
     Variable,
-    VariableDeclaration
+    VariableDeclaration,
+    ThingName,
+    InstantiatedTypeParams
 } from "./ast";
 
 import {ErrorAccessingInexistentMember} from "./errorType/E0001-AccessingInexistentMember";
@@ -68,7 +80,7 @@ import { fail, isFail, isOK, Maybe, ok } from "./maybeMonad";
 import {parseCode } from "./parseCodeToSyntaxTree";
 import {getFullFunctionName, getPartialFunctionName} from "./transpile";
 import {
-    BaseStructType,
+    BaseThingType,
     childOf,
     EnumType,
     findAllAncestorsOf,
@@ -76,7 +88,7 @@ import {
     insertChild,
     newBuiltinType,
     newListType,
-    newStructType,
+    newThingType,
     newTupleType,
     Tree,
     VoidType
@@ -121,29 +133,28 @@ export function fillUpTypeInformation(
             }
             case "ThingDecl":
                 // check if the struct is declared already or not
-                const tempStructTab  = newStructTab(d, copy(symbols.structTab));
-                if (isFail(tempStructTab)) { return tempStructTab; }
+                const tempThingTab  = newThingTab(d, copy(symbols.thingTab));
+                if (isFail(tempThingTab)) { return tempThingTab; }
 
                 const tempSymbols = copy(symbols);
                 tempSymbols.typeTree = insertChild<TypeExpression> (
-                    newStructType(d, d.genericList),
-                    BaseStructType(),
+                    newThingType(d, d.name.genTypeParams),
+                    BaseThingType(),
                     tempSymbols.typeTree,
                     typeEquals
                 );
-
-                const result = validateStruct(d, tempSymbols);
+                const result = validateThingDecl(d, tempSymbols);
                 if (isFail(result)) { return result; }
-                const validatedStruct = result.value;
+                const validatedThingDecl = result.value;
 
-                const structTab = newStructTab(validatedStruct, symbols.structTab);
-                if (isFail(structTab)) { return structTab; }
+                const thingTab = newThingTab(validatedThingDecl, symbols.thingTab);
+                if (isFail(thingTab)) { return thingTab; }
 
-                symbols.structTab = structTab.value;
+                symbols.thingTab = thingTab.value;
 
                 symbols.typeTree = insertChild<TypeExpression> (
-                    newStructType(validatedStruct, validatedStruct.genericList),
-                    BaseStructType(),
+                    newThingType(validatedThingDecl, validatedThingDecl.name.genTypeParams),
+                    BaseThingType(),
                     symbols.typeTree,
                     typeEquals
                 );
@@ -337,8 +348,8 @@ export function resolveGroupBinding(d: FunctionDeclaration, symbols: SymbolTable
             for (let i = 0; i < d.parameters.length; i++) {
                 const x = d.parameters[i];
                 const t = x.typeExpected;
-                if (t.kind === "GenericTypename") {
-                    if (g.genericList.some((y) => y.repr === t.name.repr)) {
+                if (t.kind === "GenTypeParam") {
+                    if (g.genTypeParams.some((y) => y.repr === t.name.repr)) {
                         x.typeExpected = g.typeBinded;
                     } else {
                         return fail(ErrorYetToBeDefined("Using undeclared generic name", t.location));
@@ -417,16 +428,16 @@ export function containsAsyncFunction(e: Expression | null): boolean {
     }
 }
 
-export function validateStruct(s: StructDeclaration, symbols: SymbolTable)
-: Maybe<StructDeclaration, ErrorDetail> {
-    const generics = s.genericList.map((x) => x.name.repr);
-    const result = validateMembers(generics, s.members, symbols);
+export function validateThingDecl(t: ThingDecl, symbols: SymbolTable)
+: Maybe<ThingDecl, ErrorDetail> {
+    const generics = t.name.genTypeParams.map((x) => x.name.repr);
+    const result = validateMembers(generics, t.members, symbols);
     if (result.kind === "OK") {
-        s.members = result.value;
+        t.members = result.value;
     } else {
         return result;
     }
-    return ok(s);
+    return ok(t);
 }
 
 function validateMembers(
@@ -439,24 +450,24 @@ function validateMembers(
         const result = resolveType(m.expectedType, symbols);
         if (result.kind === "OK") { m.expectedType = result.value; } else { return result; }
         switch (m.expectedType.kind) {
-            case "GenericTypename":
+            case "GenTypeParam":
                 if (declaredGenerics.indexOf(m.expectedType.name.repr) < 0) {
                     return fail(ErrorUsingUndefinedGenericName(m.expectedType.name, declaredGenerics));
                 }
                 break;
             case "BuiltinType":
-            case "StructType":
-                if (m.expectedType.genericList !== null) {
-                    const result1 = resolveGenericsType(m.expectedType.genericList, symbols);
-                    if (result1.kind === "OK") { m.expectedType.genericList = result1.value; } else { return result1; }
+            case "ThingType":
+                if (m.expectedType.typeParams !== null) {
+                    const result1 = resolveGenericsType(m.expectedType.typeParams, symbols);
+                    if (result1.kind === "OK") { m.expectedType.typeParams = result1.value; } else { return result1; }
 
                     const result2 = validateGenericType(
                         declaredGenerics,
-                        m.expectedType.genericList,
+                        m.expectedType.typeParams,
                         symbols
                     );
 
-                    if (result2.kind === "OK") { m.expectedType.genericList = result2.value; } else { return result2; }
+                    if (result2.kind === "OK") { m.expectedType.typeParams = result2.value; } else { return result2; }
                 }
                 break;
         }
@@ -467,11 +478,11 @@ function validateMembers(
 /**
  * This function is to check whether non-declared generic typename is used.
  */
-export function validateGenericType(declaredGenerics: string[], gs: GenericList, symbols: SymbolTable)
-: Maybe<GenericList, ErrorDetail> {
+export function validateGenericType(declaredGenerics: string[], gs: InstantiatedTypeParams, symbols: SymbolTable)
+: Maybe<InstantiatedTypeParams, ErrorDetail> {
     for (let i = 0; i < gs.length; i++) {
         let g = gs[i];
-        if (g.kind === "GenericTypename") {
+        if (g.kind === "GenTypeParam") {
             if (declaredGenerics.indexOf(g.name.repr) < 0) {
                 return fail(ErrorUsingUndefinedGenericName(g.name, declaredGenerics));
             }
@@ -479,20 +490,20 @@ export function validateGenericType(declaredGenerics: string[], gs: GenericList,
             const result1 = resolveType(g, symbols);
             if (result1.kind === "OK") { g = result1.value; } else { return result1; }
             switch (g.kind) {
-                case "StructType":
+                case "ThingType":
                 case "BuiltinType":
-                    const result2 = resolveGenericsType(g.genericList, symbols);
-                    if (result2.kind === "OK") { g.genericList = result2.value; } else { return result2; }
+                    const result2 = resolveGenericsType(g.typeParams, symbols);
+                    if (result2.kind === "OK") { g.typeParams = result2.value; } else { return result2; }
 
-                    const result3 = validateGenericType(declaredGenerics, g.genericList, symbols);
-                    if (result3.kind === "OK") { g.genericList = result3.value; } else { return result3; }
+                    const result3 = validateGenericType(declaredGenerics, g.typeParams, symbols);
+                    if (result3.kind === "OK") { g.typeParams = result3.value; } else { return result3; }
             }
         }
     }
     return ok(gs);
 }
 
-export function newEnumTab(e: EnumDeclaration, enumTab: EnumTable)
+export function newEnumTab(e: EnumDecl, enumTab: EnumTable)
 : Maybe<EnumTable, ErrorDetail> {
     if (enumTab[e.name.repr]) {
         return fail(ErrorEnumRedeclare(e, enumTab[e.name.repr].originFile));
@@ -517,7 +528,7 @@ export function resolveType(t: TypeExpression | null, symbols: SymbolTable)
 : Maybe<TypeExpression, ErrorDetail> {
     if (t === null) {
         return ok(VoidType());
-    } else if (t.kind in ["UnresolvedType", "GenericTypename"]) {
+    } else if (t.kind in ["UnresolvedType", "GenTypeParam"]) {
         throw new Error(`${stringifyTypeReadable(t)} had been resolved before`);
     }
     switch (t.kind) {
@@ -528,10 +539,10 @@ export function resolveType(t: TypeExpression | null, symbols: SymbolTable)
             if (matchingType) {
                 type = copy(matchingType);
                 type.nullable = t.nullable;
-                if ("genericList" in type) {
-                    type.genericList = t.genericList;
-                    const result = resolveGenericsType(type.genericList, symbols);
-                    if (result.kind === "OK") { type.genericList = result.value; } else { return result; }
+                if ("typeParams" in type) {
+                    type.typeParams = t.genTypeParams;
+                    const result = resolveGenericsType(type.typeParams, symbols);
+                    if (result.kind === "OK") { type.typeParams = result.value; } else { return result; }
                 }
                 return ok(type);
             } else {
@@ -540,9 +551,9 @@ export function resolveType(t: TypeExpression | null, symbols: SymbolTable)
             break;
         case "VoidType":
             return ok(VoidType());
-        case "GenericTypename":
+        case "GenTypeParam":
         case "BuiltinType":
-        case "StructType":
+        case "ThingType":
             return ok(t);
         default:
             // search struct table
@@ -565,8 +576,8 @@ export function resolveType(t: TypeExpression | null, symbols: SymbolTable)
         switch (y.kind) {
             case "BuiltinType":
                 return name === y.name;
-            case "StructType":
-                return name === y.reference.name.repr;
+            case "ThingType":
+                return name === stringifyThingName(y.reference.name);
             case "EnumDeclaration":
             case "GroupDeclaration":
                 return name === y.name.repr;
@@ -576,14 +587,21 @@ export function resolveType(t: TypeExpression | null, symbols: SymbolTable)
     }
 }
 
-export function newStructTab(s: StructDeclaration, structTab: StructTable)
-: Maybe<StructTable , ErrorDetail> {
-    if (s.name.repr in structTab) {
-        return fail(ErrorStructRedeclare(s));
+export function newThingTab(newThingDecl: ThingDecl, oldThingTab: ThingTable)
+: Maybe<ThingTable , ErrorDetail> {
+    const name = stringifyThingName(newThingDecl.name);
+    if (name in oldThingTab) {
+        return fail(ErrorStructRedeclare(newThingDecl));
     } else {
-        structTab[s.name.repr] = s;
+        return ok({
+            ...oldThingTab, 
+            [name]: newThingDecl
+        });
     }
-    return ok(structTab);
+}
+
+export function stringifyThingName(t: ThingName): string {
+    return t.identifiers.map((x) => x.repr).join("$");
 }
 
 export function getFunctionSignature(f: FunctionDeclaration | FunctionCall): string {
@@ -652,7 +670,7 @@ export function getVariableTable(variables: VariableDeclaration[]): VariableTabl
 
 export interface SymbolTable {
     funcTab: FunctionTable;
-    structTab: StructTable;
+    thingTab: ThingTable;
     typeTree: Tree < TypeExpression >;
     enumTab: EnumTable;
 }
@@ -661,10 +679,10 @@ export interface TableOf < T > {
     [key: string]: T;
 }
 
-export type StructTable = TableOf < StructDeclaration >;
+export type ThingTable = TableOf < ThingDecl >;
 export type VariableTable = TableOf < Variable >;
 export type FunctionTable = TableOf < FunctionDeclaration[] >;
-export type EnumTable = TableOf < EnumDeclaration >;
+export type EnumTable = TableOf < EnumDecl >;
 
 function updateVariableTable(vtab: VariableTable, variable: Variable)
 : Maybe<VariableTable, ErrorDetail> {
@@ -825,11 +843,11 @@ export function fillUpForStmtTypeInfo(f: ForStatement, symbols: SymbolTable, var
     if (result.kind === "OK") { [f.expression, symbols] = result.value; } else { return result; }
     const exprType = f.expression.returnType;
     if (exprType.kind === "BuiltinType" && exprType.name === ":list") {
-        if (exprType.genericList !== null) {
-            if (exprType.genericList.length > 1) {
+        if (exprType.typeParams !== null) {
+            if (exprType.typeParams.length > 1) {
                 throw new Error();
             }
-            f.iterator.returnType = exprType.genericList[0];
+            f.iterator.returnType = exprType.typeParams[0];
         } else {
             throw new Error("Something is wrong");
         }
@@ -856,8 +874,7 @@ export function fillUpTestExprTypeInfo(t: Expression, symbols: SymbolTable, vart
 
 export function assertReturnTypeIsBoolean(e: Expression): Maybe<boolean, ErrorDetail> {
     const type = e.returnType;
-    if ((type.kind === "EnumDeclaration" && type.name.repr === "Boolean") ||
-        (type.kind === "StructType" && type.reference.name.repr === "Boolean")) {
+    if (type.kind === "EnumDeclaration" && type.name.repr === "Boolean") {
         return ok(true);
     } else {
         return fail(ErrorConditionIsNotBoolean(e));
@@ -914,14 +931,17 @@ export function fillUpExpressionTypeInfo(e: Expression, symbols: SymbolTable, va
             if (e.constructor !== null) {
                 const typeResult = resolveType(e.constructor, symbols);
                 if (typeResult.kind === "OK") { e.constructor = typeResult.value; } else { return typeResult; }
-                if (e.constructor.kind === "StructType") {
-                    e.returnType = newStructType(e.constructor.reference, e.constructor.genericList);
+                if (e.constructor.kind === "ThingType") {
+                    e.returnType = newThingType(
+                        substituteThingGeneric(e.constructor, e.constructor.reference),
+                        e.constructor.typeParams
+                    );
                     const resultKV = fillUpKeyValueListTypeInfo(e.keyValueList, symbols, vartab);
                     if (isOK(resultKV)) { [e.keyValueList, symbols] = resultKV.value; } else { return resultKV; }
 
                     const x = checkIfKeyValueListConforms(
                         e.keyValueList,
-                        substituteStructGeneric(e.constructor, e.constructor.reference),
+                        substituteThingGeneric(e.constructor, e.constructor.reference),
                         symbols
                     );
                     if (!isOK(x)) { return x; }
@@ -937,7 +957,7 @@ export function fillUpExpressionTypeInfo(e: Expression, symbols: SymbolTable, va
                         throw new Error(`Cannot handle ${e.constructor.name} yet`);
                     }
                 } else {
-                    throw new Error(`${stringifyTypeReadable(e.constructor)} is neither struct nor builtin.`);
+                    throw new Error(`${stringifyTypeReadable(e.constructor)} is neither a thing nor a builtin-type.`);
                 }
             } else {
                 e.returnType = newBuiltinType(":table");
@@ -948,8 +968,8 @@ export function fillUpExpressionTypeInfo(e: Expression, symbols: SymbolTable, va
             if (resultOA.kind === "OK") { [e.subject, symbols] = resultOA.value; } else { return resultOA; }
             const subjectReturnType = e.subject.returnType;
             switch (subjectReturnType.kind) {
-                case "StructType":
-                    const resultST = findMemberType(e.key, subjectReturnType.reference);
+                case "ThingType":
+                    const resultST = findMemberType(e.key, subjectReturnType);
                     if (isOK(resultST)) { e.returnType = resultST.value; } else { return resultST; }
                     break;
                 default:
@@ -957,7 +977,7 @@ export function fillUpExpressionTypeInfo(e: Expression, symbols: SymbolTable, va
             }
             break;
         case "EnumExpression":
-            const resultEnum = findMatchingEnumType(e.value, symbols.enumTab);
+            const resultEnum = findMatchingEnumType(e, symbols.enumTab);
             if (isOK(resultEnum)) { e.returnType = resultEnum.value; } else { return resultEnum; }
             break;
         case "ThingUpdate": {
@@ -1075,19 +1095,9 @@ export function isStringType(r: TypeExpression): boolean {
     return r.kind === "BuiltinType" && r.name === ":string";
 }
 
-export function extractGenericList(t: TypeExpression): GenericList {
-    switch (t.kind) {
-        case "BuiltinType":
-        case "StructType":
-            return t.genericList;
-        default:
-            return [];
-    }
-}
-
-export function substituteStructGeneric(t: StructType, s: StructDeclaration): StructDeclaration {
-    const instantiatedGenerics = t.genericList;
-    const originalGenerics = s.genericList;
+export function substituteThingGeneric(t: ThingType, s: ThingDecl): ThingDecl {
+    const instantiatedGenerics = t.typeParams;
+    const originalGenerics = s.name.genTypeParams;
     const genericBinding: TableOf<TypeExpression> = {};
     for (let i = 0; i < originalGenerics.length; i++) {
         genericBinding[originalGenerics[i].name.repr] = instantiatedGenerics[i];
@@ -1119,8 +1129,8 @@ export function getTupleReturnType(t: TupleExpression): TypeExpression {
 }
 
 export function findMatchingEnumType(value: AtomicToken, enumTab: EnumTable)
-: Maybe<EnumDeclaration, ErrorDetail> {
-    const matchingEnum: EnumDeclaration[] = [];
+: Maybe<EnumDecl, ErrorDetail> {
+    const matchingEnum: EnumDecl[] = [];
     let allEnums: AtomicToken[] = [];
     for (const key in enumTab) {
         if (enumTab.hasOwnProperty(key)) {
@@ -1148,9 +1158,9 @@ export function isSubtypeOf(
     y: TypeExpression,
     tree: Tree < TypeExpression >,
 ): boolean {
-    if (x.nullable && y.kind === "EnumDeclaration" && y.name.repr === "Nil") {
+    if (x.nullable && y.kind === "EnumDeclaration" && y.name.repr === ":nil") {
         return true;
-    } else if (y.nullable && x.kind === "EnumDeclaration" && x.name.repr === "Nil") {
+    } else if (y.nullable && x.kind === "EnumDeclaration" && x.name.repr === ":nil") {
         return true;
     } else {
         return typeEquals(x, y) || childOf(x, y, tree, typeEquals) !== null;
@@ -1159,7 +1169,7 @@ export function isSubtypeOf(
 
 export function checkIfKeyValueListConforms(
     keyValues: KeyValue[],
-    structDecl: StructDeclaration,
+    structDecl: ThingDecl,
     symbols: SymbolTable
 ): Maybe<boolean, ErrorDetail> {
     const kvs = keyValues;
@@ -1201,14 +1211,14 @@ export function checkIfKeyValueListConforms(
     return ok(true);
 }
 
-export function findMemberType(key: AtomicToken, structDecl: StructDeclaration)
+export function findMemberType(key: AtomicToken, thingType: ThingType)
 : Maybe<TypeExpression, ErrorDetail> {
-    const members = structDecl.members;
+    const members = thingType.members;
     const matchingMember = members.filter((x) => x.name.repr === key.repr);
     if (matchingMember.length > 0) {
         return ok(matchingMember[0].expectedType);
     } else {
-        return fail(ErrorAccessingInexistentMember(structDecl, key));
+        return fail(ErrorAccessingInexistentMember(thingType.reference, key));
     }
 }
 
@@ -1378,23 +1388,23 @@ export function extractGenericBinding(genericParams: VariableDeclaration[], actu
     }
 }
 
-function extract(genericType: TypeExpression, actualType: TypeExpression): TableOf < TypeExpression > {
-    let result: TableOf < TypeExpression > = {};
+function extract(genericType: TypeExpression, actualType: TypeExpression): GenTypeParamBinding {
+    let result: GenTypeParamBinding = {};
     switch (genericType.kind) {
-        case "GenericTypename":
+        case "GenTypeParam":
             result[genericType.name.repr] = actualType;
             break;
         case "BuiltinType":
-        case "StructType":
-            const generics = genericType.genericList;
+        case "ThingType":
+            const generics = genericType.typeParams;
             if (actualType.kind === "UnresolvedType") {
                 throw new Error(`${actualType} is not resolved yet`);
             }
-            if (actualType.kind === "StructType" || actualType.kind === "BuiltinType") {
+            if (actualType.kind === "ThingType" || actualType.kind === "BuiltinType") {
                 for (let j = 0; j < generics.length; j++) {
                     result = {
                         ...result,
-                        ...extract(generics[j], actualType.genericList[j])
+                        ...extract(generics[j], actualType.typeParams[j])
                     };
                 }
             }
@@ -1429,23 +1439,25 @@ export function paramTypesConforms(
 }
 
 function containsGeneric(params: VariableDeclaration[]): boolean {
-    return params.some((x) => JSON.stringify(x).indexOf("GenericTypename") > -1);
+    return params.some((x) => JSON.stringify(x).indexOf("GenTypeParam") > -1);
 }
+
+export type GenTypeParamBinding = {[genTypeParamName: string]: TypeExpression};
 
 function substituteGeneric(
     unsubstitutedType: TypeExpression,
-    genericBinding: TableOf < TypeExpression >
+    genTypeParamBinding: GenTypeParamBinding
 ): TypeExpression {
     switch (unsubstitutedType.kind) {
-        case "GenericTypename":
-            return genericBinding[unsubstitutedType.name.repr];
+        case "GenTypeParam":
+            return genTypeParamBinding[unsubstitutedType.name.repr];
         case "BuiltinType":
-        case "StructType":
-            const generics = unsubstitutedType.genericList;
-            for (let i = 0; i < generics.length; i++) {
-                generics[i] = substituteGeneric(generics[i], genericBinding);
+        case "ThingType":
+            const typeParams = unsubstitutedType.typeParams;
+            for (let i = 0; i < typeParams.length; i++) {
+                typeParams[i] = substituteGeneric(typeParams[i], genTypeParamBinding);
             }
-            unsubstitutedType.genericList = generics;
+            unsubstitutedType.typeParams = typeParams;
     }
     return unsubstitutedType;
 }
@@ -1495,12 +1507,15 @@ export function checkIfAllElementTypeAreHomogeneous(ex: Expression[])
     return ok(null);
 }
 
-export function genericsEqual(genericsOfX: GenericList, genericsOfY: GenericList): boolean {
-    if (genericsOfX.length !== genericsOfY.length) {
+export function genericsEqual(
+    typeParamsOfX: InstantiatedTypeParams, 
+    typeParamsOfY: InstantiatedTypeParams
+): boolean {
+    if (typeParamsOfX.length !== typeParamsOfY.length) {
         return false;
     }
-    for (let i = 0; i < genericsOfX.length; i++) {
-        if (!typeEquals(genericsOfX[i], genericsOfY[i])) { // TODO: should use subtype of
+    for (let i = 0; i < typeParamsOfX.length; i++) {
+        if (!typeEquals(typeParamsOfX[i], typeParamsOfY[i])) { // TODO: should use subtype of
             return false;
         }
     }
@@ -1511,8 +1526,8 @@ export function genericsEqual(genericsOfX: GenericList, genericsOfY: GenericList
  * This function is to make sure all the non-generictypename type
  *  declared within the generic bracket is defined.
  */
-export function resolveGenericsType(genericList: GenericList, symbols: SymbolTable)
-: Maybe<GenericList, ErrorDetail> {
+export function resolveGenericsType(genericList: InstantiatedTypeParams, symbols: SymbolTable)
+: Maybe<InstantiatedTypeParams, ErrorDetail> {
     if (genericList === null) {
         return genericList;
     }
@@ -1542,14 +1557,15 @@ export function typeEquals(x: TypeExpression, y: TypeExpression | null): boolean
     } else {
         switch (x.kind) {
             case "EnumDeclaration":
-                return x.name.repr === (y as EnumDeclaration).name.repr;
+                return x.name.repr === (y as EnumDecl).name.repr;
             case "BuiltinType":
                 y = y as BuiltinType;
-                return x.name === y.name && genericsEqual(x.genericList, y.genericList);
-            case "StructType":
-                y = y as StructType;
-                return x.reference.name.repr === y.reference.name.repr && genericsEqual(x.genericList, y.genericList);
-            case "GenericTypename":
+                return x.name === y.name && genericsEqual(x.typeParams, y.typeParams);
+            case "ThingType":
+                y = y as ThingType;
+                return stringifyThingName(x.reference.name) 
+                === stringifyThingName(y.reference.name) && genericsEqual(x.typeParams, y.typeParams); 
+            case "GenTypeParam":
                 return true; // Is this correct?
             case "GroupDeclaration":
                 return x.name.repr === (y as GroupDeclaration).name.repr;

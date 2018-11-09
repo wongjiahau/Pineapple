@@ -1,8 +1,9 @@
 import { SourceCode } from "./interpret";
 import { newBuiltinType } from "./typeTree";
+import { GenTypeParamBinding } from "./fillUpTypeInformation";
 
 // Abstract Syntax Tree Node Interfaces
-export type GenericList = TypeExpression[];
+export type InstantiatedTypeParams = TypeExpression[];
 
 export interface SyntaxTree {
     source: SourceCode;
@@ -12,9 +13,9 @@ export interface SyntaxTree {
 
 export type Declaration
     = FunctionDeclaration
-    | StructDeclaration
+    | ThingDecl
     | ImportDeclaration
-    | EnumDeclaration
+    | EnumDecl
     | ExampleDeclaration
     | GroupDeclaration
     | GroupBindingDeclaration
@@ -64,23 +65,27 @@ export interface FunctionDeclaration {
 
 export interface GroupBindingStatement {
     kind: "GroupBindingStatement";
-    genericList: AtomicToken[];
+    genTypeParams: AtomicToken[];
     typeBinded: TypeExpression;
 }
 
 export interface TypeConstraint {
     kind: "TypeConstraint";
     traitName: AtomicToken;
-    genericList: GenericList;
+    genericList: InstantiatedTypeParams;
 }
 
-export interface StructDeclaration {
+export interface ThingDecl {
     kind: "ThingDecl";
-    name: AtomicToken;
+    name: ThingName;
     members: MemberDefinition[];
-    genericList: GenericTypename[];
     location: TokenLocation;
     originFile: string;
+}
+
+export interface ThingName {
+    identifiers: AtomicToken[];
+    genTypeParams: GenTypeParam[];
 }
 
 export interface MemberDefinition {
@@ -167,10 +172,10 @@ export type TypeExpression
     ;
 
 export type ResolvedType
-    = GenericTypename  // e.g. T, T1 or T2
+    = GenTypeParam  // e.g. T, T1 or T2
     | VoidType
-    | EnumDeclaration
-    | StructType
+    | EnumDecl
+    | ThingType
     | BuiltinType
     | GroupDeclaration
     ;
@@ -178,7 +183,7 @@ export type ResolvedType
 export interface BuiltinType {
     kind: "BuiltinType";
     name: BuiltinTypename;
-    genericList: GenericList;
+    typeParams: InstantiatedTypeParams;
     nullable: boolean;
     location: TokenLocation;
 }
@@ -190,20 +195,22 @@ export type BuiltinTypename
     | ":date"
     | ":list"
     | ":table"
-    | ":struct"
+    | ":thing"
     | ":tuple"
     | ":enum"
     ;
-
-export interface StructType {
-    kind: "StructType";
-    reference: StructDeclaration;
+    
+// ThingType is things that are instantiated, for example :number:tree
+export interface ThingType {
+    kind: "ThingType";
+    reference: ThingDecl;
     nullable: boolean;
-    genericList: GenericList;
+    typeParams: GenTypeParamBinding;
+    members: MemberDefinition[];
     location: TokenLocation;
 }
 
-export interface EnumDeclaration {
+export interface EnumDecl {
     kind: "EnumDeclaration";
     name: AtomicToken;
     enums: AtomicToken[];
@@ -212,10 +219,10 @@ export interface EnumDeclaration {
     originFile: string;
 }
 
-export interface EnumExpression {
+export interface EnumExpr {
     kind: "EnumExpression";
-    repr: AtomicToken;
-    returnType: EnumDeclaration;
+    repr: string;
+    returnType: EnumDecl;
     location: TokenLocation;
 }
 
@@ -231,11 +238,11 @@ export interface UnresolvedType {
     name: AtomicToken;
     nullable: boolean;
     location: TokenLocation;
-    genericList: Array<UnresolvedType | GenericTypename>;
+    genTypeParams: Array<UnresolvedType | GenTypeParam>;
 }
 
-export interface GenericTypename {
-    kind: "GenericTypename";
+export interface GenTypeParam {
+    kind: "GenTypeParam";
     name: AtomicToken; // "T" | "T1" | "T2";
     nullable: boolean;
     location: TokenLocation;
@@ -245,7 +252,7 @@ export type Expression
     = FunctionCall
     | StringExpression
     | NumberExpression
-    | EnumExpression
+    | EnumExpr
     | Variable
     | ThingExpr // Pineapple Object Notation (PON)
     | ThingAccess
@@ -410,9 +417,9 @@ export function NullTokenLocation(): TokenLocation {
     };
 }
 
-export function newGenericTypename(placeholder: string): GenericTypename {
+export function newGenericTypename(placeholder: string): GenTypeParam {
     return {
-        kind: "GenericTypename",
+        kind: "GenTypeParam",
         name: newAtomicToken(placeholder),
         location: NullTokenLocation(),
         nullable: false

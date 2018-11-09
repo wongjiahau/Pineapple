@@ -1,6 +1,7 @@
-import { AtomicToken, GenericList, TypeExpression } from "../ast";
+import { AtomicToken, InstantiatedTypeParams, TypeExpression } from "../ast";
+import { stringifyThingName } from "../fillUpTypeInformation";
 
-export function stringifyGenericList(gs: GenericList): string {
+export function stringifyGenericList(gs: InstantiatedTypeParams): string {
     if (gs.length === 0) {
         return "";
     } else {
@@ -14,16 +15,16 @@ export function stringifyTypeReadable(t: TypeExpression | null): string {
     }
     switch (t.kind) {
         case "UnresolvedType":
-        case "GenericTypename":
+        case "GenTypeParam":
         case "EnumDeclaration":
         case "GroupDeclaration":
             return `${t.name.repr}`;
         case "BuiltinType":
-            return `${t.name}${stringifyGenericList(t.genericList)}`;
+            return `${t.name}${stringifyGenericList(t.typeParams)}`;
         case "VoidType":
             return "`Void`";
-        case "StructType":
-            return `${t.reference.name.repr}${stringifyGenericList(t.genericList)}`;
+        case "ThingType":
+            return t.typeParams[0] + stringifyThingName(t.reference.name);
     }
 }
 

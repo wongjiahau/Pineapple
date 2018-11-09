@@ -21,6 +21,7 @@ Abbreviations:
     Param   Parameter of Function 
     Assign  Assignment
     Init    Initialization
+    Gen     Generic
 */
 
 %{
@@ -41,12 +42,17 @@ const _FuncDecl = (signature,returnType,parameters,statements,affix) => ({
     affix,
 });
 
-const _ThingDecl = (name, members, genericList, location) => ({
+const _ThingDecl = (name, members, genTypeParams, location) => ({
     kind: "ThingDecl",
     name,
     members,
-    genericList,
+    genTypeParams,
     location
+});
+
+const _ThingName = (identifiers, genTypeParams) => ({
+    identifiers,
+    genTypeParams,
 });
 
 const _ThingUpdate = (toBeUpdated, updatedKeyValues) => ({
@@ -84,11 +90,15 @@ const _FuncCall = (fix,signature,parameters,location) => ({
     location
 });
 
-const _UnresolvedType = (name, genericList, nullable) => ({ 
+const _UnresolvedType = (name, genTypeParams) => ({ 
     kind: "UnresolvedType", 
     name, 
-    genericList,
-    nullable
+    genTypeParams,
+});
+
+const _GenTypeParam = (name) => ({
+    kind: "GenTypeParam",
+    name, 
 });
 
 const _ThingExpr = (constructor, keyValueList) => ({
@@ -190,8 +200,8 @@ const _EnumExpression = (repr,location) => ({ kind: "EnumExpression", repr, loca
 [.][a-z][a-zA-Z0-9]*            return 'MEMBER_ID'
 [.]([A-Z][a-zA-Z0-9]*)?         return 'FUNC_ID'    
 [A-Z][a-zA-Z0-9]*               return 'SUBFUNC_ID'
-\b[T][12]?\b                    return 'GENERICTYPENAME'
 [:][a-z][a-zA-Z0-9]*            return 'TYPE_ID'
+[:][A-Z][a-zA-Z0-9]*            return 'GENTYPEPARAM_ID'
 [a-z][a-zA-Z0-9]*               return 'VAR_ID'
 [-!$%^&*_+|~=`;<>\/]+           return 'OP_ID'
 
@@ -228,7 +238,13 @@ Decl
     ;
 
 ThingDecl
-    : DEF THING TypeId NEWLINE INDENT MemberDecls DEDENT {$$=_ThingDecl($3,$6,[],this._$)}
+    : DEF THING ThingName NEWLINE INDENT MemberDecls DEDENT {$$=_ThingDecl($3,$6,$3.genTypeParams,this._$)}
+    ;
+
+ThingName
+    : TypeId {$$=_ThingName([$1], []);}
+    | GenTypeParamId TypeId {$$=_ThingName([$2],[$1]);}
+    | GenTypeParamId TypeId GenTypeParamId {$$=_ThingName([$2],[$1, $3]);}
     ;
 
 MemberDecls
@@ -310,7 +326,26 @@ ReturnDecl
     ;
 
 TypeExpr
-    : TypeId {$$=_UnresolvedType($1,[],false)}
+    : AtomicTypeExpr
+    | AtomicTypeExpr UnresolvedType {$2.genTypeParams.push($1); $$=$2;}
+    | AtomicTypeExpr UnresolvedType AtomicTypeExpr
+    | AtomicTypeExpr UnresolvedType AtomicTypeExpr CompoundTypeExprTail
+    | TypeExpr QuestionMark {$1.nullable=true; $$=$1;}
+    ;
+
+AtomicTypeExpr 
+    : UnresolvedType
+    | GenTypeParamId 
+    | LeftParenthesis TypeExpr RightParenthesis {$$=$2;}
+    ;
+
+UnresolvedType
+    :  TypeId {$$=_UnresolvedType($1, []);}
+    ;
+
+CompoundTypeExprTail
+    : TypeId AtomicTypeExpr
+    | TypeId AtomicTypeExpr CompoundTypeExprTail
     ;
 
 Block
@@ -412,9 +447,10 @@ AtomicExpr
     ;
 
 Expr
-    : FuncCall
-    | AtomicExpr
-    | ThingAccess
+    : FuncCall      {$$.location=this._$;}
+    | AtomicExpr    {$$.location=this._$;}
+    | ThingAccess   {$$.location=this._$;}
+    | EnumLit       {$$.location=this._$;}
     ;
 
 FuncId
@@ -427,6 +463,10 @@ SubFuncId
 
 TypeId
     : TYPE_ID {$$=_Token($1, this._$)}
+    ;
+
+GenTypeParamId 
+    : GENTYPEPARAM_ID {$$=_GenTypeParam(_Token($1, this._$))}
     ;
 
 VarId

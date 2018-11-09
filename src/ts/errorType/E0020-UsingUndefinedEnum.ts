@@ -2,6 +2,7 @@ import { AtomicToken } from "../ast";
 import { findSimilarStrings } from "../util";
 import { showSuggestion } from "./errorUtil";
 import { ErrorDetail } from "./ErrorDetail";
+import { logg } from "../fillUpTypeInformation";
 
 export function ErrorUsingUndefinedEnum(
     e: AtomicToken,

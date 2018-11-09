@@ -1,10 +1,10 @@
-import { AtomicToken, StructDeclaration } from "../ast";
+import { AtomicToken, ThingDecl } from "../ast";
 import { findSimilarStrings } from "../util";
 import { showSuggestion } from "./errorUtil";
 import { ErrorDetail } from "./ErrorDetail";
 
 export function ErrorAccessingInexistentMember(
-    relatedStruct: StructDeclaration,
+    relatedStruct: ThingDecl,
     inexistentKey: AtomicToken
 ): ErrorDetail {
     const members = relatedStruct.members;
@@ -15,7 +15,7 @@ export function ErrorAccessingInexistentMember(
         name: "ErrorAccessingInexistentMember",
         relatedLocation: inexistentKey.location,
         message:
-`${relatedStruct.name.repr} does not have the member ${inexistentKey.repr}
+`${relatedStruct.name} does not have the member ${inexistentKey.repr}
 ${showSuggestion(similarKeys)}`,
     };
 }

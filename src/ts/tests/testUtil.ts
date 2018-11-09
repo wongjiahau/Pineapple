@@ -133,6 +133,9 @@ def this:any.Log
 def enum :boolean
     #true
     #false
+
+def enum :nil
+    #nil
 `;
     describe("", () => {
         it(x.description, () => {

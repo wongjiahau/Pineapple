@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { GroupDeclaration, newAtomicToken, NullTokenLocation, StructType } from "../../ast";
+import { GroupDeclaration, newAtomicToken, NullTokenLocation, ThingType } from "../../ast";
 import { isSubtypeOf, typeEquals } from "../../fillUpTypeInformation";
 import { insertChild, newBuiltinType, newTree } from "../../typeTree";
 
@@ -14,18 +14,18 @@ describe("isSubtypeOf", () => {
             bindingFunctions: []
         };
 
-        const cat: StructType = {
-            kind: "StructType",
+        const cat: ThingType = {
+            kind: "ThingType",
             reference: {
                 kind: "ThingDecl",
                 name: newAtomicToken("Cat"),
                 members: [],
-                genericList: [],
+                genTypeParams: [],
                 location: NullTokenLocation(),
                 originFile: ""
             },
             nullable: false,
-            genericList: [],
+            typeParams: [],
             location: NullTokenLocation(),
 
         };

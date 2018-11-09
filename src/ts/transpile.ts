@@ -6,8 +6,8 @@ import {
     BranchStatement,
     Declaration,
     EnsureStatement,
-    EnumDeclaration,
-    EnumExpression,
+    EnumDecl,
+    EnumExpr,
     ExampleDeclaration,
     ExampleStatement,
     Expression,
@@ -22,10 +22,9 @@ import {
     NumberExpression,
     PassStatement,
     ReturnStatement,
-    Statement,
+    ThingDecl,
     StringExpression,
     StringInterpolationExpression,
-    StructDeclaration,
     ThingAccess,
     ThingExpr,
     ThingUpdate,
@@ -33,8 +32,10 @@ import {
     TypeExpression,
     VariableDeclaration,
     WhileStatement,
+    Statement,
 } from "./ast";
 import { ErrorTrace, InterpreterOptions } from "./interpret";
+import { stringifyThingName } from "./fillUpTypeInformation";
 
 let GENERATE_SOURCE_MAP = false;
 
@@ -87,7 +88,7 @@ export function tpExampleDeclaration(e: ExampleDeclaration): string {
     return `$$examples$$.push(function(){${tpStatements(e.statements)}});`;
 }
 
-export function tpEnumDeclaration(e: EnumDeclaration): string {
+export function tpEnumDeclaration(e: EnumDecl): string {
     return `
 /**
  * enum ${e.name.repr} = ${e.enums.map((x) => (x.repr)).join(",")}
@@ -95,9 +96,9 @@ export function tpEnumDeclaration(e: EnumDeclaration): string {
     `;
 }
 
-export function tpStructDeclaration(s: StructDeclaration): string {
+export function tpStructDeclaration(s: ThingDecl): string {
     return `
-    /*struct ${s.name.repr} {
+    /*struct ${stringifyThingName(s.name)} {
         ${s.members.map((x) => `${x.name.repr}:${stringifyType(x.expectedType)}`)}
     }*/`.trim();
 }
@@ -271,12 +272,12 @@ export function stringifyType(t: TypeExpression): string {
     switch (t.kind) {
         case "UnresolvedType":
             return t.name.repr;
-        case "GenericTypename":
+        case "GenTypeParam":
             return `Generic$${t.name.repr}`;
         case "BuiltinType":
-        case "StructType":
-            const genericsName = t.genericList.map((x) => stringifyType(x)).join("$");
-            const typename = t.kind === "BuiltinType" ? t.name : t.reference.name.repr;
+        case "ThingType":
+            const genericsName = t.typeParams.map((x) => stringifyType(x)).join("$");
+            const typename = t.kind === "BuiltinType" ? t.name : stringifyThingName(t.reference.name);
             return `${typename}${genericsName.length > 0 ? "Of" + genericsName : ""}` ;
         case "VoidType":
             return `Void`;
@@ -337,14 +338,14 @@ export function tpTupleExpression(t: TupleExpression): string {
     return `[${tpListElements(t.elements)}]`;
 }
 
-export function tpEnumExpression(e: EnumExpression): string {
-    if (e.returnType.name.repr === "Nil") {
+export function tpEnumExpression(e: EnumExpr): string {
+    if (e.returnType.name.repr === ":nil") {
         return `null`;
     }
-    if (["Boolean", "Nil", "Undefined"].indexOf(e.returnType.name.repr) > -1) {
-        return `${e.repr.repr.slice(1)}`;
+    if ([":boolean", ":undefined"].indexOf(e.returnType.name.repr) > -1) {
+        return `${e.repr.slice(1)}`;
     }
-    return `{$kind: "_Enum${e.returnType.name.repr}", $value: "${e.repr.repr.slice(1)}"}`;
+    return `{$kind: "_Enum${e.returnType.name.repr}", $value: "${e.repr.slice(1)}"}`;
 
 }
 

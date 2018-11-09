@@ -1,8 +1,8 @@
-import { EnumDeclaration } from "../ast";
+import { EnumDecl } from "../ast";
 import { ErrorDetail } from "./ErrorDetail";
 
 export function ErrorEnumRedeclare(
-    e: EnumDeclaration,
+    e: EnumDecl,
     originFile: string
 ): ErrorDetail {
     return {

@@ -12,6 +12,7 @@ import { fail, isFail, isOK, Maybe, ok } from "./maybeMonad";
 import { parseCodeToSyntaxTree } from "./parseCodeToSyntaxTree";
 import { transpile } from "./transpile";
 import { endsWith, startsWith } from "./util";
+import { logg } from "./fillUpTypeInformation";
 
 const fs       = require("fs");
 const path     = require("path");
@@ -75,7 +76,6 @@ export function interpret(
         const ir = result.value; // ir means intermediate representation
         const declarations = getDeclarations(ir) as Declaration[];
         const transpiledCode = transpile(declarations, options);
-        // console.log(transpiledCode);
         const output = executeCode(transpiledCode, interceptor, options, ir);
 
         if (output === undefined) { // This will happen when the VM is waiting input
